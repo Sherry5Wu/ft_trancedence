@@ -1,11 +1,13 @@
 Plan to do:
 	Web:
 		-Major module: Use a framework to build the backend.
+		-Minor module: Use a framework or a toolkit to build the frontend.
 		-Minor module: Use a database for the backend.
 
 	User management:
 		-Major module: Standard user management, authentication, users across
 	tournaments.
+		-Major module: Implementing a remote authentication.
 
 	Gameplay and user experience:
 		-Minor module: Game customization options.
