@@ -31,3 +31,7 @@ Maybe consider to do:
 	Accessibility:
 		-Minor module: Minor module: Expanding browser compatibility.
 		-Minor module: Add accessibility features for visually impaired users
+
+	Server-Side Pong
+		-Major module: Replace basic Pong with server-side Pong and implement an
+API.(sherry)
