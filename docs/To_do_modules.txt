@@ -19,6 +19,9 @@ Plan to do:
 	Cybersecurity:
 		-Major module: Implement Two-Factor Authentication (2FA) and JWT.
 
+	Devops
+		Major module: Designing the backend as microservices.(added by sherry, considering)
+
 	Accessibility:
 		-Minor module: Supports multiple languages.
 

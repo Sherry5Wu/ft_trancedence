@@ -1,0 +1,28 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install & test services
+      run: |
+        cd services/auth-service && npm install && npm test
+        cd ../../services/user-service && npm install && npm test
+
+    - name: Check frontend build
+      run: |
+        cd frontend && npm install && npm run build
