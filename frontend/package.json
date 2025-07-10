@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite --host --port 9000"
   },
   "keywords": [],
-  "author": "Joel",
+  "author": "Anssi, Helena, Joel, Oskari, Sherry",
   "license": "ISC",
   "description": "",
   "dependencies": {
