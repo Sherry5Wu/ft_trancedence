@@ -1,0 +1,8 @@
+In the terminal:
+python3 -m http.server 8000
+-In firefox, go to:
+http://localhost:8000/index.html
+
+The final index.html file will likely be at /frontend/
+This is just to be able to run the game independently for testing
+Final version will like have frontend/src/main.ts and frontend/src/game/pong.ts etc
