@@ -1,19 +1,21 @@
-name: Build & Test
+#Github marketplace https://github.com/marketplace
+name: Compile the Project
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      # uses: Tells GitHub to run an external or reusable action
+    - uses: actions/checkout@v4 # Clone your repo into the runner
 
-    - name: Set up Node.js
+    - name: Set up Node.js  # Human-readable label for the step (shown in GitHub UI)
       uses: actions/setup-node@v3
       with:
         node-version: 18
