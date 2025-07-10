@@ -5,7 +5,9 @@ FROM node:20-slim
 WORKDIR /app
 
 # copy package.json and package-lock.json (that have all the dependencies) to the working directory
-# dependencies include: react, react-dom, typescript, tailwindcss, postcss (so tailwind works), vite (so typescript works)
+# dependencies inside include: typescript, tailwindcss (both mandatory),
+# react, react-dom (for hooks, virtual DOMS, etc.),
+# postcss (so tailwind works), and vite (to run the dev server and to make typescript work with browsers)
 COPY package.json package-lock.json .
 
 # install node package manager
@@ -22,3 +24,14 @@ EXPOSE 9000
 
 # run the entrypoint script
 CMD ["sh", "/app/entrypoint.sh"]
+
+# INSTRUCTIONS TO USE
+# to build docker:
+#   docker build -t frontend .
+# to run docker: 
+#   docker run -p 9000:9000 -v $(pwd):/app frontend
+# to stop docker:
+#   docker ps (to get the id)
+#   docker stop {id}
+# or stop all containers with:
+#   docker stop $(docker ps -q)
