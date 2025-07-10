@@ -27,7 +27,7 @@ CMD ["sh", "/app/entrypoint.sh"]
 
 # INSTRUCTIONS TO USE
 # to build docker:
-#   docker build -t frontend .
+#   docker build --no-cache -t frontend .
 # to run docker: 
 #   docker run -p 9000:9000 -v $(pwd):/app frontend
 # to stop docker:
