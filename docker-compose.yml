@@ -1,64 +1,128 @@
-version: '3.9'
+name: ft_transcendence
 
 services:
+  # API Gateway
   gateway:
     build: ./gateway
     ports:
-      - "8080:8080"
+      - "80:3000"
     depends_on:
-      - auth-service
-      - user-service
-      - game-service
-      - chat-service
-      - stats-service
-      - i18n-service
+      auth-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      game-service:
+        condition: service_healthy
+      stats-service:
+        condition: service_healthy
+      i18n-service:
+        condition: service_healthy
+    networks:
+      - backend
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
+  # Frontend
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "3001:3000"
+    networks:
+      - frontend
+    env_file: .env
 
+  # Auth Service
   auth-service:
     build: ./services/auth-service
-    environment:
-      - DATABASE_URL=file:/data/auth.db
+    networks:
+      - backend
+    env_file: .env
     volumes:
-      - auth-data:/data
+      - ./services/auth-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
+  # User Service
   user-service:
     build: ./services/user-service
-    environment:
-      - DATABASE_URL=file:/data/user.db
+    networks:
+      - backend
+    env_file: .env
     volumes:
-      - user-data:/data
+      - ./services/user-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
+  # Game Service
   game-service:
     build: ./services/game-service
-    environment:
-      - DATABASE_URL=file:/data/game.db
+    networks:
+      - backend
+    env_file: .env
     volumes:
-      - game-data:/data
+      - ./services/game-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-  chat-service:
-    build: ./services/chat-service
-    environment:
-      - DATABASE_URL=file:/data/chat.db
-    volumes:
-      - chat-data:/data
-
+  # Stats Service
   stats-service:
     build: ./services/stats-service
-    environment:
-      - DATABASE_URL=file:/data/stats.db
+    networks:
+      - backend
+    env_file: .env
     volumes:
-      - stats-data:/data
+      - ./services/stats-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
+  # I18n Service
   i18n-service:
     build: ./services/i18n-service
+    networks:
+      - backend
+    env_file: .env
+    volumes:
+      - ./services/i18n-service:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
 
 volumes:
-  auth-data:
-  user-data:
-  game-data:
-  chat-data:
-  stats-data:
+  # Optional if using bind mounts, or replace with named volumes
+  gateway_code:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./gateway
+
+  frontend_code:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./frontend
