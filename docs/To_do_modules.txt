@@ -1,0 +1,40 @@
+Plan to do:
+	Web:
+		-Major module: Use a framework to build the backend.
+		-Minor module: Use a framework or a toolkit to build the frontend.
+		-Minor module: Use a database for the backend.
+
+	User management:
+		-Major module: Standard user management, authentication, users across tournaments.
+		-Major module: Implementing a remote authentication.
+
+	Gameplay and user experience:
+		-Minor module: Game customization options.
+
+	AI-AIgo:
+		-Minor module: User and game stats dashboards
+
+	Cybersecurity:
+		-Major module: Implement Two-Factor Authentication (2FA) and JWT.
+
+	Devops
+		Major module: Designing the backend as microservices.(added by sherry, considering)
+
+	Accessibility:
+		-Minor module: Supports multiple languages.
+
+	Graphics
+		- Major module: Use advanced 3D techniques.
+
+Maybe consider to do:
+	Gameplay and user experience
+		-Major module: Remote players
+		-Major module: Live chat.
+
+	Accessibility:
+		-Minor module: Minor module: Expanding browser compatibility.
+		-Minor module: Add accessibility features for visually impaired users
+
+	Server-Side Pong
+		-Major module: Replace basic Pong with server-side Pong and implement an
+API.(sherry)
