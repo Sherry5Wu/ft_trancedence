@@ -5,8 +5,7 @@ Plan to do:
 		-Minor module: Use a database for the backend.
 
 	User management:
-		-Major module: Standard user management, authentication, users across
-	tournaments.
+		-Major module: Standard user management, authentication, users across tournaments.
 		-Major module: Implementing a remote authentication.
 
 	Gameplay and user experience:
