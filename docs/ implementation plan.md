@@ -171,20 +171,27 @@ ft_transcendence/
 auth-service/
 ├── Dockerfile
 ├── package.json
-├── prisma/
-│   └── schema.prisma
+├── .env
 ├── src/
-│   ├── index.js           # Main Fastify server
-│   ├── routes/
-│   │   └── auth.js
-│   ├── controllers/
-│   │   └── login.js
-│   ├── utils/
-│   │   └── jwt.js
-│   └── middlewares/
-│       └── authenticate.js
+│   ├── app.js            # Fastify server setup + plugin registration
+│   ├── routes/           # Split routes by feature
+│   │   ├── google-auth.js  # Google OAuth routes
+│   │   ├── jwt.js         # Login/token routes
+│   │   └── 2fa.js        # 2FA routes
+│   ├── services/         # Business logic
+│   │   ├── auth.service.js # Core auth logic
+│   │   ├── jwt.service.js  # JWT generation/validation
+│   │   └── 2fa.service.js  # TOTP/email 2FA
+│   ├── db/
+│   │   ├── index.js      # DB connection
+│   │   └── models/       # SQLite schemas
+│   │       └── user.js
+│   └── utils/           # Reusable helpers
+│       ├── crypto.js    # Password hashing
+│       └── errors.js    # Custom error classes
 ```
 ### Collaboration Tips
 - Each teammate owns 1–2 services/* folders.<br>
 - Use consistent naming in all microservices (e.g., src/, routes/, Dockerfile, prisma/).<br>
 - Shared helper functions (e.g., JWT utils) can go in a shared libs/ folder if you later want to extract common logic.<br>
+

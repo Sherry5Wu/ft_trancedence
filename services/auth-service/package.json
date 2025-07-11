@@ -1,0 +1,23 @@
+
+{
+  "name": "auth-service",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "@fastify/jwt": "^6.0.0",
+    "@fastify/oauth2": "^7.0.0",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.0.0",
+    "fastify-plugin": "^4.0.0",
+    "sequelize": "^6.0.0",
+    "sqlite3": "^5.1.6",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.0"
+  }
+}
