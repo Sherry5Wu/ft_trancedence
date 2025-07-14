@@ -23,6 +23,30 @@ it is the single source of truth for identity and authentication in your backend
 | `GET /whoami`          | Return info about the currently logged-in user |
 | `POST /oauth/google`   | (Optional) Handle Google OAuth flow            |
 
+## File Tree
+auth-service/
+├── Dockerfile
+├── package.json
+├── .env
+├── src/
+│   ├── app.js            # Fastify server setup + plugin registration
+│   ├── routes/           # Split routes by feature
+│   │   ├── google-auth.js  # Google OAuth routes
+│   │   ├── jwt.js         # Login/token routes
+│   │   └── 2fa.js        # 2FA routes
+│   ├── services/         # Business logic
+│   │   ├── auth.service.js # Core auth logic
+│   │   ├── jwt.service.js  # JWT generation/validation
+│   │   └── 2fa.service.js  # TOTP/email 2FA
+│   ├── db/
+│   │   ├── index.js      # DB connection
+│   │   └── models/       # SQLite schemas
+│   │       └── user.js
+│   └── utils/           # Reusable helpers
+│       ├── crypto.js    # Password hashing
+|       ├── validator.js # Validation functons
+│       └── errors.js    # Custom error classes
+
 ## Step-by-Step: How to Build auth-service
 
 ### 1. Set up project
