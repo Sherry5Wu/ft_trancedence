@@ -39,3 +39,15 @@ Access-Control-Allow-Origin: https://my-frontend.com
 | `Access-Control-Allow-Headers`     | Allowed custom headers in requests     |
 | `Access-Control-Allow-Credentials` | Allows cookies/auth to be sent         |
 
+## What is Route?
+In the context of a web backend like auth-service in the ft_transcendence project, the word "route" refers to a definition of how the server responds to different HTTP requests (like GET, POST, etc.) on specific URLs. <br>
+
+In backend development (especially with frameworks like Fastify, Express, etc.), a route is:<br>
+
+	A way to map a URL path and an HTTP method (like GET, POST) to a specific function (called a handler) that tells the server what to do when that URL is accessed.
+
+So your `routes/` folder contains different files like:<br>
+- `2fa.js`: defines the API endpoints (routes) for two-factor authentication.<br>
+- `google-auth.js`: defines routes for Google OAuth login.<br>
+- `jwt.js`: defines routes related to JWT-based login/authentication.<br>
+Each file registers different endpoints that users or other services can call. For example, `POST /login`, `GET /verify`, etc.<br>
