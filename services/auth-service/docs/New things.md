@@ -1,5 +1,7 @@
 # Table
--[CORS](#cors)
+- [CORS](#cors)
+- [What is Route?](#what-is-route)
+- [2FA](#2fa)
 
 # CORS
 ## What is CORS?
@@ -39,7 +41,7 @@ Access-Control-Allow-Origin: https://my-frontend.com
 | `Access-Control-Allow-Headers`     | Allowed custom headers in requests     |
 | `Access-Control-Allow-Credentials` | Allows cookies/auth to be sent         |
 
-## What is Route?
+# What is Route?
 In the context of a web backend like auth-service in the ft_transcendence project, the word "route" refers to a definition of how the server responds to different HTTP requests (like GET, POST, etc.) on specific URLs. <br>
 
 In backend development (especially with frameworks like Fastify, Express, etc.), a route is:<br>
@@ -51,3 +53,20 @@ So your `routes/` folder contains different files like:<br>
 - `google-auth.js`: defines routes for Google OAuth login.<br>
 - `jwt.js`: defines routes related to JWT-based login/authentication.<br>
 Each file registers different endpoints that users or other services can call. For example, `POST /login`, `GET /verify`, etc.<br>
+
+# 2FA
+
+## What is 2FA?
+Two-Factor Authentication (2FA) is a security process that requires two different types of verification to prove your identity when logging in to an account.<br>
+
+## How it works?
+Instead of just entering a password (which is one factor, something you know), 2FA adds a second factor, such as:<br>
+1. Something you have – like a phone app (e.g., Google Authenticator, Authy) that generates a 6-digit code.<br>
+2. Something you are – like a fingerprint or face recognition (used in more advanced systems).<br>
+
+So when you log in:<br>
+- Step 1: You enter your password.<br>
+- Step 2: You're asked to enter a verification code from your app or device.<br>
+
+## Why it’s important:
+Even if someone steals your password, they can’t log in unless they also have access to your second factor (like your phone).<br>
