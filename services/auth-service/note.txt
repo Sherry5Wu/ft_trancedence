@@ -1,1 +1,4 @@
-continue studying the code from route/2fa.js
+1. user.js
+the checking the user Model is correct or not?
+
+2. app.js, ask deepseek why delete the "????" line

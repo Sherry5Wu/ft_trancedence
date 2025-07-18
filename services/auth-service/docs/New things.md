@@ -2,7 +2,8 @@
 - [CORS](#cors)
 - [What is Route?](#what-is-route)
 - [2FA](#2fa)
-
+- [Sequelize](#sequelize)
+- [package.json](#pakcage-jason)
 # CORS
 ## What is CORS?
 CORS (Cross-Origin Resource Sharing) is a security mechanism implemented by web browsers to control how web pages from one origin (domain, protocol, or port) can request resources from a different origin. It relies on HTTP headers to allow or block cross-origin requests.<br>
@@ -70,3 +71,61 @@ So when you log in:<br>
 
 ## Why it’s important:
 Even if someone steals your password, they can’t log in unless they also have access to your second factor (like your phone).<br>
+
+# Sequelize
+Sequelize is a Node.js ORM (Object-Relational Mapping) for SQL databases like PostgreSQL, MySQL, MariaDB, SQLite, and MSSQL. It lets you interact with your database using JavaScript instead of writing raw SQL queries.<br>
+
+```js
+const { DataTypes } = require('sequelize');
+```
+is using destructuring assignment to import the DataTypes object from the sequelize library. <br>
+
+## DataTypes
+`DataTypes` is an object provided by Sequelize that defines the types of data you can use for your model fields, such as:<br>
+- `DataTypes.STRING` – for text<br>
+- `DataTypes.INTEGER` – for integers<br>
+- `DataTypes.BOOLEAN` – for true/false<br>
+- `DataTypes.DATE` – for dates/timestamps<br>
+- `DataTypes.FLOAT`, DataTypes.TEXT, etc.<br>
+
+# package.json
+`package.json` is the metadata file that lives at the root of a Node.js project. It defines:<br>
+- Project name, version, and description<br>
+- Your dependencies<br>
+- Scripts to build, test, or run your app<br>
+- Entry point for the app (`main`)<br>
+- Author info, license, and more<br>
+It’s essential for npm (Node Package Manager) to install, run, and maintain your project and its dependencies.<br>
+
+Example: <br>
+```json
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "description": "My first Node.js app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "keywords": ["node", "example"],
+  "author": "Sherry",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
+```
+## Dependencies vs DevDependencies
+- dependencies: Needed in production.<br>
+- devDependencies: Needed only for development (e.g., linters, test frameworks).<br>
+`dependencies` are always installed in development, unless you specifically tell npm to skip them (e.g., `--production`). <br>
+
+##  Versioning (Semantic Versioning)
+In dependencies:<br>
+- "^1.2.3" = any minor or patch updates (1.x.x)<br>
+- "~1.2.3" = only patch updates (1.2.x)<br>
+- "1.2.3" = exact version<br>

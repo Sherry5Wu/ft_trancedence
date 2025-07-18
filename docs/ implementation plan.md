@@ -188,6 +188,7 @@ auth-service/
 │   │       └── user.js
 │   └── utils/           # Reusable helpers
 │       ├── crypto.js    # Password hashing
+|       ├── validator.js # Validation functons
 │       └── errors.js    # Custom error classes
 ```
 ### Collaboration Tips

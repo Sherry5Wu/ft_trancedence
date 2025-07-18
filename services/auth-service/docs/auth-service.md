@@ -24,12 +24,13 @@ it is the single source of truth for identity and authentication in your backend
 | `POST /oauth/google`   | (Optional) Handle Google OAuth flow            |
 
 ## File Tree
+```csharp
 auth-service/
 ├── Dockerfile
 ├── package.json
 ├── .env
 ├── src/
-│   ├── app.js            # Fastify server setup + plugin registration
+│   ├── app.js    # The main entry point of auth-service. Fastify server setup + plugin registration
 │   ├── routes/           # Split routes by feature
 │   │   ├── google-auth.js  # Google OAuth routes
 │   │   ├── jwt.js         # Login/token routes
@@ -46,7 +47,7 @@ auth-service/
 │       ├── crypto.js    # Password hashing
 |       ├── validator.js # Validation functons
 │       └── errors.js    # Custom error classes
-
+```
 ## Step-by-Step: How to Build auth-service
 
 ### 1. Set up project
