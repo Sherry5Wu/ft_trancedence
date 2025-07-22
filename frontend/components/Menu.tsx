@@ -15,19 +15,20 @@ const MenuItem = ({ label, icon, onClick }: MenuItemProps) => {
     );
 };
 
-export const Menu = ({ items }: { items: MenuItemProps[] }) => {
+interface MenuProps {
+    'aria-label': string,
+    icon: ReactElement,
+    elements: MenuItemProps[]
+}
+
+export const Menu = ({ 'aria-label': ariaLabel, icon, elements}: MenuProps ) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <>
-            <button onClick={() => setIsOpen(!isOpen)}></button>
+            <button aria-label={ariaLabel} onClick={() => setIsOpen(!isOpen)}>{icon}</button>
             {isOpen && (
                 <div>
-                    {items.map((item, index: number) => (
-                        <MenuItem
-                            key={index}
-                            label={item.label}
-                            icon={item.icon}
-                            onClick={item.onClick} />))}
+                    {elements.map((item, index: number) => <MenuItem key={index} {...item} />)}
                 </div>
             )}
         </>
