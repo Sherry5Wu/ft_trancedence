@@ -28,7 +28,8 @@ CMD ["sh", "/app/entrypoint.sh"]
 # INSTRUCTIONS TO USE
 # - to build docker:                docker build --no-cache -t frontend .
 # - to run docker:                  docker run -p 9000:9000 -v $(pwd):/app frontend
-# - to stop docker
+#                                   docker run -p 9000:9000 frontend (this  wont overwrites the container's /app; If you're not doing live editing, just replace -v with -p)
+# - to stop docker          
 #   first get the id:               docker ps (to get the id)
 #   then:                           docker stop {id}
 # - or stop all containers with:    docker stop $(docker ps -q)
