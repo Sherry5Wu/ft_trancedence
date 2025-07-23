@@ -4,7 +4,7 @@ import { Menu } from './Menu';
 import { ReactComponent as LangIcon } from '../assets/noun-globe-1787065.svg';
 import { ReactComponent as AccessIcon } from '../assets/noun-accessibility-7572350.svg';
 import { ReactComponent as SunIcon } from '../assets/noun-sun-7956354.svg';
-import { ReactComponent as MoonIcon } from '..assets/noun-moon-6112326.svg';
+import { ReactComponent as MoonIcon } from '../assets/noun-moon-6112326.svg';
 import { ReactComponent as ProfileIcon } from '../assets/noun-profile-7808629.svg';
 import { ReactComponent as SettingsIcon } from '../assets/noun-setting-2060937.svg';
 import { ReactComponent as LogOutIcon } from '../assets/noun-log-out-7682766.svg';
