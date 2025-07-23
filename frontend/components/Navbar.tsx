@@ -1,13 +1,15 @@
+{/* <reference types="vite-plugin-svgr/client" /> */}
+
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Menu } from './Menu';
-import { ReactComponent as LangIcon } from '../assets/noun-globe-1787065.svg';
-import { ReactComponent as AccessIcon } from '../assets/noun-accessibility-7572350.svg';
-import { ReactComponent as SunIcon } from '../assets/noun-sun-7956354.svg';
-import { ReactComponent as MoonIcon } from '../assets/noun-moon-6112326.svg';
-import { ReactComponent as ProfileIcon } from '../assets/noun-profile-7808629.svg';
-import { ReactComponent as SettingsIcon } from '../assets/noun-setting-2060937.svg';
-import { ReactComponent as LogOutIcon } from '../assets/noun-log-out-7682766.svg';
+import LangIcon from '../assets/noun-globe-1787065.svg?react';
+import AccessIcon from '../assets/noun-accessibility-7572350.svg?react';
+import SunIcon from '../assets/noun-sun-7956354.svg?react';
+import MoonIcon from '../assets/noun-moon-6112326.svg?react';
+import ProfileIcon from '../assets/noun-profile-7808629.svg?react';
+import SettingsIcon from '../assets/noun-setting-2060937.svg?react';
+import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 
 const handleDarkMode = () => {
     console.log('Toggling dark mode'); /* ACTUALLY CHANGE THESE LATER */
@@ -29,18 +31,22 @@ const accessibilityMenuItems = [
 ]
 
 const profileMenuItems = [
-    {icon: {SettingsIcon}, onClick: () => console.log('Go to Settings')},
-    {icon: {LogOutIcon}, onClick: () => console.log('Log out')} /* ACTUALLY CHANGE THESE LATER */
+    {Icon: SettingsIcon, onClick: () => console.log('Go to Settings')},
+    {Icon: LogOutIcon, onClick: () => console.log('Log out')} /* ACTUALLY CHANGE THESE LATER */
 ]
 
+{/* TOGGLE BETWEEN MOON AND SUN ICONS */}
+{/*HANDLE USER STATE */}
 export const Navbar = () => {
     return (
         <>
-        <Menu aria-label='language options' icon={LangIcon} elements={languageMenuItems} />
-        <Menu aria-label='accessibility options' icon={AccessIcon} elements={accessibilityMenuItems} />
-        <button aria-label='dark mode' onClick={handleDarkMode}>{MoonIcon}</button> {/* TOGGLE BETWEEN MOON AND SUN ICONS */}
+        {/* <img src={LangIcon} /> */}
+        {/* <h2>NAVBAR TEST</h2> */}
+        {/* <Menu aria-label='language options' Icon={LangIcon} elements={languageMenuItems} /> */}
+        <Menu aria-label='accessibility options' Icon={<AccessIcon/>} elements={accessibilityMenuItems} />
+        <button aria-label='dark mode' onClick={handleDarkMode}> <MoonIcon className="menuIcon" /> </button>
         <button aria-label='title' onClick={handleTitleClick}>P | N G - P · N G</button>
-        <Menu aria-label='profile menu' icon={ProfileIcon} elements={profileMenuItems} /> {/* HANDLE USER STATE */}
+        {/* <Menu aria-label='profile menu' Icon={ProfileIcon} elements={profileMenuItems} /> */}
         </>
     );
 };
