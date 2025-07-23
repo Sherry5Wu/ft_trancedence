@@ -1,0 +1,18 @@
+{
+  "name": "backendtest",
+  "version": "1.0.0",
+  "main": "backendtest.js",
+  "scripts": {
+	"start": "node backendtest.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "dotenv": "^17.2.0",
+    "fastify": "^5.4.0"
+  }
+}
