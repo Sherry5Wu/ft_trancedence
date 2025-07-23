@@ -26,12 +26,9 @@ EXPOSE 9000
 CMD ["sh", "/app/entrypoint.sh"]
 
 # INSTRUCTIONS TO USE
-# to build docker:
-#   docker build --no-cache -t frontend .
-# to run docker: 
-#   docker run -p 9000:9000 -v $(pwd):/app frontend
-# to stop docker:
-#   docker ps (to get the id)
-#   docker stop {id}
-# or stop all containers with:
-#   docker stop $(docker ps -q)
+# - to build docker:                docker build --no-cache -t frontend .
+# - to run docker:                  docker run -p 9000:9000 -v $(pwd):/app frontend
+# - to stop docker
+#   first get the id:               docker ps (to get the id)
+#   then:                           docker stop {id}
+# - or stop all containers with:    docker stop $(docker ps -q)
