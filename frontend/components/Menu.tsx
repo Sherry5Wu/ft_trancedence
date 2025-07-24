@@ -4,15 +4,16 @@ interface MenuItemProps {
     Icon?: ReactElement;
     label?: string;
     onClick: () => void;
-    className?: string;
 };
 
-const MenuItem = ({ label, Icon, onClick, className }: MenuItemProps) => {
+const MenuItem = ({ label, Icon, onClick}: MenuItemProps) => {
     return (
-        <button type='button' onClick={onClick} className={className}>
-            {Icon && <span className="menuIcon">{Icon}</span>}
+        <div className='relative'>
+        <button type='button' onClick={onClick} className='menuItem'>
+            {Icon && <div className="menuIcon">{Icon}</div>}
             {label}
         </button>
+        </div>
     );
 };
 
