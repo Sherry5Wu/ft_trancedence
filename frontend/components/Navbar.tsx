@@ -37,14 +37,20 @@ const profileMenuItems = [
 
 {/* TOGGLE BETWEEN MOON AND SUN ICONS */}
 {/* HANDLE USER STATE */}
-export const Navbar = ({}) => {
+export const Navbar = ({ className }: { className?: string }) => {
     return (
-        <nav>
-        <Menu aria-label='language options' Icon={<LangIcon classname='menuIcon' />} elements={languageMenuItems}/>
-        <Menu aria-label='accessibility options' Icon={<AccessIcon classname='menuIcon' />} elements={accessibilityMenuItems} />
-        <button aria-label='dark mode' onClick={handleDarkModeClick}><MoonIcon className="menuIcon" /></button>
-        <button aria-label='title' onClick={handleTitleClick}>P | N G - P · N G</button>
-        <Menu aria-label='profile menu' Icon={<ProfileIcon classname='menuIcon' />} elements={profileMenuItems} />
-        </nav>
+    <nav className='flex'>
+        <div className='flex justify-start'>
+            <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} />
+            <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} />
+            <button aria-label='dark mode' onClick={handleDarkModeClick}><MoonIcon className="menuIcon" /></button>
+        </div>
+        <div className='flex justify-center'>
+            <button aria-label='title' onClick={handleTitleClick}>P | N G - P · N G</button>
+        </div>
+        <div className='flex justify-end'>
+            <Menu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} />
+        </div>
+    </nav>
     );
 };

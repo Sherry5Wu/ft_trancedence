@@ -8,6 +8,14 @@
     @apply size-13 overflow-hidden
 }
 
+.menuItem {
+    @apply absolute
+}
+
+.navbar {
+    @apply relative
+}
+
 .h1 {
     @apply text-8xl
 }
