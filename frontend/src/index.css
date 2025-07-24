@@ -8,12 +8,24 @@
     @apply size-13 overflow-hidden
 }
 
-.menuItem {
-    @apply absolute
+.navbar {
+    @apply relative flex w-full items-center
 }
 
-.navbar {
-    @apply relative
+.itemsLeft {
+    @apply flex-1 justify-start
+}
+
+.itemsCenter {
+    @apply flex-1 justify-center
+}
+
+.itemsRight {
+    @apply flex-1 justify-end
+}
+
+.dropdownMenu {
+    @apply absolute
 }
 
 .h1 {

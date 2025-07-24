@@ -26,10 +26,10 @@ export const Menu = ({ 'aria-label': ariaLabel, Icon, elements}: MenuProps ) => 
     const [isOpen, setIsOpen] = useState(false);
     return (
         <>
-            <button aria-label={ariaLabel} onClick={() => setIsOpen(!isOpen)} className="menuIcon">{Icon}</button>
+            <button aria-label={ariaLabel} onClick={() => setIsOpen(!isOpen)} className='menuIcon'>{Icon}</button>
             {isOpen && (
-                <ul aria-label='menu items'>
-                    {elements.map((item, index: number) => (<li> <MenuItem key={index} {...item} className='menuItem'/></li>))}
+                <ul aria-label='menu items' className='dropdownMenu'>
+                    {elements.map((item, index: number) => (<li key={index}> <MenuItem {...item} /></li>))}
                 </ul>
             )}
         </>
