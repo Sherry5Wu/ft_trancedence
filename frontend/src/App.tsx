@@ -7,7 +7,7 @@ const App = () => {
     return (
         <>
         <header>
-            <Navbar />
+            <span className='navbar'><Navbar /></span>
         </header>
         <main>
             <h1 className="h1">P | N G - P · N G</h1>

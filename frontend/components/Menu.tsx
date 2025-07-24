@@ -9,7 +9,7 @@ interface MenuItemProps {
 const MenuItem = ({ label, Icon, onClick }: MenuItemProps) => {
     return (
         <button type='button' onClick={onClick}>
-            {Icon}
+            {Icon && <span className="menuIcon">{Icon}</span>}
             {label}
         </button>
     );
@@ -25,11 +25,11 @@ export const Menu = ({ 'aria-label': ariaLabel, Icon, elements}: MenuProps ) => 
     const [isOpen, setIsOpen] = useState(false);
     return (
         <>
-            <button aria-label={ariaLabel} onClick={() => setIsOpen(!isOpen)}>{Icon}</button>
+            <button aria-label={ariaLabel} onClick={() => setIsOpen(!isOpen)} className="menuIcon">{Icon}</button>
             {isOpen && (
-                <div>
-                    {elements.map((item, index: number) => <MenuItem key={index} {...item} />)}
-                </div>
+                <ul aria-label='menu items'>
+                    {elements.map((item, index: number) => (<li> <MenuItem key={index} {...item} /></li>))}
+                </ul>
             )}
         </>
     );

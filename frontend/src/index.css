@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 .menuIcon {
-    @apply size-10
+    @apply size-13 overflow-hidden
 }
 
 .h1 {

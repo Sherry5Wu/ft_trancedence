@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Menu } from './Menu';
 import LangIcon from '../assets/noun-globe-1787065.svg?react';
-import AccessIcon from '../assets/noun-accessibility-7572350.svg?react';
+import AccessIcon from '../assets/noun-accessibility-4682113.svg?react';
 import SunIcon from '../assets/noun-sun-7956354.svg?react';
-import MoonIcon from '../assets/noun-moon-6112326.svg?react';
+import MoonIcon from '../assets/noun-moon-5258339.svg?react';
 import ProfileIcon from '../assets/noun-profile-7808629.svg?react';
 import SettingsIcon from '../assets/noun-setting-2060937.svg?react';
 import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 
-const handleDarkMode = () => {
+const handleDarkModeClick = () => {
     console.log('Toggling dark mode'); /* ACTUALLY CHANGE THESE LATER */
 }
 
@@ -31,22 +31,20 @@ const accessibilityMenuItems = [
 ]
 
 const profileMenuItems = [
-    {Icon: SettingsIcon, onClick: () => console.log('Go to Settings')},
-    {Icon: LogOutIcon, onClick: () => console.log('Log out')} /* ACTUALLY CHANGE THESE LATER */
+    {Icon: <SettingsIcon classname='menuIcon'/>, onClick: () => console.log('Go to Settings')},
+    {Icon: <LogOutIcon classname='menuIcon'/>, onClick: () => console.log('Log out')} /* ACTUALLY CHANGE THESE LATER */
 ]
 
 {/* TOGGLE BETWEEN MOON AND SUN ICONS */}
-{/*HANDLE USER STATE */}
-export const Navbar = () => {
+{/* HANDLE USER STATE */}
+export const Navbar = ({}) => {
     return (
-        <>
-        {/* <img src={LangIcon} /> */}
-        {/* <h2>NAVBAR TEST</h2> */}
-        {/* <Menu aria-label='language options' Icon={LangIcon} elements={languageMenuItems} /> */}
-        <Menu aria-label='accessibility options' Icon={<AccessIcon/>} elements={accessibilityMenuItems} />
-        <button aria-label='dark mode' onClick={handleDarkMode}> <MoonIcon className="menuIcon" /> </button>
+        <nav>
+        <Menu aria-label='language options' Icon={<LangIcon classname='menuIcon' />} elements={languageMenuItems}/>
+        <Menu aria-label='accessibility options' Icon={<AccessIcon classname='menuIcon' />} elements={accessibilityMenuItems} />
+        <button aria-label='dark mode' onClick={handleDarkModeClick}><MoonIcon className="menuIcon" /></button>
         <button aria-label='title' onClick={handleTitleClick}>P | N G - P · N G</button>
-        {/* <Menu aria-label='profile menu' Icon={ProfileIcon} elements={profileMenuItems} /> */}
-        </>
+        <Menu aria-label='profile menu' Icon={<ProfileIcon classname='menuIcon' />} elements={profileMenuItems} />
+        </nav>
     );
 };
