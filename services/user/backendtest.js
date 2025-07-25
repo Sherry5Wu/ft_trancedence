@@ -8,7 +8,8 @@ const fastify = Fastify({ logger: true });
 // Avataan SQLite-tietokanta (tiedoston polku .env:stä tai oletus)
 const Database = require('better-sqlite3');
 
-const dbPath = process.env.DATABASE_URL || './data/pong.db';
+//const dbPath = process.env.DATABASE_URL || './data/pong.db';
+const dbPath = "./data/pong.db";
 
 let db;
 

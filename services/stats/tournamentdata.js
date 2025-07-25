@@ -8,7 +8,8 @@ const fastify = Fastify({ logger: true });
 // Avataan SQLite-tietokanta (tiedoston polku .env:stä tai oletus)
 const Database = require('better-sqlite3');
 
-const dbPath = process.env.DATABASE_URL || './data/pong.db';
+//const dbPath = process.env.DATABASE_URL || './data/pong.db';
+const dbPath = "./data/pong.db"
 
 let db;
 
@@ -19,6 +20,9 @@ try {
   fastify.log.error('Error when opening the database: ' + err.message);
 }
 // Luodaan taulu, jos sitä ei ole
+
+// add tournament start time and finish time
+
 db.prepare(`
   CREATE TABLE IF NOT EXISTS tournament_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
