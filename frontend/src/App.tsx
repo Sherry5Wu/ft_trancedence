@@ -11,6 +11,7 @@ const App = () => {
         </header>
         <main>
             <h1 className="h1">P | N G - P · N G</h1>
+            <
         </main>
         <footer>
             <Footer />

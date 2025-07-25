@@ -5,12 +5,26 @@
 @tailwind utilities;
 
 .menuIcon {
-    @apply size-15 overflow-hidden my-1 mx-2
+    @apply size-15 overflow-hidden border-b-3 border-transparent my-1 mx-2 
+        hover:border-black hover:cursor-pointer
+        focus:border-black
+        active:fill-[#4682B4] active:border-[#4682B4]
 }
 
+.title {
+    @apply border-b-3 border-transparent 
+        hover:border-black hover:cursor-pointer
+        focus:border-black
+        active:text-[#4682B4] active:border-[#4682B4]
+}
 
+.toggleOn {
+    @apply bg-blue-600 text-white
+}
 
-
+.toggleOff {
+    @apply bg-gray-300 text-black
+}
 
 .h1 {
     @apply text-8xl flex justify-center

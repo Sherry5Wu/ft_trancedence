@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Menu } from './Menu';
-import LangIcon from '../assets/noun-globe-1787065.svg?react';
+import { ToggleButton } from './ToggleButton';
+import LangIcon from '../assets/noun-globe-7929553.svg?react';
 import AccessIcon from '../assets/noun-accessibility-4682113.svg?react';
 import SunIcon from '../assets/noun-sun-7956354.svg?react';
 import MoonIcon from '../assets/noun-moon-5258339.svg?react';
@@ -22,12 +23,12 @@ const languageMenuItems = [
 ]
 
 const accessibilityMenuItems = [
-    {label: 'LARGE TEXT SIZE', onClick: () => console.log('Text size toggle')},
-    {label: 'HIGH CONTRAST', onClick: () => console.log('High contrast toggle')} /* ACTUALLY CHANGE THESE LATER */
+    {label: 'LARGE TEXT SIZE', button: <ToggleButton />, onClick: () => console.log('Text size toggle')},
+    {label: 'HIGH CONTRAST', button: <ToggleButton />, onClick: () => console.log('High contrast toggle')} /* ACTUALLY CHANGE THESE LATER */
 ]
 
 const profileMenuItems = [
-    {Icon: <SettingsIcon />, onClick: () => console.log('Go to Settings')},
+    {Icon: <SettingsIcon className='menuIcon'/>, onClick: () => console.log('Go to Settings')},
     {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => console.log('Log out')} /* ACTUALLY CHANGE THESE LATER */
 ]
 
@@ -37,15 +38,15 @@ export const Navbar = () => {
 
     return (
     <nav className='flex items-center'>
-        <div className='flex-1 justify-start'>
-            <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon'/>
-            <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon'/>
-            <button aria-label='dark mode' onClick={() => setIsDarkMode(!isDarkMode)} className='' >{isDarkMode ? <SunIcon className='menuIcon scale-150' /> : <MoonIcon className='menuIcon' /> }</button>
+        <div className='flex flex-1 justify-start gap-5'>
+            <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
+            <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' />
+            <Menu aria-label='dark mode' Icon={isDarkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => setIsDarkMode(!isDarkMode)}/>
         </div>
-        <div className='flex-1 justify-center -top-3'>
-            <button aria-label='title' onClick={handleTitleClick}>P | N G - P · N G</button>
+        <div className='flex flex-1 justify-center -top-3' >
+            <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
         </div>
-        <div className='flex-1 justify-end scale-110 -top-2'>
+        <div className='flex flex-1 justify-end scale-110 -top-2 mr-7'>
             <Menu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} className='menuIcon'/>
         </div>
     </nav>
