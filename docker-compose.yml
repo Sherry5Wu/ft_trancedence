@@ -1,64 +1,56 @@
 version: '3.9'
 
 services:
-  gateway:
-    build: ./gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      - auth-service
-      - user-service
-      - game-service
-      - chat-service
-      - stats-service
-      - i18n-service
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-
-  auth-service:
-    build: ./services/auth-service
-    environment:
-      - DATABASE_URL=file:/data/auth.db
-    volumes:
-      - auth-data:/data
-
   user-service:
-    build: ./services/user-service
-    environment:
-      - DATABASE_URL=file:/data/user.db
+    build: 
+      context: ./services/user
+    container_name: user-container
+    env_file: "./.env"
     volumes:
-      - user-data:/data
-
-  game-service:
-    build: ./services/game-service
-    environment:
-      - DATABASE_URL=file:/data/game.db
-    volumes:
-      - game-data:/data
-
-  chat-service:
-    build: ./services/chat-service
-    environment:
-      - DATABASE_URL=file:/data/chat.db
-    volumes:
-      - chat-data:/data
+      - user_data:/app/data
+    networks:
+      - trancendence-network
+    restart: unless-stopped
 
   stats-service:
-    build: ./services/stats-service
-    environment:
-      - DATABASE_URL=file:/data/stats.db
+    build: 
+      context: ./services/stats
+    container_name: stats-container
+    env_file: "./.env"
     volumes:
-      - stats-data:/data
+      - tournament_data:/app/data
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+  
+  gateway-service:
+    build:
+      context: ./gateway
+    container_name: gateway_container
+    env_file: "./.env"
+    ports:
+      - "8443:8443"
+    networks:
+      - trancendence-network
+    restart: unless-stopped
 
-  i18n-service:
-    build: ./services/i18n-service
 
 volumes:
-  auth-data:
-  user-data:
-  game-data:
-  chat-data:
-  stats-data:
+  user_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/user/data
+  tournament_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/stats/data
+  
+networks:
+  trancendence-network:
+    name: trancendence-network
+    driver: bridge
+

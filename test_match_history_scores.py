@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "http://localhost:3000"
+BASE_URL = "https://localhost:8443/user"
 
 def test_post_match_history():
     data = {
@@ -9,7 +9,7 @@ def test_post_match_history():
         "opponent_name": "PlayerTwo",
         "result": "win"
     }
-    response = requests.post(f"{BASE_URL}/match_history", json=data)
+    response = requests.post(f"{BASE_URL}/match_history", json=data, verify=False)
     assert response.status_code == 200
     json = response.json()
     assert json["player_name"] == "PlayerOne"
@@ -17,12 +17,12 @@ def test_post_match_history():
     assert json["result"] == "win"
 
 def test_get_match_history_all():
-    response = requests.get(f"{BASE_URL}/match_history")
+    response = requests.get(f"{BASE_URL}/match_history", verify=False)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 def test_get_match_history_by_id():
-    response = requests.get(f"{BASE_URL}/match_history/123abc")
+    response = requests.get(f"{BASE_URL}/match_history/123abc", verify=False)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
     assert all(row["player_id"] == "123abc" for row in response.json())
@@ -33,7 +33,7 @@ def test_post_score():
         "player_name": "PlayerOne",
         "elo_score": 1040
     }
-    response = requests.post(f"{BASE_URL}/scores", json=data)
+    response = requests.post(f"{BASE_URL}/scores", json=data, verify=False)
     assert response.status_code == 200 or response.status_code == 500  # 500 if already inserted
     if response.status_code == 200:
         json = response.json()
@@ -43,7 +43,7 @@ def test_put_score():
     data = {
         "elo_score": 1350
     }
-    response = requests.put(f"{BASE_URL}/scores/123abc", json=data)
+    response = requests.put(f"{BASE_URL}/scores/123abc", json=data, verify=False)
     assert response.status_code == 200
     json = response.json()
     assert json["player_id"] == "123abc"

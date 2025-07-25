@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "http://localhost:3000"
+BASE_URL = "https://localhost:8443/stats"
 
 def test_create_tournament_match():
     payload = {
@@ -11,7 +11,7 @@ def test_create_tournament_match():
         "opponent_name": "PlayerTwo",
         "result": "win"
     }
-    response = requests.post(f"{BASE_URL}/tournament_history", json=payload)
+    response = requests.post(f"{BASE_URL}/tournament_history", json=payload, verify=False)
     assert response.status_code == 200
     data = response.json()
     assert data["tournament_id"] == payload["tournament_id"]
@@ -19,13 +19,13 @@ def test_create_tournament_match():
     assert data["result"] == "win"
 
 def test_get_all_tournament_matches():
-    response = requests.get(f"{BASE_URL}/tournament_history")
+    response = requests.get(f"{BASE_URL}/tournament_history", verify=False)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 def test_get_specific_tournament():
     tournament_id = "turnaus123"
-    response = requests.get(f"{BASE_URL}/tournament_history/{tournament_id}")
+    response = requests.get(f"{BASE_URL}/tournament_history/{tournament_id}", verify=False)
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
