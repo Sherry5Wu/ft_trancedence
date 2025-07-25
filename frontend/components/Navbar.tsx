@@ -36,17 +36,17 @@ export const Navbar = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
     return (
-    <nav className='relative flex w-full items-center'>
+    <nav className='flex items-center'>
         <div className='flex-1 justify-start'>
-            <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} />
-            <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} />
-            <button aria-label='dark mode' onClick={() => setIsDarkMode(!isDarkMode)}>{isDarkMode ? <SunIcon className='menuIcon scale-150' /> : <MoonIcon className='menuIcon' /> }</button>
+            <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon'/>
+            <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon'/>
+            <button aria-label='dark mode' onClick={() => setIsDarkMode(!isDarkMode)} className='' >{isDarkMode ? <SunIcon className='menuIcon scale-150' /> : <MoonIcon className='menuIcon' /> }</button>
         </div>
-        <div className='flex-1 justify-center relative -top-3'>
+        <div className='flex-1 justify-center -top-3'>
             <button aria-label='title' onClick={handleTitleClick}>P | N G - P · N G</button>
         </div>
-        <div className='flex-1 justify-end scale-110 relative -top-2'>
-            <Menu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} />
+        <div className='flex-1 justify-end scale-110 -top-2'>
+            <Menu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} className='menuIcon'/>
         </div>
     </nav>
     );

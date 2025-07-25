@@ -5,36 +5,12 @@
 @tailwind utilities;
 
 .menuIcon {
-    @apply size-14 overflow-hidden m-2
+    @apply size-15 overflow-hidden my-1 mx-2
 }
 
-.navbar {
-    @apply relative flex w-full items-center
-}
 
-.itemsLeft {
-    @apply flex-1 justify-start
-}
 
-.itemsCenter {
-    @apply flex-1 justify-center relative -top-3
-}
 
-.itemsRight {
-    @apply flex justify-end scale-120 relative -top-2
-}
-
-.dropdownMenu {
-    @apply absolute left-0
-}
-
-.menuItem {
-    @apply relative inline-block
-}
-
-.menu {
-    @apply relative inline-block
-}
 
 .h1 {
     @apply text-8xl flex justify-center
