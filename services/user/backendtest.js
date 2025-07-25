@@ -155,7 +155,7 @@ fastify.post('/match_history', (request, reply) => {
 
 
 // Käynnistetään palvelin portissa 3000 (tai .env:n PORT)
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     fastify.log.error(err);
