@@ -2,3 +2,5 @@
 the checking the user Model is correct or not?
 
 2. app.js, ask deepseek why delete the "????" line
+
+3. how to run test on database setup?

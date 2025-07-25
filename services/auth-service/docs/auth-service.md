@@ -6,7 +6,7 @@ The Auth Service is responsible for: <br>
 | ---------------------------------------- | ------------------------------------------------------------------------------------ |
 | **User registration**                    | Create new user accounts with hashed passwords                                       |
 | **Login authentication**                 | Validate credentials, issue JWT tokens                                               |
-| **Two-Factor Authentication (2FA)**      | Enable/verify TOTP-based 2FA (e.g., Google Authenticator)                            |
+| **Two-Factor Authentication (2FA)**      | Enable/verify TOTP-based and Emial-based OTP 2FA                         |
 | **Remote authentication** (Google OAuth) | Let users log in using Google Sign-In                                                |
 | **Token management**                     | Generate, sign, and validate JSON Web Tokens (JWTs)                                  |
 | **Securing other services**              | Other services rely on this one to authenticate users and extract `userId` from JWTs |
