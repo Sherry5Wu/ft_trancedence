@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput } from "../components/GenericInput";
+import { Toggle } from "../components/Toggle"
+import { Menu } from '../components/Menu';
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const SignUpPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
+  const [isOn, setIsOn] = useState(false);
 
   const formFilled =
     email.trim() !== '' &&
@@ -25,6 +28,10 @@ const SignUpPage: React.FC = () => {
     password === confirmPassword &&
     pin === confirmPin;
 
+    const TWOFAMenuItems = [
+    {label: '2FA', Button: (isOn: boolean) => <Toggle isOn={isOn} />, onClick: () => {setIsOn(!isOn)}}
+    ]
+
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
       
@@ -33,14 +40,14 @@ const SignUpPage: React.FC = () => {
       
       {/* User inputs */}
       <GenericInput
+        type="username"
+        placeholder="Username"
+        onFilled={setUsername}
+      />
+            <GenericInput
         type="email"
         placeholder="Email"
         onFilled={setEmail}
-      />
-      <GenericInput
-        type="text"
-        placeholder="Username"
-        onFilled={setUsername}
       />
       <GenericInput
         type="password"
@@ -61,9 +68,11 @@ const SignUpPage: React.FC = () => {
         type="password"
         placeholder="Confirm Player PIN"
         onFilled={setConfirmPin}
-      />
+      /> 
 
       {/* Toggle 2FA with Google Authenticator */}  
+      {/* <Menu aria-label='2fa button' elements={TWOFAMenuItems} className='menuIcon' /> */}
+      <Toggle />
 
       {/* Sign up Button */}  
       <GenericButton
