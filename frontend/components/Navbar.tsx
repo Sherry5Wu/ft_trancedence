@@ -1,9 +1,8 @@
 /// <reference types="vite-plugin-svgr/client" />
 
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom/client';
+import { useState, useContext } from 'react';
 import { Menu } from './Menu';
-import { Toggle } from './Toggle';
+import { Toggle } from './IndicatorToggle';
 import LangIcon from '../assets/noun-globe-7929553.svg?react';
 import AccessIcon from '../assets/noun-accessibility-4682113.svg?react';
 import SunIcon from '../assets/noun-sun-7956354.svg?react';
@@ -16,6 +15,7 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 export const Navbar = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOn, setIsOn] = useState(false);
+    // const userState = useContext(userContext)
 
     const handleTitleClick = () => {
         console.log('Going to title/profile page'); /* ACTUALLY CHANGE THESE LATER */
@@ -38,7 +38,7 @@ export const Navbar = () => {
     ]
 
     return (
-    <nav className='flex items-center sticky top-0 z-100'>
+    <nav className='flex items-center sticky top-0 z-50'>
         <div className='flex flex-1 justify-start gap-5'>
             <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
             <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' />

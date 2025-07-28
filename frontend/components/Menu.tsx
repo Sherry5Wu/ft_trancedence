@@ -1,4 +1,4 @@
-import React, { useState, ReactElement, ReactNode } from 'react';
+import React, { useState, ReactElement } from 'react';
 
 interface MenuItemProps {
     Icon?: ReactElement;
@@ -29,10 +29,10 @@ const MenuItem = ({ label, Icon, Button, onClick, href }: MenuItemProps) => {
 
     else {
         return (
-            <button type='button' onClick={handleClick} className='flex ml-7 pl-2 -my-1 border-l-3 border-b-3 border-b-transparent hover:border-b-black active:text-[#4682B4] active:border-[#4682B4]'>
+            <button type='button' onClick={handleClick} className='flex -my-1 active:text-[#4682B4] active:border-[#4682B4]'>
                 {Icon && <span className=''>{Icon}</span>}
-                {Button && <span className='mt-1'>{Button(isOn)}</span>}
-                {label && <span className='truncate w-full ml-3'>{label}</span>}
+                {label && <span className='truncate w-full ml-5 pl-2 border-l-3 border-b-3 border-b-transparent hover:border-b-black active:border-[#4682B4]'>{label}</span>}
+                {Button && <span className='ml-2 mt-1'>{Button(isOn)}</span>}
             </button>
         );
     }
