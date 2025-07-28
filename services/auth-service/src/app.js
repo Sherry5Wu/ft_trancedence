@@ -58,13 +58,11 @@ try {
   await initDB();
   fastify.log.info('Database initialized');
 
-  await fastify.listen({
-    port: process.env.PORT || 3000,
+  const address = await fastify.listen({ // the returned address is like:  http://127.0.0.1:3001
+    port: process.env.PORT || 3001,
     host: '0.0.0.0',
-    // `listenTextResolver` is a new Fastify option (>=4.8.0)
-    //listenTextResolver: (address) => `Auth service ready at ${address}` // ??????????
   });
-  fastify.log.info('Auth service ready at ${fastify.server.address().port}');
+  fastify.log.info(`Auth service ready at ${address}`); // here is backticks'`'
 } catch (err) {
   fastify.log.error('Database sync failed:', err);
   process.exit(1);

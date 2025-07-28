@@ -47,6 +47,17 @@ auth-service/
 │       ├── crypto.js    # Password hashing
 |       ├── validator.js # Validation functons
 │       └── errors.js    # Custom error classes
+|── test/
+|   ├──integration
+│   │   ├── routes.test.js
+|   ├──unit
+│   │   ├── db.test.js
+│   │   ├── 2fa.service.test.js
+│   │   ├── jwt.service.test.js
+│   │   ├── validators.test.js
+|   ├──utils
+│   │   ├── test-db.js
+│   │   ├── test-server.js
 ```
 ## Step-by-Step: How to Build auth-service
 

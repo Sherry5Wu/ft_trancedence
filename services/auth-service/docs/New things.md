@@ -5,6 +5,7 @@
 - [JWT](#jwt)
 - [Sequelize](#sequelize)
 - [package.json](#pakcage-jason)
+- [Run containder with Dockfile](#run-containder-with-dockfile)
 # CORS
 ## What is CORS?
 CORS (Cross-Origin Resource Sharing) is a security mechanism implemented by web browsers to control how web pages from one origin (domain, protocol, or port) can request resources from a different origin. It relies on HTTP headers to allow or block cross-origin requests.<br>
@@ -203,3 +204,51 @@ In dependencies:<br>
 - "^1.2.3" = any minor or patch updates (1.x.x)<br>
 - "~1.2.3" = only patch updates (1.2.x)<br>
 - "1.2.3" = exact version<br>
+
+# Run containder with Dockfile
+1. Navigate to the service root folder;<br>
+2. Build the image from the Dockerfile:
+```bash
+docker build -t auth-service .
+```
+- `-t auth-service` assigns a name to your image.<br>
+- `. `uses the current directory (where the Dockerfile is) as the build context.<br>
+3. Run the container:
+```bash
+docker run -d -p 3001:3001 --name auth-service-container auth-service
+```
+- -d → Detached mode.<br>
+- -p 3001:3001 → Maps container’s port 3001 to your host’s port 3001.<br>
+- --name auth-service-container → Gives the container a name.<br>
+- auth-service → The image you built in step 2.<br>
+
+4. Stop the containder:
+```bash
+docker stop auth-service-container
+docker rm auth-service-container
+```
+
+If you need environment variable from `.env` to be loaded when you run this container:
+```bash
+docker run -d -p 3001:3001 --env-file .env --name auth-service-container auth-service
+```
+
+## Run a single test file
+1. Build the container image;
+2. Run a container interactively for executing the test:
+```bash
+docker run --rm -it --env-file .env auth-service sh
+```
+- --rm → Remove the container after it exits.
+- -it → Interactive shell.
+- --env-file .env → Load environment variables from your .env file.
+- auth-service → The image you built.
+- sh → Opens a shell inside the container.
+3. Inside the container, run:
+```bash
+npm test -- test/unit/db.test.js
+```
+or if you used Jtest, you can run the command as:
+```bash
+npx jest test/unit/db.test.js
+```

@@ -4,7 +4,7 @@
  *  - Register models
  *  - Provide an interface for the rest of the website
  *    - sequelize: for DB-level operations or transactons;
- *    - User: for CRUD operations like User.findone() or User.create();
+ *    - User: for CRUD operations(create, read, update ,delete) like User.findone() or User.create();
  *    - initDB(): a utility function to ensure the DB is ready when the app starts;
  *
  * index.js = database bootstrap + model registry + app-wide interface for DB operations.
