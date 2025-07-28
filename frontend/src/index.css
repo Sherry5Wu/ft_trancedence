@@ -18,13 +18,7 @@
         active:text-[#4682B4] active:border-[#4682B4]
 }
 
-.toggleOn {
-    @apply bg-blue-600 text-white
-}
 
-.toggleOff {
-    @apply bg-gray-300 text-black
-}
 
 .h1 {
     @apply text-8xl flex justify-center

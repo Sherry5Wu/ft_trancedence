@@ -1,31 +1,38 @@
-import React, { useState, ReactElement } from 'react';
+import React, { useState, ReactElement, ReactNode } from 'react';
 
 interface MenuItemProps {
     Icon?: ReactElement;
     label?: string;
-    Button?: ReactElement;
+    Button?: (isOn: boolean) => ReactElement;
     href?: string;
     onClick?: () => void;
 };
 
 const MenuItem = ({ label, Icon, Button, onClick, href }: MenuItemProps) => {
 
+    const [isOn, setIsOn] = useState(false);
+    
+    const handleClick = () => {
+        setIsOn(!isOn);
+        if (onClick)
+            onClick();
+    }
+
     if (href) {
         return (
-            <a href={href}>
+            <a href={href} className='active:text-[#4682B4]'>
                 {Icon && <span className=''>{Icon}</span>}
-                {label && <span className='truncate w-full ml-5 pl-3 border-l-3 hover:border-b-3 active:text-[#4682B4]'>{label}</span>}
+                {label && <span className='truncate w-full ml-5 pl-3 border-l-3 hover:border-b-3'>{label}</span>}
             </a>
         );
     }
 
     else {
         return (
-            <button type='button' onClick={onClick} className='flex'>
+            <button type='button' onClick={handleClick} className='flex ml-7 pl-2 -my-1 border-l-3 border-b-3 border-b-transparent hover:border-b-black active:text-[#4682B4] active:border-[#4682B4]'>
                 {Icon && <span className=''>{Icon}</span>}
-                {label && <span className='truncate w-full ml-5 pl-3 border-l-3 hover:border-b-3 active:text-[#4682B4]'>{label}</span>}
-                {Button} 
-                {/* BUTTON DOESN'T RENDER, BUTTON INSIDE BUTTON*/}
+                {Button && <span className='mt-1'>{Button(isOn)}</span>}
+                {label && <span className='truncate w-full ml-3'>{label}</span>}
             </button>
         );
     }
