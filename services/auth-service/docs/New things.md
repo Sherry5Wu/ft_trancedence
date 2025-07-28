@@ -6,6 +6,7 @@
 - [Sequelize](#sequelize)
 - [package.json](#pakcage-jason)
 - [Run containder with Dockfile](#run-containder-with-dockfile)
+- [Jest](#jest)
 # CORS
 ## What is CORS?
 CORS (Cross-Origin Resource Sharing) is a security mechanism implemented by web browsers to control how web pages from one origin (domain, protocol, or port) can request resources from a different origin. It relies on HTTP headers to allow or block cross-origin requests.<br>
@@ -213,6 +214,11 @@ docker build -t auth-service .
 ```
 - `-t auth-service` assigns a name to your image.<br>
 - `. `uses the current directory (where the Dockerfile is) as the build context.<br>
+or
+```bash
+docker build --target dev -t auth-service-dev .
+```
+When you have deve and pro two targets in Dockerfile;<br>
 3. Run the container:
 ```bash
 docker run -d -p 3001:3001 --name auth-service-container auth-service
@@ -251,4 +257,105 @@ npm test -- test/unit/db.test.js
 or if you used Jtest, you can run the command as:
 ```bash
 npx jest test/unit/db.test.js
+```
+
+# Jest
+
+## execpt()
+`expect()` is a global function provided by Jest (a popular JavaScript testing framework). It takes the actual value you want to test and returns an expectation object, which you can then chain with matchers (like `.toBe()`, `.toEqual()`, `.toBeUndefined()`, etc.) to write assertions. <br>
+```javascript
+expect(2 + 2).toBe(4);
+```
+- `expect(2 + 2)` → creates an expectation object with the value 4.
+- `.toBe(4)` → asserts that the value is strictly equal (===) to 4.
+
+## matchers
+
+**1. `.toBe(value)` -- Strict Equality (===)**
+- Best for primitive values (numbers, strings, booleans).
+- Fails for objects and arrays because those compare by reference.
+
+```javascript
+expect(5).toBe(5);             // ✅ Pass
+expect('hello').toBe('hello'); // ✅ Pass
+expect({a:1}).toBe({a:1});     // ❌ FAIL (different object references)
+```
+
+**2. `.toEuqal(value)` -- Deep Equality**
+- Checks structural equality (recursively compares object contents).
+- Use this for objects and arrays.
+```javascript
+expect({a:1}).toEqual({a:1});   // ✅ Pass
+expect([1,2,3]).toEqual([1,2,3]); // ✅ Pass
+```
+Tip: .toEqual() ignores object property order but not value differences.<br>
+
+**3. `.toBeUndefined()`**
+- Passes if the received value is exactly undefined.
+- Does not pass for null or other falsy values.
+```javascript
+let x;
+expect(x).toBeUndefined();  // ✅ Pass
+expect(null).toBeUndefined(); // ❌ FAIL
+```
+**4. `.toBeNull()`**
+- Checks if the value is null.
+```javascript
+let x;
+expect(null).toBeNull(); // ✅ Pass
+```
+**5. `.toBeDefined()`**
+- Opposite of .toBeUndefined().
+- Passes for any value except undefined.
+```javascript
+expect('Hello').toBeDefined(); // ✅ Pass
+```
+**6. `.toBeTruthy() / .toBeFalsy()`**
+- Checks if a value is truthy or falsy in a boolean context.
+```javascript
+expect(1).toBeTruthy();     // ✅ Pass
+expect(0).toBeFalsy();      // ✅ Pass
+expect('').toBeFalsy();     // ✅ Pass
+```
+**7. `.toContain(item)`**
+- Works for arrays, strings, and iterables.
+- Checks if item exists.
+```javascript
+expect([1, 2, 3]).toContain(2);
+expect('hello world').toContain('world');
+```
+**8. `.toHaveLength(number)`**
+- Checks the .length property of arrays, strings.
+```javascript
+expect([1, 2, 3]).toHaveLength(3);
+expect('hello').toHaveLength(5);
+```
+**9. `.toHaveProperty(keyPath, value?)`**
+- Checks if an object has a property.
+- Optionally, verify the value.
+```javascript
+const user = { name: 'Alice', address: { city: 'Paris' }};
+expect(user).toHaveProperty('name');              // ✅
+expect(user).toHaveProperty('address.city', 'Paris'); // ✅
+```
+**10. `.toMatch(regexOrString)`**
+- For string matching with regex or substring.
+```javascript
+expect('hello world').toMatch(/world/);    // ✅ Pass
+expect('hello world').toMatch('world');    // ✅ Pass (string also works)
+expect('hello world').toMatch(/WORLD/);    // ❌ Fail (regex is case-sensitive by default)
+expect('hello world').toMatch(/WORLD/i);   // ✅ Pass (case-insensitive with `i`)
+```
+**11. `.toThrow(error?)`**
+- Checks if a function throws an error.
+- Optionally match the error message or type.
+```javascript
+function bad() { throw new Error('Boom'); }
+expect(bad).toThrow('Boom');
+```
+**12. `.toBeGreaterThan(number)` / `.toBeLessThan(number)`**
+- For comparing numbers.
+```javascript
+expect(10).toBeGreaterThan(5);
+expect(3).toBeLessThan(5);
 ```

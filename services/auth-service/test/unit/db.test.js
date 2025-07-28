@@ -15,6 +15,9 @@ describe('Database Initialization and User Model', () => {
   });
 
   test('Test 1: Database should connect successfully', async () => {
+    // sequelize.authenticate()
+    //  if the connection works: it resovles successfully with undefined;
+    //  if the connection fails: it throws an error;
     const status = await sequelize.authenticate();
     expect(status).toBeUndefined();
   });

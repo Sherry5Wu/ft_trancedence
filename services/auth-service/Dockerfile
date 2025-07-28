@@ -3,15 +3,42 @@
 # the cached version. So in the below version, if nothing changed in package.json,
 # Docker will start from "COPY . .", skip re-running "npm install"
 
-FROM node:20-alpine
-WORKDIR /app
-# Created a folder for auth.db file in container
-RUN mkdir -p /app/db
+# Stage 1: Development (includes devDependencies, nodemon, etc.)
+FROM node:20-alpine AS dev
 
-COPY package.json .
-# when install npm, the file "package.json" will be read
+WORKDIR /app
+
+# Install all dependencies (prod + dev)
+COPY package.json package-lock.json* ./
 RUN npm install
+
+# Copy source code
 COPY . .
 
+# Expose port for dev server
 EXPOSE 3001
-CMD ["npm", "start"]
+
+# Default command: run with nodemon for hot reload
+CMD ["npx", "nodemon", "src/app.js"]
+
+
+# Stage 2: Production (only prod dependencies)
+FROM node:20-alpine AS prod
+
+WORKDIR /app
+
+# Create folder for auth.db or any data persistence needs
+RUN mkdir -p /app/db
+
+# Copy package files and install prod dependencies only
+COPY package*.json ./
+RUN npm install --production
+
+# Copy only the built source code
+COPY . .
+
+# Expose port for prod server
+EXPOSE 3001
+
+# Default command: run the app normally
+CMD ["node", "src/app.js"]
