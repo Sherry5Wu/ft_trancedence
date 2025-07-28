@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput } from "../components/GenericInput";
-import { Toggle } from "../components/Toggle"
-import { Menu } from '../components/Menu';
+import { ToggleButton } from "../components/ToggleButton"
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,7 +15,6 @@ const SignUpPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
-  const [isOn, setIsOn] = useState(false);
 
   const formFilled =
     email.trim() !== '' &&
@@ -27,10 +25,6 @@ const SignUpPage: React.FC = () => {
     confirmPin !== '' &&
     password === confirmPassword &&
     pin === confirmPin;
-
-    const TWOFAMenuItems = [
-    {label: '2FA', Button: (isOn: boolean) => <Toggle isOn={isOn} />, onClick: () => {setIsOn(!isOn)}}
-    ]
 
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
@@ -72,7 +66,7 @@ const SignUpPage: React.FC = () => {
 
       {/* Toggle 2FA with Google Authenticator */}  
       {/* <Menu aria-label='2fa button' elements={TWOFAMenuItems} className='menuIcon' /> */}
-      <Toggle />
+      <ToggleButton label='2FA with Google Authenticator'/>
 
       {/* Sign up Button */}  
       <GenericButton
