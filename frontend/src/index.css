@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  @apply m-0 p-0 h-full w-full;
+  /* overflow: hidden; optional */
+}
+
 .menuIcon {
     @apply size-15 overflow-hidden border-b-3 border-transparent my-1 mx-2 
         hover:border-black hover:cursor-pointer
@@ -34,4 +39,247 @@
 
 .h4 {
     @apply text-2xl
+}
+
+
+/* Custom GoogleButton CSS https://developers.google.com/identity/branding-guidelines */
+.google-signin-button {
+  /* display: inline-flex; */
+  display: flex;
+  margin: 0 auto; 
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  color: white;
+  font-family: "Roboto", Arial, sans-serif; /* Official Google font for the button*/
+  font-weight: 500;
+  letter-spacing: 0.25px;
+  height: 40px;
+  width: 180px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  transition: background-color 0.3s ease;
+}
+.google-signin-button:hover {
+  background: #4e4e4e;
+}
+.google-signin-button:active {
+  background: #d635e8;
+}
+/* .google-signin-button:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+} */
+/* Google "G" logo */
+.google-signin-button svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+}
+
+/* Default button */
+.generic-button {
+  display: flex;
+  margin: 0 auto; 
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 16px;
+  height: 40px;
+  /* width: 100%;
+  max-width: 300px; */
+  font-family: "Roboto", Arial, sans-serif;
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s ease;
+}
+.generic-button:hover {
+  background-color: #4e4e4e;
+}
+.generic-button:active {
+  background-color: #d635e8;
+}
+/* .generic-button:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+} */
+.generic-button .icon-wrapper svg,
+.generic-button .icon-wrapper img {
+  width: 18px;
+  height: 18px;
+  filter: invert(100%); /* 100% makes black SVG white */
+  pointer-events: none;
+}
+
+/* Round button style */
+.round-icon-button {
+  display: flex;
+  margin: 0 auto; 
+  width: 100px;
+  height: 100px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  cursor: pointer;
+  color: white;
+}
+.round-icon-button img,
+.round-icon-button svg {
+  width: 80px;
+  height: 80px;
+  filter: invert(100%); /* 100% makes black SVG white */
+  pointer-events: none;
+}
+.round-icon-button:hover {
+  background-color: #4e4e4e;
+}
+.round-icon-button:active {
+  background-color: #d635e8;
+}
+/* .round-icon-button:focus,
+.round-icon-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+} */
+
+
+/* Wrap for button + label */
+.button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+/* Hidden by default */
+.hover-label {
+  margin-top: 0.2rem;
+  font-size: 14px;
+  color: #4e4e4e;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+/* Shown on hover */
+.button-wrapper:hover .hover-label {
+  opacity: 1;
+}
+
+/* Prop for Generic button */
+.disabled-button {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+/* GenericInput */
+.generic-input {
+  display: flex;
+  margin: 0 auto;
+  height: 40px;   
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: "Roboto", Arial, sans-serif;
+  background-color: #fdfBD4;
+  color: black;
+  border:none;
+  border-radius: 20px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+  margin: 0.5rem 0;
+}
+.generic-input:focus {
+  border-color: #357ae8;
+}
+.generic-input::placeholder {
+  color: gray;
+}
+.generic-input.filled {
+  color: black;
+}
+
+/* TopDownButton */
+.topdown-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+.topdown-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: "Roboto", Arial, sans-serif;
+  background-color:  #fdfBD4;
+  border: none;
+  border-radius: 20px;
+  outline: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  color: gray; /* default gray */
+}
+.topdown-button.filled {
+  color: black;
+}
+.topdown-label {
+  flex-grow: 1;
+  text-align: left;
+}
+.topdown-arrow {
+  margin-left: auto;
+}
+/* Dropdown menu */
+.topdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 300px;
+  background-color: #fdfBD4;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  margin-top: 0.3rem;
+  list-style: none;
+  padding: 0;
+  z-index: 10;
+}
+.topdown-option {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: "Roboto", Arial, sans-serif;
+  color: black;
+  border-bottom: 1px solid #eee;
+}
+.topdown-option:last-child {
+  border-bottom: none;
+}
+.topdown-option:hover {
+  background-color: #f0f0f0;
+  border-radius: 20px;
 }
