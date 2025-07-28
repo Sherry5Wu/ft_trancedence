@@ -27,6 +27,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import HomePage from '../pages/Home';
+import SignInPage from '../pages/SignIn';
+import SignUpPage from '../pages/SignUp';
+
 
 const App = () => {
   return (
@@ -36,10 +39,11 @@ const App = () => {
           <Navbar />
         </header>
 
-        <main className="flex items-center justify-center">
+        <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            {/* Add more pages here as needed */}
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
           </Routes>
         </main>
 
