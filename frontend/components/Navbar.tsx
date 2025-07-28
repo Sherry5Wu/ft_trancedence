@@ -43,10 +43,11 @@ export const Navbar = () => {
             <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' />
             <Menu aria-label='dark mode' Icon={isDarkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => setIsDarkMode(!isDarkMode)}/>
         </div>
-        <div className='flex flex-1 justify-center -top-3' >
+        <div className='flex flex-1 justify-center mb-5' >
             <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
+            {/* CHANGE THIS TO A LINK LATER */}
         </div>
-        <div className='flex flex-1 justify-end scale-110 -top-2 mr-7'>
+        <div className='flex flex-1 justify-end scale-110 mr-7'>
             <Menu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} className='menuIcon'/>
         </div>
     </nav>
