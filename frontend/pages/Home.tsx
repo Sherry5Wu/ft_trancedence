@@ -1,4 +1,4 @@
-//pages/Home.tsx
+// pages/Home.tsx
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,15 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate(); // to access other pages
 
   return (
-    <div className="flex justify-center p-8">
+    <div className="flex flex-col items-center p-8 space-y-6">
+      
+      {/* Page title*/}
+      <div>
+        <h1 className="font-semibold text-center">P | N G - P · N G</h1>
+      </div>
+
+      {/* Sign in Button */}
+      <div className="flex flex-wrap justify-center gap-6">
         <GenericButton
           className="generic-button"
           text="SIGN IN"
@@ -17,6 +25,14 @@ const HomePage: React.FC = () => {
           disabled={false}
           onClick={() => navigate('/signin')}
         />
+
+      {/* Arrow down button */}
+
+      {/* About the project */}
+
+      {/* Arrow up button */}
+
+      </div>
     </div>
   );
 };

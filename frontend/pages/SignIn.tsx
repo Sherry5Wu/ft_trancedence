@@ -1,4 +1,4 @@
-//pages/SignIn.tsx
+// pages/SignIn.tsx
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,8 @@ import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
 
 const SignInPage: React.FC = () => {
+  const navigate = useNavigate(); // to access other pages
+
   const [name, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const formFilled = name.trim() !== "" && password.trim() !== "";
@@ -30,12 +32,12 @@ const SignInPage: React.FC = () => {
         onFilled={setPassword}
       />
 
-      {/* Log in Button */}      
+      {/* Log in Button */}
       <GenericButton
         className="generic-button"
         text="LOG IN"
         disabled={!formFilled}
-        onClick={() => alert('Go to HomeUserPage')}
+        onClick={() => { navigate('/homeuser')}}
       />
 
       {/* GoogleLogin Button */}

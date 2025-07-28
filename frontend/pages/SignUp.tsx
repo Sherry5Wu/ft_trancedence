@@ -1,4 +1,4 @@
-//pages/SignUp.tsx
+// pages/SignUp.tsx
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -65,7 +65,6 @@ const SignUpPage: React.FC = () => {
       /> 
 
       {/* Toggle 2FA with Google Authenticator */}  
-      {/* <Menu aria-label='2fa button' elements={TWOFAMenuItems} className='menuIcon' /> */}
       <ToggleButton label='2FA with Google Authenticator'/>
 
       {/* Sign up Button */}  
@@ -74,7 +73,6 @@ const SignUpPage: React.FC = () => {
         text="SIGN UP"
         disabled={!formFilled}
         onClick={() => {
-          // Submit logic here
           alert('Registered successfully!');
           navigate('/homeuser');
         }}
