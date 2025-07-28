@@ -1,0 +1,12 @@
+Best practice:
+
+For pages:
+
+// src/pages/Home.tsx
+const HomePage = () => { ... };
+export default HomePage;
+
+
+For shared components:
+// src/components/GenericButton.tsx
+export const GenericButton = ({ ... }) => { ... };

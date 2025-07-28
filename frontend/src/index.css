@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  @apply m-0 p-0 h-full w-full;
+  /* overflow: hidden; optional */
+}
+
 .menuIcon {
     @apply size-15 overflow-hidden border-b-3 border-transparent my-1 mx-2 
         hover:border-black hover:cursor-pointer

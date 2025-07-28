@@ -35,3 +35,6 @@ CMD ["sh", "/app/entrypoint.sh"]
 #   first get the id:               docker ps (to get the id)
 #   then:                           docker stop {id}
 # - or stop all containers with:    docker stop $(docker ps -q)
+
+# in the project root:              npm install react-router-dom 
+#                                   npm install --save-dev @types/react-router-dom

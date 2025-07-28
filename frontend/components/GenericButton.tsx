@@ -2,14 +2,14 @@ import React from "react";
 
 interface GenericButtonProps {
   text?: string;
-  icon?: React.ReactNode;  // SVG, <img>, or JSX
-  className?: string;      // CSS class to style it
+  icon?: React.ReactNode;
+  className?: string;
   hoverLabel?: string;
   disabled?: boolean;
   onClick: () => void;
 }
 
-const GenericButton: React.FC<GenericButtonProps> = ({
+export const GenericButton: React.FC<GenericButtonProps> = ({
   text,
   icon,
   className = "",
@@ -32,5 +32,3 @@ const GenericButton: React.FC<GenericButtonProps> = ({
     </div>
   );
 };
-
-export default GenericButton;
