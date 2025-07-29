@@ -10,6 +10,7 @@ import HomeUserPage from '../pages/HomeUser';
 import Setup2faMainPage from '../pages/Auth/Setup2faMain';
 import Setup2faBackupPage from '../pages/Auth/Setup2faBackup';
 import Setup2faSuccessPage from '../pages/Auth/Setup2faSuccess';
+import Verify2faPage from '../pages/Auth/Verify2fa';
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/setup2fa" element={<Setup2faMainPage />} />
             <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
             <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
+            <Route path="/verify2fa" element={<Verify2faPage />} />
           </Routes>
         </main>
 
