@@ -3,6 +3,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
+import { MatchHistory } from '../components/MatchHistory';
 import ProfileIcon from '../assets/noun-profile-7808629.svg';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
@@ -61,6 +62,10 @@ const HomeUserPage: React.FC = () => {
 
       {/* Arrow up button */}
 
+      </div>
+      {/* MATCH HISTORY */}
+      <div>
+        <MatchHistory player1='user' matchIndex={1} />
       </div>
     </div>
   );
