@@ -29,6 +29,7 @@ import { Footer } from '../components/Footer';
 import HomePage from '../pages/Home';
 import SignInPage from '../pages/SignIn';
 import SignUpPage from '../pages/SignUp';
+import HomeUserPage from '../pages/HomeUser';
 
 
 const App = () => {
@@ -44,6 +45,7 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/homeuser" element={<HomeUserPage />} />
           </Routes>
         </main>
 

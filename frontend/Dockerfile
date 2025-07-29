@@ -36,5 +36,6 @@ CMD ["sh", "/app/entrypoint.sh"]
 #   then:                           docker stop {id}
 # - or stop all containers with:    docker stop $(docker ps -q)
 
-# in the project root:              npm install react-router-dom 
+# in the project root:              npm install (for run with vite)
+#                                   npm install react-router-dom 
 #                                   npm install --save-dev @types/react-router-dom
