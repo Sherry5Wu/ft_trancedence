@@ -8,7 +8,7 @@ import SignInPage from '../pages/SignIn';
 import SignUpPage from '../pages/SignUp';
 import HomeUserPage from '../pages/HomeUser';
 import Setup2faMainPage from '../pages/Auth/Setup2faMain';
-
+import Setup2faBackupPage from '../pages/Auth/Setup2faBackup';
 
 const App = () => {
   return (
@@ -25,6 +25,7 @@ const App = () => {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/homeuser" element={<HomeUserPage />} />
             <Route path="/mainsetup2fa" element={<Setup2faMainPage />} />
+            <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
           </Routes>
         </main>
 

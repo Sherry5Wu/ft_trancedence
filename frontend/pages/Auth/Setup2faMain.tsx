@@ -4,9 +4,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
-import { GenericInput } from '../../components/GenericInput';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
-
 
 const Setup2faMainPage: React.FC = () => {
   const navigate = useNavigate(); // to access other pages
@@ -40,7 +38,7 @@ const Setup2faMainPage: React.FC = () => {
         {' '}to manually configure your authenticator app.
       </p>
 
-        {/* Infos to user about 2FA APP */} 
+        {/* Message to user */} 
         <p className="text-center text-sm">
           Don’t have the app? Google Authenticator is a free 2FA app. 
           Download it on your mobile device by searching for “Google Authenticator” on the Play Store or Apple Store.
@@ -72,8 +70,9 @@ const Setup2faMainPage: React.FC = () => {
           icon={undefined}
           hoverLabel={undefined}
           disabled={!formFilled}
-          onClick={() => 
-            alert('Go to Next 2fa page!')}  // UPDATE TO navigate('path')
+          onClick={() => {
+            navigate('/setup2fa-backup');
+        }}
         />
       </div>
     </div>
