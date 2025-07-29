@@ -5,13 +5,15 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
+import VerificationCodeInput from '../../components/VerificationCodeInput';
+
 
 const Setup2faMainPage: React.FC = () => {
   const navigate = useNavigate(); // to access other pages
   
-  const [code, setCode] = useState("");
-  const formFilled = code.trim() !== "";
-
+  const [code, setCode] = useState('');
+  const formFilled = /^\d{6}$/.test(code); // Only valid when 6 digits
+ 
   return (
     <div className="flex flex-col items-center p-8 space-y-6">
       <div>
@@ -47,11 +49,8 @@ const Setup2faMainPage: React.FC = () => {
         {/* User input for TOTP (6-digit code)*/} 
         <h4 className="font-semibold text-center">
           Verify the code from the app</h4>
-        <GenericInput
-          type="tel"
-          placeholder="Enter 6-digit code"
-          onFilled={setCode}
-          value={code}
+        <VerificationCodeInput 
+          onComplete={setCode}
         />
       </div>
 
