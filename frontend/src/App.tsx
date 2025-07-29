@@ -25,7 +25,7 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
-            <Route path="/homeuser" element={<HomeUserPage />} />
+            <Route path="/homeuser" element={<HomeUserPage />} /> {/* Could we have custom-login-name instead of homeuser? */}
             <Route path="/setup2fa" element={<Setup2faMainPage />} />
             <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
             <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
