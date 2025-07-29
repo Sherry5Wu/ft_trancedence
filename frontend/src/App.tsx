@@ -1,26 +1,3 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom/client';
-// import { Navbar } from '../components/Navbar';
-// import { Footer } from '../components/Footer';
-
-// const App = () => {
-//     return (
-//         <>
-//         <header>
-//             <Navbar />
-//         </header>
-//         <main>
-//             <h1 className="h1">P | N G - P · N G</h1>
-//         </main>
-//         <footer>
-//             <Footer />
-//         </footer>
-//         </>
-//     );
-// }
-
-// export default App;
-
 // src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -30,7 +7,8 @@ import HomePage from '../pages/Home';
 import SignInPage from '../pages/SignIn';
 import SignUpPage from '../pages/SignUp';
 import HomeUserPage from '../pages/HomeUser';
-
+import Setup2faMainPage from '../pages/Auth/Setup2faMain';
+import Setup2faBackupPage from '../pages/Auth/Setup2faBackup';
 
 const App = () => {
   return (
@@ -46,6 +24,8 @@ const App = () => {
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/homeuser" element={<HomeUserPage />} />
+            <Route path="/mainsetup2fa" element={<Setup2faMainPage />} />
+            <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
           </Routes>
         </main>
 

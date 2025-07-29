@@ -65,7 +65,12 @@ const SignUpPage: React.FC = () => {
       /> 
 
       {/* Toggle 2FA with Google Authenticator */}  
-      <ToggleButton label='2FA with Google Authenticator'/>
+      <ToggleButton
+        label='2FA with Google Authenticator'
+        onClick={() => {
+          navigate('/mainsetup2fa');
+        }}
+      />
 
       {/* Sign up Button */}  
       <GenericButton
