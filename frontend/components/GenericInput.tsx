@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 
 interface GenericInputProps {
   type?: string; // Allows types like "text", "email", "password"
@@ -8,16 +8,16 @@ interface GenericInputProps {
   required?: boolean;
 }
 
-export const GenericInput: React.FC<GenericInputProps> = ({
+export const GenericInput = ({
   type = "text",
   placeholder,
   onFilled,
   value = "",
   required = false
-}) => {
+}: GenericInputProps) => {
   const [inputValue, setInputValue] = useState(value);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
     onFilled(newValue);
