@@ -2,7 +2,7 @@ import { useState, createContext, useContext, ReactElement, ReactNode } from 're
 
 interface User {
     username: string;
-    profilePicture: ReactElement;
+    profilePic: ReactElement;
     email: string;
 }
 
@@ -11,13 +11,14 @@ interface UserType {
     setUser: (user: User | null) => void;
 }
 
-const userContext = createContext<UserType | undefined>(undefined);
+export const userContext = createContext<UserType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-    const user = useState()
+    const [user, setUser] = useState<User | null>(null)
 
     return (
-        <userContext.Provider>
+        <userContext.Provider value={{ user, setUser }}>
+            {children}
         </userContext.Provider>
     )
 }

@@ -1,9 +1,10 @@
 /// <reference types="vite-plugin-svgr/client" />
 
-import { useState, useContext, useRef } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, UserMenu } from './Menu';
+import { Menu } from './Menu';
 import { Toggle } from './IndicatorToggle';
+import { userContext } from '../context/UserContext';
 import FrenchIcon from '../assets/noun-france-6661055.svg?react';
 import EnglishIcon from '../assets/noun-uk-6661102.svg?react';
 import PortugueseIcon from '../assets/noun-brazil-6661040.svg?react';
@@ -20,11 +21,12 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 export const Navbar = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOn, setIsOn] = useState(false);
-    // const userState = useContext(userContext);
+    const user = useContext(userContext);
     const navigate = useNavigate();
 
     const handleTitleClick = () => {
-        console.log('Going to title/profile page'); /* ACTUALLY CHANGE THESE LATER */
+        console.log('Going to title/profile page');
+        navigate('/homeuser');
     }
 
     const languageMenuItems = [
@@ -57,8 +59,8 @@ export const Navbar = () => {
             {/* CHANGE THIS TO A LINK LATER */}
         </div>
         <div className='flex flex-1 justify-end scale-110 mr-7'>
-            {/* <UserMenu aria-label='profile menu' Icon={userState ? { ProfilePic } : <ProfileIcon />} elements={profileMenuItems} className='menuIcon'/> */}
-            <UserMenu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} className='menuIcon'/>
+            <Menu aria-label='profile menu' Icon={user ? { user.profilePic } : <ProfileIcon />} elements={profileMenuItems} className='menuIcon'/> */
+            {/* <Menu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} className='menuIcon' userMenu={true} /> */}
         </div>
     </nav>
     );

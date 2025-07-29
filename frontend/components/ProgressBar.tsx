@@ -1,7 +1,7 @@
 // components/ProgressBar.tsx
 
 import React from 'react';
-import clsx from 'clsx'; // clsx is a utility library used to conditionally combine class names
+// import clsx from 'clsx'; // clsx is a utility library used to conditionally combine class names
 
 interface Setup2faProgressBarProps {
   currentStep: 1 | 2 | 3;

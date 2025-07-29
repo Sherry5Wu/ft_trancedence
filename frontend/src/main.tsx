@@ -2,11 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx'
 import './index.css'
+import { UserProvider } from '../context/UserContext.tsx';
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
 
-root.render(<App />);
+
+root.render(
+    <UserProvider>
+        <App />
+    </UserProvider>
+);
 
 
 // To set up Google OAuth authentication, the clientId is required to 
