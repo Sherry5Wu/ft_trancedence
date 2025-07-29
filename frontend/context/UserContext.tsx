@@ -1,4 +1,11 @@
-import { useState, createContext } from 'react';
-import ReactDOM from 'react-dom/client';
+import { useState, createContext, ReactElement } from 'react';
 
-const UserContext = createContext();
+interface User {
+    username: string, 
+    profilePicture: ReactElement;
+    email: string
+}
+
+export const UserContext = () => {
+    const 
+}

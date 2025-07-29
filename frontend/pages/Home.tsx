@@ -12,11 +12,11 @@ const HomePage: React.FC = () => {
       
       {/* Page title*/}
       <div>
-        <h1 className="font-semibold text-center">P | N G - P · N G</h1>
+        <h1 className="h1 mb-30">P | N G - P · N G</h1>
       </div>
 
       {/* Sign in Button */}
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="flex flex-wrap justify-center align-middle gap-6">
         <GenericButton
           className="generic-button"
           text="SIGN IN"
