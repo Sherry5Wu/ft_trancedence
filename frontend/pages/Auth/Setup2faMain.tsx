@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
+import ProgressBar from '../../components/ProgressBar';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
 
 const Setup2faMainPage: React.FC = () => {
@@ -20,7 +21,7 @@ const Setup2faMainPage: React.FC = () => {
           Setup Two-factor authentication</h3>
 
         {/* Progress bar component */}
-
+        <ProgressBar currentStep={1} stepCompletion={{ 1: formFilled }} />
 
         {/* QR code */}
         <h4 className="font-semibold text-center">
