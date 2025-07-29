@@ -1,3 +1,7 @@
+/**
+ * add JWT generation and validation for sessions.
+ */
+
 import fp from 'fastify-plugin';
 
 export default fp(async (fastify) => {

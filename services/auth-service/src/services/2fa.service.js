@@ -1,3 +1,7 @@
+/**
+ * Build TOTP/email 2FA logic after base authentication works.
+ */
+
 import speakeasy from 'speakeasy';
 import db from '../db/index.js';
 

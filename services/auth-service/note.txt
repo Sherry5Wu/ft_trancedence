@@ -1,1 +1,5 @@
 After the database, continue to the register flow!!!!
+
+await: what time do we use the keyword await???
+payload???
+how should I know what kind of the value the function should return????
