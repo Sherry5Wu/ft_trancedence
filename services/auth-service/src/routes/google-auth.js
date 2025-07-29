@@ -1,7 +1,7 @@
-const fastifyOauth2 = require('@fastify/oauth2');
-const { googleAuth } = require('../services/auth.service');
+import fastifyOauth2 from '@fastify/oauth2';
+import { googleAuth } from '../services/auth.service.js';
 
-module.exports = async (fastify) => {
+export default async function googleAuthRoutes(fastify) {
   fastify.register(fastifyOauth2, {
     name: 'googleOAuth2',
     credentials: {
@@ -18,4 +18,4 @@ module.exports = async (fastify) => {
     const token = await googleAuth(req.query.code);
     reply.send({ token });
   });
-};
+}

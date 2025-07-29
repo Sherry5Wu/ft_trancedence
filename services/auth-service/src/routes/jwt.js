@@ -1,11 +1,12 @@
-const {
+import {
   normalizeAndValidateEmail,
+  normalizeEmail,
   validatePassword,
   ValidationError
-} = require('../utils/validators');
-const { loginUser, registerUser } = require('../services/auth.service');
+} from '../utils/validators.js';
+import { loginUser, registerUser } from '../services/auth.service.js';
 
-module.exports = async (fastify) => {
+export default async function jwtRoutes(fastify) {
   // Register new user
   fastify.post('/auth/register', async (req, reply) => {
     try {
@@ -46,4 +47,4 @@ module.exports = async (fastify) => {
       }
     }
   });
-};
+}

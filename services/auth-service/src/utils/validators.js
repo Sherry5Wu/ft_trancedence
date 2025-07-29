@@ -1,79 +1,60 @@
 /**
- * Modular validation utilities for auth-service.
- * Separates email format checks and normalization for flexibility.
+ * checking email format, passwordformat, normalize the email(set all the letters
+ * t lowercases)
  */
 
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'ValidationError';
-    this.statusCode = 400;
-  }
-}
+import fp from 'fastify-plugin'
 
-// --- Email Validation ---
+// Predefine the regular expression outside to improve performance.
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-/**
- * Validates email format (RFC 5322).
- * @throws {ValidationError} if invalid
- */
-const validateEmailFormat = (email) => {
-  if (typeof email !== 'string' || !EMAIL_REGEX.test(email.trim())) {
-    throw new ValidationError('Invalid email format');
-  }
-};
-
-/**
- * Normalizes email (lowercase + Gmail dot handling).
- * @returns {string} Normalized email
- */
-const normalizeEmail = (email) => {
-  if (typeof email !== 'string' || !email.trim()) {
-    throw new ValidationError('Email is required');
-  }
-
-  let normalized = email.trim().toLowerCase();
-  const [localPart, domain] = normalized.split('@');
-
-  // Optional: Handle Gmail dot aliases
-  if (domain === 'gmail.com') {
-    normalized = localPart.replace(/\./g, '') + '@gmail.com';
-  }
-
-  return normalized;
-};
-
-// --- Password Validation ---
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-const validatePassword = (password) => {
-  if (!PASSWORD_REGEX.test(password)) {
-    throw new ValidationError(
-      'Password must contain: 8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char (@$!%*?&)'
-    );
-  }
-};
+export default fp(async (fastify) => {
+  // Get ValidationError from fastify.authErrors
+  const { ValidationError } = fastify.authErrors;
 
-// --- Combined Email Helper ---
-/**
- * Validates AND normalizes email in one call.
- * For convenience in most use cases.
- */
-const normalizeAndValidateEmail = (email) => {
-  validateEmailFormat(email);
-  return normalizeEmail(email);
-};
+  const validateEmailFormat = (email) => {
+    if (typeof email !== 'string' || !EMAIL_REGEX.test(email.trim())){
+      throw new ValidationError('Invalid email format');
+    }
+  };
 
-module.exports = {
-  // Individual functions
-  validateEmailFormat,
-  normalizeEmail,
-  validatePassword,
+  const normalizeEmail = (email) => {
+    // string.trim(): removes the whitespaces from both ends, not in the middle
+    if (typeof email !== 'string' || !email.trim()){
+      throw new ValidationError('Email is required');
+    }
 
-  // Combined function
-  normalizeAndValidateEmail,
+    let normalizedEmail = email.trim().toLowerCase();
 
-  // Error class
-  ValidationError,
-};
+    // handle Gmail dot rule. In Gmail, it doesn't save the dot before the @.
+    // for example: sherry.wu@gmail.com, will be saved as "sherrywu@gmail.com"
+    const [localPart, domain] = normalizeEmail.split('@');
+    if (domain === 'gmail.com'){
+      normalizeEmail = localPart.replace(/\./g, '') + '@gmail.com'; // remove all the dot in the localPart
+    }
+    return normalizeEmail;
+  };
+
+  const validatePassword = (password) => {
+    if (typeof password !== 'string' || !password.trim()){
+      throw new ValidationError ('Password is required and must be a string');
+    }
+
+    if (!PASSWORD_REGEX.test(password.trim())){
+      throw new ValidationError ('Password format is wrong');
+    }
+  };
+
+  const normalizeAndValidateEmail = (email) => {
+    validateEmailFormat(email);
+    return normalizeEmail(email);
+  };
+
+  fastify.decorate('validators', {
+    validateEmailFormat,
+    normalizeEmail,
+    validatePassword,
+    normalizeAndValidateEmail,
+  });
+});

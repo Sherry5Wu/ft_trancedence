@@ -1,32 +1,30 @@
-const {
-  normalizeEmail,
-  validatePassword,
-  ValidationError
-} = require('../utils/validators');
-const { hashPassword, comparePassword } = require('../utils/crypto');
-const db = require('../db');
+import { normalizeEmail, validatePassword, ValidationError } from '../utils/validators.js';
+import { hashPassword, comparePassword } from '../utils/crypto.js';
+import db from '../db/index.js';
+import { signToken } from '../utils/jwt.js'; // Assuming you have a JWT utility
 
-module.exports = {
+export const authService = {
   /**
    * Register a new user
    * @throws {ValidationError} if email/password invalid
    * @throws {Error} if email exists
    */
-  registerUser: async (email, password) => {
-    // Double-check password (defensive programming)
+  async registerUser(email, password) {
+    // Validate password
     validatePassword(password);
 
-    // Check for existing user (using normalized email)
+    // Check if email already exists
     const exists = await db.User.findOne({
-      where: { email } // email already normalized by route
+      where: { email } // email should be normalized by route
     });
     if (exists) throw new Error('Email already registered');
 
-    // Create user
+    // Create new user
     const user = await db.User.create({
       email,
       passwordHash: await hashPassword(password),
     });
+
     return signToken(user.id);
   },
 
@@ -34,7 +32,7 @@ module.exports = {
    * Authenticate a user
    * @throws {InvalidCredentialsError} if auth fails
    */
-  loginUser: async (normalizedEmail, password) => {
+  async loginUser(normalizedEmail, password) {
     const user = await db.User.findOne({
       where: { email: normalizedEmail }
     });

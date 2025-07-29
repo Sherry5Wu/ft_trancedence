@@ -1,4 +1,4 @@
-# Why the below code is better than copy all the files first than "npm install"
+# Why the below code is better than copy all the files first then "npm install"
 # Because Docker builds images in layers. If a layer doesn't change, it can reuse
 # the cached version. So in the below version, if nothing changed in package.json,
 # Docker will start from "COPY . .", skip re-running "npm install"

@@ -3,6 +3,7 @@
 - [What is Route?](#what-is-route)
 - [2FA](#2fa)
 - [JWT](#jwt)
+- [Hash a password](#hash-a-password)
 - [Sequelize](#sequelize)
 - [package.json](#pakcage-jason)
 - [Run containder with Dockfile](#run-containder-with-dockfile)
@@ -145,8 +146,106 @@ GET /api/user/profile
   - Every protected resource request → requires authentication first.<br>
   - The JWT is your “proof” of who the user is.<br>
 
+# Hash a password
 
+## How many ways to hash a password?
+There are several cryptographic algorithms and methods for hashing passwords, but the important part is not to use plain hash algorithms like SHA or MD5 alone, because they are fast and vulnerable to brute-force attacks. Instead, password hashing functions are designed to be slow and salted. Commonly used secure password-hashing algorithms include:<br>
+**1. bcrypt**
+  - Uses the Blowfish cipher internally.<br>
+  - Adaptive: you can increase the cost factor as hardware improves.<br>
+  - Widely used in web applications.<br>
+**2. argon2 (specifically Argon2id)**
+  - Winner of the Password Hashing Competition (PHC).<br>
+  - Memory-hard (resistant to GPU/ASIC attacks).<br>
+  - Newer and considered more secure than bcrypt.<br>
+**3. scrypt**
+  - Memory-hard algorithm like Argon2.<br>
+  - More resistant to large-scale brute-force attacks than bcrypt.<br>
+**4. PBKDF2 (Password-Based Key Derivation Function 2)**
+  - Uses HMAC (Hash-based Message Authentication Code).<br>
+  - Slower than plain SHA but still widely used in legacy systems.<br>
+❌ **Not recommended for password hashing alone:**
+  - SHA-256, SHA-512, MD5 (too fast, easy to crack).<br>
 
+## Which is most popular in JavaScript?
+In JavaScript (Node.js), the most popular password hashing library is:<br>
+- `bcrypt` → via the `bcrypt` npm package<br>
+  - Mature, easy to use, and widely supported.<br>
+  - Good default for most applications.<br>
+Example:<br>
+```javascript
+const bcrypt = require('bcrypt');
+
+const password = 'myPassword123';
+const saltRounds = 10;
+
+// Hash password
+const hash = await bcrypt.hash(password, saltRounds);
+
+// Verify password
+const isMatch = await bcrypt.compare(password, hash);
+console.log('Password match:', isMatch);
+```
+**Alternatives in Node.js:**
+- argon2 (via argon2 npm package) → More secure, but slightly less common.<br>
+- crypto (built-in module) → Can implement PBKDF2, but requires more setup.<br>
+
+## About saltRounds
+
+### What is saltRounds in bcrypt?
+- saltRounds (also called cost factor or work factor) defines how many times the hashing algorithm will be applied internally.<br>
+- It controls the computational complexity and time it takes to generate the hash.<br>
+
+### How it works:
+- bcrypt automatically generates a **random salt** for each password hash.<br>
+- The `saltRounds` parameter determines **how expensive (slow) the hashing process** is by increasing the number of iterations or the complexity of the key setup.<br>
+- Higher `saltRounds` means:<br>
+  - More CPU time needed to compute the hash (slower).<br>
+  - Harder for attackers to brute-force or guess passwords, because each guess requires more work.<br>
+
+### Typical values:
+- Common values range from **10 to 12**.<br>
+- `saltRounds = 10` means about 2^10 = 1024 rounds internally (rough estimate).<br>
+- Increasing the rounds improves security but also slows down login and registration, so you need to balance security and performance.<br>
+
+### Summary:
+- `saltRounds` **controls the cost/complexity of the hash function**.<br>
+- It **makes the hashing slower**, which **protects against brute-force attacks**.<br>
+- Each password gets a **unique random salt automatically** by bcrypt, separate from the rounds.<br>
+
+## Core Functions in bcrypt (Node.js version)
+1. `bcrypt.hash(data, saltRounds)`<br>
+  - Purpose: Hash a password with a random salt and given cost factor.<br>
+  - Parameters:<br>
+    - `data`: The plain text password.<br>
+    - `saltRounds`: Number of rounds to process (work factor).<br>
+  - Returns: A hashed string (including the salt inside).<br>
+  - Example:<br>
+  ```javascript
+  const hash = await bcrypt.hash('myPassword', 10);
+  console.log(hash); // $2b$10$...
+  ```
+2. `bcrypt.compare(data, hash)`<br>
+  - Purpose: Verify if a plain text password matches a hashed password.<br>
+  - Parameters:<br>
+    - data: The plain text password.<br>
+    - hash: The hashed password from the database.<br>
+  - Returns: `true` or `false`.<br>
+  - Example:<br>
+  ```javascript
+  const isMatch = await bcrypt.compare('myPassword', hash);
+  console.log(isMatch); // true or false
+  ```
+3. `bcrypt.genSalt(saltRounds)`<br>
+  - Purpose: Generate a salt manually (bcrypt usually does this internally).<br>
+  - Parameters:<br>
+    - saltRounds: Number of rounds for complexity.<br>
+  - Returns: A salt string.<br>
+  - Example:<br>
+    ```javascript
+  const salt = await bcrypt.genSalt(10);
+  console.log(salt);
+  ```
 
 # Sequelize
 Sequelize is a Node.js ORM (Object-Relational Mapping) for SQL databases like PostgreSQL, MySQL, MariaDB, SQLite, and MSSQL. It lets you interact with your database using JavaScript instead of writing raw SQL queries.<br>

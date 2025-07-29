@@ -1,6 +1,6 @@
-const fp = require('fastify-plugin');
+import fp from 'fastify-plugin';
 
-module.exports = fp(async (fastify) => {
+export default fp(async (fastify) => {
   fastify.decorate('jwtSign', (payload) => {
     return fastify.jwt.sign(payload);
   });
@@ -9,3 +9,4 @@ module.exports = fp(async (fastify) => {
     return fastify.jwt.verify(token);
   });
 });
+
