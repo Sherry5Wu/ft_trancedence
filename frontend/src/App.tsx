@@ -14,11 +14,11 @@ const App = () => {
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
-        <header>
+        <header className='sticky top-0 z-50'>
           <Navbar />
         </header>
 
-        <main className="flex-grow">
+        <main className="flex-grow p-4">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignInPage />} />

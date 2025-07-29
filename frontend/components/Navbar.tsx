@@ -46,7 +46,7 @@ export const Navbar = () => {
     ]
 
     return (
-    <nav className='flex items-center sticky top-0 z-50'>
+    <nav className='flex items-center bg-[#FFCC00]'>
         <div className='flex flex-1 justify-start gap-5'>
             <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
             <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' />
@@ -57,6 +57,7 @@ export const Navbar = () => {
             {/* CHANGE THIS TO A LINK LATER */}
         </div>
         <div className='flex flex-1 justify-end scale-110 mr-7'>
+            {/* <UserMenu aria-label='profile menu' Icon={userState ? { ProfilePic } : <ProfileIcon />} elements={profileMenuItems} className='menuIcon'/> */}
             <UserMenu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} className='menuIcon'/>
         </div>
     </nav>

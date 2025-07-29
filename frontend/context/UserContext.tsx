@@ -1,11 +1,23 @@
-import { useState, createContext, ReactElement } from 'react';
+import { useState, createContext, useContext, ReactElement, ReactNode } from 'react';
 
 interface User {
-    username: string, 
+    username: string;
     profilePicture: ReactElement;
-    email: string
+    email: string;
 }
 
-export const UserContext = () => {
-    const 
+interface UserType {
+    user: User | null;
+    setUser: (user: User | null) => void;
+}
+
+const userContext = createContext<UserType | undefined>(undefined);
+
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+    const user = useState()
+
+    return (
+        <userContext.Provider>
+        </userContext.Provider>
+    )
 }
