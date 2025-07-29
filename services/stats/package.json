@@ -1,9 +1,10 @@
 {
-  "name": "backendtest",
+  "name": "tournament-stats",
   "version": "1.0.0",
-  "main": "backendtest.js",
+  "type": "module",
+  "main": "tournamentdata.js",
   "scripts": {
-	"start": "node backendtest.js",
+	"start": "node tournamentdata.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
