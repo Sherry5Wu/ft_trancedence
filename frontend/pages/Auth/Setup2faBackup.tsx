@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
+import ProgressBar from '../../components/ProgressBar';
 
 const Setup2faBackupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ const Setup2faBackupPage: React.FC = () => {
         <h3 className="font-semibold text-center">
           Setup Two-factor authentication
         </h3>
+
+        {/* Progress bar component */}
+        <ProgressBar currentStep={2} stepCompletion={{ 1: true, 2: hasDownloaded }} />
 
         <h4 className="font-semibold text-center">
           Backup verification codes
@@ -69,7 +73,7 @@ const Setup2faBackupPage: React.FC = () => {
           hoverLabel={undefined}
           disabled={!hasDownloaded}
           onClick={() => {
-            alert('Go to Success page!');
+            navigate('/setup2fa-success');
           }}
         />
       </div>
