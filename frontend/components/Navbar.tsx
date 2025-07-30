@@ -4,7 +4,7 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from './Menu';
 import { Toggle } from './IndicatorToggle';
-import { userContext } from '../context/UserContext';
+import { useUserContext } from '../context/UserContext';
 import FrenchIcon from '../assets/noun-france-6661055.svg?react';
 import EnglishIcon from '../assets/noun-uk-6661102.svg?react';
 import PortugueseIcon from '../assets/noun-brazil-6661040.svg?react';
@@ -21,12 +21,16 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 export const Navbar = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOn, setIsOn] = useState(false);
-    const user = useContext(userContext);
+    const { user, setUser } = useUserContext();
     const navigate = useNavigate();
 
     const handleTitleClick = () => {
         console.log('Going to title/profile page');
         navigate('/homeuser');
+    }
+
+    const handleLogOut = () => {
+        setUser(null);
     }
 
     const languageMenuItems = [
@@ -44,7 +48,7 @@ export const Navbar = () => {
 
     const profileMenuItems = [
         {Icon: <SettingsIcon className='menuIcon'/>, onClick: () => {console.log('Go to Settings'), navigate('/settings')}},
-        {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), navigate('/')}} /* REMEMBER TO FLUSH OUT USER*/
+        {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/')}} /* REMEMBER TO FLUSH OUT USER*/
     ]
 
     return (
@@ -59,8 +63,7 @@ export const Navbar = () => {
             {/* CHANGE THIS TO A LINK LATER */}
         </div>
         <div className='flex flex-1 justify-end scale-110 mr-7'>
-            <Menu aria-label='profile menu' Icon={user ? { user.profilePic } : <ProfileIcon />} elements={profileMenuItems} className='menuIcon'/> */
-            {/* <Menu aria-label='profile menu' Icon={<ProfileIcon />} elements={profileMenuItems} className='menuIcon' userMenu={true} /> */}
+            <Menu aria-label='profile menu' Icon={user ? user.profilePic : <ProfileIcon />} elements={profileMenuItems} className='menuIcon' user={true}/>
         </div>
     </nav>
     );

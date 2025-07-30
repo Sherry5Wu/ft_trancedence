@@ -23,7 +23,9 @@ html, body {
         active:text-[#4682B4] active:border-[#4682B4]
 }
 
-
+.profilePic {
+  @apply size-14 rounded-full object-cover
+}
 
 .h1 {
     @apply text-8xl flex justify-center
