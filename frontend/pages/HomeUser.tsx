@@ -65,7 +65,7 @@ const HomeUserPage: React.FC = () => {
       </div>
       {/* MATCH HISTORY */}
       <div>
-        <MatchHistory player1='user' matchIndex={1} />
+        {/* <MatchHistory player1='user' matchIndex={1} /> */}
       </div>
     </div>
   );
