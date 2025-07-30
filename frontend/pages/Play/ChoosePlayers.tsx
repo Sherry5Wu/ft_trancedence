@@ -19,12 +19,9 @@ const ChoosePlayersPage: React.FC = () => {
 
   useEffect(() => {
     // Simulate fetch for player 1 data
-
-      const fetchedPlayerName = user?.username; // pretend backend data
-      // console.log('user is ' + user?.username);
-      setPlayer1(fetchedPlayerName);
+      setPlayer1(user?.username ?? "");
       setIsPlayer1Loading(false);
-  });
+  }, [user]);
 
   const formFilled = player2.trim() !== "";
 
@@ -37,10 +34,10 @@ const ChoosePlayersPage: React.FC = () => {
         <GenericInput
           type="text"
           placeholder="Player 1"
-          onFilled={setPlayer1}
           value={player1}
+          onFilled={setPlayer1}
           disabled={isPlayer1Loading}
-          showEditIcon={true} // <-- Always show edit icon if value is present
+          showEditIcon={true}
         />
 
         {/* Player 2 type selection */}
@@ -64,7 +61,7 @@ const ChoosePlayersPage: React.FC = () => {
         </div>
 
         {/* Player 2 input - active only after choosing type */}
-        {player2Type && (
+        {player2Type && ( //  conditionally render the Player 2
         <div className="mt-4">
         <GenericInput
           type="text"
