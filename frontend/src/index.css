@@ -120,6 +120,29 @@ html, body {
   pointer-events: none;
 }
 
+/* Unclicked button style */
+.generic-button.unclicked-button {
+  background-color: transparent;
+  color: black;
+  border: 2px solid black;
+  box-shadow: none;
+}
+
+.generic-button.unclicked-button:hover {
+  background-color: #f0f0f0;
+}
+
+.generic-button.unclicked-button:active {
+  background-color: #e0e0e0;
+}
+
+/* Optional: to keep icon colors consistent */
+.generic-button.unclicked-button .icon-wrapper svg,
+.generic-button.unclicked-button .icon-wrapper img {
+  filter: invert(0%);
+}
+
+
 /* Round button style */
 .round-icon-button {
   display: flex;
@@ -215,6 +238,16 @@ html, body {
 .generic-input.filled {
   color: black;
 }
+
+/* Style for disabled input */
+.generic-input:disabled {
+  background-color: #d6d6d6;  /* Light gray background */
+  color: #999;  /* Gray text */
+  border-color: #dcdcdc;  /* Lighter gray border */
+  cursor: not-allowed;  /* Change cursor to indicate it's disabled */
+}
+
+
 
 /* TopDownButton */
 .topdown-wrapper {
