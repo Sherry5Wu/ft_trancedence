@@ -21,8 +21,8 @@ export const MenuItem = ({ label, Icon, Button, onClick, user }: MenuItemProps) 
     if (user) {
         return (
             <button type='button' onClick={handleClick} className='flex active:text-[#4682B4] active:border-[#4682B4]'>
-                {Icon && <span className=''>{Icon}</span>}
-                {label && <span className='truncate w-full pl-2  active:border-[#4682B4]'>{label}</span>}
+                {Icon && <span className='mt-1'>{Icon}</span>}
+                {label && <span className='truncate w-full pl-2 active:border-[#4682B4]'>{label}</span>}
             </button>
         );
     }
