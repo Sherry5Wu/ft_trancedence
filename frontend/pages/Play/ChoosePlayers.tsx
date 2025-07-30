@@ -66,6 +66,7 @@ const ChoosePlayersPage: React.FC = () => {
         <GenericInput
           type="text"
           placeholder="Player 2"
+          value={player2}  
           onFilled={setPlayer2}
           disabled={player2Type === null}
           showEditIcon={true} // <-- Always show edit icon if value is present

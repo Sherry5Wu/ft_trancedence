@@ -41,7 +41,7 @@
 
 
 // controlled component
-import { ChangeEvent } from "react";
+import React, { ChangeEvent } from "react";
 import ModifyIcon from "../assets/noun-modify-4084225.svg";
 
 interface GenericInputProps {
@@ -68,7 +68,7 @@ export const GenericInput = ({
     onFilled(newValue); // updates parent state
   };
 
-  const shouldShowIcon = showEditIcon;
+const shouldShowIcon = showEditIcon && value.trim() !== "";
 
   return (
     <div className="relative w-full">
