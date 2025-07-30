@@ -1,6 +1,7 @@
 {
   "name": "backendtest",
   "version": "1.0.0",
+  "type": "module",
   "main": "backendtest.js",
   "scripts": {
 	"start": "node backendtest.js",
