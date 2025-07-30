@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAccessibilityContext } from '../context/AccessibilityContext';
+
 
 interface ToggleButtonProps {
     label?: string;

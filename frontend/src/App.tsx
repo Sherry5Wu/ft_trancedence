@@ -16,32 +16,34 @@ import LogInPlayerPage from '../pages/Play/LogInPlayer';
 
 const App = () => {
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <header className='sticky top-0 z-50'>
-          <Navbar />
-        </header>
+    <div className='bg-[#FFCC00]'>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <header className='sticky top-0 z-50'>
+            <Navbar />
+          </header>
 
-        <main className="flex-grow p-4">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/signin" element={<SignInPage />} />
-            <Route path="/signup" element={<SignUpPage />} />
-            <Route path="/homeuser" element={<HomeUserPage />} /> {/* Could we have custom-login-name instead of homeuser? */}
-            <Route path="/setup2fa" element={<Setup2faMainPage />} />
-            <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
-            <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
-            <Route path="/verify2fa" element={<Verify2faPage />} />
-            <Route path="/choose-players" element={<ChoosePlayersPage />} />
-            <Route path="/login-player" element={<LogInPlayerPage />} />
-          </Routes>
-        </main>
+          <main className="flex-grow p-4">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/signin" element={<SignInPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route path="/homeuser" element={<HomeUserPage />} /> {/* Could we have custom-login-name instead of homeuser? */}
+              <Route path="/setup2fa" element={<Setup2faMainPage />} />
+              <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
+              <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
+              <Route path="/verify2fa" element={<Verify2faPage />} />
+              <Route path="/choose-players" element={<ChoosePlayersPage />} />
+              <Route path="/login-player" element={<LogInPlayerPage />} />
+            </Routes>
+          </main>
 
-        <footer>
-          <Footer />
-        </footer>
-      </div>
-    </Router>
+          <footer>
+            <Footer />
+          </footer>
+        </div>
+      </Router>
+    </div>
   );
 };
 
