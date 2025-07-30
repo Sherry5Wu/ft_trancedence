@@ -238,8 +238,6 @@ html, body {
   box-sizing: border-box;
   transition: border-color 0.3s ease;
   margin: 0.5rem 0;
-    /* Padding right for icon space */
-  padding-right: 2.5rem;
 }
 .generic-input:focus {
   border-color: #357ae8;

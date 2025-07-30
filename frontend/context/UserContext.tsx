@@ -8,6 +8,7 @@ interface User {
     rank: number;
     firstname: string;
     lastname: string;
+    password: any; // for testing
 };
 
 interface UserType {
@@ -35,7 +36,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       score: 128,
       rank: 66,
       firstname: 'Bob',
-      lastname: 'Smith'
+      lastname: 'Smith',
+      password: 12345,
     };
     setUser(mockUser);
   }, []);

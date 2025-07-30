@@ -1,5 +1,5 @@
-// // pages/Play/ChoosePlayers.tsx
-// // user choose player 2 as Registed or Guest, if register the player should 'log in a player'
+// pages/Play/ChoosePlayers.tsx
+// user choose player 2 as Registed or Guest, if register the player should 'log in a player'
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
