@@ -71,7 +71,7 @@ export const GenericInput = ({
 const shouldShowIcon = showEditIcon && value.trim() !== "";
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-md mx-auto">
       <input
         type={type}
         value={value}
@@ -82,7 +82,7 @@ const shouldShowIcon = showEditIcon && value.trim() !== "";
         className={`generic-input ${value ? "filled" : ""} pr-10`}
       />
       {shouldShowIcon && (
-        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500">
+        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
           <img
             src={ModifyIcon}
             alt="Edit"

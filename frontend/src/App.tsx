@@ -13,6 +13,9 @@ import Setup2faSuccessPage from '../pages/Auth/Setup2faSuccess';
 import Verify2faPage from '../pages/Auth/Verify2fa';
 import ChoosePlayersPage from '../pages/Play/ChoosePlayers';
 import LogInPlayerPage from '../pages/Play/LogInPlayer';
+import SettingsPage from '../pages/User/UserSettings';
+// import ChangePasswordPage from '../pages/User/UserChangePassword';
+// import ChangePINPage from '../pages/User/UserChangePIN';
 
 const App = () => {
   return (
@@ -34,6 +37,9 @@ const App = () => {
             <Route path="/verify2fa" element={<Verify2faPage />} />
             <Route path="/choose-players" element={<ChoosePlayersPage />} />
             <Route path="/login-player" element={<LogInPlayerPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            {/* <Route path="/change-password" element={<ChangePasswordPage />} /> */}
+            {/* <Route path="/change-pin" element={<ChangePINPage />} />             */}
           </Routes>
         </main>
 
