@@ -5,6 +5,7 @@
 	- [ESModules: Export and Import Syntax](#esmodules-export-and-import-syntax)
 	- [Sequelize](#sequelize)
 - [What is Fastify?](#what-is-fastify)
+	- [Request Lifecycle for a API](#request-lifecycle-for-a-api)
 
 # Node.js
 ## What is Node.js?
@@ -151,3 +152,37 @@ Example Use Case:<br>
 With Node.js, you get the engine to run server-side code.<br>
 With Fastify, you get a toolkit to build web APIs faster and with better structure.<br>
 
+## Request Lifecycle for a API
+Work flow of registerUser:
+1. Client calls API → POST /register<br>
+2. Fastify Route Handler (in routes/auth.js):<br>
+	- Applies JSON schema validation automatically<br>
+	- If invalid → Fastify returns 400 error (never reaches your service)<br>
+3. If valid:<br>
+	- The route handler calls your service function (registerUser() in auth.service.js)<br>
+4. Service Layer:<br>
+	- Handles business logic: DB queries, password hashing, etc.<br>
+	- Returns sanitized user object<br>
+5. Route handler sends response to the client<br>
+
+**Why this is good:**
+- Validation happens early → Service layer assumes input is valid.
+- Cleaner services → No need to repeat validation logic.
+- Security → Prevents bad data from ever touching your DB logic.
+
+**Visual Flow:**
+```less
+[ HTTP Request ]
+      |
+      v
+[ Fastify Route + Schema Validation ]
+      |
+      v
+[ auth.service.js -> registerUser() ]
+      |
+      v
+[ DB -> User created ]
+      |
+      v
+[ Response to Client ]
+```

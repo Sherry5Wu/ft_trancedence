@@ -15,7 +15,7 @@ Your email should be something like `user.name+tag@example-domain.com`.<br>
 
 ## Password Rules
 
-- Your password must be at least 8 characters long.<br>
+- Your password Total length between 8 and 72 characters(include 8 and 72).<br>
 - It needs to have at least one lowercase letter (like `a`, `b`, `c`).<br>
 - It needs at least one uppercase letter (like `A`, `B`, `C`).<br>
 - It requires at least one number (like `1`, `2`, `3`).<br>

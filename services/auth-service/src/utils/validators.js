@@ -7,7 +7,7 @@ import fp from 'fastify-plugin'
 
 // Predefine the regular expression outside to improve performance.
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,72}$/; // lenght is between 8-72
 
 export default fp(async (fastify) => {
   // Get ValidationError from fastify.authErrors
@@ -19,6 +19,7 @@ export default fp(async (fastify) => {
     }
   };
 
+
   const normalizeEmail = (email) => {
     // string.trim(): removes the whitespaces from both ends, not in the middle
     if (typeof email !== 'string' || !email.trim()){
@@ -29,12 +30,13 @@ export default fp(async (fastify) => {
 
     // handle Gmail dot rule. In Gmail, it doesn't save the dot before the @.
     // for example: sherry.wu@gmail.com, will be saved as "sherrywu@gmail.com"
-    const [localPart, domain] = normalizeEmail.split('@');
+    const [localPart, domain] = normalizedEmail.split('@');
     if (domain === 'gmail.com'){
-      normalizeEmail = localPart.replace(/\./g, '') + '@gmail.com'; // remove all the dot in the localPart
+      normalizedEmail = localPart.replace(/\./g, '') + '@gmail.com'; // remove all the dot in the localPart
     }
-    return normalizeEmail;
+    return normalizedEmail;
   };
+
 
   const validatePassword = (password) => {
     if (typeof password !== 'string' || !password.trim()){
@@ -45,6 +47,7 @@ export default fp(async (fastify) => {
       throw new ValidationError ('Password format is wrong');
     }
   };
+
 
   const normalizeAndValidateEmail = (email) => {
     validateEmailFormat(email);

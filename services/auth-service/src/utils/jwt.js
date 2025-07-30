@@ -35,7 +35,8 @@ function generateRefreshToken(payload) {
  * Verify an Access JWT token and return the decoded payload.
  * @param {string} token - The JWT token to verify.
  * @returns {object} Decoded payload.
- * @throws {Error} If the token is invalid or expired.
+ * @throws {Error} If the token is invalid or expired, it throws an error
+ * (e.g., JsonWebTokenError, TokenExpiredError).
  */
 
 function verifyAccessToken(token) {
@@ -60,6 +61,8 @@ function verifyRefreshToken(token) {
  * @param {string} token - The JWT token.
  * @returns {object|null} Decoded payload or null if invalid.
  */
+// complete: false  --> only return the payload;
+// complete: true   --> return an object with three parts: header, payload and signature
 function decodeToken(token) {
 	return jwt.decode(token, { complete: false });
 }

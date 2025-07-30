@@ -11,40 +11,34 @@
  *      ✔ Custom error handling using ValidationError and InvalidCredentialsError
  */
 
-// import { normalizeAndValidateEmail, validatePassword } from '../utils/validators.js';
-// import { hashPassword, comparePassword } from '../utils/crypto.js';
-// import db from '../db/index.js';
-// import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.js';
-// import { ValidationError, InvalidCredentialsError } from '../utils/errors.js';
-
 import { User } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 
 /**
- * Regiser a new user.
+ * Register a new user.
  * @param {string} email - User email
  * @param {string} password - plaintext password
  * @return {Promise<object>} Created user (without sensitive fields)
  */
 async function registerUser(email, password) {
-  // Normalize and validate email using fastify.validators in route handler
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser){
-    throw new Error('Email already registered');
-  }
+    // Normalize and validate email using fastify.validators in route handler
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser){
+      throw new Error('Email already registered');
+    }
 
-  const passwordHash = await hashPassword(password);
-  const user = await User.create({
-    email,
-    passwordHash,
-  });
+    const passwordHash = await hashPassword(password);
+    const user = await User.create({
+      email,
+      passwordHash,
+    });
 
-  // Remove sensitive fields from returned user
-  const userData = user.toJSON();
-  delete userData.passwordHash;
+    // Remove sensitive fields from returned user
+    const userData = user.toJSON();
+    delete userData.passwordHash;
 
-  return userData; // What data is in userData??????
+    return userData;
 }
 
 /**
@@ -54,16 +48,16 @@ async function registerUser(email, password) {
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
 async function authenticateUser(email, password) {
-  // Fine user with secrets
+  // Find user with secrets
   const user = await User.scope('withSecrets').findOne({ where: { email }});
 
   if (!user){
-    throw new Error('Invalid email');
+    throw new Error('Invalid credentials');
   }
 
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch){
-    throw new Error('Incorret password');
+    throw new Error('Incorrect password');
   }
 
   // Generate JWT tokens
@@ -129,12 +123,9 @@ async function disableTwoFA(userId) {
   await user.update({ twoFASecret: null, backupCodes: null });
 }
 
-
-/// from HEREEEEEEEEEEE
-
-
 /**
  * Validate backup code for 2FA recovery
+ * Each code just can be used once, so need to remove it after using.
  * @param {string} userId
  * @param {string} code
  * @returns {Promise<boolean>}
@@ -145,11 +136,12 @@ async function validateBackupCode(userId, code) {
     return false;
   }
 
+  // get the index of code in the backupCodes array
   const matchIndex = user.backupCodes.indexOf(code);
   if (matchIndex === -1) return false;
 
   // remove used code
-  user.backupCodes.splice(matchIndex, 1);
+  user.backupCodes.splice(matchIndex, 1); // Remove the code from the array at position matchIndex.
   await user.update({ backupCodes: user.backupCodes });
   return true;
 }
@@ -165,6 +157,7 @@ async function updatePassword(userId, newPassword) {
   if (!user) {
     throw new Error('User not found');
   }
+
   const newHash = await hashPassword(newPassword);
   await user.update({ passwordHash: newHash });
 }

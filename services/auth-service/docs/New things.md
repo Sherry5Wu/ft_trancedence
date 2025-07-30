@@ -8,6 +8,8 @@
 - [package.json](#pakcage-jason)
 - [Run containder with Dockfile](#run-containder-with-dockfile)
 - [Jest](#jest)
+- [dotenv](#dotenv)
+
 # CORS
 ## What is CORS?
 CORS (Cross-Origin Resource Sharing) is a security mechanism implemented by web browsers to control how web pages from one origin (domain, protocol, or port) can request resources from a different origin. It relies on HTTP headers to allow or block cross-origin requests.<br>
@@ -457,4 +459,33 @@ expect(bad).toThrow('Boom');
 ```javascript
 expect(10).toBeGreaterThan(5);
 expect(3).toBeLessThan(5);
+```
+
+# dotenv
+
+## What is dotenv?
+`dotenv` is a **zero-dependency Node.js module** that loads environment variables from a `.env` file into `process.env`.<br>
+
+## Why use `dotenv`?
+- Keeps secrets and configuration (API keys, DB credentials, ports) outside your code.<br>
+- Makes your app easily configurable across environments (dev, staging, production).<br>
+- Prevents hardcoding sensitive data in the source code.<br>
+
+## How it works:
+**1. Install the package:**
+```bash
+npm install dotenv
+```
+**2. Create a `.env` file:**
+```ini
+PORT=3000
+DB_PATH=./database.sqlite
+JWT_SECRET=mysecret
+```
+**3. Load variables in your code:**
+```javascript
+import dotenv from 'dotenv';
+dotenv.config();
+
+console.log(process.env.PORT); // 3000
 ```
