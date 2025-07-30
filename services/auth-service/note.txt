@@ -1,0 +1,4 @@
+After the database, continue to the register flow!!!!
+
+ const user = await User.findByPk(userId);
+						 findBy....

@@ -1,0 +1,33 @@
+
+{
+  "name": "auth-service",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "identity and authentication of user ",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --forceExit",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest unit/",
+    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest integration/",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch"
+  },
+  "dependencies": {
+    "@fastify/jwt": "^6.0.0",
+    "@fastify/oauth2": "^7.0.0",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^17.2.0",
+    "fastify": "^5.4.0",
+    "fastify-plugin": "^4.0.0",
+    "sequelize": "^6.0.0",
+    "sqlite3": "^5.1.6",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.0",
+    "jest": "^30.0.5",
+    "supertest": "^6.0.0",
+    "babel-jest": "^29.0.0",
+    "@babel/preset-env": "^7.22.0"
+  }
+}

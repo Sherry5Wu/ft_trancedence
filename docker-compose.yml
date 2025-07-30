@@ -1,7 +1,7 @@
 services:
   user-service:
     build: 
-      context: ./services/user
+      context: ./services/stats-service
     container_name: user-container
     env_file: "./.env"
     volumes:
@@ -10,9 +10,10 @@ services:
       - trancendence-network
     restart: unless-stopped
 
+  # Stats Service
   stats-service:
     build: 
-      context: ./services/stats
+      context: ./services/i18n-service
     container_name: stats-container
     env_file: "./.env"
     volumes:
@@ -39,13 +40,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${PWD}/services/user/data
+      device: ${PWD}/services/stats-service/data
   tournament_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${PWD}/services/stats/data
+      device: ${PWD}/services/i18n-service/data
   
 networks:
   trancendence-network:
