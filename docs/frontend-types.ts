@@ -20,7 +20,7 @@ export interface ApiError {
 export class TournamentAPI {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'https://localhost:8443/stats') {
+  constructor(baseUrl: string = 'https://localhost:8443/tournament') {
     this.baseUrl = baseUrl;
   }
 

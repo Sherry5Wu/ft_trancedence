@@ -6,12 +6,12 @@
 http://localhost:3002
 
 # Through nginx proxy (production):
-https://localhost:8443/stats
+https://localhost:8443/tournament
 ```
 
 ## Service Architecture
 - Tournament service runs on port `3002`
-- Nginx gateway proxies requests to `https://localhost:8443/stats/*`
+- Nginx gateway proxies requests to `https://localhost:8443/tournament/*`
 - SSL certificate required for HTTPS
 
 ## Endpoints
@@ -105,7 +105,7 @@ Post new tournament
 ### Get all tournament history:
 ```bash
 # Through nginx proxy (production):
-curl -k https://localhost:8443/stats/tournament_history
+curl -k https://localhost:8443/tournament/tournament_history
 
 # Direct access (development):
 curl http://localhost:3002/tournament_history
@@ -114,7 +114,7 @@ curl http://localhost:3002/tournament_history
 ### Get specific tournament:
 ```bash
 # Through nginx proxy (production):
-curl -k https://localhost:8443/stats/tournament_history/tournament_1
+curl -k https://localhost:8443/tournament/tournament_history/tournament_1
 
 # Direct access (development):
 curl http://localhost:3002/tournament_history/tournament_1
@@ -123,7 +123,7 @@ curl http://localhost:3002/tournament_history/tournament_1
 ### Add new match:
 ```bash
 # Through nginx proxy (production):
-curl -k -X POST https://localhost:8443/stats/tournament_history \
+curl -k -X POST https://localhost:8443/tournament/tournament_history \
   -H "Content-Type: application/json" \
   -d '{
     "tournament_id": "tournament_1",

@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "https://localhost:8443/stats"
+BASE_URL = "https://localhost:8443/tournament"
 
 def test_create_tournament_match():
     payload = {

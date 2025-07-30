@@ -10,11 +10,11 @@ services:
       - trancendence-network
     restart: unless-stopped
 
-  # Stats Service
-  stats-service:
+  # Tournament Service
+  tournament-service:
     build: 
-      context: ./services/i18n-service
-    container_name: stats-container
+      context: ./services/tournament-service
+    container_name: tournament-container
     env_file: "./.env"
     volumes:
       - tournament_data:/app/data
@@ -46,7 +46,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${PWD}/services/i18n-service/data
+      device: ${PWD}/services/tournament-service/data
   
 networks:
   trancendence-network:
