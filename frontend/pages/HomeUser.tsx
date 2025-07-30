@@ -4,21 +4,36 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
+import { useUserContext } from '../context/UserContext';
 import ProfileIcon from '../assets/noun-profile-7808629.svg';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
 import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
 
-const HomeUserPage: React.FC = () => {
+const HomeUserPage = () => {
   const navigate = useNavigate(); // to access other pages
+  const { user, setUser } = useUserContext();
 
     return (
       <div className="flex flex-col items-center p-8 space-y-6">
       
       {/* Username header */}
+
+      <div className='bigProfilePic'>
+        {user?.profilePic}
+      </div>
+
       <div>
-        <h3 className="font-semibold text-center">get username 'Bob' here</h3>
+        <h2 className='h2 mb-3'>{user?.username} </h2>
+        <div className='flex justify-between'>
+          <h4 className='h4'>Score</h4>
+          <h4 className='h4 text-right font-semibold'>{user?.score}</h4>
+        </div>
+        <div className='flex justify-between'>
+          <h4 className='h4'>Rank</h4>
+          <h4 className='h4 text-right font-semibold'>#{user?.rank}</h4>
+        </div>
       </div>
 
       {/* Round-big-button group */}

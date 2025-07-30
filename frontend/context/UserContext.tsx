@@ -4,6 +4,8 @@ interface User {
     username: string;
     profilePic: ReactElement;
     email: string;
+    score: number;
+    rank: number;
 };
 
 interface UserType {
@@ -25,9 +27,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
     const mockUser: User = {
-      username: 'MockUser',
+      username: 'Paddington',
       profilePic: <img src='../assets/profilepics/image.jpg' className='profilePic' />,
       email: 'mock@user.com',
+      score: 128,
+      rank: 66
     };
     setUser(mockUser);
   }, []);
