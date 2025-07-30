@@ -31,7 +31,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
     const mockUser: User = {
       username: 'Paddington',
-      profilePic: <img src='../assets/profilepics/image.jpg' className='profilePic' />,
+      profilePic: <img src='../assets/profilepics/Bluey.png' className='profilePic' />,
       email: 'mock@user.com',
       score: 128,
       rank: 66,

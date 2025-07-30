@@ -3,8 +3,10 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from './Menu';
-import { Toggle } from './IndicatorToggle';
+import { OptionToggle } from './OptionToggle';
 import { useUserContext } from '../context/UserContext';
+import { useDarkModeContext } from '../context/DarkModeContext';
+import { useAccessibilityContext } from '../context/AccessibilityContext';
 import FrenchIcon from '../assets/noun-france-6661055.svg?react';
 import EnglishIcon from '../assets/noun-uk-6661102.svg?react';
 import PortugueseIcon from '../assets/noun-brazil-6661040.svg?react';
@@ -19,18 +21,27 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 
 {/* HANDLE USER AND DARK MODE STATE */}
 export const Navbar = () => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
     const [isOn, setIsOn] = useState(false);
     const { user, setUser } = useUserContext();
+    const { darkMode, setDarkMode } = useDarkModeContext();
+    const { largeText, setLargeText} = useAccessibilityContext();
     const navigate = useNavigate();
 
     const handleTitleClick = () => {
         console.log('Going to title/profile page');
         navigate('/homeuser');
-    }
+    } 
 
     const handleLogOut = () => {
         setUser(null);
+    }
+
+    const handleDarkMode = () => {
+        setDarkMode(!darkMode);
+    }
+
+    const handleTextSize = () => {
+        setLargeText(!largeText);
     }
 
     const languageMenuItems = [
@@ -42,8 +53,11 @@ export const Navbar = () => {
     ]
 
     const accessibilityMenuItems = [
-        {label: 'LARGE TEXT SIZE', Button: (isOn: boolean) => <Toggle isOn={isOn} />, onClick: () => {console.log('Text size toggle'); setIsOn(!isOn)}},
-        {label: 'HIGH CONTRAST', Button: (isOn: boolean) => <Toggle isOn={isOn} />, onClick: () => {console.log('High contrast toggle'); setIsOn(!isOn)}} /* ACTUALLY CHANGE THESE LATER */
+        {   
+            label: 'LARGE TEXT SIZE', 
+            Button: () => <OptionToggle isOn={largeText}/>, 
+            onClick: () => handleTextSize()
+        },
     ]
 
     const profileMenuItems = [
@@ -56,7 +70,7 @@ export const Navbar = () => {
         <div className='flex flex-1 justify-start gap-5'>
             <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
             <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' />
-            <Menu aria-label='dark mode' Icon={isDarkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => setIsDarkMode(!isDarkMode)}/>
+            <Menu aria-label='dark mode' Icon={darkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => handleDarkMode()}/>
         </div>
         <div className='flex flex-1 justify-center mb-5' >
             <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>

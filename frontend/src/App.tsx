@@ -19,11 +19,12 @@ import ChangePasswordPage from '../pages/User/UserChangePassword';
 
 const App = () => {
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen">
-        <header className='sticky top-0 z-50'>
-          <Navbar />
-        </header>
+    <div className='bg-[#FFCC00]'>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <header className='sticky top-0 z-50'>
+            <Navbar />
+          </header>
 
         <main className="flex-grow p-4">
           <Routes>
@@ -43,11 +44,12 @@ const App = () => {
           </Routes>
         </main>
 
-        <footer>
-          <Footer />
-        </footer>
-      </div>
-    </Router>
+          <footer>
+            <Footer />
+          </footer>
+        </div>
+      </Router>
+    </div>
   );
 };
 

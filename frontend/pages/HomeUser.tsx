@@ -24,8 +24,8 @@ const HomeUserPage = () => {
         {user?.profilePic}
       </div>
 
-      <div>
-        <h2 className='h2 mb-3'>{user?.username} </h2>
+      <div className='w-56 truncate mb-12'>
+        <h2 className='h2 text-center mb-3'>{user?.username} </h2>
         <div className='flex justify-between'>
           <h4 className='h4'>Score</h4>
           <h4 className='h4 text-right font-semibold'>{user?.score}</h4>
