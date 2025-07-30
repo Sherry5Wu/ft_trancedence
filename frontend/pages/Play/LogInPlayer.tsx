@@ -39,7 +39,7 @@ const LogInPlayerPage: React.FC = () => {
         className="generic-button"
         text="OK"
         disabled={!formFilled}
-        onClick={() => { navigate('/choose-players')}}
+        onClick={() => { navigate(-1);}} //  go to the previous page in React Router without explicitly defining the path
       />
       </div>
     </div>
