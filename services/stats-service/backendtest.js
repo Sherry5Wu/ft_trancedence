@@ -2,12 +2,18 @@
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
 import Database from 'better-sqlite3';
+import jwt from '@fastify/jwt';
 
 // Ladataan ympäristömuuttujat
 dotenv.config();
 
 // Luodaan Fastify-instanssi
 const fastify = Fastify({ logger: true });
+
+// JWT-tuki
+await fastify.register(jwt, {
+  secret: process.env.JWT_SECRET
+});
 
 //const dbPath = process.env.DATABASE_URL || './data/pong.db';
 const dbPath = "./data/pong.db";
@@ -41,6 +47,22 @@ db.prepare(`
   )
 `).run();
 
+fastify.addHook('preHandler', async (request, reply) => {
+
+  try {
+    const authHeader = request.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const token = authHeader.split(' ')[1];
+    const decoded = fastify.jwt.verify(token);
+    request.id = decoded.id; // Tallennetaan käyttäjän ID pyyntöön
+    request.email = decoded.email; // Tallennetaan käyttäjän sähköposti pyyntöön
+  } catch (err) {
+    reply.status(500).send({ error: err.message });
+  }
+});
+
 // Yksinkertainen reitti, joka palauttaa kaikki pisteet
 fastify.get('/scores', (request, reply) => {
   try {
@@ -70,10 +92,12 @@ fastify.get('/scores/:player_id', (request, reply) => {
 
 //Reitti pelaajan lisäämisen elo score taulukkoon
 fastify.post('/scores', (request, reply) => {
-  const { player_id, player_name, elo_score } = request.body;
+  // TURVALLISUUS: player_id vain tokenista, player_name voi tulla frontendistä
+  const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
+  const { player_name, elo_score } = request.body;  // Display name voi vaihtua
 
-  if (!player_id || !player_name || !elo_score) {
-    return reply.status(400).send({ error: 'Virheellinen data' });
+  if (!player_name || !elo_score) {
+    return reply.status(400).send({ error: 'Player name ja elo score vaaditaan' });
   }
 
   try {
@@ -91,16 +115,28 @@ fastify.post('/scores', (request, reply) => {
 // Reitti Elo scoren päivittämiseen pelaajalle ID:n perusteella
 fastify.put('/scores/:player_id', (request, reply) => {
   const { player_id } = request.params;
-  const { elo_score } = request.body;
+  const { elo_score, player_name } = request.body;
+  
+  // TURVALLISUUS: vain oma score voidaan päivittää
+  if (player_id !== request.id) {
+    return reply.status(403).send({ error: 'Voit päivittää vain omaa scoreasi' });
+  }
 
   if (typeof elo_score !== 'number') {
     return reply.status(400).send({ error: 'Virheellinen pistemäärä' });
   }
 
   try {
-    const stmt = db.prepare(`UPDATE scores SET elo_score = ? WHERE player_id = ?`);
-    stmt.run(elo_score, player_id);
-    reply.send({ player_id, elo_score });
+    // Päivitetään sekä elo_score että player_name (jos annettu)
+    if (player_name) {
+      const stmt = db.prepare(`UPDATE scores SET elo_score = ?, player_name = ? WHERE player_id = ?`);
+      stmt.run(elo_score, player_name, player_id);
+      reply.send({ player_id, elo_score, player_name });
+    } else {
+      const stmt = db.prepare(`UPDATE scores SET elo_score = ? WHERE player_id = ?`);
+      stmt.run(elo_score, player_id);
+      reply.send({ player_id, elo_score });
+    }
   } catch (err) {
     reply.status(500).send({ error: err.message });
   }
@@ -136,10 +172,12 @@ fastify.get('/match_history/:player_id', (request, reply) => {
 
 // Reitti uuden matchin lisäämiseen (POST JSON-bodyllä)
 fastify.post('/match_history', (request, reply) => {
-  const {player_id, player_name, opponent_name, result } = request.body;
+  // TURVALLISUUS: player_id vain tokenista
+  const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
+  const { player_name, opponent_name, result } = request.body;  // Display name voi vaihtua
 
-  if (!player_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
-    return reply.status(400).send({ error: 'Virheellinen data' });
+  if (!player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
+    return reply.status(400).send({ error: 'Player name, vastustajan nimi ja tulos (win/loss/draw) vaaditaan' });
   }
 
   try {
@@ -148,7 +186,7 @@ fastify.post('/match_history', (request, reply) => {
       VALUES (?, ?, ?, ?)
     `);
     const resultDb = stmt.run(player_id, player_name, opponent_name, result);
-    reply.send({ id: resultDb.lastInsertRowid, player_name, opponent_name, result });
+    reply.send({ id: resultDb.lastInsertRowid, player_id, player_name, opponent_name, result });
   } catch (err) {
     reply.status(500).send({ error: err.message });
   }

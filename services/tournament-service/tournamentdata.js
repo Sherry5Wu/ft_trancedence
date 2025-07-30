@@ -2,10 +2,17 @@
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
 import Database from 'better-sqlite3';
+import jwt from '@fastify/jwt';
 dotenv.config();
 
 // Luodaan Fastify-instanssi
 const fastify = Fastify({ logger: true });
+
+// JWT-tuki
+await fastify.register(jwt, {
+  secret: process.env.JWT_SECRET
+});
+
 
 // Avataan SQLite-tietokanta (tiedoston polku .env:stä tai oletus)
 const dbPath = process.env.DATABASE_URL || './data/pong.db';
@@ -27,6 +34,7 @@ db.prepare(`
     tournament_id TEXT NOT NULL,
     stage_number INTEGER NOT NULL,
     match_number INTEGER NOT NULL,
+    player_id TEXT NOT NULL,
     player_name TEXT NOT NULL,
     opponent_name TEXT NOT NULL,
     result TEXT CHECK(result IN ('win', 'loss', 'draw')) NOT NULL,
@@ -34,7 +42,24 @@ db.prepare(`
   )
 `).run();
 
-// Yksinkertainen reitti, joka palauttaa kaikki pisteet
+// JWT verification middleware - vain tietyille reiteille
+const requireAuth = async (request, reply) => {
+  try {
+    const authHeader = request.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const token = authHeader.split(' ')[1];
+    const decoded = fastify.jwt.verify(token);
+    request.id = decoded.id; // Tallennetaan käyttäjän ID pyyntöön
+    request.email = decoded.email; // Tallennetaan käyttäjän sähköposti pyyntöön
+  } catch (err) {
+    reply.status(500).send({ error: err.message });
+  }
+};
+
+// ✅ JULKINEN REITTI - ei vaadi JWT:tä
+// Yksinkertainen reitti, joka palauttaa kaikki turnaushistoriat
 fastify.get('/tournament_history', (request, reply) => {
   try {
     const rows = db.prepare('SELECT * FROM tournament_history').all();
@@ -44,7 +69,8 @@ fastify.get('/tournament_history', (request, reply) => {
   }
 });
 
-// Retti elo scoren hakemiseen pelaajan_idn perusteella
+// ✅ JULKINEN REITTI - ei vaadi JWT:tä  
+// Hakee tietyn turnauksen kaikki matsit
 fastify.get('/tournament_history/:tournament_id', (request, reply) => {
   const { tournament_id } = request.params;
 
@@ -63,20 +89,32 @@ fastify.get('/tournament_history/:tournament_id', (request, reply) => {
 
 
 // Reitti uuden matchin lisäämiseen (POST JSON-bodyllä)
-fastify.post('/tournament_history', (request, reply) => {
-  const {tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body;
+// ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!
+fastify.post('/tournament_history', { preHandler: requireAuth }, (request, reply) => {
+  // TURVALLISUUS: player_id vain tokenista
+  const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
+  const { tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body;
 
   if (!tournament_id || !stage_number || !match_number || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
-    return reply.status(400).send({ error: 'Errors in data' });
+    return reply.status(400).send({ error: 'Tournament_id, stage_number, match_number, player_name, opponent_name ja result (win/loss/draw) vaaditaan' });
   }
 
   try {
     const stmt = db.prepare(`
-      INSERT INTO tournament_history (tournament_id, stage_number, match_number, player_name, opponent_name, result)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO tournament_history (tournament_id, stage_number, match_number, player_id, player_name, opponent_name, result)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
-    const resultDb = stmt.run(tournament_id, stage_number, match_number, player_name, opponent_name, result);
-    reply.send({ id: resultDb.lastInsertRowid, tournament_id, stage_number, match_number, player_name, opponent_name, result });
+    const resultDb = stmt.run(tournament_id, stage_number, match_number, player_id, player_name, opponent_name, result);
+    reply.send({ 
+      id: resultDb.lastInsertRowid, 
+      tournament_id, 
+      stage_number, 
+      match_number, 
+      player_id,
+      player_name, 
+      opponent_name, 
+      result 
+    });
   } catch (err) {
     reply.status(500).send({ error: err.message });
   }
