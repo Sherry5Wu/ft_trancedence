@@ -16,6 +16,9 @@ import LogInPlayerPage from '../pages/Play/LogInPlayer';
 import SettingsPage from '../pages/User/UserSettings';
 import ChangePasswordPage from '../pages/User/UserChangePassword';
 import ChangePINPage from '../pages/User/UserChangePIN';
+import TournamentsPage from '../pages/Tournament/TournamentMain';
+import NewTournamentPage from '../pages/Tournament/TournamentNew';
+import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
 
 const App = () => {
   return (
@@ -41,6 +44,9 @@ const App = () => {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/change-password" element={<ChangePasswordPage />} />
             <Route path="/change-pin" element={<ChangePINPage />} />
+            <Route path="/tournaments" element={<TournamentsPage />} />
+            <Route path="/tournaments/new" element={<NewTournamentPage />} />
+            <Route path="/tournaments/new/players" element={<TournamentPlayers />} />
           </Routes>
         </main>
 
