@@ -48,7 +48,7 @@ interface UserProfileBadgeProps {
   onClick: () => void;
 }
 
-const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({ user, onClick }) => {
+export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({ user, onClick }) => {
   return (
     <div className="relative w-12 h-12 cursor-pointer" onClick={onClick}>
       <img
@@ -64,5 +64,3 @@ const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({ user, onClick }) =>
     </div>
   );
 };
-
-export default UserProfileBadge;

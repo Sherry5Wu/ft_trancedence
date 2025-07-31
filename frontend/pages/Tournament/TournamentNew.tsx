@@ -154,7 +154,7 @@ import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
 import { TopDownButton } from '../../components/TopDownButton';
-import UserProfileBadge from '../../components/UserProfileBadge';
+import { UserProfileBadge } from '../../components/UserProfileBadge';
 
 const NewTournamentPage: React.FC = () => {
   const navigate = useNavigate();
