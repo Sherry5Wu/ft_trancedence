@@ -6,6 +6,9 @@ interface User {
     email: string;
     score: number;
     rank: number;
+    firstname: string;
+    lastname: string;
+    password: any; // for testing
 };
 
 interface UserType {
@@ -32,7 +35,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       profilePic: <img src='../assets/profilepics/Bluey.png' className='profilePic' />,
       email: 'mock@user.com',
       score: 128,
-      rank: 66
+      rank: 66,
+      firstname: 'Bob',
+      lastname: 'Smith',
+      password: 12345,
     };
     setUser(mockUser);
   }, []);

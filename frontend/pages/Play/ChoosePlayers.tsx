@@ -1,13 +1,15 @@
-// // pages/Play/ChoosePlayers.tsx
-// // user choose player 2 as Registed or Guest, if register the player should 'log in a player'
+// pages/Play/ChoosePlayers.tsx
+// user choose player 2 as Registed or Guest, if register the player should 'log in a player'
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from "../../components/GenericInput";
+import { useUserContext } from '../../context/UserContext';
 
 const ChoosePlayersPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useUserContext();
 
   const [player1, setPlayer1] = useState("");     // Editable input state
   const [player2, setPlayer2] = useState("");
@@ -17,14 +19,11 @@ const ChoosePlayersPage: React.FC = () => {
 
   useEffect(() => {
     // Simulate fetch for player 1 data
-    setTimeout(() => {
-      const fetchedPlayerName = "BobTheLogInUser"; // pretend backend data
-      setPlayer1(fetchedPlayerName);
+      setPlayer1(user?.username ?? "");
       setIsPlayer1Loading(false);
-    }, 1000);
-  }, []);
+  }, [user]);
 
-  const formFilled = player1.trim() !== "" && player2.trim() !== "";
+  const formFilled = player2.trim() !== "";
 
   return (
     <div className="flex flex-col items-center p-8 space-y-6">
@@ -35,10 +34,10 @@ const ChoosePlayersPage: React.FC = () => {
         <GenericInput
           type="text"
           placeholder="Player 1"
-          onFilled={setPlayer1}
           value={player1}
+          onFilled={setPlayer1}
           disabled={isPlayer1Loading}
-          showEditIcon={true} // <-- Always show edit icon if value is present
+          showEditIcon={true}
         />
 
         {/* Player 2 type selection */}
@@ -62,13 +61,18 @@ const ChoosePlayersPage: React.FC = () => {
         </div>
 
         {/* Player 2 input - active only after choosing type */}
+        {player2Type && ( //  conditionally render the Player 2
+        <div className="mt-4">
         <GenericInput
           type="text"
           placeholder="Player 2"
+          value={player2}  
           onFilled={setPlayer2}
           disabled={player2Type === null}
           showEditIcon={true} // <-- Always show edit icon if value is present
         />
+      </div>
+    )}
       </div>
 
       {/* Bottom buttons */}

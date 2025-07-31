@@ -13,6 +13,12 @@ import Setup2faSuccessPage from '../pages/Auth/Setup2faSuccess';
 import Verify2faPage from '../pages/Auth/Verify2fa';
 import ChoosePlayersPage from '../pages/Play/ChoosePlayers';
 import LogInPlayerPage from '../pages/Play/LogInPlayer';
+import SettingsPage from '../pages/User/UserSettings';
+import ChangePasswordPage from '../pages/User/UserChangePassword';
+import ChangePINPage from '../pages/User/UserChangePIN';
+import TournamentsPage from '../pages/Tournament/TournamentMain';
+import NewTournamentPage from '../pages/Tournament/TournamentNew';
+import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
 
 const App = () => {
   return (
@@ -23,20 +29,26 @@ const App = () => {
             <Navbar />
           </header>
 
-          <main className="flex-grow p-4">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/homeuser" element={<HomeUserPage />} /> {/* Could we have custom-login-name instead of homeuser? */}
-              <Route path="/setup2fa" element={<Setup2faMainPage />} />
-              <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
-              <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
-              <Route path="/verify2fa" element={<Verify2faPage />} />
-              <Route path="/choose-players" element={<ChoosePlayersPage />} />
-              <Route path="/login-player" element={<LogInPlayerPage />} />
-            </Routes>
-          </main>
+        <main className="flex-grow p-4">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/homeuser" element={<HomeUserPage />} /> {/* Could we have custom-login-name instead of homeuser? */}
+            <Route path="/setup2fa" element={<Setup2faMainPage />} />
+            <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
+            <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
+            <Route path="/verify2fa" element={<Verify2faPage />} />
+            <Route path="/choose-players" element={<ChoosePlayersPage />} />
+            <Route path="/login-player" element={<LogInPlayerPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/change-password" element={<ChangePasswordPage />} />
+            <Route path="/change-pin" element={<ChangePINPage />} />
+            <Route path="/tournaments" element={<TournamentsPage />} />
+            <Route path="/tournaments/new" element={<NewTournamentPage />} />
+            <Route path="/tournaments/new/players" element={<TournamentPlayers />} />
+          </Routes>
+        </main>
 
           <footer>
             <Footer />
