@@ -121,8 +121,8 @@ fastify.post('/tournament_history', { preHandler: requireAuth }, (request, reply
 });
 
 
-// Käynnistetään palvelin portissa 3000 (tai .env:n PORT)
-const port = process.env.PORT || 3002;
+// Käynnistetään palvelin portissa 3001 (yhtenäisyys muiden kanssa)
+const port = process.env.PORT || 3001;
 fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     fastify.log.error(err);
@@ -130,3 +130,19 @@ fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {
   }
   fastify.log.info(`Server is running at address ${address}`);
 });
+
+const gracefullShutdown = async (signal) => {
+  fastify.log.info(`Received ${signal}, shutting down gracefully...`);
+  try {
+    await fastify.close();
+    db.close();
+    fastify.log.info('Server and database closed successfully');
+  } catch (err) {
+    fastify.log.error('Error during shutdown:', err);
+    process.exit(1);
+  }
+  process.exit(0);
+};
+
+process.on('SIGINT', gracefullShutdown);
+process.on('SIGTERM', gracefullShutdown);
