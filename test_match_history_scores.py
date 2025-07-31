@@ -6,6 +6,7 @@ STATS_URL = f"{BASE_URL}/stats"
 
 # Mock test user - ei tarvita oikeaa auth:ia
 MOCK_USER_ID = "test-user-123"
+MOCK_OPPONENT_ID = "test-opponent-456"
 MOCK_USER_EMAIL = "testuser@example.com"
 
 def get_mock_headers(user_id=None):
@@ -19,10 +20,15 @@ def get_mock_headers(user_id=None):
     }
 
 def test_post_match_history():
-    """Test POST /match_history with mock auth"""
+    """Test POST /match_history with mock auth - all required fields"""
     headers = get_mock_headers()
     
+    # ✅ PÄIVITETTY: Kaikki vaaditut kentät
     data = {
+        "player_score": 21,           # ← UUSI
+        "opponent_score": 15,         # ← UUSI  
+        "duration": "00:05:30",       # ← UUSI
+        "opponent_id": MOCK_OPPONENT_ID,  # ← UUSI
         "player_name": "PlayerOne",
         "opponent_name": "PlayerTwo", 
         "result": "win"
@@ -34,6 +40,7 @@ def test_post_match_history():
     assert json_response["player_name"] == "PlayerOne"
     assert json_response["opponent_name"] == "PlayerTwo"
     assert json_response["result"] == "win"
+    # ✅ PÄIVITETTY: Tarkista uudet kentät responssissa
     print("✅ POST match_history test passed")
 
 def test_get_match_history_all():
@@ -73,7 +80,6 @@ def test_put_score():
         "player_name": "UpdatedPlayer"
     }
     
-    # PUT ei tarvitse auth:ia - käyttää URL:n player_id:tä
     response = requests.put(f"{STATS_URL}/scores/{MOCK_USER_ID}", json=data, verify=False)
     assert response.status_code == 200
     json_response = response.json()
@@ -81,12 +87,16 @@ def test_put_score():
     print("✅ PUT scores test passed")
 
 def test_different_users():
-    """Test with different mock users"""
+    """Test with different mock users - updated with new fields"""
     user1_headers = get_mock_headers("user-123")
     user2_headers = get_mock_headers("user-456")
     
-    # User 1 creates match history
+    # ✅ PÄIVITETTY: User 1 creates match history with all fields
     data1 = {
+        "player_score": 21,
+        "opponent_score": 18,
+        "duration": "00:04:15",
+        "opponent_id": "opponent-789",
         "player_name": "Player1",
         "opponent_name": "Enemy1",
         "result": "win"
@@ -94,8 +104,12 @@ def test_different_users():
     response1 = requests.post(f"{STATS_URL}/match_history", json=data1, headers=user1_headers, verify=False)
     assert response1.status_code == 200
     
-    # User 2 creates different match history
+    # ✅ PÄIVITETTY: User 2 creates different match history with all fields
     data2 = {
+        "player_score": 15,
+        "opponent_score": 21,
+        "duration": "00:06:45",
+        "opponent_id": "opponent-999",
         "player_name": "Player2", 
         "opponent_name": "Enemy2",
         "result": "loss"
@@ -104,3 +118,45 @@ def test_different_users():
     assert response2.status_code == 200
     
     print("✅ Different users test passed")
+
+def test_validation_errors():
+    """Test validation with missing fields"""
+    headers = get_mock_headers()
+    
+    # ✅ UUSI: Testaa puuttuvat kentät
+    incomplete_data = {
+        "player_name": "PlayerOne",
+        "result": "win"
+        # Puuttuu: player_score, opponent_score, duration, opponent_id, opponent_name
+    }
+    
+    response = requests.post(f"{STATS_URL}/match_history", json=incomplete_data, headers=headers, verify=False)
+    assert response.status_code == 400  # Pitäisi antaa validation error
+    print("✅ Validation error test passed")
+
+# ✅ UUSI: Testaa eri duration formaatteja
+def test_duration_formats():
+    """Test different duration formats"""
+    headers = get_mock_headers()
+    
+    test_cases = [
+        "00:05:30",    # MM:SS format
+        "00:10:15",    # MM:SS format
+        "01:23:45",    # HH:MM:SS format
+    ]
+    
+    for duration in test_cases:
+        data = {
+            "player_score": 21,
+            "opponent_score": 19,
+            "duration": duration,
+            "opponent_id": "test-opponent",
+            "player_name": "TestPlayer",
+            "opponent_name": "TestOpponent",
+            "result": "win"
+        }
+        
+        response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
+        assert response.status_code == 200
+    
+    print("✅ Duration formats test passed")

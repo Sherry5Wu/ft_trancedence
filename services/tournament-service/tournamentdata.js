@@ -19,8 +19,6 @@ try {
 }
 // Luodaan taulu, jos sitä ei ole
 
-// add tournament start time and finish time
-
 db.prepare(`
   CREATE TABLE IF NOT EXISTS tournament_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
