@@ -25,6 +25,7 @@ export const useUserContext = () => {
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
 
+    // MOCKUP FOR TESTING, REMOVE LATER
     useEffect(() => {
     const mockUser: User = {
       username: 'Paddington',

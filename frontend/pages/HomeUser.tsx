@@ -20,7 +20,7 @@ const HomeUserPage = () => {
       
       {/* Username header */}
 
-      <div className='bigProfilePic'>
+      <div className='profilePicBig'>
         {user?.profilePic}
       </div>
 
@@ -44,7 +44,7 @@ const HomeUserPage = () => {
           icon={<img src={PlayIcon} alt="Play icon" />}
           hoverLabel="PLAY"
           onClick={() => 
-            alert('Go to Play Page!')} // UPDATE TO vavigate('path')
+            navigate('/choose-players')} // UPDATE TO vavigate('path')
         />
         <GenericButton
           className="round-icon-button"
@@ -52,7 +52,7 @@ const HomeUserPage = () => {
           icon={<img src={TournamentIcon} alt="Tournament icon" />}
           hoverLabel="TOURNAMENT"
           onClick={() => 
-            alert('Go to Tournament Page!')} // UPDATE TO vavigate('path')
+            navigate('/tournamets')} // UPDATE TO vavigate('path')
         />
         <GenericButton
           className="round-icon-button"
@@ -80,7 +80,8 @@ const HomeUserPage = () => {
       </div>
       {/* MATCH HISTORY */}
       <div>
-        {/* <MatchHistory player1='user' matchIndex={1} /> */}
+        <h3 className='h3 text-center font-semibold mb-5'>MATCH HISTORY</h3>
+        <MatchHistory player1={user?.username} />
       </div>
     </div>
   );

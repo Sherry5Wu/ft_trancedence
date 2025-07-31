@@ -24,11 +24,15 @@ html, body {
 }
 
 .profilePic {
-  @apply w-full h-full border-2 rounded-full object-cover mb-1
+  @apply w-full h-full border-2 rounded-full object-cover mb-1 bg-[#FFEE8C]
 }
 
-.bigProfilePic { 
-  @apply size-32 border-3 rounded-full
+.profilePicBig { 
+  @apply size-32 border-3 rounded-full bg-[#FFEE8C]
+}
+
+.profilePicSmall {
+  @apply size-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C]
 }
 
 .h1 {
