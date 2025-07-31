@@ -38,6 +38,7 @@ const SignUpPage: React.FC = () => {
         placeholder="Username"
         onFilled={setUsername}
       />
+      
       <GenericInput
         type="email"
         placeholder="Email"

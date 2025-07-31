@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import CloseIcon from '../assets/noun-close-45886.svg';
+import CloseIcon from '../assets/symbols/noun-cross-rounded-5432729.svg';
 
 export const CloseButton = ({ iconSize = 24, className = '' }) => {
   const navigate = useNavigate();
