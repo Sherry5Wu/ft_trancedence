@@ -1,10 +1,19 @@
-import {
-  normalizeAndValidateEmail,
-  normalizeEmail,
-  validatePassword,
-  ValidationError
-} from '../utils/validators.js';
-import { loginUser, registerUser } from '../services/auth.service.js';
+import { authenticateUser, registerUser } from '../services/auth.service.js';
+
+// Simple ValidationError class for this route
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'ValidationError';
+    this.statusCode = 400;
+  }
+}
+
+// Simple email validation
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
 
 export default async function jwtRoutes(fastify) {
   // Register new user
@@ -12,11 +21,17 @@ export default async function jwtRoutes(fastify) {
     try {
       const { email, password } = req.body;
 
-      // Validate and normalize email + validate password
-      const normalizedEmail = normalizeAndValidateEmail(email);
-      validatePassword(password);
+      // Basic validation
+      if (!email || !password) {
+        throw new ValidationError('Email and password are required');
+      }
+      
+      if (!validateEmail(email)) {
+        throw new ValidationError('Invalid email format');
+      }
 
-      // Proceed with registration
+      // Proceed with registration  
+      const normalizedEmail = email.toLowerCase().trim();
       const token = await registerUser(normalizedEmail, password);
       reply.send({ token });
 
@@ -34,9 +49,14 @@ export default async function jwtRoutes(fastify) {
     try {
       const { email, password } = req.body;
 
+      // Basic validation
+      if (!email || !password) {
+        throw new ValidationError('Email and password are required');
+      }
+
       // Normalize email (assumes email was validated during registration)
-      const normalizedEmail = normalizeEmail(email);
-      const token = await loginUser(normalizedEmail, password);
+      const normalizedEmail = email.toLowerCase().trim();
+      const token = await authenticateUser(normalizedEmail, password);
       reply.send({ token });
 
     } catch (error) {

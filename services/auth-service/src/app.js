@@ -45,11 +45,9 @@ await fastify.register(jwt, {
 });
 
 // Register routes
-import googleAuthRoutes from './routes/google-auth.js';
-import jwtRoutes from './routes/jwt.js';
-import twoFARoutes from './routes/2fa.js';
+import jwtRoutes from './routes/jwt.routes.js';
+import twoFARoutes from './routes/2fa.routes.js';
 
-await fastify.register(googleAuthRoutes, { prefix: '/auth' });
 await fastify.register(jwtRoutes, { prefix: '/auth' });
 await fastify.register(twoFARoutes, { prefix: '/auth' });
 

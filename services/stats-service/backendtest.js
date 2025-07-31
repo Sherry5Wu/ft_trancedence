@@ -2,7 +2,7 @@
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
 import Database from 'better-sqlite3';
-import jwt from '@fastify/jwt';
+//import jwt from '@fastify/jwt';
 
 // Ladataan ympäristömuuttujat
 dotenv.config();
@@ -11,9 +11,9 @@ dotenv.config();
 const fastify = Fastify({ logger: true });
 
 // JWT-tuki
-await fastify.register(jwt, {
-  secret: process.env.JWT_SECRET
-});
+// await fastify.register(jwt, {
+//  secret: process.env.JWT_SECRET
+//});
 
 //const dbPath = process.env.DATABASE_URL || './data/pong.db';
 const dbPath = "./data/pong.db";
@@ -47,21 +47,20 @@ db.prepare(`
   )
 `).run();
 
-fastify.addHook('preHandler', async (request, reply) => {
 
-  try {
-    const authHeader = request.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return reply.status(401).send({ error: 'Unauthorized' });
-    }
-    const token = authHeader.split(' ')[1];
-    const decoded = fastify.jwt.verify(token);
-    request.id = decoded.id; // Tallennetaan käyttäjän ID pyyntöön
-    request.email = decoded.email; // Tallennetaan käyttäjän sähköposti pyyntöön
-  } catch (err) {
-    reply.status(500).send({ error: err.message });
+// JWT verification middleware - SIMPLE MOCK
+const requireAuth = async (request, reply) => {
+  // 🧪 MOCK AUTH - Kovakoodattu käyttäjä
+  console.log('🎭 MOCK AUTH: Using test user');
+  
+  request.id = 'test-user-123';
+  request.email = 'testuser@example.com';
+  
+  // Optio: Lue käyttäjä headerista testausta varten
+  if (request.headers['x-test-user-id']) {
+    request.id = request.headers['x-test-user-id'];
   }
-});
+};
 
 // Yksinkertainen reitti, joka palauttaa kaikki pisteet
 fastify.get('/scores', (request, reply) => {
@@ -91,7 +90,7 @@ fastify.get('/scores/:player_id', (request, reply) => {
 });
 
 //Reitti pelaajan lisäämisen elo score taulukkoon
-fastify.post('/scores', (request, reply) => {
+fastify.post('/scores', { preHandler: requireAuth }, (request, reply) => {
   // TURVALLISUUS: player_id vain tokenista, player_name voi tulla frontendistä
   const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
   const { player_name, elo_score } = request.body;  // Display name voi vaihtua
@@ -113,10 +112,10 @@ fastify.post('/scores', (request, reply) => {
 });
 
 // Reitti Elo scoren päivittämiseen pelaajalle ID:n perusteella
-fastify.put('/scores/:player_id', (request, reply) => {
+fastify.put('/scores/:player_id', { preHandler: requireAuth }, (request, reply) => {
   const { player_id } = request.params;
   const { elo_score, player_name } = request.body;
-  
+
   // TURVALLISUUS: vain oma score voidaan päivittää
   if (player_id !== request.id) {
     return reply.status(403).send({ error: 'Voit päivittää vain omaa scoreasi' });
@@ -171,7 +170,7 @@ fastify.get('/match_history/:player_id', (request, reply) => {
 
 
 // Reitti uuden matchin lisäämiseen (POST JSON-bodyllä)
-fastify.post('/match_history', (request, reply) => {
+fastify.post('/match_history', { preHandler: requireAuth }, (request, reply) => {
   // TURVALLISUUS: player_id vain tokenista
   const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
   const { player_name, opponent_name, result } = request.body;  // Display name voi vaihtua
@@ -202,3 +201,19 @@ fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {
   }
   fastify.log.info(`Palvelin käynnissä osoitteessa ${address}`);
 });
+
+const gracefullShutdown = async (signal) => {
+  fastify.log.info(`Received ${signal}, shutting down gracefully...`);
+  try {
+    await fastify.close();
+    db.close();
+    fastify.log.info('Server and database closed successfully');
+  } catch (err) {
+    fastify.log.error('Error during shutdown:', err);
+    process.exit(1);
+  }
+  process.exit(0);
+};
+
+process.on('SIGINT', gracefullShutdown);
+process.on('SIGTERM', gracefullShutdown);

@@ -1,11 +1,11 @@
 services:
-  user-service:
+  stats-service:
     build: 
       context: ./services/stats-service
-    container_name: user-container
+    container_name: stats-container
     env_file: "./.env"
     volumes:
-      - user_data:/app/data
+      - stats_data:/app/data
     networks:
       - trancendence-network
     restart: unless-stopped
@@ -33,9 +33,19 @@ services:
       - trancendence-network
     restart: unless-stopped
 
+  #auth-service:
+    #build:
+      #context: ./services/auth-service
+    #container_name: auth_container
+    #env_file: "./.env"
+    # EI ports - vain sisäinen network käytössä!
+    # Nginx gateway hoitaa ulkoisen yhteyden
+    #networks:
+      #- trancendence-network
+    #restart: unless-stopped
 
 volumes:
-  user_data:
+  stats_data:
     driver: local
     driver_opts:
       type: none
