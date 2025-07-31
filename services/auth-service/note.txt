@@ -1,4 +1,21 @@
-After the database, continue to the register flow!!!!
 
- const user = await User.findByPk(userId);
+ 1. const user = await User.findByPk(userId);
 						 findBy....
+
+2. But backend thinks session is still valid, because refresh token is still good., what is
+session????
+layers these concepts
+
+
+3. in auth-service.js, why not import { User, RefreshToken } from '../db/index.js';
+
+4. what are the differeces short-live token and long-live token? why can't just have
+long-live token?
+
+
+5. in jwt.service.js file:
+	why validateAccessToken don't return value, but validateRefreshToken does????
+	go through jwt.service.js file
+
+
+6. graceFullyShutDown() ????

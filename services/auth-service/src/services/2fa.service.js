@@ -1,52 +1,110 @@
 /**
- * Build TOTP/email 2FA logic after base authentication works.
+ * Build TOTP 2FA logic after base authentication works.
  */
 
 import speakeasy from 'speakeasy';
-import db from '../db/index.js';
+import crypto from 'crypto';
+import QRCode from 'qrcode';
+import { models } from '../db/index.js';
+import {
+  NotFoundError,
+  ValidationError,
+} from '../utils/errors.js';
+
+const { user } = models;
 
 /**
- * Two-Factor Authentication Service
- * - Uses TOTP (Time-Based One-Time Password) via `speakeasy`.
- * - Secrets are stored in the DB alongside user records.
+ * Generate a TOTP secret and backup codes for a user, store in DB.
+ * @param {string} userId - UUID of the user
+ * @returns {Promise<{ secret: string, otpauthUrl: string, backupCodes: string[] }>}
  */
-export const twoFAService = {
-  /**
-   * Generate a new 2FA secret for a user
-   * @param {string} userId - User ID from JWT
-   * @returns {Object} { secret, otpauthUrl }
-   */
-  generate2FASecret(userId) {
-    const secret = speakeasy.generateSecret({
-      name: `ft_transcendence (${userId})`, // App name + user ID
-      length: 20,
-    });
+async function generateTwoFASetup(userId) {
+  const user = await User.findByPk(userId);
+  if (!user) throw new NotFoundError('user not found');
 
-    // Save secret to DB (in a real app, encrypt this!)
-    db.User.update({ twoFASecret: secret.base32 }, { where: { id: userId } });
+  // Generate TOTP secret
+  const secret = speakeasy.generateSecret({ name: 'ft_transcendence (${user.email})' });
+  const otpauthUrl = secret.otpauth_url;
+  const base32Secret = secret.base32;
 
-    return {
-      secret: secret.base32,
-      otpauthUrl: secret.otpauth_url, // For QR code generation
-    };
-  },
+  // Generate backup codes: 10 randomized 8-character codes
+  const backupCodes = Array.from({ length: 10 }, () => crypto.randomBytes(4).toString('hex'));
 
-  /**
-   * Verify a 2FA token
-   * @param {string} userId - User ID from JWT
-   * @param {string} token - 6-digit TOTP code
-   * @returns {boolean} True if valid
-   */
-  async verify2FAToken(userId, token) {
-    const user = await db.User.findByPk(userId);
-    if (!user || !user.twoFASecret) throw new Error('2FA not set up');
+  // Persist secret and backup codes
+  await user.update({ twoFASecret: base32Secret, backupCodes });
 
-    return speakeasy.totp.verify({
-      secret: user.twoFASecret,
-      encoding: 'base32',
-      token,
-      window: 1, // Allow 1-step time drift
-    });
+  return { secret: base32Secret, otpauthUrl, backupCodes };
+}
+
+/**
+ * Verify a TOTP token for a user
+ * @param {string} userId
+ * @param {string} token - 6-digit TOTP code
+ * @returns {Promise<boolean>}
+ */
+async function veriifyTwoFAToken(userId, token){
+  const user =  await User.scope('withSecrets').findByPk(userId);
+  if (!user) throw new NotFoundError('User not found');
+  if (!user.twoFASecret) throw new ValidationError('2FA not enabled for this user');
+
+  const verified = speakeasy.totp.verify({
+    secret: user.twoFASecret,
+    encoding: 'base32',
+    token,
+    window: 1, // allow 1 step before/after
+  });
+
+  return verified;
+}
+
+/**
+ * Generate a QR code data URL for the user's TOTP secret
+ * @param {string} otpauthUrl
+ * @returns {Promise<string>} - data URL of QR code image
+ */
+async function generateTwoFAQrCode(otpauthUrl) {
+  if (!otpauthUrl) throw new ValidationError('Missing otpauth URL');
+  const qrCodeDataUrl = await QRCode.toDataURL(otpauthUrl);
+  return qrCodeDataUrl;
+}
+
+/**
+ * Consume a backup code for 2FA recovery
+ * @param {string} userId
+ * @param {string} code
+ * @returns {Promise<boolean>} - true if valid and consumed
+ */
+async function consumeBackupCode(userId, code){
+  const user =  await User.scope('withSecrets').findByPk(userId);
+  if (!user) throw new NotFoundError('User not found');
+  if (!Array.isArray(user.backupCodes) || user.backupCodes.length === 0) {
+    throw new ValidationError('No backup codes available');
   }
-};
 
+  const index = user.backupCodes.indexOf(code);
+  if (index === -1) return false;
+
+  // Remove used code and update
+  user.backupCodes.splice(index, 1);
+  await user.update({ backupCodes: user.backupCodes });
+  return true;
+}
+
+/**
+ * Disable TOTP 2FA for a user
+ * @param {string} userId
+ * @returns {Promise<void>}
+ */
+async function disableTwoFA(userId) {
+  const user = await User.findByPk(userId);
+  if (!user) throw new NotFoundError('User not found');
+  await User.update({ twoFASecret: null, backupCodes: null });
+}
+
+export {
+  generateTwoFAQrCode,
+  veriifyTwoFAToken,
+  generateTwoFAQrCode,
+  consumeBackupCode,
+  disableTwoFA,
+}

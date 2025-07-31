@@ -14,6 +14,7 @@
 
 import { Sequelize } from 'sequelize';
 import User from './models/user.js';
+import RefreshToken from './models/refreshToken.js';
 
 // This instance use to manage the connection to auth database and perform queries.
 const sequelize = new Sequelize({
@@ -23,8 +24,19 @@ const sequelize = new Sequelize({
   logging: false,
 });
 
-// Initiaize models, and let sequelize know the table structure
-const UserModel = User(sequelize);
+// Initialize models
+const models = {
+  User: User(sequelize),
+  RefreshToken: RefreshToken(sequelize),
+};
+
+// Set up associations
+Object.values(models).forEach((model) => {
+  if (model.associate) {
+    model.associate(models);
+  }
+});
+
 
 // Sync models
 const initDB = async () => {
@@ -44,4 +56,5 @@ const initDB = async () => {
   }
 };
 
-export { sequelize, UserModel as User,  initDB };
+// export { sequelize, UserModel as User,  initDB };
+export { sequelize, models,  initDB };

@@ -41,6 +41,11 @@ export default (sequelize) => {
         return !!this.twoFASecret; // "!!" negates twice, converts the value to a boolean
       }
     },
+    role: {
+      type: DataTypes.EUNM('user', 'admin'), // add role with ENUM
+      allowNull: false,
+      defaultValue: 'user',
+    },
   }, {
     // timestamps: ture, it tells Sequelize to add createdAt and updatedAt two columns
     // into User table
@@ -50,6 +55,7 @@ export default (sequelize) => {
     indexes: [
       { fields: ['email'] }, // Speed up email lookups
       { fields: ['googleId'] }, // Speed up OAuth lookups
+      { fields: ['role'] }, // Speed up faster queries
     ],
     // defaultScope is the default behavior for all queries on this model.
     // Here by default, 'twoFASecret' and 'backupCodes' will NOT be included in any query result
@@ -67,6 +73,14 @@ export default (sequelize) => {
       }
     },
   });
+
+  User.associate = (models) => {
+    User.hasMany(models.RefreshToken, {
+      foreignkey: 'userId',
+      as: 'refreshTokens',
+      onDelete: 'CASCADE', // if user is deleted, delete all tokens
+    });
+  };
 
   return User;
 };

@@ -250,6 +250,7 @@ console.log('Password match:', isMatch);
   ```
 
 # Sequelize
+
 Sequelize is a Node.js ORM (Object-Relational Mapping) for SQL databases like PostgreSQL, MySQL, MariaDB, SQLite, and MSSQL. It lets you interact with your database using JavaScript instead of writing raw SQL queries.<br>
 
 ```js

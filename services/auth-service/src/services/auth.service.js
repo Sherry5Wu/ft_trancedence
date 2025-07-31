@@ -11,9 +11,11 @@
  *      ✔ Custom error handling using ValidationError and InvalidCredentialsError
  */
 
-import { User } from '../db/index.js';
+import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
+
+const { User, RefreshToken } = models;
 
 /**
  * Register a new user.
@@ -29,10 +31,7 @@ async function registerUser(email, password) {
     }
 
     const passwordHash = await hashPassword(password);
-    const user = await User.create({
-      email,
-      passwordHash,
-    });
+    const user = await User.create({ email, passwordHash, });
 
     // Remove sensitive fields from returned user
     const userData = user.toJSON();
@@ -61,9 +60,22 @@ async function authenticateUser(email, password) {
   }
 
   // Generate JWT tokens
-  const payload = { id: user.id, email: user.email };
+  const payload = {
+    id: user.id,
+    email: user.email,
+    role: user.role || 'user', // default role if not set
+    is2FAEnabled: !user.twoFASecret, // True if 2FA is enabled
+  };
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(payload);
+
+  // Save refresh token in DB with assocation
+  await RefreshToken.create({
+    token: refreshToken,
+    userId: user.id,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
+
+  });
 
   // Return safe user data
   const userData = user.toJSON();

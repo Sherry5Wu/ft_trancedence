@@ -46,15 +46,16 @@ auth-service/
 │   └── utils/           # Reusable helpers
 │       ├── crypto.js    # Password hashing
 |       ├── validator.js # Validation functons
+|       ├── jwt.js       # Generate token and verify token
 │       └── errors.js    # Custom error classes
 |── test/
 |   ├──integration
 │   │   ├── routes.test.js
+│   │   ├── validators.test.js
 |   ├──unit
 │   │   ├── db.test.js
 │   │   ├── 2fa.service.test.js
 │   │   ├── jwt.service.test.js
-│   │   ├── validators.test.js
 |   ├──utils
 │   │   ├── test-db.js
 │   │   ├── test-server.js
@@ -110,3 +111,44 @@ const token = fastify.jwt.sign({ userId: user.id });
   Authorization: Bearer <token>
   ```
 - auth-service should expose a utility to verify that token and extract userId;<br>
+
+## payload
+Payload for JWTs
+```json
+{
+  "id": "UUID",          // Always required for identifying user
+  "email": "user@email", // Useful for quick lookups
+  "role": "user",        // Default role now, can expand later (admin, mod, etc.)
+  "is2FAEnabled": true   // Optional, useful for enforcing flows
+}
+```
+
+## Integration with the Authentication Flow
+Based on typical 2FA + OAuth + JWT services, here’s a forward-thinking integration plan:<br>
+**1.Login (email/password)**<br>
+  - Validate with `authenticateUser()`.<br>
+  - If `user.is2FAEnabled` → don’t immediately issue access tokens; instead return **a temporary one-time 2FA token** (short TTL) so the client can call the 2FA confirmation endpoint.<br>
+  - After successful TOTP or backup-code validation, issue **full access & refresh tokens**.<br>
+
+**2. Google OAuth**<br>
+  - Use your existing Google routes to fetch (or create) a user by `googleId`.<br>
+  - If 2FA is enabled, same flow as above: require TOTP before issuing JWTs.<br>
+  - Otherwise, issue JWTs immediately.<br>
+
+**3. Token Refresh**<br>
+  - Client sends refresh token to `/auth/refresh`.<br>
+  - In handler:<br>
+    - Verify and look up the stored `RefreshToken` record.<br>
+    - If revoked or expired → reject.<br>
+    - If valid → rotate: mark old token as revoked (set `revokedAt` and `replacedByToken`), create/store a new one, and return new tokens.<br>
+
+**4. Logout**<br>
+  - Client calls /auth/logout with refresh token.<br>
+  - Handler finds the RefreshToken record and sets revokedAt.<br>
+  - Client should also clear cookies/localStorage.<br>
+
+**5. Protected Routes**<br>
+  - Require a valid access token via middleware (see Q7).<br>
+  - If token’s `is2FAEnabled` is `false` but route requires 2FA, you can reject with `ForbiddenError('2FA required')`.<br>
+
+This flow covers standard email/password, 2FA gating, OAuth login, rotation, and secure logout.<br>
