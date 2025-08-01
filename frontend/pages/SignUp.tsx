@@ -3,77 +3,101 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
-import { GenericInput } from "../components/GenericInput";
-import { ToggleButton } from "../components/ToggleButton"
+import { GenericInput } from '../components/GenericInput';
+import { ToggleButton } from '../components/ToggleButton';
+import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
+import { useValidationField } from '../hooks/useValidationField';
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const usernameField = useValidationField('', isValidUsername);
+  const emailField = useValidationField('', isValidEmail);
+  const passwordField = useValidationField('', isValidPassword);
+  const pinField = useValidationField('', isValidPin);
+
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
 
+  const passwordMismatch = passwordField.value && confirmPassword && passwordField.value !== confirmPassword;
+  const pinMismatch = pinField.value && confirmPin && pinField.value !== confirmPin;
+
   const formFilled =
-    email.trim() !== '' &&
-    username.trim() !== '' &&
-    password !== '' &&
-    confirmPassword !== '' &&
-    pin !== '' &&
-    confirmPin !== '' &&
-    password === confirmPassword &&
-    pin === confirmPin;
+  usernameField.value !== '' &&
+  emailField.value !== '' &&
+  passwordField.value !== '' &&
+  confirmPassword !== '' &&
+  pinField.value !== '' &&
+  confirmPin !== '' &&
+  !usernameField.error &&
+  !emailField.error &&
+  !passwordField.error &&
+  !pinField.error &&
+  !passwordMismatch &&
+  !pinMismatch;
+
 
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
-      
-      {/* Page title*/}
       <h3 className="font-semibold text-center">Sign Up</h3>
-      
-      {/* User inputs */}
+
       <GenericInput
         type="username"
         placeholder="Username"
-        onFilled={setUsername}
+        value={usernameField.value}
+        onFilled={usernameField.onFilled}
+        onBlur={usernameField.onBlur}
+        errorMessage={usernameField.error}
       />
-      
+
       <GenericInput
         type="email"
         placeholder="Email"
-        onFilled={setEmail}
+        value={emailField.value}
+        onFilled={emailField.onFilled}
+        onBlur={emailField.onBlur}
+        errorMessage={emailField.error}
       />
+
       <GenericInput
         type="password"
         placeholder="Password"
-        onFilled={setPassword}
+        value={passwordField.value}
+        onFilled={passwordField.onFilled}
+        onBlur={passwordField.onBlur}
+        errorMessage={passwordField.error}
       />
+
       <GenericInput
         type="password"
         placeholder="Confirm Password"
+        value={confirmPassword}
         onFilled={setConfirmPassword}
+        errorMessage={passwordMismatch ? "Passwords do not match" : ''}
       />
+
       <GenericInput
         type="password"
         placeholder="Player PIN"
-        onFilled={setPin}
+        value={pinField.value}
+        onFilled={pinField.onFilled}
+        onBlur={pinField.onBlur}
+        errorMessage={pinField.error}
       />
+
       <GenericInput
         type="password"
         placeholder="Confirm Player PIN"
+        value={confirmPin}
         onFilled={setConfirmPin}
-      /> 
-
-      {/* Toggle 2FA with Google Authenticator */}  
-      <ToggleButton
-        label='2FA with Google Authenticator'
-        onClick={() => {
-          navigate('/setup2fa');
-        }}
+        errorMessage={pinMismatch ? "PINs do not match" : ''}
       />
 
-      {/* Sign up Button */}  
+      <ToggleButton
+        label="2FA with Google Authenticator"
+        onClick={() => navigate('/setup2fa')}
+      />
+
       <GenericButton
         className="generic-button"
         text="SIGN UP"
@@ -84,7 +108,6 @@ const SignUpPage: React.FC = () => {
         }}
       />
 
-      {/* Sign in link */}
       <p className="text-center text-sm">
         Already have an account?{' '}
         <Link to="/signin" className="underline">
@@ -96,3 +119,4 @@ const SignUpPage: React.FC = () => {
 };
 
 export default SignUpPage;
+
