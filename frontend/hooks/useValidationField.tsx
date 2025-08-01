@@ -18,11 +18,6 @@ export const useValidationField = (
     }
   };
   
-//   const handleBlur = () => {
-//     setTouched(true);
-//     const trimmed = value.trim();
-//     setError(validate(trimmed) ? '' : 'Invalid format');
-//   };
   const handleBlur = () => {
     setTouched(true);
     const trimmed = value.trim();

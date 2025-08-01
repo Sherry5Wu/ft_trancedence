@@ -5,8 +5,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput } from '../components/GenericInput';
 import { ToggleButton } from '../components/ToggleButton';
-import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 import { useValidationField } from '../hooks/useValidationField';
+import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
+
 
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,19 +24,18 @@ const SignUpPage: React.FC = () => {
   const pinMismatch = pinField.value && confirmPin && pinField.value !== confirmPin;
 
   const formFilled =
-  usernameField.value !== '' &&
-  emailField.value !== '' &&
-  passwordField.value !== '' &&
-  confirmPassword !== '' &&
-  pinField.value !== '' &&
-  confirmPin !== '' &&
-  !usernameField.error &&
-  !emailField.error &&
-  !passwordField.error &&
-  !pinField.error &&
-  !passwordMismatch &&
-  !pinMismatch;
-
+    usernameField.value !== '' &&
+    emailField.value !== '' &&
+    passwordField.value !== '' &&
+    confirmPassword !== '' &&
+    pinField.value !== '' &&
+    confirmPin !== '' &&
+    !usernameField.error &&
+    !emailField.error &&
+    !passwordField.error &&
+    !pinField.error &&
+    !passwordMismatch &&
+    !pinMismatch;
 
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">

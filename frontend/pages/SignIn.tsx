@@ -6,33 +6,39 @@ import { Link } from 'react-router-dom';
 import { useState } from "react";
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
+import { useValidationField } from '../hooks/useValidationField';
+import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
 
 const SignInPage: React.FC = () => {
-  const navigate = useNavigate(); // to access other pages
+  const navigate = useNavigate();
 
-  const [name, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const formFilled = name.trim() !== "" && password.trim() !== "";
+  const usernameField = useValidationField('', isValidUsername);
+  const passwordField = useValidationField('', isValidPassword);
+
+  const formFilled = usernameField.value !== '' && passwordField.value !== '';
 
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
       
-      {/* Page title*/}
       <h3 className="font-semibold text-center">Sing In</h3>
 
-      {/* User inputs */}
       <GenericInput
-        type="text"
+        type="username"
         placeholder="Username"
-        onFilled={setUsername}
+        value={usernameField.value}
+        onFilled={usernameField.onFilled}
+        onBlur={usernameField.onBlur}
+        errorMessage={usernameField.error}
       />
       <GenericInput
         type="password"
         placeholder="Password"
-        onFilled={setPassword}
+        value={passwordField.value}
+        onFilled={passwordField.onFilled}
+        onBlur={passwordField.onBlur}
+        errorMessage={passwordField.error}
       />
 
-      {/* Log in Button */}
       <GenericButton
         className="generic-button"
         text="LOG IN"
