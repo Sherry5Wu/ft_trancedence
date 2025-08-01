@@ -7,6 +7,13 @@ export const isValidUsername = (username: string): boolean => {
     return regex.test(username);
 };
 
+// Checks if the alias is 6–20 characters, starts with a letter,
+// and only contains letters, numbers, dots (.), underscores (_), or hyphens (-)
+export const isValidAlias = (alias: string): boolean => {
+  const regex = /^[a-zA-Z][a-zA-Z0-9._-]{5,19}$/;
+  return regex.test(alias);
+};
+
 // Validates standard email format with @ and a valid domain,
 // including a top-level domain of at least 2 letters
 export const isValidEmail = (email: string): boolean => {

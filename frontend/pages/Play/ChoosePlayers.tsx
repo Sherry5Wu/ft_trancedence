@@ -4,43 +4,57 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
-import { GenericInput } from "../../components/GenericInput";
+import { GenericInput } from '../../components/GenericInput';
 import { useUserContext } from '../../context/UserContext';
+import { useValidationField } from '../../hooks/useValidationField';
+import { isValidAlias } from '../../utils/Validation';
 
 const ChoosePlayersPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useUserContext();
+  const { user } = useUserContext();
 
-  const [player1, setPlayer1] = useState("");     // Editable input state
-  const [player2, setPlayer2] = useState("");
+  const player1Field = useValidationField('', isValidAlias);
+  const player2Field = useValidationField('', isValidAlias);
 
   const [player2Type, setPlayer2Type] = useState<"registered" | "guest" | null>(null);
-  const [isPlayer1Loading, setIsPlayer1Loading] = useState(true); // Optional loader
+  const [isPlayer1Loading, setIsPlayer1Loading] = useState(true);
 
+  // Simulate fetch for player 1 data
   useEffect(() => {
-    // Simulate fetch for player 1 data
-      setPlayer1(user?.username ?? "");
-      setIsPlayer1Loading(false);
+    player1Field.setValue(user?.username ?? '');
+    setIsPlayer1Loading(false);
   }, [user]);
 
-  const formFilled = player2.trim() !== "";
+  const aliasDuplicate =
+    player1Field.value.trim() !== '' &&
+    player2Field.value.trim() !== '' &&
+    player1Field.value.trim().toLowerCase() === player2Field.value.trim().toLowerCase();
+
+  const formFilled =
+    player1Field.value.trim() !== '' &&
+    player2Field.value.trim() !== '' &&
+    !player1Field.error &&
+    !player2Field.error &&
+    !aliasDuplicate;
 
   return (
     <div className="flex flex-col items-center p-8 space-y-6">
       <div>
         <h3 className="font-semibold text-center">Choose players</h3>
 
-        {/* Player 1 input - fetched and editable */}
         <GenericInput
           type="text"
           placeholder="Player 1"
-          value={player1}
-          onFilled={setPlayer1}
+          value={player1Field.value}
+          onFilled={player1Field.onFilled}
+          onBlur={player1Field.onBlur}
+          errorMessage={
+            player1Field.error || 
+            (aliasDuplicate ? 'Player aliases must be different' : '')}
           disabled={isPlayer1Loading}
           showEditIcon={true}
         />
 
-        {/* Player 2 type selection */}
         <div className="flex flex-wrap justify-center gap-6 mt-4">
           <GenericButton
             className={`generic-button ${player2Type === "registered" ? "" : "unclicked-button"}`}
@@ -60,22 +74,25 @@ const ChoosePlayersPage: React.FC = () => {
           />
         </div>
 
-        {/* Player 2 input - active only after choosing type */}
-        {player2Type && ( //  conditionally render the Player 2
-        <div className="mt-4">
-        <GenericInput
-          type="text"
-          placeholder="Player 2"
-          value={player2}  
-          onFilled={setPlayer2}
-          disabled={player2Type === null}
-          showEditIcon={true} // <-- Always show edit icon if value is present
-        />
-      </div>
-    )}
+        {player2Type && (
+          <div className="mt-4">
+            <GenericInput
+              type="text"
+              placeholder="Player 2"
+              value={player2Field.value}
+              onFilled={player2Field.onFilled}
+              onBlur={player2Field.onBlur}
+              errorMessage={
+                player2Field.error ||
+                (aliasDuplicate ? 'Player aliases must be different' : '')
+              }
+              disabled={player2Type === null}
+              showEditIcon={true}
+            />
+          </div>
+        )}
       </div>
 
-      {/* Bottom buttons */}
       <div className="flex flex-wrap justify-center gap-6 mt-6">
         <GenericButton
           className="generic-button"
