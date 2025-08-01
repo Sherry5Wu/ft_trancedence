@@ -33,3 +33,10 @@ export const isValidPin = (pin: string): boolean => {
     const regex = /^\d{4}$/;
     return regex.test(pin);
   };
+
+// Ensures the tournament title is 1–32 characters long and includes only
+// uppercase or lowercase letters and digits (no spaces or special characters)
+export const isValidTitle = (title: string): boolean => {
+  const regex = /^[a-zA-Z0-9]{1,32}$/;
+  return regex.test(title);
+};
