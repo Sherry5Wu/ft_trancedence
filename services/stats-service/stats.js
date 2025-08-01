@@ -47,10 +47,23 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS scores (
     player_id TEXT PRIMARY KEY,
     player_name TEXT NOT NULL,
-    elo_score INTEGER DEFAULT 1000
+    elo_score INTEGER DEFAULT 1000,
+    games_played INTEGER NOT NULL,
+    games_won INTEGER NOT NULL,
+    games_lost INTEGER NOT NULL
   )
 `).run();
 
+// Creating rivals table
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS rivals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id TEXT NOT NULL,
+    rival_id TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(player_id, rival_id)
+  )
+`).run();
 
 // JWT verification middleware - SIMPLE MOCK
 const requireAuth = async (request, reply) => {
@@ -65,6 +78,75 @@ const requireAuth = async (request, reply) => {
     request.id = request.headers['x-test-user-id'];
   }
 };
+
+fastify.get('/rivals/:player_id', (request, reply) => {
+  const { player_id } = request.params;
+  try {
+    const stmt = db.prepare('SELECT * FROM rivals WHERE player_id = ?');
+    const rows = stmt.all(player_id);
+    reply.send(rows);
+  }
+  catch (err)
+  {
+     reply.status(500).send({ error: err.message });
+  }
+});
+
+fastify.post('/rivals', { preHandler: requireAuth }, (request, reply) => {
+  const player_id = request.id;
+  const { rival_id } = request.body;
+  
+  if (!rival_id) {
+    return reply.status(400).send({ error: 'Rival id is required' });
+  }
+  if (player_id === rival_id) {
+    return reply.status(400).send({ error: 'Cannot add yourself as rival' });
+  }
+  
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO rivals (player_id, rival_id)
+      VALUES (?, ?)
+    `);
+    const result = stmt.run(player_id, rival_id);
+    reply.send({ 
+      id: result.lastInsertRowid,
+      player_id, 
+      rival_id,
+      message: 'Rival added successfully'
+    });
+  }
+  catch (err) {
+    // UNIQUE constraint violation
+    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      reply.status(409).send({ error: 'This rival already exists' });
+    } else {
+      reply.status(500).send({ error: err.message });
+    }
+  }
+});
+
+// DELETE rival
+fastify.delete('/rivals/:rival_id', { preHandler: requireAuth }, (request, reply) => {
+  const player_id = request.id;
+  const { rival_id } = request.params;
+  
+  try {
+    const stmt = db.prepare(`
+      DELETE FROM rivals 
+      WHERE player_id = ? AND rival_id = ?
+    `);
+    const result = stmt.run(player_id, rival_id);
+    if (result.changes === 0) {
+      reply.status(404).send({ error: 'Rival not found' });
+    } else {
+      reply.send({ message: 'Rival removed successfully' });
+    }
+  }
+  catch (err) {
+    reply.status(500).send({ error: err.message });
+  }
+});
 
 // Yksinkertainen reitti, joka palauttaa kaikki pisteet
 fastify.get('/scores', (request, reply) => {
@@ -86,7 +168,7 @@ fastify.get('/scores/:player_id', (request, reply) => {
     if (row) {
       reply.send(row);
     } else {
-      reply.status(404).send({ error: 'Pelaajaa ei löytynyt' });
+      reply.status(404).send({ error: 'Player was not found' });
     }
   } catch (err) {
     reply.status(500).send({ error: err.message });
@@ -97,19 +179,19 @@ fastify.get('/scores/:player_id', (request, reply) => {
 fastify.post('/scores', { preHandler: requireAuth }, (request, reply) => {
   // TURVALLISUUS: player_id vain tokenista, player_name voi tulla frontendistä
   const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
-  const { player_name, elo_score } = request.body;  // Display name voi vaihtua
+  const { player_name, elo_score, games_played = 0, games_won = 0, games_lost = 0 } = request.body;  // Display name voi vaihtua
 
   if (!player_name || !elo_score) {
-    return reply.status(400).send({ error: 'Player name ja elo score vaaditaan' });
+    return reply.status(400).send({ error: 'Player name and elo score is required' });
   }
 
   try {
     const stmt = db.prepare(`
-      INSERT INTO scores (player_id, player_name, elo_score)
-      VALUES (?, ?, ?)
+      INSERT INTO scores (player_id, player_name, elo_score, games_played, games_won, games_lost)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
-    stmt.run(player_id, player_name, elo_score);
-    reply.send({ player_id, player_name, elo_score });
+    stmt.run(player_id, player_name, elo_score, games_played, games_won, games_lost);
+    reply.send({ player_id, player_name, elo_score, games_played, games_won, games_lost });
   } catch (err) {
     reply.status(500).send({ error: err.message });
   }
@@ -133,26 +215,24 @@ function eloProbability(rating1, rating2)
   return 1 / (1 + Math.pow(10, (rating1 - rating2) / 400));
 }
 
-function updatePlayerElo(playerId, newScore, playerName) {
+function updatePlayerScoreTable(playerId, newScore, playerName, gamesPlayed, gamesLost, gamesWon) {
   try 
   {
-    const stmt = db.prepare(`UPDATE scores SET elo_score = ? WHERE player_id = ?`);
-    const result = stmt.run(Math.round(newScore), playerId);
-    if (result.changes === 0) 
-    {
-      const insertStmt = db.prepare(`
-        INSERT INTO scores (player_id, player_name, elo_score)
-        VALUES (?, ?, ?)
+    const insertStmt = db.prepare(`
+        INSERT INTO scores (player_id, player_name, elo_score, games_played, games_lost, games_won)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(player_id) DO UPDATE SET
+        player_name = excluded.player_name,
+        elo_score = excluded.elo_score,
+        games_played = excluded.games_played,
+        games_lost = excluded.games_lost,
+        games_won = excluded.games_won
       `);
-      insertStmt.run(playerId, playerName, Math.round(newScore));
-      console.log(`✅ Created new player: ${playerId} (${playerName}) with elo ${Math.round(newScore)}`);
-    } 
-    else 
-    {
-      console.log(`✅ Updated player: ${playerId} to elo ${Math.round(newScore)}`);
-    }
-  } catch(err) {
-    console.log('Error updating elo score:', err);
+      insertStmt.run(playerId, playerName, Math.round(newScore), gamesPlayed, gamesLost, gamesWon);
+      console.log(`✅ Updated or created player: ${playerId} (${playerName})`);
+  } 
+  catch(err) {
+    console.log('Error updating player score table:', err);
   }
 }
 
@@ -171,9 +251,6 @@ function calculateEloScore(player_id1, player_id2, outcome, player1_name, player
 
   let newRating1 = rating1 + K * (outcome - P1);
   let newRating2 = rating2 + K * ((1 - outcome) - P2);
-  // updates the player elo scores
-  updatePlayerElo(player_id1, newRating1, player1_name);
-  updatePlayerElo(player_id2, newRating2, player2_name);
   return {
       player1: { name: player1_name, old: rating1, new: Math.round(newRating1) },
       player2: { name: player2_name, old: rating2, new: Math.round(newRating2) }
@@ -236,6 +313,57 @@ fastify.get('/match_history/:player_id', (request, reply) => {
   }
 });
 
+function calculateGamesPlayed(player_id) {
+  try {
+     const stmt = db.prepare(`
+      SELECT * FROM match_history
+      WHERE player_id = ?
+      ORDER BY played_at DESC
+    `);
+    const rows = stmt.all(player_id);
+    return rows.length;
+  }
+  catch(err) {
+    console.error('Error calculating gamesplayed:', err);
+    return 0;
+  }
+}
+
+function calculateGamesWon(player_id) {
+  try {
+     const stmt = db.prepare(`
+      SELECT * FROM match_history
+      WHERE player_id = ?
+      ORDER BY played_at DESC
+    `);
+    const rows = stmt.all(player_id);
+    const gamesWon = rows.filter(row => row.result === 'win');
+    return gamesWon.length;
+  }
+  catch(err) {
+    console.error('Error calculating gamesWon:', err);
+    return 0;
+  }
+}
+
+function calculateGamesLost(player_id) {
+  try {
+     const stmt = db.prepare(`
+      SELECT * FROM match_history
+      WHERE player_id = ?
+      ORDER BY played_at DESC
+    `);
+    const rows = stmt.all(player_id);
+    const gamesLost = rows.filter(row => row.result === 'loss');
+    return gamesLost.length;
+  }
+  catch(err) {
+    console.error('Error calculating gamesLost:', err);
+    return 0;
+  }
+}
+
+
 
 // Reitti uuden matchin lisäämiseen (POST JSON-bodyllä)
 fastify.post('/match_history', { preHandler: requireAuth }, (request, reply) => {
@@ -262,14 +390,30 @@ fastify.post('/match_history', { preHandler: requireAuth }, (request, reply) => 
     else
       outcome = 0.5;
 
+    const gamesPlayed = calculateGamesPlayed(player_id);
+    const gamesLost = calculateGamesLost(player_id);
+    const gamesWon = calculateGamesWon(player_id);
     const eloChanges = calculateEloScore(player_id, opponent_id, outcome, player_name, opponent_name);
+    const opponentGamesPlayed = calculateGamesPlayed(opponent_id);
+    const opponentGamesLost = calculateGamesLost(opponent_id);
+    const opponentGamesWon = calculateGamesWon(opponent_id);
+    updatePlayerScoreTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon);
+    updatePlayerScoreTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon);
     reply.send({ 
       id: resultDb.lastInsertRowid, 
       player_id, 
       player_name, 
       opponent_name, 
       result,
-      eloChanges});
+      gamesPlayed,
+      gamesLost,
+      gamesWon,
+      opponentGamesPlayed,
+      opponentGamesLost,
+      opponentGamesWon,
+      eloChanges,
+      message: 'Match added to history successfully'
+    });
   } catch (err) {
     reply.status(500).send({ error: err.message });
   }
