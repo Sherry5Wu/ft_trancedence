@@ -1,4 +1,5 @@
 // src/App.tsx
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
@@ -19,6 +20,9 @@ import ChangePINPage from '../pages/User/UserChangePIN';
 import TournamentsPage from '../pages/Tournament/TournamentMain';
 import NewTournamentPage from '../pages/Tournament/TournamentNew';
 import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
+import GamePage from '../pages/Game';
+import LeaderboardPage from '../pages/Leaderboard';
+import RivalsPage from '../pages/Rivals/RivalsMain';
 
 const App = () => {
   return (
@@ -47,6 +51,9 @@ const App = () => {
             <Route path="/tournaments" element={<TournamentsPage />} />
             <Route path="/tournaments/new" element={<NewTournamentPage />} />
             <Route path="/tournaments/new/players" element={<TournamentPlayers />} />
+            <Route path="/game" element={<GamePage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/rivals" element={<RivalsPage />} />
           </Routes>
         </main>
 

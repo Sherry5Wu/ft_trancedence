@@ -44,7 +44,7 @@ const HomeUserPage = () => {
           icon={<img src={PlayIcon} alt="Play icon" />}
           hoverLabel="PLAY"
           onClick={() => 
-            navigate('/choose-players')} // UPDATE TO vavigate('path')
+            navigate('/choose-players')}
         />
         <GenericButton
           className="round-icon-button"
@@ -52,7 +52,7 @@ const HomeUserPage = () => {
           icon={<img src={TournamentIcon} alt="Tournament icon" />}
           hoverLabel="TOURNAMENT"
           onClick={() => 
-            navigate('/tournamets')} // UPDATE TO vavigate('path')
+            navigate('/tournaments')}
         />
         <GenericButton
           className="round-icon-button"
@@ -60,7 +60,7 @@ const HomeUserPage = () => {
           icon={<img src={RivalsIcon} alt="Rivals icon" />}
           hoverLabel="RIVALS"
           onClick={() => 
-            alert('Go to Rivals Page!')}  // UPDATE TO vavigate('path')
+            navigate('/rivals')}
         />
         <GenericButton
           className="round-icon-button"
@@ -68,7 +68,7 @@ const HomeUserPage = () => {
           icon={<img src={LeaderboardIcon} alt="Leaderboard icon" />}
           hoverLabel="LEADERBOARD"
           onClick={() => 
-            alert('Go to Leaderboard Page!')}  // UPDATE TO vavigate('path')
+            navigate('/leaderboard')}
         />
 
       {/* Arrow down button */}

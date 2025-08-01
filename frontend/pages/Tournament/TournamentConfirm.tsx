@@ -63,7 +63,7 @@ const TournamentPlayersPage: React.FC = () => {
           className="generic-button"
           text="START"
           onClick={() => {
-            navigate('/ping-pong');
+            navigate('/game');
           }}
         />
       </div>

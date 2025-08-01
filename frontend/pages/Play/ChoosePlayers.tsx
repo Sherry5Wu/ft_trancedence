@@ -103,7 +103,7 @@ const ChoosePlayersPage: React.FC = () => {
           className="generic-button"
           text="PLAY"
           disabled={!formFilled}
-          onClick={() => navigate('/ping-pong')}
+          onClick={() => navigate('/game')}
         />
       </div>
     </div>
