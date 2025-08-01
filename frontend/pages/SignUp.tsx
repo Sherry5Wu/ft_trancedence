@@ -8,7 +8,6 @@ import { ToggleButton } from '../components/ToggleButton';
 import { useValidationField } from '../hooks/useValidationField';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 
-
 const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
 

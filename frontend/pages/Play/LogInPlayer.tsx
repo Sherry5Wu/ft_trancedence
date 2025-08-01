@@ -6,32 +6,41 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput} from "../../components/GenericInput";
-
+import { useValidationField } from '../../hooks/useValidationField';
+import { isValidUsername, isValidPin } from '../../utils/Validation';
 
 const LogInPlayerPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [name, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const formFilled = name.trim() !== "" && password.trim() !== "";
+  const usernameField = useValidationField('', isValidUsername);
+  const pinField = useValidationField('', isValidPin);
+
+  const formFilled =
+    usernameField.value !== '' &&
+    pinField.value !== '';
 
   return (
     <div className="flex flex-col items-center p-8 space-y-6">
       <div>
-        {/* Page title */}
-        <h3 className="font-semibold text-center">
-          Log in a player</h3>
 
-      {/* User inputs */}
+      <h3 className="font-semibold text-center">Log in a player</h3>
+
       <GenericInput
-        type="text"
+        type="username"
         placeholder="Username"
-        onFilled={setUsername}
+        value={usernameField.value}
+        onFilled={usernameField.onFilled}
+        onBlur={usernameField.onBlur}
+        errorMessage={usernameField.error}
       />
+
       <GenericInput
         type="password"
         placeholder="Player PIN"
-        onFilled={setPassword}
+        value={pinField.value}
+        onFilled={pinField.onFilled}
+        onBlur={pinField.onBlur}
+        errorMessage={pinField.error}
       />
 
       {/* OK Button */}

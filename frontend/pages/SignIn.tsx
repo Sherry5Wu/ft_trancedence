@@ -15,7 +15,9 @@ const SignInPage: React.FC = () => {
   const usernameField = useValidationField('', isValidUsername);
   const passwordField = useValidationField('', isValidPassword);
 
-  const formFilled = usernameField.value !== '' && passwordField.value !== '';
+  const formFilled =
+    usernameField.value !== '' &&
+    passwordField.value !== '';
 
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">

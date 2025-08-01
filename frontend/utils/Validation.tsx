@@ -1,4 +1,4 @@
-// utils/validation.tsx
+// utils/Validation.tsx
 
 // Checks if the username is 6–20 characters, starts with a letter,
 // and only contains letters, numbers, dots (.), underscores (_), or hyphens (-)
