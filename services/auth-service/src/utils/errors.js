@@ -86,7 +86,7 @@ class TokenRevokedError extends AuthError {
 /**
  * Fastify plugin to decorate error classes and set a global error handler.
  */
-export default fp(async (fastify) => {
+const errorPlugin = fp(async (fastify) => {
   // Decorate Fastify instance with error constructors
   fastify.decorate('errors', {
     AuthError,
@@ -127,3 +127,25 @@ export default fp(async (fastify) => {
   });
 });
 
+export {
+  AuthError,
+  ValidationError,
+  InvalidCredentialsError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+  TokenExpiredError,
+  TokenRevokedError
+};
+
+export default errorPlugin;
+
+/**
+ * Export error classes/functions for service files (services, routes, etc.) —
+ * so in your business logic you can do things like throw new NotFoundError() or
+ * throw new ConflictError(). This helps you express precise errors and handle them
+ * clearly.
+
+   Export the plugin -- Just tell Fastify how to handle those error classes — mapping
+   them to HTTP status codes, formatting error responses, logging, etc..
+ */

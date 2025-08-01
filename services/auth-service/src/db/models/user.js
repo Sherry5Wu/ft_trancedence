@@ -42,12 +42,12 @@ export default (sequelize) => {
       }
     },
     role: {
-      type: DataTypes.EUNM('user', 'admin'), // add role with ENUM
+      type: DataTypes.ENUM('user', 'admin'), // add role with ENUM
       allowNull: false,
       defaultValue: 'user',
     },
   }, {
-    // timestamps: ture, it tells Sequelize to add createdAt and updatedAt two columns
+    // timestamps: true, it tells Sequelize to add createdAt and updatedAt two columns
     // into User table
     timestamps: true,
     // indexes option in a Sequelize model definition tells sequelize to add indexed to
@@ -76,7 +76,7 @@ export default (sequelize) => {
 
   User.associate = (models) => {
     User.hasMany(models.RefreshToken, {
-      foreignkey: 'userId',
+      foreignKey: 'userId',
       as: 'refreshTokens',
       onDelete: 'CASCADE', // if user is deleted, delete all tokens
     });

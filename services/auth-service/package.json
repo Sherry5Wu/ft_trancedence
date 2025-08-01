@@ -13,20 +13,24 @@
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch"
   },
   "dependencies": {
-    "@fastify/jwt": "^6.0.0",
-    "@fastify/oauth2": "^7.0.0",
-    "bcrypt": "^5.1.0",
-    "dotenv": "^17.2.0",
+    "@fastify/jwt": "^9.1.0",
+    "@fastify/oauth2": "^8.1.2",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
     "fastify": "^5.4.0",
-    "fastify-plugin": "^4.0.0",
-    "sequelize": "^6.0.0",
-    "sqlite3": "^5.1.6",
-    "speakeasy": "^2.0.0"
+    "fastify-plugin": "^4.5.1",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
+    "speakeasy": "^2.0.0",
+    "@fastify/swagger": "^9.5.0",
+    "@fastify/swagger-ui": "^5.2.3",
+    "qrcode": "^1.5.4",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.0",
+    "nodemon": "^2.0.20",
     "jest": "^30.0.5",
-    "supertest": "^6.0.0",
+    "supertest": "^6.3.3",
     "babel-jest": "^29.0.0",
     "@babel/preset-env": "^7.22.0"
   }

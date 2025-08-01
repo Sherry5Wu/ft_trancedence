@@ -21,7 +21,6 @@ import {
   TokenRevokedError,
   NotFoundError,
 } from '../utils/errors.js';
-import user from '../db/models/user.js';
 
 const { RefreshToken } = models;
 
@@ -110,7 +109,7 @@ async function rotateTokens(token, meta = {}) {
 
   // revoke old token
   await RefreshToken.update(
-    { revokedAt: new Date(), replaceByToken: 'rotating' },
+    { revokedAt: new Date(), replacedByToken: 'rotating' },
     { where: { token } },
   );
 
@@ -126,7 +125,7 @@ async function rotateTokens(token, meta = {}) {
 
   // update replacedBytoken reference
   await RefreshToken.update(
-    { replaceByToken: refreshToken },
+    { replacedByToken: refreshToken },
     { where: { token } }
   );
   return { accessToken, refreshToken };

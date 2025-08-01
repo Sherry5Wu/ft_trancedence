@@ -11,7 +11,7 @@ import {
   ValidationError,
 } from '../utils/errors.js';
 
-const { user } = models;
+const { User } = models;
 
 /**
  * Generate a TOTP secret and backup codes for a user, store in DB.
@@ -23,7 +23,7 @@ async function generateTwoFASetup(userId) {
   if (!user) throw new NotFoundError('user not found');
 
   // Generate TOTP secret
-  const secret = speakeasy.generateSecret({ name: 'ft_transcendence (${user.email})' });
+  const secret = speakeasy.generateSecret({ name: `ft_transcendence (${user.email})` });
   const otpauthUrl = secret.otpauth_url;
   const base32Secret = secret.base32;
 
@@ -42,7 +42,7 @@ async function generateTwoFASetup(userId) {
  * @param {string} token - 6-digit TOTP code
  * @returns {Promise<boolean>}
  */
-async function veriifyTwoFAToken(userId, token){
+async function verifyTwoFAToken(userId, token){
   const user =  await User.scope('withSecrets').findByPk(userId);
   if (!user) throw new NotFoundError('User not found');
   if (!user.twoFASecret) throw new ValidationError('2FA not enabled for this user');
@@ -98,13 +98,19 @@ async function consumeBackupCode(userId, code){
 async function disableTwoFA(userId) {
   const user = await User.findByPk(userId);
   if (!user) throw new NotFoundError('User not found');
-  await User.update({ twoFASecret: null, backupCodes: null });
+  await user.update({ twoFASecret: null, backupCodes: null });
+}
+
+async function getTwoFAStatus(userId) {
+  const user = await User.findByPk(userId);
+  return !!user?.twoFASecret;
 }
 
 export {
-  generateTwoFAQrCode,
-  veriifyTwoFAToken,
+  generateTwoFASetup,
+  verifyTwoFAToken,
   generateTwoFAQrCode,
   consumeBackupCode,
   disableTwoFA,
+  getTwoFAStatus,
 }

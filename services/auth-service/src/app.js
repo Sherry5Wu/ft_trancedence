@@ -1,69 +1,101 @@
 /**
- * Purpose of app.js
- * The app.js file is the main entry point of auth-service server. When the container
- * starts (after dependencies are installed and the setup is complete), this is the
- * file that gets executed to start your authentication service
+ * Main entry point for the Auth Service.
+ * Initializes Fastify, loads environment variables, sets up plugins, routes, and starts the server.
  */
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 import Fastify from 'fastify';
-import rateLimit from '@fastify/rate-limit';
-import helmet from '@fastify/helmet';
-import jwt from '@fastify/jwt';
-import { sequelize, initDB } from './db/index.js';
+import path from 'path';
+import dotenv from 'dotenv';
+import swagger from '@fastify/swagger';
+import swaggerUI from '@fastify/swagger-ui';
 
-// Initialize Fastify
-const fastify = Fastify({
-  logger: true,
-  trustProxy: true // Enable if behind a proxy (e.g., Nginx)
-});
+// Load environment variables
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-// ---Rate Limiting---
-await fastify.register(rateLimit, {
-  global: true, // Applies to all routes
-  max: 100, // Adjusted to 100 requests/minute
-  timeWindow: '1 minute',
-  ban: 5, // Temporary ban after exceeding limits
-  skipOnError: false,
-  keyGenerator: (req) => req.ip
-});
+// Import DB and utils
+import { initDB, models } from './db/index.js';
+import errorPlugin from './utils/errors.js';
 
-// --- Security Headers---
-await fastify.register(helmet, {
-  contentSecurityPolicy: false
-});
-
-// ---JWT Authentication---
-await fastify.register(jwt, {
-  secret: process.env.JWT_SECRET,
-  cookie: {
-    cookieName: 'token',
-    signed: true
-  }
-});
-
-// Register routes
+// Import routes
+import authRoutes from './routes/auth.routes.js';
+import twoFARoutes from './routes/2fa.routes.js';
 import googleAuthRoutes from './routes/google-auth.js';
-import jwtRoutes from './routes/jwt.js';
-import twoFARoutes from './routes/2fa.js';
+import userRoutes from './routes/user.routes.js';
+import healthRoutes from './routes/health.routes.js';
 
-await fastify.register(googleAuthRoutes, { prefix: '/auth' });
-await fastify.register(jwtRoutes, { prefix: '/auth' });
-await fastify.register(twoFARoutes, { prefix: '/auth' });
+// Import authenticate plugin and schemas
+import authenticate from './utils/authenticate.js';
+import userSchema from './schemas/user.schema.js';
 
-// --- Database Initialization & Server Start ---
-try {
-  await initDB();
-  fastify.log.info('Database initialized');
+async function buildApp() {
+  const app = Fastify({ logger: true });
 
-  const address = await fastify.listen({ // the returned address is like:  http://127.0.0.1:3001
-    port: process.env.PORT || 3001,
-    host: '0.0.0.0',
+  // Add JSON schemas for validation and serialization
+  app.addSchema(userSchema);
+
+  // Initialize database with error handling
+  try {
+    await initDB();
+    app.log.info('Database initialized successfully');
+  } catch (err) {
+    app.log.error('Database initialization failed:', err);
+    process.exit(1);
+  }
+
+  // Decorate Fastify instance with DB models
+  app.decorate('models', models);
+
+  // Register plugins and routes with async/await to catch errors early
+  app.register(errorPlugin);
+
+  await app.register(authenticate);
+
+  // Swagger/OpenAPI configuration
+  await app.register(swagger, {
+    openapi: {
+      info: {
+        title: 'Auth Service API',
+        description: 'Authentication and Authorization Service for ft_transcendence',
+        version: '1.0.0',
+      },
+      servers: [
+        { url: `http://localhost:${process.env.PORT || 3001}`, description: 'Local server' },
+      ],
+    },
   });
-  fastify.log.info(`Auth service ready at ${address}`); // here is backticks'`'
-} catch (err) {
-  fastify.log.error('Database sync failed:', err);
-  process.exit(1);
+
+  await app.register(swaggerUI, {
+    routePrefix: '/docs',
+    uiConfig: {
+      docExpansion: 'full',
+      deepLinking: false,
+    },
+  });
+
+  app.register(authRoutes);
+  app.register(twoFARoutes);
+  app.register(googleAuthRoutes, { prefix: '/auth/google' });
+  // Register routes with prefixes
+  // app.register(authRoutes, { prefix: '/auth' });
+  // app.register(twoFARoutes, { prefix: '/2fa' });
+  // app.register(googleAuthRoutes, { prefix: '/auth/google' });
+  app.register(userRoutes);
+  app.register(healthRoutes);
+
+  // for testing
+  app.log.info(app.printRoutes());// only for testing
+
+  return app;
 }
+
+(async () => {
+  try {
+    const app = await buildApp();
+    const port = process.env.PORT || 3001;
+    await app.listen({ port, host: '0.0.0.0' });
+    app.log.info(`Server listening on http://localhost:${port}`);
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+})();

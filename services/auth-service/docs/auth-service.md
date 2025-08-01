@@ -32,9 +32,11 @@ auth-service/
 ├── src/
 │   ├── app.js    # The main entry point of auth-service. Fastify server setup + plugin registration
 │   ├── routes/           # Split routes by feature
-│   │   ├── google-auth.js  # Google OAuth routes
-│   │   ├── jwt.js         # Login/token routes
-│   │   └── 2fa.js        # 2FA routes
+│   │   ├── google-auth.js  # Google OAuth endpoints
+│   │   ├── auth.routes.js  # Core auth: register, login, logout, refresh token
+│   │   ├── health.routes.js   # Service health check (useful in microservices)
+│   │   ├── user.routes.js   # For profile management (view/update user info)
+│   │   └── 2fa.routes.js   # Two-Factor Authentication endpoints
 │   ├── services/         # Business logic
 │   │   ├── auth.service.js # Core auth logic
 │   │   ├── jwt.service.js  # JWT generation/validation
@@ -42,6 +44,7 @@ auth-service/
 │   ├── db/
 │   │   ├── index.js      # DB connection
 │   │   └── models/       # SQLite schemas
+│   │       ├── refreshToken.js
 │   │       └── user.js
 │   └── utils/           # Reusable helpers
 │       ├── crypto.js    # Password hashing
