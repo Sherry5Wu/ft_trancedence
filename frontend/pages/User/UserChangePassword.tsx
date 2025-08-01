@@ -4,40 +4,70 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
+import { CloseButton } from '../../components/CloseButton';
+import { useValidationField } from '../../hooks/useValidationField';
+import { isValidPassword } from '../../utils/Validation';
 
 const ChangePasswordPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const passwordField = useValidationField('', isValidPassword);
+  const newPasswordField = useValidationField('', isValidPassword);
+
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+  const newPasswordIsSame =
+    passwordField.value !== '' &&
+    newPasswordField.value !== '' &&
+    passwordField.value === newPasswordField.value;
+
+  const passwordMismatch =
+    newPasswordField.value &&
+    confirmNewPassword &&
+    newPasswordField.value !== confirmNewPassword;
 
   const formFilled =
-    currentPassword.trim() !== '' &&
-    newPassword.trim() !== '' &&
-    confirmPassword.trim() !== '';
-
+    passwordField.value !== '' &&
+    newPasswordField.value !== '' &&
+    confirmNewPassword !== '' &&
+    !passwordField.error &&
+    !newPasswordField.error &&
+    !passwordMismatch &&
+    !newPasswordIsSame;
+  
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
+      <CloseButton className="ml-auto" />
+
       <h3 className="font-semibold text-center">Change password</h3>
 
       <GenericInput
         type="password"
-        value={currentPassword}
-        placeholder="Current password"
-        onFilled={setCurrentPassword}
+        placeholder="Password"
+        value={passwordField.value}
+        onFilled={passwordField.onFilled}
+        onBlur={passwordField.onBlur}
+        errorMessage={passwordField.error}
       />
+
       <GenericInput
         type="password"
-        value={newPassword}
         placeholder="New password"
-        onFilled={setNewPassword}
+        value={newPasswordField.value}
+        onFilled={newPasswordField.onFilled}
+        onBlur={newPasswordField.onBlur}
+        errorMessage={
+          newPasswordField.error ||
+          (newPasswordIsSame ? 'New password must be different from current password' : '')
+        }
       />
+
       <GenericInput
         type="password"
-        value={confirmPassword}
         placeholder="Confirm new password"
-        onFilled={setConfirmPassword}
+        value={confirmNewPassword}
+        onFilled={setConfirmNewPassword}
+        errorMessage={passwordMismatch ? "New passwords do not match" : ''}
       />
 
       <GenericButton
@@ -46,7 +76,7 @@ const ChangePasswordPage: React.FC = () => {
         disabled={!formFilled}
         onClick={() => {
             alert('Password updated');
-            navigate('/settings'); // or navigate(-1)
+            navigate('/settings');
         }}
       />
     </div>

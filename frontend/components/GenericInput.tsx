@@ -1,46 +1,6 @@
-// import React, { useState, ChangeEvent } from "react";
-
-// // interface GenericInputProps {
-//   type?: string; // Allows types like "text", "email", "password"
-//   placeholder: string;
-//   onFilled: (value: string) => void;
-//   value?: string;
-//   required?: boolean;
-//   disabled?: boolean;
-// }
-
-// export const GenericInput = ({
-//   type = "text",
-//   placeholder,
-//   onFilled,
-//   value = "",
-//   required = false,
-//   disabled = false  
-// }: GenericInputProps) => {
-//   const [inputValue, setInputValue] = useState(value);
-
-//   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-//     const newValue = e.target.value;
-//     setInputValue(newValue);
-//     onFilled(newValue);
-//   };
-
-//   return (
-//     <input
-//       type={type}
-//       value={inputValue}
-//       onChange={handleChange}
-//       placeholder={placeholder}
-//       required={required}
-//       disabled={disabled}  
-//       className={`generic-input ${inputValue ? "filled" : ""}`}
-//     />
-//   );
-// };
-
-
-
+// components/GenericInput.tsx
 // controlled component
+
 import React, { ChangeEvent } from "react";
 import ModifyIcon from "../assets/noun-modify-4084225.svg";
 
@@ -48,10 +8,12 @@ interface GenericInputProps {
   type?: string;
   placeholder: string;
   onFilled: (value: string) => void;
-  value: string; // 👈 now required
+  value: string;
   required?: boolean;
   disabled?: boolean;
   showEditIcon?: boolean;
+  errorMessage?: string;
+  onBlur?: () => void;
 }
 
 export const GenericInput = ({
@@ -61,98 +23,46 @@ export const GenericInput = ({
   value,
   required = false,
   disabled = false,
-  showEditIcon = false
+  showEditIcon = false,
+  errorMessage = '',
+  onBlur,
 }: GenericInputProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    onFilled(newValue); // updates parent state
+    onFilled(e.target.value);
   };
 
-const shouldShowIcon = showEditIcon && value.trim() !== "";
+  const inputId = placeholder.toLowerCase().replace(/\s+/g, '-');
+  const shouldShowIcon = showEditIcon && value.trim() !== "";
 
   return (
     <div className="relative w-full max-w-md mx-auto">
       <input
+        id={inputId}
         type={type}
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
         required={required}
         disabled={disabled}
+        aria-invalid={!!errorMessage}
+        aria-describedby={errorMessage ? `${inputId}-error` : undefined}
         className={`generic-input ${value ? "filled" : ""} pr-10`}
+        onBlur={onBlur}
       />
       {shouldShowIcon && (
         <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
-          <img
-            src={ModifyIcon}
-            alt="Edit"
-            className="w-4 h-4"
-          />
+          <img src={ModifyIcon} alt="Edit" className="w-4 h-4" />
         </div>
+      )}
+      {errorMessage && (
+        <p
+          id={`${inputId}-error`}
+          className="text-red-500 text-xs mt-1"
+          role="alert"
+        >
+          {errorMessage}
+        </p>
       )}
     </div>
   );
 };
-
-
-
-
-// import { useState, useEffect, ChangeEvent } from "react";
-// import ModifyIcon from "../assets/noun-modify-4084225.svg"
-
-// interface GenericInputProps {
-//   type?: string;
-//   placeholder: string;
-//   onFilled: (value: string) => void;
-//   value?: string;
-//   required?: boolean;
-//   disabled?: boolean;
-//   showEditIcon?: boolean; // NEW PROP
-// }
-
-// export const GenericInput = ({
-//   type = "text",
-//   placeholder,
-//   onFilled,
-//   value = "",
-//   required = false,
-//   disabled = false,
-//   showEditIcon = false
-// }: GenericInputProps) => {
-//   const [inputValue, setInputValue] = useState(value);
-
-//   useEffect(() => {
-//     setInputValue(value); // Sync when parent updates value
-//   }, [value]);
-
-//   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-//     const newValue = e.target.value;
-//     setInputValue(newValue);
-//     onFilled(newValue);
-//   };
-
-//   const shouldShowIcon = showEditIcon && inputValue.trim() !== "";
-
-//   return (
-//     <div className="relative w-full">
-//       <input
-//         type={type}
-//         value={inputValue}
-//         onChange={handleChange}
-//         placeholder={placeholder}
-//         required={required}
-//         disabled={disabled}
-//         className={`generic-input ${inputValue ? "filled" : ""} pr-10`}
-//       />
-//      {shouldShowIcon && (
-//         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500">
-//           <img
-//             src={ModifyIcon}
-//             alt="Edit"
-//             className="w-4 h-4"
-//           />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
