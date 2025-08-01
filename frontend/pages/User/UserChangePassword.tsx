@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
+import { CloseButton } from '../../components/CloseButton';
 import { useValidationField } from '../../hooks/useValidationField';
 import { isValidPassword } from '../../utils/Validation';
 
@@ -36,6 +37,8 @@ const ChangePasswordPage: React.FC = () => {
   
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
+      <CloseButton className="ml-auto" />
+
       <h3 className="font-semibold text-center">Change password</h3>
 
       <GenericInput
