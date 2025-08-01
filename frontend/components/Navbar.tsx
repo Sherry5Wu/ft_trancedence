@@ -74,7 +74,6 @@ export const Navbar = () => {
         </div>
         <div className='flex flex-1 justify-center mb-5' >
             <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
-            {/* CHANGE THIS TO A LINK LATER */}
         </div>
         <div className='flex flex-1 justify-end scale-110 mr-7'>
             <Menu aria-label='profile menu' Icon={user ? user.profilePic : <ProfileIcon />} elements={profileMenuItems} className='menuIcon' user={true}/>
