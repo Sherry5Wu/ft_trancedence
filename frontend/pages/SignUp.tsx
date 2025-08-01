@@ -19,8 +19,15 @@ const SignUpPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
 
-  const passwordMismatch = passwordField.value && confirmPassword && passwordField.value !== confirmPassword;
-  const pinMismatch = pinField.value && confirmPin && pinField.value !== confirmPin;
+  const passwordMismatch =
+    passwordField.value &&
+    confirmPassword &&
+    passwordField.value !== confirmPassword;
+
+  const pinMismatch =
+    pinField.value &&
+    confirmPin &&
+    pinField.value !== confirmPin;
 
   const formFilled =
     usernameField.value !== '' &&
