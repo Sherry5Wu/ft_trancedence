@@ -78,9 +78,9 @@ export const MatchHistory = ( { player1 }:  { player1: string } ) => {
                         <span className='ml-3'>{match.date}</span>
                         <span className='col-span-2 truncate flex items-center justify-center gap-2'>
                             <span className=''>{match.player1} </span> 
-                            <img src={match.player1pic} className={`h-11 w-11 rounded-full border-4 ${match.player1 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
+                            <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.player1 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
                             <span>vs</span>
-                            <img src={match.player2pic} className={`h-11 w-11 rounded-full border-4 ${match.player2 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
+                            <img src={match.player2pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.player2 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
                             <span className=''>{match.player2}</span>
                         </span> 
                         <span className=''>{match.player1score} - {match.player2score}</span>
