@@ -7,6 +7,7 @@ import { Footer } from '../components/Footer';
 import HomePage from '../pages/Home';
 import SignInPage from '../pages/SignIn';
 import SignUpPage from '../pages/SignUp';
+import CompleteProfilePage from '../pages/Registration/CompleteProfile';
 import HomeUserPage from '../pages/HomeUser';
 import Setup2faMainPage from '../pages/Auth/Setup2faMain';
 import Setup2faBackupPage from '../pages/Auth/Setup2faBackup';
@@ -38,6 +39,7 @@ const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/signup/complete-profile" element={<CompleteProfilePage />} />
             <Route path="/homeuser" element={<HomeUserPage />} /> {/* Could we have custom-login-name instead of homeuser? */}
             <Route path="/setup2fa" element={<Setup2faMainPage />} />
             <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
