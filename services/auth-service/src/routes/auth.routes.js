@@ -151,4 +151,37 @@ export default fp(async (fastify) => {
     if (!user) throw new NotFoundError('User not found');
     return user;
   });
+
+  // Token Verification for Microservices
+  fastify.post('/auth/verify-token', {
+    schema: {
+      tags: ['Auth'],
+      summary: 'Verify access token',
+      description: 'Validates JWT token for other microservices',
+      headers: {
+        type: 'object',
+        properties: {
+          authorization: { type: 'string' }
+        },
+        required: ['authorization']
+      },
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            email: { type: 'string' },
+            role: { type: 'string' }
+          }
+        }
+      }
+    }
+  }, async (req, reply) => {
+    await fastify.authenticate(req, reply);
+    return {
+      id: req.user.id,
+      email: req.user.email,
+      role: req.user.role || 'user'
+    };
+  });
 });

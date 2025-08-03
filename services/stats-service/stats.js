@@ -22,9 +22,9 @@ let db;
 
 try {
   db = new Database(dbPath);
-  fastify.log.info('Tietokanta avattu: ' + dbPath);
+  fastify.log.info('Database opened: ' + dbPath);
 } catch (err) {
-  fastify.log.error('Virhe avattaessa tietokantaa: ' + err.message);
+  fastify.log.error('Error when opening database: ' + err.message);
 }
 // Luodaan taulu, jos sitä ei ole
 db.prepare(`
@@ -65,17 +65,41 @@ db.prepare(`
   )
 `).run();
 
-// JWT verification middleware - SIMPLE MOCK
+// JWT verification middleware - MICROSERVICES AUTH
 const requireAuth = async (request, reply) => {
-  // 🧪 MOCK AUTH - Kovakoodattu käyttäjä
-  console.log('🎭 MOCK AUTH: Using test user');
-  
-  request.id = 'test-user-123';
-  request.email = 'testuser@example.com';
-  
-  // Optio: Lue käyttäjä headerista testausta varten
-  if (request.headers['x-test-user-id']) {
-    request.id = request.headers['x-test-user-id'];
+  try {
+    const authHeader = request.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return reply.status(401).send({ error: 'Missing or invalid authorization header' });
+    }
+
+    const response = await fetch('http://auth-service:3000/auth/verify-token', {
+      method: 'POST',
+      headers: {
+        'Authorization': authHeader,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Authentication failed' }));
+      return reply.status(response.status).send(errorData);
+    }
+
+    const userData = await response.json();
+    
+    request.id = userData.id;
+    request.email = userData.email;
+    request.username = userData.username;
+    
+    console.log(`✅ Authenticated user: ${userData.username} (${userData.id})`);
+    
+  } catch (error) {
+    console.error('🚨 Auth service connection error:', error.message);
+    return reply.status(503).send({ 
+      error: 'Authentication service unavailable',
+      details: error.message 
+    });
   }
 };
 
@@ -148,7 +172,6 @@ fastify.delete('/rivals/:rival_id', { preHandler: requireAuth }, (request, reply
   }
 });
 
-// Yksinkertainen reitti, joka palauttaa kaikki pisteet
 fastify.get('/scores', (request, reply) => {
   try {
     const rows = db.prepare('SELECT * FROM scores').all();
@@ -158,7 +181,6 @@ fastify.get('/scores', (request, reply) => {
   }
 });
 
-// Retti elo scoren hakemiseen pelaajan_idn perusteella
 fastify.get('/scores/:player_id', (request, reply) => {
   const { player_id } = request.params;
 
@@ -427,7 +449,7 @@ fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {
     fastify.log.error(err);
     process.exit(1);
   }
-  fastify.log.info(`Palvelin käynnissä osoitteessa ${address}`);
+  fastify.log.info(`Server running on address ${address}`);
 });
 
 const gracefullShutdown = async (signal) => {

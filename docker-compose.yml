@@ -33,16 +33,17 @@ services:
       - trancendence-network
     restart: unless-stopped
 
-  #auth-service:
-    #build:
-      #context: ./services/auth-service
-    #container_name: auth_container
-    #env_file: "./.env"
-    # EI ports - vain sisäinen network käytössä!
-    # Nginx gateway hoitaa ulkoisen yhteyden
-    #networks:
-      #- trancendence-network
-    #restart: unless-stopped
+  auth-service:
+    build:
+      context: ./services/auth-service
+      target: dev  # Use development stage for testing
+    container_name: auth_container
+    env_file: "./.env"
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+    volumes:
+      - auth_data:/app/db  # Persist database
 
 volumes:
   stats_data:
@@ -57,6 +58,12 @@ volumes:
       type: none
       o: bind
       device: ${PWD}/services/tournament-service/data
+  auth_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/auth-service/db
   
 networks:
   trancendence-network:
