@@ -10,8 +10,8 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,72}$/; // lenght is between 8-72
 
 export default fp(async (fastify) => {
-  // Get ValidationError from fastify.authErrors
-  const { ValidationError } = fastify.authErrors;
+  // Get ValidationError from fastify.errors
+  const { ValidationError } = fastify.errors;
 
   const validateEmailFormat = (email) => {
     if (typeof email !== 'string' || !EMAIL_REGEX.test(email.trim())){

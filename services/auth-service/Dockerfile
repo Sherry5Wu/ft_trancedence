@@ -8,8 +8,12 @@ FROM node:20-alpine AS dev
 
 WORKDIR /app
 
-# Install all dependencies (prod + dev)
-COPY package.json package-lock.json* ./
+# Create folder for auth.db or any data persistence needs
+RUN mkdir -p /app/db
+
+# Install all dependencies (prod + dev) package-lock.json
+COPY package.json ./
+
 RUN npm install
 
 # Copy source code
@@ -31,11 +35,12 @@ WORKDIR /app
 RUN mkdir -p /app/db
 
 # Copy package files and install prod dependencies only
-COPY package*.json ./
+COPY package.json package-lock.json ./
+
 RUN npm install --production
 
 # Copy only the built source code
-COPY . .
+COPY src/ ./src
 
 # Expose port for prod server
 EXPOSE 3001

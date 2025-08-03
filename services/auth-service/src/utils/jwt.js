@@ -1,7 +1,7 @@
 /**
- * Generate JWT tokens during login/registration--> signToken()
- * Verify tokens when users access protected routes --> verifyToken()
- * Possibly decode tokens for user identification --> decodeToken()
+ * Generate JWT tokens during login/registration
+ * Verify tokens when users access protected routes
+ * Possibly decode tokens for user identification
  */
 
 import jwt from 'jsonwebtoken';
@@ -18,7 +18,7 @@ const REFRESH_EXPIRATION = process.env.JWT_REFRESH_EXPIRATION || '7d';
  */
 
 function generateAccessToken(payload) {
-	return jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_EXPIRATION });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_EXPIRATION });
 }
 
 /**
@@ -28,7 +28,7 @@ function generateAccessToken(payload) {
  */
 
 function generateRefreshToken(payload) {
-	return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: REFRESH_EXPIRATION });
+  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: REFRESH_EXPIRATION });
 }
 
 /**
@@ -40,7 +40,7 @@ function generateRefreshToken(payload) {
  */
 
 function verifyAccessToken(token) {
-	return jwt.verify(token, JWT_SECRET);
+  return jwt.verify(token, JWT_SECRET);
 }
 
 /**
@@ -50,7 +50,7 @@ function verifyAccessToken(token) {
  * @throws {Error} If the token is invalid or expired.
  */
 function verifyRefreshToken(token) {
-	return jwt.verify(token, JWT_REFRESH_SECRET);
+  return jwt.verify(token, JWT_REFRESH_SECRET);
 }
 
 /**
@@ -64,13 +64,13 @@ function verifyRefreshToken(token) {
 // complete: false  --> only return the payload;
 // complete: true   --> return an object with three parts: header, payload and signature
 function decodeToken(token) {
-	return jwt.decode(token, { complete: false });
+  return jwt.decode(token, { complete: false });
 }
 
 export {
-	generateAccessToken,
-	generateRefreshToken,
-	verifyAccessToken,
-	verifyRefreshToken,
-	decodeToken,
+  generateAccessToken,
+  generateRefreshToken,
+  verifyAccessToken,
+  verifyRefreshToken,
+  decodeToken,
 };

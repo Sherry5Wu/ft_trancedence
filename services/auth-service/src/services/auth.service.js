@@ -11,9 +11,12 @@
  *      ✔ Custom error handling using ValidationError and InvalidCredentialsError
  */
 
-import { User } from '../db/index.js';
+import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
+import { ConflictError, InvalidCredentialsError, NotFoundError } from '../utils/errors.js';
+
+const { User, RefreshToken } = models;
 
 /**
  * Register a new user.
@@ -25,14 +28,11 @@ async function registerUser(email, password) {
     // Normalize and validate email using fastify.validators in route handler
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser){
-      throw new Error('Email already registered');
+      throw new ConflictError('Email already registered');
     }
 
     const passwordHash = await hashPassword(password);
-    const user = await User.create({
-      email,
-      passwordHash,
-    });
+    const user = await User.create({ email, passwordHash, });
 
     // Remove sensitive fields from returned user
     const userData = user.toJSON();
@@ -52,18 +52,31 @@ async function authenticateUser(email, password) {
   const user = await User.scope('withSecrets').findOne({ where: { email }});
 
   if (!user){
-    throw new Error('Invalid credentials');
+    throw new InvalidCredentialsError('Invalid credentials');
   }
 
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch){
-    throw new Error('Incorrect password');
+    throw new InvalidCredentialsError('Incorrect password');
   }
 
   // Generate JWT tokens
-  const payload = { id: user.id, email: user.email };
+  const payload = {
+    id: user.id,
+    email: user.email,
+    role: user.role || 'user', // default role if not set
+    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
+  };
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(payload);
+
+  // Save refresh token in DB with assocation
+  await RefreshToken.create({
+    token: refreshToken,
+    userId: user.id,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
+
+  });
 
   // Return safe user data
   const userData = user.toJSON();
@@ -105,7 +118,7 @@ async function getUserById(id, includeSecrets = false) {
 async function enableTwoFA(userId, secret, backupCodes) {
   const user = await User.findByPk(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new NotFoundError('User not found');
   }
   await user.update({ twoFASecret: secret, backupCodes });
 }
@@ -118,7 +131,7 @@ async function enableTwoFA(userId, secret, backupCodes) {
 async function disableTwoFA(userId) {
   const user = await User.findByPk(userId);
   if (!user){
-    throw new Error('User not found');
+    throw new NotFoundError('User not found');
   }
   await user.update({ twoFASecret: null, backupCodes: null });
 }
@@ -155,7 +168,7 @@ async function validateBackupCode(userId, code) {
 async function updatePassword(userId, newPassword) {
   const user = await User.findByPk(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new NotFoundError('User not found');
   }
 
   const newHash = await hashPassword(newPassword);

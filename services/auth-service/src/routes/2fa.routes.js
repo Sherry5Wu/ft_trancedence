@@ -1,61 +1,144 @@
-import { twoFAService } from '../services/2fa.service.js';
+import fp from 'fastify-plugin';
+import {
+  generateTwoFASetup,
+  verifyTwoFAToken,
+  generateTwoFAQrCode,
+  consumeBackupCode,
+  disableTwoFA as disableTwoFAService,
+  getTwoFAStatus
+} from '../services/2fa.service.js';
+import { ValidationError } from '../utils/errors.js';
 
-export default async function twoFARoutes(fastify) {
+export default fp(async (fastify) => {
   /**
-   * Generate a new 2FA secret for the authenticated user
-   *
-   * @route POST /auth/2fa/generate
-   * @auth Requires JWT-authenticated user (req.user)
-   * @returns {Object} { secret: string } - The new 2FA secret
-   * @throws {Error} If user ID is missing or secret generation fails
+   * @swagger
+   * tags:
+   *   name: TwoFactorAuth
+   *   description: Endpoints for Two-Factor Authentication (2FA) setup and management
    */
-  fastify.post('/auth/2fa/generate', async (req, reply) => {
-    try {
-      if (!req.user || !req.user.id) {
-        return reply.status(401).send({ error: 'Unauthorized: User not authenticated' });
-      }
 
-      const secret = twoFAService.generate2FASecret(req.user.id); // Assumes JWT middleware populates req.user
-      if (!secret) {
-        throw new Error('Failed to generate 2FA secret');
+  // Setup 2FA
+  fastify.post('/2fa/setup', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['TwoFactorAuth'],
+      summary: 'Setup 2FA',
+      description: 'Generates a secret, otpauth URL, QR code, and backup codes for enabling 2FA.',
+      response: {
+        200: {
+          description: '2FA setup details including QR code and backup codes',
+          type: 'object',
+          properties: {
+            secret: { type: 'string' },
+            otpauthUrl: { type: 'string' },
+            qrCode: { type: 'string' },
+            backupCodes: {
+              type: 'array',
+              items: { type: 'string' }
+            }
+          },
+          required: ['secret', 'otpauthUrl', 'qrCode', 'backupCodes']
+        }
       }
-      reply.send({ secret });
-    } catch (err) {
-      fastify.log.error('Error generating 2FA secret:', err);
-      reply.status(500).send({
-        error: 'Internal Server Error',
-        details: err.message,
-      });
     }
+  }, async (req, reply) => {
+    const { secret, otpauthUrl, backupCodes } = await generateTwoFASetup(req.user.id);
+    const qrCode = await generateTwoFAQrCode(otpauthUrl);
+    return { secret, otpauthUrl, qrCode, backupCodes };
   });
 
-  /**
-   * Verify a 2FA token for the authenticated user
-   *
-   * @route POST /auth/2fa/verify
-   * @auth Requires JWT-authenticated user (req.user)
-   * @param {string} req.body.token - The token to verify
-   * @returns {Object} { valid: boolean } - Whether the token is valid
-   * @throws {Error} If verification fails or user is not authenticated
-   */
-  fastify.post('/auth/2fa/verify', async (req, reply) => {
-    try {
-      if (!req.user || !req.user.id) {
-        return reply.status(401).send({ error: 'Unauthorized: User not authenticated' });
+  // Verify TOTP code
+  fastify.post('/2fa/verify', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['TwoFactorAuth'],
+      summary: 'Verify 2FA TOTP',
+      description: 'Verifies a 6-digit TOTP code and enables 2FA for the user.',
+      body: {
+        type: 'object',
+        required: ['token'],
+        properties: {
+          token: { type: 'string', pattern: '^[0-9]{6}$', description: '6-digit TOTP code' }
+        }
+      },
+      response: {
+        200: {
+          description: 'Verification result',
+          type: 'object',
+          properties: { verified: { type: 'boolean' } },
+          required: ['verified']
+        }
       }
-
-      if (!req.body || typeof req.body.token !== 'string') {
-        return reply.status(400).send({ error: 'Bad Request: Missing or invalid token' });
-      }
-
-      const isValid = await twoFAService.verify2FAToken(req.user.id, req.body.token);
-      reply.send({ valid: isValid });
-    } catch (err) {
-      fastify.log.error('Error verifying 2FA token:', err);
-      reply.status(500).send({
-        error: 'Internal Server Error',
-        details: err.message,
-      });
     }
+  }, async (req, reply) => {
+    const ok = await verifyTwoFAToken(req.user.id, req.body.token);
+    if (!ok) throw new ValidationError('Invalid 2FA token');
+    return { verified: true };
   });
-}
+
+  // Consume backup code
+  fastify.post('/2fa/backup', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['TwoFactorAuth'],
+      summary: 'Consume backup code',
+      description: 'Consumes a backup code when the user cannot provide a TOTP code.',
+      body: {
+        type: 'object',
+        required: ['code'],
+        properties: {
+          code: { type: 'string', description: 'One-time backup code' }
+        }
+      },
+      response: {
+        200: {
+          description: 'Backup code usage status',
+          type: 'object',
+          properties: { used: { type: 'boolean' } },
+          required: ['used']
+        }
+      }
+    }
+  }, async (req, reply) => {
+    const ok = await consumeBackupCode(req.user.id, req.body.code);
+    if (!ok) throw new ValidationError('Invalid backup code');
+    return { used: true };
+  });
+
+  // Disable 2FA
+  fastify.delete('/2fa', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['TwoFactorAuth'],
+      summary: 'Disable 2FA',
+      description: 'Disables 2FA for the user.',
+      response: {
+        204: { description: '2FA successfully disabled', type: 'null' }
+      }
+    }
+  }, async (req, reply) => {
+    await disableTwoFAService(req.user.id);
+    return reply.code(204).send();
+  });
+
+  // 2FA Status
+  fastify.get('/2fa/status', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['TwoFactorAuth'],
+      summary: 'Check 2FA status',
+      description: 'Checks whether 2FA is currently enabled for the user.',
+      response: {
+        200: {
+          description: '2FA status',
+          type: 'object',
+          properties: { enabled: { type: 'boolean' } },
+          required: ['enabled']
+        }
+      }
+    }
+  }, async (req, reply) => {
+    const enabled = await getTwoFAStatus(req.user.id);
+    return { enabled };
+  });
+});
