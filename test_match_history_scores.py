@@ -42,7 +42,6 @@ def get_auth_headers(token=None):
         raise Exception("No token available! Please login first.")
     
     return {
-        "Content-Type": "application/json",
         "Authorization": f"Bearer {token}"
     }
 
@@ -86,32 +85,6 @@ def test_setup_users():
 def test_login_user():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     assert ACCESS_TOKEN != None
-    headers = get_auth_headers(ACCESS_TOKEN)
-    print(headers)
-    
-    # ✅ PÄIVITETTY: Kaikki vaaditut kentät
-    data = {
-        "player_score": 21,           # ← UUSI
-        "opponent_score": 15,         # ← UUSI  
-        "duration": "00:05:30",       # ← UUSI
-        "opponent_id": "test-opponent-456",  # ← Static opponent ID
-        "player_name": "PlayerOne",
-        "opponent_name": "PlayerTwo", 
-        "result": "win"
-    }
-    
-    response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
-    print(response.status_code, response.text)
-    print("JSON:", response.json())  # jos validi JSON
-    assert response.status_code == 200
-    json_response = response.json()
-    assert json_response["player_name"] == "PlayerOne"
-    assert json_response["opponent_name"] == "PlayerTwo"
-    assert json_response["result"] == "win"
-    # ✅ PÄIVITETTY: Tarkista uudet kentät responssissa
-    print("✅ POST match_history test passed")
-
-
 
 def test_post_match_history():
     """Test POST /match_history with JWT auth - all required fields"""
