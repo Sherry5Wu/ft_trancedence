@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
+import { LineGraph } from '../components/LineGraph';
+import { BarGraph } from '../components/BarGraph';
+import { PieGraph } from '../components/PieGraph';
+import { ResponsiveContainer } from 'recharts';
 import ProfileIcon from '../assets/noun-profile-7808629.svg';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
@@ -16,7 +20,7 @@ const HomeUserPage = () => {
   const { user, setUser } = useUserContext();
 
     return (
-      <div className="flex flex-col items-center p-8 space-y-6">
+      <div className='pageLayout'>
       
       {/* Username header */}
 
@@ -60,7 +64,7 @@ const HomeUserPage = () => {
           icon={<img src={RivalsIcon} alt="Rivals icon" />}
           hoverLabel="RIVALS"
           onClick={() => 
-            alert('Go to Rivals Page!')}  // UPDATE TO navigate('path')
+            navigate('/rivals')}
         />
         <GenericButton
           className="round-icon-button"
@@ -68,18 +72,36 @@ const HomeUserPage = () => {
           icon={<img src={LeaderboardIcon} alt="Leaderboard icon" />}
           hoverLabel="LEADERBOARD"
           onClick={() => 
-            alert('Go to Leaderboard Page!')}  // UPDATE TO navigate('path')
+            navigate('/leaderboard')}
         />
 
       {/* Arrow down button */}
 
-      {/* Statistics */}
-
       {/* Arrow up button */}
-
       </div>
+
+      {/* Statistics */}
+      <div className=''>
+        <h3 className='h3 text-center font-semibold mb-5'>STATISTICS</h3>
+        <div className='grid grid-cols-2 scale-80'>
+          <div>
+            <h4 className='h4 text-center mb-5'>SCORE HISTORY</h4>
+            <LineGraph />
+          </div>
+          <div className=''>
+            <h4 className='h4 text-center mb-5'>SCORE GAINS/LOSSES</h4>
+            <BarGraph />
+          </div>
+          <div>
+            <h4 className='h4 text-center mb-5'>WINRATE</h4>
+            <PieGraph />
+          </div>
+        </div>
+      </div>
+
+
       {/* MATCH HISTORY */}
-      <div>
+      <div className=''>
         <h3 className='h3 text-center font-semibold mb-5'>MATCH HISTORY</h3>
         <MatchHistory player1={user?.username} />
       </div>

@@ -9,6 +9,10 @@ html, body {
   /* overflow: hidden; optional */
 }
 
+.pageLayout {
+  @apply flex flex-col items-center mr-7 gap-y-5
+}
+
 .menuIcon {
     @apply size-15 overflow-hidden border-b-3 border-transparent my-1 mx-2 
         hover:border-black hover:cursor-pointer

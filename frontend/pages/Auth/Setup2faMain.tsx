@@ -62,7 +62,8 @@ const Setup2faMainPage: React.FC = () => {
           hoverLabel={undefined}
           disabled={false}
           onClick={() => {
-            navigate('/signup');
+            // navigate('/signup');
+            navigate(-1);
         }}
         />
         <GenericButton
