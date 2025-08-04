@@ -24,10 +24,10 @@ const SettingsPage: React.FC = () => {
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center p-8 space-y-6">
+    <div className='pageLayout'>
 
       {/* Username header */}
-      <div className='bigProfilePic'>
+      <div className='profilePicBig'>
         {user?.profilePic}
       </div>
 

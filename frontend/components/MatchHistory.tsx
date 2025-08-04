@@ -39,11 +39,7 @@ export const MatchHistory = ( { player1 }:  { player1: string | undefined } ) =>
                 <span className=''>Score</span>
                 <span className=''>Duration</span>
              </div>
-
-            <ul aria-label='match history rows' className='grid grid-cols-4 h-12 w-full bg-[#FFEE8C] rounded-full items-center text-center'>
-
-
-            </ul>
+             
             <div className='grid grid-cols-4 h-12 w-full bg-[#FFEE8C] rounded-full items-center text-center'>
                <span className='flex-1'>{formatDate}</span>
                <span className='flex-1'>{player1} {player1pic} vs {player2pic} {player2} </span>
