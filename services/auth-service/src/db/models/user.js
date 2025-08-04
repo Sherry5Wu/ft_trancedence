@@ -41,6 +41,11 @@ export default (sequelize) => {
         return !!this.twoFASecret; // "!!" negates twice, converts the value to a boolean
       }
     },
+    isVerified: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+    },
     role: {
       type: DataTypes.ENUM('user', 'admin'), // add role with ENUM
       allowNull: false,

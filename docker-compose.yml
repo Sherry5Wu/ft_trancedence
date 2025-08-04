@@ -38,12 +38,12 @@ services:
       context: ./services/auth-service
       target: dev  # Use development stage for testing
     container_name: auth_container
-    env_file: "./.env"
+    env_file: "./services/auth-service/.env"
     networks:
       - trancendence-network
     restart: unless-stopped
     volumes:
-      - auth_data:/app/db  # Persist database
+      - auth_data:/app/data
 
 volumes:
   stats_data:
@@ -63,7 +63,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${PWD}/services/auth-service/db
+      device: ${PWD}/services/auth-service/data
   
 networks:
   trancendence-network:

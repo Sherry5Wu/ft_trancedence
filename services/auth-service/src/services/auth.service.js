@@ -51,8 +51,12 @@ async function authenticateUser(email, password) {
   // Find user with secrets
   const user = await User.scope('withSecrets').findOne({ where: { email }});
 
-  if (!user){
-    throw new InvalidCredentialsError('Invalid credentials');
+  if (!user) {
+  throw new InvalidCredentialsError('User not found.');
+  }
+  
+  if (!user.isVerified) {
+  throw new InvalidCredentialsError('Please verify your email address before logging in.');
   }
 
   const isMatch = await comparePassword(password, user.passwordHash);

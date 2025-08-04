@@ -8,9 +8,9 @@ AUTH_URL = f"{BASE_URL}/as"
 # Test users for real authentication - unique emails per test run
 import time
 TIMESTAMP = int(time.time())
-TEST_USER_EMAIL = f"testuser{TIMESTAMP}@example.com"
+TEST_USER_EMAIL = f"testuser@example.com"
 TEST_USER_PASSWORD = "password123"
-TEST_USER2_EMAIL = f"testuser2{TIMESTAMP}@example.com"
+TEST_USER2_EMAIL = f"testuser2@example.com"
 TEST_USER2_PASSWORD = "password123"
 
 # Global variables to store tokens
@@ -64,7 +64,7 @@ def setup_test_users():
         register_response = requests.post(f"{AUTH_URL}/auth/register", json=register_data, verify=False)
         print(f"Register response: {register_response.status_code} - {register_response.text}")
         ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
-    
+    assert ACCESS_TOKEN != None
     ACCESS_TOKEN_USER2 = login_user(TEST_USER2_EMAIL, TEST_USER2_PASSWORD)
     if ACCESS_TOKEN_USER2 is None:
         # Register second user - ✅ KORJATTU: Vain email ja password
@@ -76,12 +76,47 @@ def setup_test_users():
         register_response = requests.post(f"{AUTH_URL}/auth/register", json=register_data, verify=False)
         print(f"Register response: {register_response.status_code} - {register_response.text}")
         ACCESS_TOKEN_USER2 = login_user(TEST_USER2_EMAIL, TEST_USER2_PASSWORD)
-    
+
+def test_setup_users():
+    setup_test_users()
+    assert ACCESS_TOKEN != None
+    assert ACCESS_TOKEN_USER2 != None
     print("✅ Test users setup complete")
+
+def test_login_user():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    assert ACCESS_TOKEN != None
+    headers = get_auth_headers(ACCESS_TOKEN)
+    print(headers)
+    
+    # ✅ PÄIVITETTY: Kaikki vaaditut kentät
+    data = {
+        "player_score": 21,           # ← UUSI
+        "opponent_score": 15,         # ← UUSI  
+        "duration": "00:05:30",       # ← UUSI
+        "opponent_id": "test-opponent-456",  # ← Static opponent ID
+        "player_name": "PlayerOne",
+        "opponent_name": "PlayerTwo", 
+        "result": "win"
+    }
+    
+    response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
+    print(response.status_code, response.text)
+    print("JSON:", response.json())  # jos validi JSON
+    assert response.status_code == 200
+    json_response = response.json()
+    assert json_response["player_name"] == "PlayerOne"
+    assert json_response["opponent_name"] == "PlayerTwo"
+    assert json_response["result"] == "win"
+    # ✅ PÄIVITETTY: Tarkista uudet kentät responssissa
+    print("✅ POST match_history test passed")
+
+
 
 def test_post_match_history():
     """Test POST /match_history with JWT auth - all required fields"""
-    headers = get_auth_headers()
+    headers = get_auth_headers(ACCESS_TOKEN)
+    print(headers)
     
     # ✅ PÄIVITETTY: Kaikki vaaditut kentät
     data = {
@@ -242,35 +277,3 @@ def test_duration_formats():
         assert response.status_code == 200
     
     print("✅ Duration formats test passed")
-
-# Main test runner
-if __name__ == "__main__":
-    try:
-        print("🚀 Starting authentication tests...")
-        
-        # 1. Setup users and get tokens
-        setup_test_users()
-        
-        if ACCESS_TOKEN is None:
-            print("❌ Could not get access token for user 1")
-            exit(1)
-        
-        print("🔐 Testing with real JWT tokens...")
-        
-        # 2. Run tests
-        test_post_match_history()
-        test_get_match_history_all()
-        test_get_match_history_by_id()
-        test_post_score()
-        test_put_score()
-        test_different_users()
-        test_validation_errors()
-        test_unauthorized_access()  # New test for security
-        test_duration_formats()
-        
-        print("\n🎉 All tests passed!")
-        
-    except Exception as e:
-        print(f"❌ Test failed: {e}")
-        import traceback
-        traceback.print_exc()

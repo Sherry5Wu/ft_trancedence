@@ -73,7 +73,7 @@ const requireAuth = async (request, reply) => {
       return reply.status(401).send({ error: 'Missing or invalid authorization header' });
     }
 
-    const response = await fetch('http://auth-service:3000/auth/verify-token', {
+    const response = await fetch('http://auth-service:3001/auth/verify-token', {
       method: 'POST',
       headers: {
         'Authorization': authHeader,
@@ -437,6 +437,7 @@ fastify.post('/match_history', { preHandler: requireAuth }, (request, reply) => 
       message: 'Match added to history successfully'
     });
   } catch (err) {
+    console.error('Error when trying to add match history', err)
     reply.status(500).send({ error: err.message });
   }
 });
