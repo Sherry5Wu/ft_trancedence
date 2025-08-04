@@ -76,8 +76,7 @@ const requireAuth = async (request, reply) => {
     const response = await fetch('http://auth-service:3001/auth/verify-token', {
       method: 'POST',
       headers: {
-        'Authorization': authHeader,
-        'Content-Type': 'application/json'
+        'Authorization': authHeader
       }
     });
 
