@@ -23,7 +23,7 @@ const fetchMatchData = (user: string | undefined) => {
             player1: user,
             player2: 'Rival1',
             date: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
-            duration: 120,
+            duration: 300,
             player1score: 2,
             player2score: 1,
             winner: user,
