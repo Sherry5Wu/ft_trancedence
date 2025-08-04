@@ -5,8 +5,7 @@ import './index.css'
 import { UserProvider } from '../context/UserContext.tsx';
 import { DarkModeProvider } from '../context/DarkModeContext.tsx';
 import { AccessibilityProvider } from '../context/AccessibilityContext.tsx';
-import { SingleMatchProvider } from '../context/SingleMatchContext';
-import { TournamentProvider } from '../context/TournamentContext';
+import { PlayersProvider } from '../context/PlayersContext.tsx';
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
@@ -16,11 +15,9 @@ const Providers = ({ children }: { children: ReactNode}) => {
         <UserProvider>
             <AccessibilityProvider>
                 <DarkModeProvider>
-                    <SingleMatchProvider>
-                        <TournamentProvider>
+                    <PlayersProvider>
                             {children}
-                     </TournamentProvider>
-                    </SingleMatchProvider>
+                     </PlayersProvider>
                 </DarkModeProvider>
             </AccessibilityProvider>
         </UserProvider>
