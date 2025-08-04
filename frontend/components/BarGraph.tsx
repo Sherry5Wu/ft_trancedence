@@ -1,4 +1,4 @@
-import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, Cell } from 'recharts';
 
 const fetchData = () => {
     //FETCH REAL DATA FROM BACKEND
@@ -7,11 +7,11 @@ const fetchData = () => {
     const data = [
         {key: 0, value: 0},
         {key: 1, value: 100},
-        {key: 2, value: 250},
-        {key: 3, value: 300},
-        {key: 4, value: 200},
-        {key: 5, value: 150},
-        {key: 6, value: 450}
+        {key: 2, value: 50},
+        {key: 3, value: 50},
+        {key: 4, value: -200},
+        {key: 5, value: -150},
+        {key: 6, value: 300}
     ];
 
     const newData = [];
@@ -22,18 +22,28 @@ const fetchData = () => {
 export const BarGraph = () => {
     const data = fetchData();
 
-    if (data.length === 0)
-        return 'No data yet';
+    // return (
+    //     <BarChart width={600} height={300} data={data}>
+    //         <Tooltip cursor={false}/>
+    //         <CartesianGrid stroke='#aaa' strokeDasharray='3 3' />
+    //         <Bar dataKey='value' fill='#000' stroke='black' strokeWidth={2} activeBar={<Rectangle fill="#FFEE8C" />} />
+    //         <XAxis dataKey='key' />
+    //         <YAxis />
+    //     </BarChart>
+    // );
 
     return (
-    <div className=''>
-            <BarChart width={600} height={300} data={data}>
-                <Tooltip cursor={false}/>
-                <CartesianGrid stroke='#aaa' strokeDasharray='3 3' />
-                <Bar dataKey='value' fill='#000' stroke='black' strokeWidth={2} activeBar={<Rectangle fill="#FFF" />} />
-                <XAxis dataKey='key' />
-                <YAxis />
-            </BarChart>
-    </div>
+        <BarChart width={500} height={300} data={data} >
+            <Tooltip cursor={false}/>
+            <CartesianGrid stroke='#aaa' strokeDasharray='3 3' />
+            <Bar dataKey='value' barSize={20} stroke='black' strokeWidth={2} activeBar={<Rectangle fill="#FFEE8C" />}>
+                {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.value >= 0 ? '#2E6F40' : '#CD1C18'} />
+                ))}
+            </Bar>
+            <XAxis dataKey='key' />
+            <YAxis />
+            <ReferenceLine y={0} stroke='black' strokeWidth={2}/>
+        </BarChart>
     );
 }

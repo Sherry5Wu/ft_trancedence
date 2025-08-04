@@ -6,7 +6,9 @@ import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
 import { LineGraph } from '../components/LineGraph';
-import { BarGraph } from '../components/BarGraph'
+import { BarGraph } from '../components/BarGraph';
+import { PieGraph } from '../components/PieGraph';
+import { ResponsiveContainer } from 'recharts';
 import ProfileIcon from '../assets/noun-profile-7808629.svg';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
@@ -81,14 +83,18 @@ const HomeUserPage = () => {
       {/* Statistics */}
       <div className=''>
         <h3 className='h3 text-center font-semibold mb-5'>STATISTICS</h3>
-        <div className='grid grid-cols-2'>
+        <div className='grid grid-cols-2 scale-80'>
+          <div>
+            <h4 className='h4 text-center mb-5'>SCORE HISTORY</h4>
+            <LineGraph />
+          </div>
           <div className=''>
-            <h4 className='h4 text-center font-semibold mb-5'>SCORE</h4>
+            <h4 className='h4 text-center mb-5'>SCORE GAINS/LOSSES</h4>
             <BarGraph />
           </div>
           <div>
-            <h4 className='h4 text-center font-semibold mb-5'>RANK</h4>
-            <LineGraph />
+            <h4 className='h4 text-center mb-5'>WINRATE</h4>
+            <PieGraph />
           </div>
         </div>
       </div>
