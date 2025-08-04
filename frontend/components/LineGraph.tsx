@@ -1,18 +1,20 @@
-import { LineChart, Line } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const fetchData = () => {
     //FETCH REAL DATA FROM BACKEND
 
     //mockdata
     const data = [
-    {key: 0, value: 0},
-    {key: 1, value: 100},
-    {key: 2, value: 250},
-    {key: 3, value: 300},
-    {key: 4, value: 200},
-    {key: 5, value: 350},
-    {key: 6, value: 500}
+        {key: 0, value: 100},
+        {key: 1, value: 85},
+        {key: 2, value: 60},
+        {key: 3, value: 45},
+        {key: 4, value: 55},
+        {key: 5, value: 70},
+        {key: 6, value: 30}
     ];
+
+    const newData = [];
 
     return data;
 };
@@ -24,8 +26,14 @@ export const LineGraph = () => {
         return 'No data yet';
 
     return (
-    <LineChart width={data.length} height={Math.max(...data.map((d) => d.value))} data={data}>
-        <Line dataKey='data' />
-    </LineChart>
-    )
-};
+    <div className=''>
+            <LineChart width={600} height={300} data={data}>
+                <CartesianGrid stroke='#aaa' strokeDasharray='5 5' />
+                <Line dataKey='value' type='monotone' stroke='black' strokeWidth={2}/>
+                <XAxis dataKey='key' />
+                <YAxis reversed/>
+                <Tooltip cursor={false}/>
+            </LineChart>
+    </div>
+    );
+}

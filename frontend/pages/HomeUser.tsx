@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
-import LineGraph from '../components/LineGraph'
+import { LineGraph } from '../components/LineGraph';
+import { BarGraph } from '../components/BarGraph'
 import ProfileIcon from '../assets/noun-profile-7808629.svg';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
@@ -78,14 +79,23 @@ const HomeUserPage = () => {
       </div>
 
       {/* Statistics */}
-      <div>
+      <div className=''>
         <h3 className='h3 text-center font-semibold mb-5'>STATISTICS</h3>
-        {/* <LineGraph /> */}
+        <div className='grid grid-cols-2'>
+          <div className=''>
+            <h4 className='h4 text-center font-semibold mb-5'>SCORE</h4>
+            <BarGraph />
+          </div>
+          <div>
+            <h4 className='h4 text-center font-semibold mb-5'>RANK</h4>
+            <LineGraph />
+          </div>
+        </div>
       </div>
 
 
       {/* MATCH HISTORY */}
-      <div>
+      <div className=''>
         <h3 className='h3 text-center font-semibold mb-5'>MATCH HISTORY</h3>
         <MatchHistory player1={user?.username} />
       </div>
