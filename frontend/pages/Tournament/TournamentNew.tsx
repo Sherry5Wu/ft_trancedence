@@ -31,6 +31,8 @@ const NewTournamentPage: React.FC = () => {
 
   const handlePlayerClick = (index: number) => {
     setPlayers((prev) => {
+      
+      // on click should go to navigat('/login-player') page where backed with return user data (username, id, photo)
       const updated = [...prev];
       updated[index] = updated[index] ? null : { photoUrl: undefined }; // Simulate user go to /login-player 
       return updated;
