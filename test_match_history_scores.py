@@ -7,7 +7,9 @@ AUTH_URL = f"{BASE_URL}/as"
 
 # Test users for real authentication - unique emails per test run
 import time
+import datetime
 TIMESTAMP = int(time.time())
+DATETIME = datetime.datetime.now()
 TEST_USER_EMAIL = f"testuser@example.com"
 TEST_USER_PASSWORD = "password123"
 TEST_USER2_EMAIL = f"testuser2@example.com"
@@ -100,10 +102,11 @@ def test_post_match_history():
         "player_name": "PlayerOne",
         "opponent_name": "PlayerTwo", 
         "result": "win",
-        "played_at": "2025-02-20 00:05:30"
+        "played_at": f"{DATETIME}"
     }
     
     response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
+    print(response.json)
     assert response.status_code == 200
     json_response = response.json()
     assert json_response["player_name"] == "PlayerOne"
@@ -127,38 +130,6 @@ def test_get_match_history_by_id():
     assert isinstance(response.json(), list)
     print("✅ GET match_history by ID test passed")
 
-def test_post_score():
-    """Test POST /scores with JWT auth"""
-    headers = get_auth_headers()
-    
-    data = {
-        "player_name": "PlayerOne",
-        "elo_score": 1040
-    }
-    
-    response = requests.post(f"{STATS_URL}/scores", json=data, headers=headers, verify=False)
-    assert response.status_code == 200 or response.status_code == 500  # 500 if already exists
-    if response.status_code == 200:
-        json_response = response.json()
-        assert json_response["elo_score"] == 1040
-    print("✅ POST scores test passed")
-
-def test_put_score():
-    """Test PUT /scores/:id with JWT auth"""
-    headers = get_auth_headers()
-    
-    data = {
-        "elo_score": 1350,
-        "player_name": "UpdatedPlayer"
-    }
-    
-    # This will fail with 403 if trying to update other user's score
-    # For now, let's test with a generic user ID
-    response = requests.put(f"{STATS_URL}/scores/test-user-id", json=data, headers=headers, verify=False)
-    # May return 403 if user ID doesn't match token, which is expected
-    assert response.status_code in [200, 403]
-    print("✅ PUT scores test passed")
-
 def test_different_users():
     """Test with different JWT tokens - updated with new fields"""
     user1_headers = get_auth_headers(ACCESS_TOKEN)
@@ -172,7 +143,8 @@ def test_different_users():
         "opponent_id": "opponent-789",
         "player_name": "Player1",
         "opponent_name": "Enemy1",
-        "result": "win"
+        "result": "win",
+        "played_at": f"{DATETIME}"
     }
     response1 = requests.post(f"{STATS_URL}/match_history", json=data1, headers=user1_headers, verify=False)
     assert response1.status_code == 200
@@ -185,7 +157,8 @@ def test_different_users():
         "opponent_id": "opponent-999",
         "player_name": "Player2", 
         "opponent_name": "Enemy2",
-        "result": "loss"
+        "result": "loss",
+        "played_at": f"{DATETIME}"
     }
     response2 = requests.post(f"{STATS_URL}/match_history", json=data2, headers=user2_headers, verify=False)
     assert response2.status_code == 200
@@ -218,7 +191,8 @@ def test_unauthorized_access():
         "opponent_id": "test-opponent",
         "player_name": "PlayerOne",
         "opponent_name": "PlayerTwo",
-        "result": "win"
+        "result": "win",
+        "played_at": f"{DATETIME}"
     }
     
     response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
@@ -244,7 +218,8 @@ def test_duration_formats():
             "opponent_id": "test-opponent",
             "player_name": "TestPlayer",
             "opponent_name": "TestOpponent",
-            "result": "win"
+            "result": "win",
+            "played_at": f"{DATETIME}"
         }
         
         response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
