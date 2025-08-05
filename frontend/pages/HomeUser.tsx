@@ -89,9 +89,9 @@ const HomeUserPage = () => {
       {/* <DownArrow className='size-15' /> */}
       {/* Statistics */}
       
-      <div className=''>
-        <h3 className='h3 text-center font-semibold'>STATS</h3>
-        <div className='grid grid-cols-2 scale-80'>
+      <div className='w-200'>
+        <h3 className='h3 text-center font-semibold mb-10'>STATS</h3>
+        <div className='grid grid-cols-2 w-full h-200 gap-5'>
           <div>
             <h4 className='h4 text-center mb-5 font-semibold'>SCORE HISTORY</h4>
             <LineGraph />
@@ -100,11 +100,11 @@ const HomeUserPage = () => {
             <h4 className='h4 text-center mb-5 font-semibold'>SCORE GAINS/LOSSES</h4>
             <BarGraph />
           </div>
-          <div className='mt-5'>
+          <div className='mt-15'>
             <h4 className='h4 text-center mb-5 font-semibold'>WIN RATE</h4>
-            <PieGraph />
+            <PieGraph/>
           </div> 
-          <div className='mt-5 ml-15 px-2 flex flex-col'>
+          <div className='mt-15 ml-15 px-2 flex flex-col'>
             <div className='flex mb-5 justify-between items-end border-b-2 border-dashed'>
               <h4 className='h4 font-semibold'>PLAYED GAMES</h4><h3 className='h3 font-bold'>{playedGames}</h3>
             </div>
