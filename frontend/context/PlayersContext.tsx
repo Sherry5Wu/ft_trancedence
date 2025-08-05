@@ -14,6 +14,7 @@ interface PlayersContextType {
     addPlayer: (player: Players) => void;
     removePlayer: (id: string) => void;
     resetPlayers: () => void;
+    setPlayer: (index: number, player: Players) => void;
 }
 
 const PlayersContext = createContext<PlayersContextType | undefined>(undefined);
@@ -52,8 +53,16 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
     setTournamentTitle(newTitle);
   };
 
+  const setPlayer = (index: number, player: Players) => {
+    setPlayers((prevPlayers) => {
+      const updated = [...prevPlayers];
+      updated[index] = player;
+      return updated;
+    });
+  };
+
   return (
-    <PlayersContext.Provider value={{ players, tournamentTitle, addPlayer, removePlayer, setPlayerUsername, setTitle, resetPlayers }}>
+    <PlayersContext.Provider value={{ players, tournamentTitle, addPlayer, removePlayer, setPlayerUsername, setTitle, resetPlayers, setPlayer, }}>
       {children}
     </PlayersContext.Provider>
   );

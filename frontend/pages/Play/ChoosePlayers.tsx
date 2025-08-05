@@ -1,301 +1,195 @@
 // pages/Play/ChoosePlayers.tsx
 // user choose player 2 as Registed or Guest, if register the player should 'log in a player'
 
-// import React, { useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { GenericButton } from '../../components/GenericButton';
-// import { GenericInput } from '../../components/GenericInput';
-// import { useUserContext } from '../../context/UserContext';
-// import { useSingleMatch } from '../../context/SingleMatchContext';
-// import { useValidationField } from '../../hooks/useValidationField';
-// import { isValidAlias } from '../../utils/Validation';
-
-// const ChoosePlayersPage: React.FC = () => {
-//   const navigate = useNavigate();
-//   const { user } = useUserContext();
-//   const { secondPlayer } = useSingleMatch(); // Inject second player from context
-
-//   const player1Field = useValidationField('', isValidAlias);
-//   const player2Field = useValidationField('', isValidAlias);
-
-//   const [player2Type, setPlayer2Type] = useState<"registered" | "guest" | null>(null);
-//   const [isPlayer1Loading, setIsPlayer1Loading] = useState(true);
-
-//   // Simulate fetch for player 1 data
-//   useEffect(() => {
-//     player1Field.setValue(user?.username ?? '');
-//     setIsPlayer1Loading(false);
-//   }, [user]);
-
-//     // Inject Player 2 when context changes
-//   useEffect(() => {
-//     if (secondPlayer?.username) {
-//       player2Field.setValue(secondPlayer.username);
-//       setPlayer2Type("registered");
-//     }
-//   }, [secondPlayer]);
-
-//   const aliasDuplicate =
-//     player1Field.value.trim() !== '' &&
-//     player2Field.value.trim() !== '' &&
-//     player1Field.value.trim().toLowerCase() === player2Field.value.trim().toLowerCase();
-
-//   const formFilled =
-//     player1Field.value.trim() !== '' &&
-//     player2Field.value.trim() !== '' &&
-//     !player1Field.error &&
-//     !player2Field.error &&
-//     !aliasDuplicate;
-
-//   return (
-//     <div className="flex flex-col items-center p-8 space-y-6">
-//       <div>
-//         <h3 className="font-semibold text-center">Choose players</h3>
-
-//         <GenericInput
-//           type="text"
-//           placeholder="Player 1"
-//           value={player1Field.value}
-//           onFilled={player1Field.onFilled}
-//           onBlur={player1Field.onBlur}
-//           errorMessage={
-//             player1Field.error ||
-//             (aliasDuplicate ? 'Player aliases must be different' : '')
-//           }
-//           disabled={isPlayer1Loading}
-//           showEditIcon={true}
-//         />
-
-//         <div className="flex flex-wrap justify-center gap-6 mt-4">
-//           <GenericButton
-//             className={`generic-button ${player2Type === "registered" ? "" : "unclicked-button"}`}
-//             text="Registered"
-//             onClick={() => {
-//               setPlayer2Type("registered");
-//               // navigate("/login-player");
-//                     navigate("/login-player", { state: { context: "single", playerIndex: 1 } });
-//             }}
-//           />
-//           <GenericButton
-//             className={`generic-button ${player2Type === "guest" ? "" : "unclicked-button"}`}
-//             text="Guest"
-//             onClick={() => {
-//               setPlayer2Type("guest");
-//               alert("Fill the guest player!");
-//             }}
-//           />
-//         </div>
-
-//         {player2Type && (
-//           <div className="mt-4">
-//             <GenericInput
-//               type="text"
-//               placeholder="Player 2"
-//               value={player2Field.value}
-//               onFilled={player2Field.onFilled}
-//               onBlur={player2Field.onBlur}
-//               errorMessage={
-//                 player2Field.error ||
-//                 (aliasDuplicate ? 'Player aliases must be different' : '')
-//               }
-//               disabled={player2Type === null}
-//               showEditIcon={true}
-//             />
-//           </div>
-//         )}
-//       </div>
-
-//       <div className="flex flex-wrap justify-center gap-6 mt-6">
-//         <GenericButton
-//           className="generic-button"
-//           text="CANCEL"
-//           onClick={() => navigate('/homeuser')}
-//         />
-//         <GenericButton
-//           className="generic-button"
-//           text="PLAY"
-//           disabled={!formFilled}
-//           onClick={() => navigate('/game')}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ChoosePlayersPage;
-
-
-
-
-// pages/Play/ChoosePlayers.tsx
-
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
 import { useUserContext } from '../../context/UserContext';
-import { useSingleMatch } from '../../context/SingleMatchContext';
+import { usePlayersContext } from '../../context/PlayersContext';
 import { useValidationField } from '../../hooks/useValidationField';
 import { isValidAlias } from '../../utils/Validation';
 
 const ChoosePlayersPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // ✅
-
   const { user } = useUserContext();
-  // const { secondPlayer, setSecondPlayer } = useSingleMatch(); // ✅ Context read
-const { firstPlayer, setFirstPlayer, secondPlayer, setSecondPlayer } = useSingleMatch();
+  const {
+    players,
+    addPlayer,
+    removePlayer,
+    resetPlayers,
+    setPlayer,
+  } = usePlayersContext();
 
   const player1Field = useValidationField('', isValidAlias);
   const player2Field = useValidationField('', isValidAlias);
 
   const [player2Type, setPlayer2Type] = useState<"registered" | "guest" | null>(null);
-
-
-//   const [player2Type, setPlayer2Type] = useState<"registered" | "guest" | null>(() => {
-//   if (secondPlayer?.username) return "registered";
-//   return null;
-// });
-
   const [isPlayer1Loading, setIsPlayer1Loading] = useState(true);
 
-  useEffect(() => {
-  if (user?.username) {
-    player1Field.setValue(user.username);
-    setFirstPlayer({
-      id: user.username, // or some real unique ID if you have it
+// Player 1 from logged-in user
+useEffect(() => {
+  if (user?.username && players.length === 0) {
+    const photo = user.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
+    const player = {
+      id: user.username,
       username: user.username,
-      photo: user.profilePic?.props?.src ?? '' // or user.profilePic.props.src if available
-    });
+      photo,
+    };
+    addPlayer(player);
+    player1Field.setValue(user.username);
+  } else if (players.length > 0) {
+    player1Field.setValue(players[0].username);
   }
   setIsPlayer1Loading(false);
-}, [user]);
+}, [user, players]);
 
-  // ✅ Sync first player from user
-  // useEffect(() => {
-  //   player1Field.setValue(user?.username ?? '');
-    
-  //   setIsPlayer1Loading(false);
-  // }, [user]);
+// sync second player field when players array changes
+useEffect(() => {
+  if (players.length > 1) {
+    player2Field.setValue(players[1].username);
+    if (player2Type === null)
+      setPlayer2Type("registered");
+  } else {
+    player2Field.setValue('');
+  }
+}, [players]);
 
-  // ✅ Always re-apply second player if it exists
-  // useEffect(() => {
-  //   if (secondPlayer?.username) {
-  //     player2Field.setValue(secondPlayer.username);
-  //     setPlayer2Type("registered"); // <-- this was not persisting
-  //   }
-  // }, [secondPlayer]);
+// sync player1 field with PlayersContext
+useEffect(() => {
+  const trimmed = player1Field.value.trim();
+  if (!isPlayer1Loading && trimmed !== '' && !player1Field.error) {
+    const updated = {
+      id: user?.username ?? 'player1',
+      username: trimmed,
+      photo: user?.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`,
+    };
 
-  // Sync player2Type with secondPlayer only if player2Type is null (not user-selected)
-  React.useEffect(() => {
-
-    console.log("Effect - secondPlayer or player2Type changed:", { secondPlayer, player2Type });
-
-    if (player2Type === null) {
-      if (secondPlayer?.username) {
-        setPlayer2Type("registered");
-      } else {
-        setPlayer2Type(null);
-      }
-    }
-  }, [secondPlayer, player2Type]);
-
-  // Sync player2Field with secondPlayer
-  React.useEffect(() => {
-
-    console.log("Effect - syncing player2Field with secondPlayer:", secondPlayer?.username);
-
-    if (secondPlayer?.username) {
-      player2Field.setValue(secondPlayer.username);
+    if (players.length === 0) {
+      addPlayer(updated);
     } else {
-      player2Field.setValue('');
+      setPlayer(0, updated);
     }
-  }, [secondPlayer]);
+  }
+}, [player1Field.value]);
 
-  const aliasDuplicate =
-    player1Field.value.trim().toLowerCase() === player2Field.value.trim().toLowerCase() &&
-    player1Field.value.trim() !== '';
 
-  const formFilled =
-    player1Field.value.trim() !== '' &&
-    player2Field.value.trim() !== '' &&
-    !player1Field.error &&
-    !player2Field.error &&
-    !aliasDuplicate;
+// sync player2 field with PlayersContext
+useEffect(() => {
+  const trimmed = player2Field.value.trim();
+  if (trimmed === '' || player2Field.error) return;
 
-  return (
-    <div className="flex flex-col items-center p-8 space-y-6">
-      <div>
-        <h3 className="font-semibold text-center">Choose players</h3>
+  const id = player2Type === 'guest'
+    ? `guest-${trimmed.toLowerCase()}`
+    : trimmed;
 
-        <GenericInput
-          type="text"
-          placeholder="Player 1"
-          value={player1Field.value}
-          onFilled={player1Field.onFilled}
-          onBlur={player1Field.onBlur}
-          errorMessage={
-            player1Field.error || 
-            (aliasDuplicate ? 'Player aliases must be different' : '')}
-          disabled={isPlayer1Loading}
-          showEditIcon={true}
+  const photo = player2Type === 'guest'
+    ? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`
+    : players[1]?.photo ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`;
+
+  const updated = { id, username: trimmed, photo };
+
+  if (players.length > 1) {
+    setPlayer(1, updated);
+  } else if (players.length === 1) {
+    addPlayer(updated);
+  }
+}, [player2Field.value]);
+
+
+const aliasDuplicate =
+  player1Field.value.trim().toLowerCase() === player2Field.value.trim().toLowerCase() &&
+  player1Field.value.trim() !== '';
+
+const formFilled =
+  player1Field.value.trim() !== '' &&
+  player2Field.value.trim() !== '' &&
+  !player1Field.error &&
+  !player2Field.error &&
+  !aliasDuplicate;
+
+return (
+  <div className="flex flex-col items-center p-8 space-y-6">
+    <div>
+      <h3 className="font-semibold text-center">Choose players</h3>
+
+      <GenericInput
+        type="text"
+        placeholder="Player 1"
+        value={player1Field.value}
+        onFilled={player1Field.onFilled}
+        onBlur={player1Field.onBlur}
+        errorMessage={
+          player1Field.error || 
+          (aliasDuplicate ? 'Player aliases must be different' : '')}
+        disabled={isPlayer1Loading}
+        showEditIcon={true}
+      />
+
+      <div className="flex flex-wrap justify-center gap-6 mt-4">
+        <GenericButton
+          className={`generic-button ${player2Type === "registered" ? "" : "unclicked-button"}`}
+          text="Registered"
+          onClick={() => {
+            navigate("/login-player", {
+              state: {
+                context: "generic",
+                playerIndex: 1,
+                returnTo: "/choose-players"
+              }
+            });
+          }}
         />
+        <GenericButton
+          className={`generic-button ${player2Type === "guest" ? "" : "unclicked-button"}`}
+          text="Guest"
+          onClick={() => {
+            setPlayer2Type("guest");
+            player2Field.setValue('');
+            removePlayer(players[1]?.id);
+            alert("Fill the guest player!");
+          }}
+        />
+      </div>
 
-        <div className="flex flex-wrap justify-center gap-6 mt-4">
-          <GenericButton
-            className={`generic-button ${player2Type === "registered" ? "" : "unclicked-button"}`}
-            text="Registered"
-            onClick={() => {
-              navigate("/login-player", {
-              state: { context: "single", playerIndex: 1, returnTo: "/choose-players" },
-              });
-            }}
-          />
-          <GenericButton
-            className={`generic-button ${player2Type === "guest" ? "" : "unclicked-button"}`}
-            text="Guest"
-            onClick={() => {
-              setPlayer2Type("guest");
-              player2Field.setValue(""); // Clear input
-              setSecondPlayer(null);     // Clear context (registered player)
-              alert("Fill the guest player!");
-            }}
+      {player2Type && (
+        <div className="mt-4">
+          <GenericInput
+            type="text"
+            placeholder="Player 2"
+            value={player2Field.value}
+            onFilled={player2Field.onFilled}
+            onBlur={player2Field.onBlur}
+            errorMessage={
+              player2Field.error ||
+              (aliasDuplicate ? 'Player aliases must be different' : '')
+            }
+            showEditIcon={true}
           />
         </div>
-
-        {player2Type && (
-          <div className="mt-4">
-            <GenericInput
-              type="text"
-              placeholder="Player 2"
-              value={player2Field.value}
-              onFilled={player2Field.onFilled}
-              onBlur={player2Field.onBlur}
-              errorMessage={
-                player2Field.error ||
-                (aliasDuplicate ? 'Player aliases must be different' : '')
-              }
-              showEditIcon={true}
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-wrap justify-center gap-6 mt-6">
-        <GenericButton
-          className="generic-button"
-          text="CANCEL"
-          onClick={() => navigate('/homeuser')}
-        />
-        <GenericButton
-          className="generic-button"
-          text="PLAY"
-          disabled={!formFilled}
-          onClick={() => navigate('/game')}
-        />
-      </div>
+      )}
     </div>
-  );
+
+    <div className="flex flex-wrap justify-center gap-6 mt-6">
+      <GenericButton
+        className="generic-button"
+        text="CANCEL"
+        onClick={() => {
+          resetPlayers();
+          navigate('/homeuser');
+        }}
+      />
+      <GenericButton
+        className="generic-button"
+        text="PLAY"
+        disabled={!formFilled}
+        onClick={() => {
+          navigate('/game');
+        }}
+      />
+    </div>
+  </div>
+);
 };
 
 export default ChoosePlayersPage;
