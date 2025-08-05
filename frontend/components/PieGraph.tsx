@@ -1,4 +1,4 @@
-import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip } from 'recharts';
+import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
 
 const fetchData = () => {
     //FETCH REAL DATA FROM BACKEND
@@ -30,15 +30,24 @@ export const PieGraph = () => {
     const data = fetchData();
 
     return (
-        <PieChart width={500} height={300} data={data}>
-            <Pie dataKey='value' fill='#FFF' stroke='#000' strokeWidth={2} labelLine={false}
-                label={({ percent, payload }) => `${payload.key.toUpperCase()} ${((percent ?? 1)* 100).toFixed(0)}%`}
-                >
-                {data.map((entry, index) => (
-                    <Cell key={`cell-${entry.key}`} fill={colors[index % colors.length]} />
-                ))}
-            </Pie>
-            <Tooltip />
-        </PieChart>
+        <div className='p-4'>
+        <ResponsiveContainer width='100%' aspect={1.25}>
+            <PieChart width={500} height={300} data={data}>
+                <Pie dataKey='value' fill='#FFF' stroke='#000' strokeWidth={2} labelLine={false}
+                    label={({ percent, payload }) => `${((percent ?? 1)* 100).toFixed(0)}%`}
+                    >
+                    {data.map((entry, index) => (
+                        <Cell key={`cell-${entry.key}`} fill={colors[index % colors.length]} />
+                    ))}
+                </Pie>
+                <Tooltip />
+                <Legend
+                formatter={(value, entry) => {
+                    return entry.payload.key.toUpperCase(); // or just value.toUpperCase()
+                }}
+                />
+            </PieChart>
+        </ResponsiveContainer>
+        </div>
     );
 }

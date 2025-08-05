@@ -33,12 +33,14 @@ export const LineGraph = () => {
     const data = fetchData();
 
     return (
-        <LineChart width={500} height={300} data={data}>
-            <CartesianGrid stroke='#aaa' strokeDasharray='5 5' />
-            <Line dataKey='value' type='monotone' stroke='black' strokeWidth={2}/>
-            <XAxis dataKey='key' />
-            <YAxis/>
-            <Tooltip cursor={false}/>
-        </LineChart>
+        <ResponsiveContainer width="100%" aspect={1.5}>
+            <LineChart width={500} height={300} data={data}>
+                <CartesianGrid stroke='#aaa' strokeDasharray='5 5' />
+                <Line dataKey='value' type='monotone' stroke='black' strokeWidth={2}/>
+                <XAxis dataKey='key' />
+                <YAxis/>
+                <Tooltip cursor={false}/>
+            </LineChart>
+        </ResponsiveContainer>
     );
 }
