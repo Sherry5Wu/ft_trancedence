@@ -99,7 +99,8 @@ def test_post_match_history():
         "opponent_id": "test-opponent-456",  # ← Static opponent ID
         "player_name": "PlayerOne",
         "opponent_name": "PlayerTwo", 
-        "result": "win"
+        "result": "win",
+        "played_at": "2025-02-20 00:05:30"
     }
     
     response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)

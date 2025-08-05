@@ -42,6 +42,17 @@ db.prepare(`
   )
 `).run();
 
+// Create elo score history table
+
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS score_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  player_id TEXT NOT NULL,
+  elo_score INTEGER,
+  played_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+  `).run();
+
 // Luodaan elo score taulu 
 db.prepare(`
   CREATE TABLE IF NOT EXISTS scores (
@@ -101,6 +112,39 @@ const requireAuth = async (request, reply) => {
     });
   }
 };
+
+fastify.get('/score_history/:player_id', (request, reply) => {
+  const { player_id } = request.params;
+  try {
+    const stmt = db.prepare('SELECT * FROM score_history WHERE player_id = ?');
+    const rows = stmt.all(player_id);
+    reply.send(rows);
+  }
+  catch (err)
+  {
+    reply.status(500).send({ error : err.message});
+  }
+});
+
+fastify.post('/score_history/', { preHandler: requireAuth }, (request, reply) => {
+  const player_id = request.id;
+  const { elo_score, player_at } = request.body;
+  if (!elo_score || !player_at) {
+    return reply.status(400).send({ error: 'Player at and elo score is required' });
+  }
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO score_history (player_id, )
+      VALUES (?, ?)
+    `);
+    stmt.run(player_id, elo_score, player_at)
+  }
+  catch (err)
+  {
+    console.error('Error when trying to add score history', err)
+    reply.status(500).send({ error: err.message });
+  }
+});
 
 fastify.get('/rivals/:player_id', (request, reply) => {
   const { player_id } = request.params;
@@ -234,6 +278,21 @@ function getEloScore(player_id) {
 function eloProbability(rating1, rating2)
 {
   return 1 / (1 + Math.pow(10, (rating1 - rating2) / 400));
+}
+
+function updateScoreHistoryTable(player_id, elo_score, played_at)
+{
+  try
+  {
+    const stmt = db.prepare(`
+        INSERT INTO scores (player_id, elo_score, played_at)
+        VALUES (?, ?, ?,)
+      `);
+  }
+  catch(err)
+  {
+    console.log('Error updating score history table:', err);
+  }
 }
 
 function updatePlayerScoreTable(playerId, newScore, playerName, gamesPlayed, gamesLost, gamesWon) {
@@ -390,18 +449,18 @@ function calculateGamesLost(player_id) {
 fastify.post('/match_history', { preHandler: requireAuth }, (request, reply) => {
   // TURVALLISUUS: player_id vain tokenista
   const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
-  const {opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result } = request.body;  // Display name voi vaihtua
+  const {opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at} = request.body;  // Display name voi vaihtua
 
-  if (!player_score || !opponent_score || !duration || !player_id || !opponent_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
-    return reply.status(400).send({ error: 'Player_id, opponent_id, player_name, opponent_name, result(win, loss, draw) is required' });
+  if (!played_at || !player_score || !opponent_score || !duration || !player_id || !opponent_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
+    return reply.status(400).send({ error: 'Played_at, Player_id, opponent_id, player_name, opponent_name, result(win, loss, draw) is required' });
   }
 
   try {
     const stmt = db.prepare(`
       INSERT INTO match_history (duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    const resultDb = stmt.run(duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
+    const resultDb = stmt.run(played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
     
     let outcome;
     if (result === 'win')
@@ -420,6 +479,8 @@ fastify.post('/match_history', { preHandler: requireAuth }, (request, reply) => 
     const opponentGamesWon = calculateGamesWon(opponent_id);
     updatePlayerScoreTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon);
     updatePlayerScoreTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon);
+    updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at);
+    updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at);
     reply.send({ 
       id: resultDb.lastInsertRowid, 
       player_id, 
