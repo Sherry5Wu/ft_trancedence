@@ -17,19 +17,28 @@ const fetchData = () => {
 
 const colors = ['#2E6F40', '#252525', '#cd1c18'];
 
+// const customTooltip = ({ active, payload, label}) => {
+//     if (active && payload && payload.length)
+//         return (
+//             <div>
+//                 <p>{payload.value}</p>
+//             </div>
+//     )
+// }
+
 export const PieGraph = () => {
     const data = fetchData();
 
     return (
         <PieChart width={500} height={300} data={data}>
-            <Pie dataKey='value' fill='#FFF' stroke='#000' strokeWidth={2}
+            <Pie dataKey='value' fill='#FFF' stroke='#000' strokeWidth={2} labelLine={false}
                 label={({ percent, payload }) => `${payload.key.toUpperCase()} ${((percent ?? 1)* 100).toFixed(0)}%`}
-                labelLine={false}>
+                >
                 {data.map((entry, index) => (
                     <Cell key={`cell-${entry.key}`} fill={colors[index % colors.length]} />
                 ))}
             </Pie>
-            <Tooltip  />
+            <Tooltip />
         </PieChart>
     );
 }
