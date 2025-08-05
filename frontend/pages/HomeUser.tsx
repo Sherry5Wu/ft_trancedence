@@ -14,7 +14,7 @@ import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
 import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
-import { ReactComponent as DownArrow } from '../assets/noun-down-arrow-down-1144832.svg?react';
+// import { ReactComponent as DownArrow } from '../assets/noun-down-arrow-down-1144832.svg?react';
 
 const HomeUserPage = () => {
   const navigate = useNavigate(); // to access other pages
@@ -86,7 +86,7 @@ const HomeUserPage = () => {
 
       {/* Arrow up button */}
       </div>
-      <DownArrow className='size-15' />
+      {/* <DownArrow className='size-15' /> */}
       {/* Statistics */}
       
       <div className=''>
