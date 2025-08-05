@@ -28,6 +28,7 @@ import RivalsPage from '../pages/Rivals/RivalsMain';
 
 const App = () => {
   return (
+    
     <div className='bg-[#FFCC00]'>
       <Router>
         <div className="flex flex-col min-h-screen">

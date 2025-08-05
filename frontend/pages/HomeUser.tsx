@@ -48,7 +48,7 @@ const HomeUserPage = () => {
       </div>
 
       {/* Round-big-button group */}
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="flex flex-wrap justify-center gap-6 mb-7">
         <GenericButton
           className="round-icon-button"
           text={undefined}
@@ -113,7 +113,7 @@ const HomeUserPage = () => {
             <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
               <h4 className='h4 font-semibold'>LONGEST WIN STREAK</h4><h3 className='h3 font-bold'>{longestWinStreak}</h3>
             </div>
-            <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
+            <div className='flex mt-5 justify-between items-end border-b-2 border-dashed'>
               <h4 className='h4 font-semibold'>WORST RIVAL</h4><h3 className='h3 font-bold'>{worstRival}</h3>
             </div>
           </div>
