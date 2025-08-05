@@ -50,7 +50,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
 
   const setTitle = (newTitle: string) => {
     setTournamentTitle(newTitle);
-  }
+  };
 
   return (
     <PlayersContext.Provider value={{ players, tournamentTitle, addPlayer, removePlayer, setPlayerUsername, setTitle, resetPlayers }}>
