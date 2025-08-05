@@ -1,7 +1,6 @@
 import { useEffect, ReactElement } from 'react';
 import { useUserContext } from '../context/UserContext';
 import { RivalIcon } from '../assets/noun-battle-7526810.svg?react'
-import { match } from 'react-router-dom';
 
 interface MatchData {
     matchIndex: number,
@@ -74,7 +73,7 @@ export const MatchHistory = ( { player1 }:  { player1: string } ) => {
 
             <ul aria-label='match history rows' className=''>
                 {matchData.map((match, index: number) => {
-                    return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-full items-center text-center'>
+                    return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'>
                         <span className='ml-3'>{match.date}</span>
                         <span className='col-span-2 truncate flex items-center justify-center gap-2'>
                             <span className=''>{match.player1} </span> 
