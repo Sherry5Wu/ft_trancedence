@@ -8,7 +8,7 @@ import { usePlayersContext } from '../context/PlayersContext';
 
 const GamePage: React.FC = () => {
   const navigate = useNavigate();
-  const { players, resetPlayers } = usePlayersContext();
+  const { tournamentTitle, players, resetPlayers } = usePlayersContext();
 
   return (
     <div className="flex flex-col justify-center p-8 space-y-6 max-w-sm mx-auto">
@@ -16,12 +16,12 @@ const GamePage: React.FC = () => {
 
       <h3 className="font-semibold text-center">Game</h3>
 
-{/* 
+
       {tournamentTitle && (
         <h4 className="text-center text-xl font-semibold text-blue-600">
-          {tournamentTitle}
+          The title tournament is '{tournamentTitle}'
         </h4>
-      )} */}
+      )}
 
       {players.length === 0 ? (
         <p className="text-center text-gray-500">No players selected.</p>

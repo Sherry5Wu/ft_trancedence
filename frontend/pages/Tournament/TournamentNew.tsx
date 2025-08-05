@@ -136,7 +136,6 @@ const NewTournamentPage: React.FC = () => {
           text="NEXT"
           disabled={!formFilled}
           onClick={() => {
-            setTitle(titleField.value.trim());
             navigate('/tournaments/new/players');
           }}
         />
