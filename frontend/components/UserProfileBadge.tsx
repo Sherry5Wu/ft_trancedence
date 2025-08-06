@@ -34,16 +34,16 @@ export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
   
   const sizeClasses = {
     sm: {
-      container: 'w-12 h-12',
-      icon: 'w-4 h-4',
+      container: 'w-16 h-16',
+      icon: 'w-6 h-6',
     },
     md: {
       container: 'w-20 h-20',
-      icon: 'w-6 h-6',
+      icon: 'w-8 h-8',
     },
     lg: {
       container: 'w-32 h-32',
-      icon: 'w-8 h-8',
+      icon: 'w-10 h-10',
     },
   };
 

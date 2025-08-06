@@ -52,7 +52,7 @@ const SettingsPage: React.FC = () => {
     <div className='pageLayout'>
 
       {/* Profile picture */}
-      <div >
+        <div >
         <UserProfileBadge
           size="lg"
           user={{
