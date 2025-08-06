@@ -1,11 +1,13 @@
 // pages/User/UserSettings.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
 import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
+import { UserProfileBadge } from '../../components/UserProfileBadge';
+import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +17,8 @@ const SettingsPage: React.FC = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Populate local state from user context
   useEffect(() => {
     if (user) {
@@ -23,12 +27,49 @@ const SettingsPage: React.FC = () => {
     }
   }, [user]);
 
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Image = reader.result as string;
+      const newProfilePic = (
+        <img src={base64Image} className="profilePic" alt="Uploaded profile" />
+      );
+
+      setUser({
+        ...user!,
+        profilePic: newProfilePic,
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+  
   return (
     <div className='pageLayout'>
 
-      {/* Username header */}
-      <div className='profilePicBig'>
-        {user?.profilePic}
+      {/* Profile picture */}
+      <div >
+        <UserProfileBadge
+          size="lg"
+          user={{
+            username: user?.username,
+            photo: (user?.profilePic as React.ReactElement)?.props?.src // extract the image URL from JSX
+            // photo: user?.profilePic ? user.profilePic.props?.src : undefined // if user.profilePic isn't present yet 
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          alwaysShowPlus
+        />
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleImageUpload}
+        />
       </div>
 
       <div>
@@ -77,7 +118,13 @@ const SettingsPage: React.FC = () => {
             className="generic-button"
             text="Save changes"
             onClick={() => {
-              alert('Profile updated!'); // update user context or save to backend
+              alert('Profile updated!');
+              // send to backend later
+              setUser({
+                ...user!,
+                firstname: firstName,
+                lastname: lastName,
+              });
             }}
           />
         </div>
