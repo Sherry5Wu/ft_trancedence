@@ -30,7 +30,6 @@ export const PieGraph = () => {
     const data = fetchData();
 
     return (
-        <div className='p-4'>
         <ResponsiveContainer width='100%' aspect={1.25}>
             <PieChart width={500} height={300} data={data}>
                 <Pie dataKey='value' fill='#FFF' stroke='#000' strokeWidth={2} labelLine={false}
@@ -48,6 +47,5 @@ export const PieGraph = () => {
                 />
             </PieChart>
         </ResponsiveContainer>
-        </div>
     );
 }

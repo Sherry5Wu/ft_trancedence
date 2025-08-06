@@ -61,7 +61,6 @@ export const MatchHistory = ( { player1 }:  { player1: string } ) => {
             </div>
     );
 
-
     return (
         <div aria-label='match history' className=''>
             <div aria-label='match history categories' className='grid grid-cols-5 mb-1 text-center'>
