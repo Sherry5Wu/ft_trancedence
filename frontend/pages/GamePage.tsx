@@ -2,10 +2,15 @@ import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CloseButton } from '../components/CloseButton';
 import GameCanvas from '../game/main'; // main.tsx
+import { usePlayersContext } from '../context/PlayersContext'
 
 const GamePage: React.FC = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const { players, resetPlayers } = usePlayersContext();
+  const p1Name = players[0]?.username ?? 'Player 1';
+  const p2Name = players[1]?.username ?? 'Player 2';
 
   return (
     <div className="flex flex-col items-center p-8 space-y-4">
@@ -19,7 +24,10 @@ const GamePage: React.FC = () => {
         {/* Game Container */}
         <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
           {/* Babylon.js Game Logic */}
-          <GameCanvas canvasRef={canvasRef} />
+          <GameCanvas
+          canvasRef={canvasRef}
+          playerNames={[p1Name, p2Name]}
+          />
 
           {/* Babylon.js Canvas */}
           <canvas
@@ -39,7 +47,7 @@ const GamePage: React.FC = () => {
             id="scoreBoard"
             className="absolute top-2 left-1/2 transform -translate-x-1/2 font-mono text-xl text-green-700 z-10 pointer-events-none"
           >
-            Player 1: 0 | Player 2: 0
+            {p1Name}: 0 | {p2Name}: 0
           </div>
           <div
             id="pauseOverlay"

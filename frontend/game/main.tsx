@@ -16,9 +16,11 @@ import { createMaterials } from './materials';
 
 type GameCanvasProps = {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  playerNames: [string, string];
 };
 
-const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef }) => {
+const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
+  const [p1Name, p2Name] = playerNames;
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -58,8 +60,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef }) => {
     }
 
     function updateScore() {
-      if (scoreBoard)
-        scoreBoard.textContent = `Player 1: ${score1} | Player 2: ${score2}`;
+      const scoreBoard = document.getElementById('scoreBoard')!;
+      scoreBoard.textContent = `${p1Name}: ${score1} | ${p2Name}: ${score2}`;
     }
 
     window.addEventListener("keydown", e => {
@@ -220,7 +222,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef }) => {
 
     updateScore();
     resetBall();
-  }, [canvasRef]);
+  }, [canvasRef, p1Name, p2Name]);
 
   return null;
 };

@@ -23,7 +23,7 @@ import NewTournamentPage from '../pages/Tournament/TournamentNew';
 import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/RivalsMain';
-import GamePage from '../pages/GamePage'; //added this!!!!!!!!!!!!!!!!!!!!!!!
+import GamePage from '../pages/GamePage';
 
 const App = () => {
   return (

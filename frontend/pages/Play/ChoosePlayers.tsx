@@ -100,11 +100,18 @@ const ChoosePlayersPage: React.FC = () => {
           onClick={() => navigate('/homeuser')}
         />
         <GenericButton
-          className="generic-button"
-          text="PLAY"
-          disabled={!formFilled}
-          onClick={() => navigate('/game')}
-        />
+        className="generic-button"
+        text="PLAY"
+        disabled={!formFilled}
+        onClick={() =>
+          navigate('/game', {
+            state: {
+              player1: player1Field.value.trim(),
+              player2: player2Field.value.trim(),
+            }
+          })
+        }
+      />
       </div>
     </div>
   );
