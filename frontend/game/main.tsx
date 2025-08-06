@@ -13,6 +13,7 @@ import { explodeBall, gatherBall, spawnFlash, flashPaddle, createFireTrail, upda
 import { createScene } from './sceneSetup';
 import { createObjects } from './objects';
 import { createMaterials } from './materials';
+import { updatePauseOverlay, updateStartPrompt, updateScore } from './uiHelpers';
 
 type GameCanvasProps = {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -49,21 +50,6 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
     const startPrompt = document.getElementById("startPrompt") as HTMLElement;
     const scoreBoard = document.getElementById("scoreBoard") as HTMLElement;
 
-    function updatePauseOverlay() {
-      if (pauseOverlay)
-        pauseOverlay.style.visibility = paused && !awaitingStart ? "visible" : "hidden";
-    }
-
-    function updateStartPrompt() {
-      if (startPrompt)
-        startPrompt.style.visibility = awaitingStart ? "visible" : "hidden";
-    }
-
-    function updateScore() {
-      const scoreBoard = document.getElementById('scoreBoard')!;
-      scoreBoard.textContent = `${p1Name}: ${score1} | ${p2Name}: ${score2}`;
-    }
-
     window.addEventListener("keydown", e => {
       if (!acceptingInput) return;
       keysPressed.add(e.key);
@@ -75,11 +61,11 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
         if (awaitingStart) {
           awaitingStart = false;
           paused = false;
-          updateStartPrompt();
-          updatePauseOverlay();
+          updateStartPrompt(startPrompt, awaitingStart);
+          updatePauseOverlay(pauseOverlay, paused, awaitingStart);
         } else {
           paused = !paused;
-          updatePauseOverlay();
+          updatePauseOverlay(pauseOverlay, paused, awaitingStart);
         }
       }
     });
@@ -101,8 +87,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
       vx = (Math.random() < 0.5 ? -1 : 1) * 0.07;
       vz = (Math.random() < 0.5 ? -1 : 1) * 0.04;
       resetPaddles();
-      updatePauseOverlay();
-      updateStartPrompt();
+      updatePauseOverlay(pauseOverlay, paused, awaitingStart);
+      updateStartPrompt(startPrompt, awaitingStart);
 
       ballMaterial.emissiveIntensity = 0;
       ballMaterial.emissiveColor     = new Color3(0, 0, 0);
@@ -199,7 +185,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
         if (ball.position.x > paddleDistance + 1.5) score2++;
         else score1++;
 
-        updateScore();
+        updateScore(scoreBoard, score1, score2, p1Name, p2Name);
         const lastVx = vx, lastVz = vz;
         ball.isVisible = false;
 
@@ -220,7 +206,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
     engine.runRenderLoop(() => scene.render());
     window.addEventListener("resize", () => engine.resize());
 
-    updateScore();
+    updateScore(scoreBoard, score1, score2, p1Name, p2Name);
     resetBall();
   }, [canvasRef, p1Name, p2Name]);
 

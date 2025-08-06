@@ -19,9 +19,6 @@ interface PositionSource { position: Vector3; }
 
 let fireTrail: GPUParticleSystem | null = null;
 
-/**
- * Create a random shard box for explosion or gather effects
- */
 function makeShard(
   scene: Scene,
   ball: AbstractMesh | PositionSource,
@@ -89,9 +86,6 @@ export function explodeBall(
   });
 }
 
-/**
- * Gather shards back to the center and call onComplete when done
- */
 export function gatherBall(
   scene: Scene,
   ballMaterial: PBRMaterial,
@@ -156,9 +150,6 @@ export function gatherBall(
   });
 }
 
-/**
- * Spawn a quick flash particle effect and light at the given position
- */
 export function spawnFlash(
   position: Vector3,
   scene: Scene,
@@ -209,9 +200,6 @@ export function spawnFlash(
   paddleSound.setPosition(position);
 }
 
-/**
- * Flash the paddle by animating its emissive color
- */
 export function flashPaddle(
   paddle: AbstractMesh,
   scene: Scene,
@@ -238,9 +226,6 @@ export function flashPaddle(
   scene.beginAnimation(material, 0, 15, false);
 }
 
-/**
- * Create and start a GPU particle fire trail attached to the ball
- */
 export function createFireTrail(
   ball: AbstractMesh,          // <-- now typed as an AbstractMesh
   scene: Scene,
@@ -279,9 +264,6 @@ export function createFireTrail(
   fireTrail.maxSize = 0;
 }
 
-/**
- * Update the fire trail emission based on boost level
- */
 export function updateFireTrail(boostLevel: number): void {
   if (!fireTrail) return;
   if (boostLevel <= 0) {
@@ -295,9 +277,6 @@ export function updateFireTrail(boostLevel: number): void {
   }
 }
 
-/**
- * Reset and clear the fire trail particle system
- */
 export function resetFireTrail(): void {
   if (!fireTrail) return;
   fireTrail.reset();

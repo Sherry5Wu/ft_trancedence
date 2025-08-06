@@ -12,11 +12,6 @@ export type ObjectsResult = {
   limits: { upperLimitZ: number; lowerLimitZ: number };
 };
 
-/**
- * createObjects
- * @param scene - Babylon.js Scene
- * @param materials - materials created by createMaterials
- */
 export function createObjects(
   scene: Scene,
   materials: SceneMaterials

@@ -21,10 +21,6 @@ export type SceneSetupResult = {
   glow: GlowLayer;
 };
 
-/**
- * createScene
- * @param canvas - the HTMLCanvasElement to render into
- */
 export function createScene(canvas: HTMLCanvasElement): SceneSetupResult {
   // 1) Engine & Scene
   const engine = new Engine(canvas, true);

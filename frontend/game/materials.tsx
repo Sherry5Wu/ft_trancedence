@@ -3,9 +3,6 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { PBRMaterial } from '@babylonjs/core/Materials/PBR/pbrMaterial';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 
-/**
- * Collection of materials used in the scene
- */
 export type SceneMaterials = {
   warmYellow: Color3;
   wallMaterial: StandardMaterial;
@@ -14,10 +11,6 @@ export type SceneMaterials = {
   floorMat: StandardMaterial;
 };
 
-/**
- * createMaterials
- * @param scene - Babylon.js Scene
- */
 export function createMaterials(scene: Scene): SceneMaterials {
   // Warm yellow color for diffuse/emissive use
   const warmYellow = Color3.FromHexString('#FFCC00');
