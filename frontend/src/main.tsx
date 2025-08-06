@@ -5,6 +5,7 @@ import './index.css'
 import { UserProvider } from '../context/UserContext.tsx';
 import { DarkModeProvider } from '../context/DarkModeContext.tsx';
 import { AccessibilityProvider } from '../context/AccessibilityContext.tsx';
+import { PlayersProvider } from '../context/PlayersContext.tsx';
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
@@ -14,7 +15,9 @@ const Providers = ({ children }: { children: ReactNode}) => {
         <UserProvider>
             <AccessibilityProvider>
                 <DarkModeProvider>
-                    {children}
+                    <PlayersProvider>
+                            {children}
+                     </PlayersProvider>
                 </DarkModeProvider>
             </AccessibilityProvider>
         </UserProvider>

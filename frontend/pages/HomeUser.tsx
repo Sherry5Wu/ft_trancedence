@@ -14,10 +14,17 @@ import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
 import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
+// import { ReactComponent as DownArrow } from '../assets/noun-down-arrow-down-1144832.svg?react';
 
 const HomeUserPage = () => {
   const navigate = useNavigate(); // to access other pages
   const { user, setUser } = useUserContext();
+
+  //mockdata
+  const playedGames = 7;
+  const winStreak = 1;
+  const longestWinStreak =3;
+  const worstRival = 'Alice';
 
     return (
       <div className='pageLayout'>
@@ -79,22 +86,37 @@ const HomeUserPage = () => {
 
       {/* Arrow up button */}
       </div>
-
+      {/* <DownArrow className='size-15' /> */}
       {/* Statistics */}
-      <div className=''>
-        <h3 className='h3 text-center font-semibold mb-5'>STATISTICS</h3>
-        <div className='grid grid-cols-2 scale-80'>
+      
+      <div className='w-200'>
+        <h3 className='h3 text-center font-semibold mb-10'>STATS</h3>
+        <div className='grid grid-cols-2 w-full h-200 gap-5'>
           <div>
-            <h4 className='h4 text-center mb-5'>SCORE HISTORY</h4>
+            <h4 className='h4 text-center mb-5 font-semibold'>SCORE HISTORY</h4>
             <LineGraph />
           </div>
           <div className=''>
-            <h4 className='h4 text-center mb-5'>SCORE GAINS/LOSSES</h4>
+            <h4 className='h4 text-center mb-5 font-semibold'>SCORE GAINS/LOSSES</h4>
             <BarGraph />
           </div>
-          <div>
-            <h4 className='h4 text-center mb-5'>WINRATE</h4>
-            <PieGraph />
+          <div className='mt-15'>
+            <h4 className='h4 text-center mb-5 font-semibold'>WIN RATE</h4>
+            <PieGraph/>
+          </div> 
+          <div className='mt-15 ml-15 px-2 flex flex-col'>
+            <div className='flex mb-5 justify-between items-end border-b-2 border-dashed'>
+              <h4 className='h4 font-semibold'>PLAYED GAMES</h4><h3 className='h3 font-bold'>{playedGames}</h3>
+            </div>
+            <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
+              <h4 className='h4 font-semibold'>WIN STREAK</h4><h3 className='h3 font-bold'>{winStreak}</h3>
+            </div>
+            <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
+              <h4 className='h4 font-semibold'>LONGEST WIN STREAK</h4><h3 className='h3 font-bold'>{longestWinStreak}</h3>
+            </div>
+            <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
+              <h4 className='h4 font-semibold'>WORST RIVAL</h4><h3 className='h3 font-bold'>{worstRival}</h3>
+            </div>
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ html, body {
 }
 
 .profilePicSmall {
-  @apply size-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C]
+  @apply h-11 w-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C]
 }
 
 .h1 {

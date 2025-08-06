@@ -25,6 +25,7 @@ import GamePage from '../pages/Game';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/RivalsMain';
 
+
 const App = () => {
   return (
     <div className='bg-[#FFCC00]'>
@@ -33,7 +34,6 @@ const App = () => {
           <header className='sticky top-0 z-50'>
             <Navbar />
           </header>
-
         <main className="flex-grow p-4">
           <Routes>
             <Route path="/" element={<HomePage />} />

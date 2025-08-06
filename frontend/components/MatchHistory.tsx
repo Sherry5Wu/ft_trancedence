@@ -13,47 +13,83 @@ interface MatchData {
     winner: string,
 }
 
-
-export const MatchHistory = ( { player1 }:  { player1: string | undefined } ) => {
-
-    const { user } = useUserContext();
+const fetchMatchData = (user: string | undefined) => {
     // FETCH MATCH HISTORY FROM PLAYER 1
 
-    // MOCKUP DATA
-        player1 = user?.username;
-        const player2 = "Rival";
-        const rawDate = new Date('2025-07-13 18:08');
-        const formatDate = rawDate.toLocaleString('en-GB');
-        const duration = 3;
-        const player1score = 2;
-        const player2score = 1;
-        const winner = player1;
-        const player1pic = <img src='../assets/profilepics/Bluey.png' className='profilePicSmall' />;
-        const player2pic = <img src='../assets/profilepics/B2.png' className='profilePicSmall' />;
+    // MOCKUP DATA FOR TESTING
+    const matchData = [
+        {
+            player1: user,
+            player2: 'Rival1',
+            date: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
+            duration: 300,
+            player1score: 2,
+            player2score: 1,
+            winner: user,
+            player1pic: '../assets/profilepics/Bluey.png',
+            player2pic: '../assets/profilepics/B2.png'
+        },
+        {
+            player1: user,
+            player2: 'Rival2',
+            date: new Date('2025-07-15 15:05').toLocaleString('en-GB'),
+            duration: 300,
+            player1score: 2,
+            player2score: 5,
+            winner: 'Rival2',
+            player1pic: '../assets/profilepics/Bluey.png',
+            player2pic: '../assets/profilepics/image.jpg'
+        },
+    ];
+    // const matchData = [];
+
+    return matchData;
+};
+
+
+export const MatchHistory = ( { player1 }:  { player1: string } ) => {
+
+    const { user } = useUserContext();
+
+    // FETCH MATCH HISTORY FROM PLAYER 1
+    const matchData = fetchMatchData(user?.username);
+
+    if (matchData.length  === 0)
+        return (
+            <div aria-label='empty match history' className='bg-[#FFEE8C] rounded-full text-center'>
+            -
+            </div>
+    );
+
 
     return (
         <div aria-label='match history' className=''>
-            <div aria-label='match history categories' className='grid grid-cols-4 text-center'>
+            <div aria-label='match history categories' className='grid grid-cols-5 mb-1 text-center'>
                 <span className=''>Date/Time</span>
-                <span className='col-span-[1.5]'>Players</span>
+                <span className='col-span-2'>Players</span>
                 <span className=''>Score</span>
                 <span className=''>Duration</span>
              </div>
-            <div className='grid grid-cols-4 h-12 w-full bg-[#FFEE8C] rounded-full items-center text-center'>
-               <span className='flex-1'>{formatDate}</span>
-               <span className='flex-1'>{player1} {player1pic} vs {player2pic} {player2} </span>
-               <span className='flex-1'>{player1score} - {player2score}</span>
-               <span className='flex-1'>{duration}</span>
-            </div>
 
+            <ul aria-label='match history rows' className=''>
+                {matchData.map((match, index: number) => {
+                    return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'>
+                        <span className='ml-3'>{match.date}</span>
+                        <span className='col-span-2 truncate flex items-center justify-center gap-2'>
+                            <span className=''>{match.player1} </span> 
+                            <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.player1 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
+                            <span>vs</span>
+                            <img src={match.player2pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.player2 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
+                            <span className=''>{match.player2}</span>
+                        </span> 
+                        <span className=''>{match.player1score} - {match.player2score}</span>
+                        <span className=''>{match.duration}</span>
+                    </li>
+                })}
+
+            </ul>
         </div>
     );
 };
 
-
-            // <div className='grid grid-cols-4 h-12 w-full bg-[#FFEE8C] rounded-full items-center text-center'>
-            //    <span className='flex-1'>{formatDate}</span>
-            //    <span className='flex-1'>{player1} {player1pic} vs {player2pic} {player2} </span>
-            //    <span className='flex-1'>{player1score} - {player2score}</span>
-            //    <span className='flex-1'>{duration}</span>
-            // </div>
+//  <span className={`${match.player2 === match.winner ? 'border-b-3' : ''}`}>{match.player2}</span>
