@@ -114,6 +114,7 @@ const NewTournamentPage: React.FC = () => {
         <div className="grid grid-cols-4 gap-4 mt-6">
           {displayPlayers.map((player, idx) => (
             <UserProfileBadge
+              size="sm"
               key={idx}
               user={player}
               onClick={() => handlePlayerClick(idx)}

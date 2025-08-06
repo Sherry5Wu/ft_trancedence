@@ -101,7 +101,7 @@ const TournamentConfirm: React.FC = () => {
 
           return (
             <div key={idx} className="flex items-center gap-4">
-              <UserProfileBadge user={player} disabled />
+              <UserProfileBadge size="sm" user={player} disabled />
               <GenericInput
                 type="text"
                 placeholder={`Player ${idx + 1}`}
