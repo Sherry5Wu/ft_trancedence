@@ -21,10 +21,9 @@ import ChangePINPage from '../pages/User/UserChangePIN';
 import TournamentsPage from '../pages/Tournament/TournamentMain';
 import NewTournamentPage from '../pages/Tournament/TournamentNew';
 import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
-import GamePage from '../pages/Game';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/RivalsMain';
-
+import GamePage from '../pages/GamePage'; //added this!!!!!!!!!!!!!!!!!!!!!!!
 
 const App = () => {
   return (
@@ -34,6 +33,7 @@ const App = () => {
           <header className='sticky top-0 z-50'>
             <Navbar />
           </header>
+
         <main className="flex-grow p-4">
           <Routes>
             <Route path="/" element={<HomePage />} />

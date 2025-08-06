@@ -1,75 +1,66 @@
+// import React from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { useUserContext } from '../context/UserContext';
+
+// import ProfileIcon from '../assets/noun-profile-7808629.svg';
+// import PlusIcon from '../assets/symbols/noun-plus-rounded-5432794.svg';
+// import CheckIcon from '../assets/symbols/noun-check-rounded-5432747.svg';
+
+// const UserProfileBadge: React.FC = () => {
+//   const { user } = useUserContext();
+//   const navigate = useNavigate();
+
+//   const handleClick = () => {
+//     if (!user) {
+//       navigate('/login-player');
+//     }
+//   };
+
+//   return (
+//     <div className="relative w-16 h-16 cursor-pointer" onClick={handleClick}>
+//       <img
+//         src={user?.profilePic || ProfileIcon}
+//         alt="User Profile"
+//         className="w-full h-full rounded-full object-cover border border-gray-300"
+//       />
+//       <img
+//         src={user ? CheckIcon : PlusIcon}
+//         alt={user ? 'Confirmed' : 'Add User'}
+//         className="absolute top-0 right-0 w-5 h-5"
+//       />
+//     </div>
+//   );
+// };
+
+// export default UserProfileBadge;
+
+
 // UserProfileBadge.tsx
-
-// encodeURIComponent ensures the username works safely in URLs.
-// The priority is:
-// photoUrl
-// username → DiceBear
-// Static ProfileIcon
-
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import ProfileIcon from '../assets/noun-profile-7808629.svg';
 import PlusIcon from '../assets/symbols/noun-plus-rounded-5432794.svg';
 import CheckIcon from '../assets/symbols/noun-check-rounded-5432747.svg';
 
 interface UserProfileBadgeProps {
-  user: { photo?: string; username?: string } | null;
-  onClick?: () => void;
-  disabled?: boolean;
-  alwaysShowPlus?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  user: { photoUrl?: string } | null;
+  onClick: () => void;
 }
 
-export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
-  user,
-  onClick,
-  disabled = false,
-  alwaysShowPlus = false,
-  size = 'md',
-}) => {
-  const avatarSrc = user?.photo
-    ? user.photo
-    : user?.username
-      ? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user.username)}`
-      : ProfileIcon;
-  
-  const sizeClasses = {
-    sm: {
-      container: 'w-12 h-12',
-      icon: 'w-4 h-4',
-    },
-    md: {
-      container: 'w-20 h-20',
-      icon: 'w-6 h-6',
-    },
-    lg: {
-      container: 'w-32 h-32',
-      icon: 'w-8 h-8',
-    },
-  };
-
-  const selectedSize = sizeClasses[size];
-
+export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({ user, onClick }) => {
   return (
-    <div className={`relative ${selectedSize.container}`}>
+    <div className="relative w-12 h-12 cursor-pointer" onClick={onClick}>
       <img
-        src={avatarSrc}
+        src={user?.photoUrl || ProfileIcon}
         alt="User Profile"
-        className="w-full h-full rounded-full bg-white object-cover border-3 border-black"
+    className="w-full h-full rounded-full bg-white object-cover border border-black"
       />
-
-      {!disabled && (
-        <button
-          type="button"
-          onClick={onClick}
-          className={`absolute top-0 right-0 translate-x-1/4 bg-white rounded-full flex items-center justify-center p-1 cursor-pointer ${selectedSize.icon}`}
-        >
-          <img
-            src={alwaysShowPlus || !user ? PlusIcon : CheckIcon}
-            alt="Action Icon"
-            className="w-full h-full"
-          />
-        </button>
-      )}
+      <img
+        src={user ? CheckIcon : PlusIcon}
+        alt={user ? 'Confirmed' : 'Add User'}
+        className="absolute top-0 right-0 translate-x-1/4 w-5 h-5 bg-white rounded-full"
+      />
     </div>
   );
 };
