@@ -1,6 +1,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from './Menu';
 import { OptionToggle } from './OptionToggle';
@@ -43,6 +43,13 @@ export const Navbar = () => {
     const handleTextSize = () => {
         setLargeText(!largeText);
     }
+
+    useEffect(() => {
+        const value = largeText ? '1.3' : '1.0';
+        console.log('Setting --scale-modifier to:', value);
+        document.documentElement.style.setProperty('--scale-modifier', value);
+    }), [handleTextSize];
+
 
     const languageMenuItems = [
         {label: 'EN', Icon: <EnglishIcon />, onClick: () => console.log('English')},

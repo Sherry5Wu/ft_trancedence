@@ -37,7 +37,7 @@ const HomeUserPage = () => {
       </div>
 
       <div className='w-56 truncate mb-12'>
-        <h2 className='h2 text-center mb-3 font-semibold'>{user?.username} </h2>
+        <h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{user?.username} </h2>
         <div className='flex justify-between'>
           <h4 className='h4'>Score</h4>
           <h4 className='h4 text-right font-semibold'>{user?.score}</h4>
@@ -143,7 +143,7 @@ const HomeUserPage = () => {
 
       {/* MATCH HISTORY */}
       <div className=''>
-        <h3 className='h3 text-center font-semibold mb-5 -mt-10'>MATCH HISTORY</h3>
+        <h3 className='h3 text-center font-semibold mb-5 -mt-10 scale-90'>MATCH HISTORY</h3>
         <MatchHistory player1={user?.username} />
       </div>
     </div>

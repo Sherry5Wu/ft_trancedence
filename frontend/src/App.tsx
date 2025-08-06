@@ -1,6 +1,6 @@
 // src/App.tsx
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
@@ -27,10 +27,6 @@ import RivalsPage from '../pages/Rivals/RivalsMain';
 
 
 const App = () => {
-
-  // useEffect(() => {
-  //   document.documentElement.style.setProperty('--scale-modifier', '1.0');
-  // }, [])
 
   return (
     <div className='bg-[#FFCC00]'>
