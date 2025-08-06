@@ -56,6 +56,17 @@ function getMatchHistoryForPlayer(player_id)
     }
 }
 
+export function calculateLongestWinStreak(player_id) {
+  const rows = getMatchHistoryForPlayer(player_id);
+  numberofwins = 0;
+  rows.forEach((item) => {
+    if (item.result === 'win')
+        numberofwins += 1;
+    else
+      return numberofwins;
+  });
+}
+
 export function calculateGamesPlayed(player_id) {
     return getMatchHistoryForPlayer(player_id).length;
   }

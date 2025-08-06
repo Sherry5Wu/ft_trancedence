@@ -48,7 +48,8 @@ db.prepare(`
       elo_score INTEGER DEFAULT 1000,
       games_played INTEGER NOT NULL,
       games_won INTEGER NOT NULL,
-      games_lost INTEGER NOT NULL
+      games_lost INTEGER NOT NULL,
+      win_streak DEFAULT 0
     )
   `).run();
   

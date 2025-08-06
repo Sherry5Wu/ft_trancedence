@@ -10,7 +10,7 @@ fastify.get('/', (request, reply) => {
     }
   });
 // /user_match_data/:player_id
-fastify.get('/scores/:player_id', (request, reply) => {
+fastify.get('/user_match_data/:player_id', (request, reply) => {
     const { player_id } = request.params;
   
     try {

@@ -50,7 +50,7 @@ export default async function matchHistoryRoutes(fastify) {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
         const resultDb = stmt.run(played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
-        
+
         let outcome;
         if (result === 'win')
             outcome = 1;
@@ -58,6 +58,31 @@ export default async function matchHistoryRoutes(fastify) {
             outcome = 0;
         else
             outcome = 0.5;
+
+        const updateWin = db.prepare(`
+                UPDATE user_match_data
+                SET
+                    win_streak = win_streak + 1
+                WHERE player_id = ?
+            `);
+         const resetStreak = db.prepare(`
+                UPDATE user_match_data
+                SET
+                    win_streak = 0
+                WHERE player_id = ?
+            `);
+        if (outcome === 1)
+        {
+            updateWin.run(player_id);
+            if (player_id !== opponent_id)
+                resetStreak.run(opponent_id);   
+        }
+        else
+        {
+            updateWin.run(opponent_id);
+            if (player_id !== opponent_id)
+                resetStreak.run(player_id);
+        }
     
         const gamesPlayed = calculateGamesPlayed(player_id);
         const gamesLost = calculateGamesLost(player_id);
