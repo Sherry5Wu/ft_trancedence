@@ -4,11 +4,6 @@
 
 :root {
   --font-sans: 'Jost', sans-serif;
-  --font-base: 1rem;
-  --font-scale: 1.2;
-  --font-small: var(--font-base);
-  --font-medium: calc(var(--font-base) * var(--font-scale));
-  --font-large: calc(var(--font-medium) * var(--font-scale));
   --scale-modifier: 1.0;
 }
 
