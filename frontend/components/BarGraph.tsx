@@ -11,7 +11,7 @@ const fetchData = () => {
         {key: 3, value: 50},
         {key: 4, value: -200},
         {key: 5, value: -150},
-        {key: 6, value: 300}
+        {key: 6, value: 250}
     ];
 
     const newData = [];
