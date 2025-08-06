@@ -21,11 +21,11 @@ const HomeUserPage = () => {
   const { user, setUser } = useUserContext();
 
   //mockdata
-  const playedGames = 7;
+  const playedGames = 77;
   const winStreak = 1;
   const longestWinStreak =3;
   const worstRival = 'Alice';
-  const WorstRivalPic = <img src='../assets/profilepics/B2.png' className='profilePic'/>
+  const WorstRivalPic = <img src='../assets/profilepics/B2.png' className='profilePic mt-1'/>
 
     return (
       <div className='pageLayout'>
@@ -37,7 +37,7 @@ const HomeUserPage = () => {
       </div>
 
       <div className='w-56 truncate mb-12'>
-        <h2 className='h2 text-center mb-3'>{user?.username} </h2>
+        <h2 className='h2 text-center mb-3 font-semibold'>{user?.username} </h2>
         <div className='flex justify-between'>
           <h4 className='h4'>Score</h4>
           <h4 className='h4 text-right font-semibold'>{user?.score}</h4>
@@ -82,16 +82,13 @@ const HomeUserPage = () => {
           onClick={() => 
             navigate('/leaderboard')}
         />
-
-      {/* Arrow down button */}
-
-      {/* Arrow up button */}
       </div>
-      <DownArrow className='size-15' />
+
+      {/* <DownArrow className='size-15' /> */}
       {/* Statistics */}
       
-      <div className='w-200'>
-        <h3 className='h3 text-center font-semibold mb-10'>STATS</h3>
+      <div className='w-200 scale-90'>
+        <h3 className='h3 text-center font-semibold my-5'>STATS</h3>
         <div className='grid grid-cols-2 w-full h-200'>
           <div>
             <h4 className='h4 text-center my-5 font-semibold'>SCORE HISTORY</h4>
