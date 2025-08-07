@@ -1,4 +1,5 @@
-          
+import SortIcon from '../assets/noun-sort-7706006.svg?react';
+
 const fetchRivalData = () => {
   let rivalData = [
     {
@@ -75,9 +76,10 @@ export const RivalRows = () => {
             }
             </ul>
             <div className='flex justify-end mt-5'>
-              <div className='flex justify-center items-center h-8 w-50 bg-[#FFEE8C] rounded-full'>
+              <button className='flex items-center h-8 w-50 bg-[#FFEE8C] rounded-full'>
+                  <SortIcon className='size-7 ml-2' />
                   hello
-              </div>
+              </button>
           </div>
         </div>
     )
