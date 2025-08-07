@@ -131,10 +131,10 @@ const TournamentsPage: React.FC = () => {
                       onClick={() => setExpandedIdx(isExpanded ? null : idx)}
                       aria-label={`Details for ${tournament.title}`}
                     >
-                      <DownArrow
-                        className={`size-12 hover:cursor-pointer ${isExpanded ? 'scale-y-[-1] opacity-50' : ''
-                        }`}
-                      />
+                    <div className={`size-12  transition ease-in-out duration-300 ${isExpanded ? '-rotate-180 opacity-25 ' : 'rotate-0'}`}>
+                      <DownArrow />
+                    </div>
+
                     </button>
                   </span>
                 </li>
@@ -148,8 +148,6 @@ const TournamentsPage: React.FC = () => {
             );
           })}
         </ul>
-
-
 
         {visibleTournamentsCount < sortTournaments.length && (
           <div className="mt-4 text-center">
