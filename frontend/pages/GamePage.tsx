@@ -50,7 +50,11 @@ const GamePage: React.FC = () => {
             {p1Name}: 0 | {p2Name}: 0
           </div>
           <div
-            id="pauseOverlay"
+             id="endOverlay"
+             className="absolute inset-0 pointer-events-none"
+           />
+           <div
+             id="pauseOverlay"
             style={{ visibility: 'hidden' }}
             className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-white font-sans z-20 pointer-events-none"
           >

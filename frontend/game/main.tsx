@@ -24,7 +24,6 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
   const [p1Name, p2Name] = playerNames;
   useEffect(() => {
     if (!canvasRef.current) return;
-
     const canvas = canvasRef.current;
     const { engine, scene } = createScene(canvas);
     const materials = createMaterials(scene);
@@ -34,9 +33,9 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
 
     const flareTexture = new Texture("https://playground.babylonjs.com/textures/flare.png", scene);
     const flameTexture = new Texture("https://playground.babylonjs.com/textures/flame.png", scene);
+
     createFireTrail(ball, scene, flameTexture);
     updateFireTrail(0);
-
     let score1 = 0, score2 = 0;
     let vx = 0.105, vz = 0.06;
     let paused = true;
@@ -45,18 +44,40 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
     let boostLevel = 0;
     const boostPressed = new Set<string>();
     const keysPressed = new Set<string>();
-
     const pauseOverlay = document.getElementById("pauseOverlay")!;
     const startPrompt = document.getElementById("startPrompt") as HTMLElement;
     const scoreBoard = document.getElementById("scoreBoard") as HTMLElement;
+    const endContainer   = document.getElementById("endOverlay")!;
 
+    // create “Play Again” button
+    const playAgainBtn = document.createElement('button');
+    playAgainBtn.textContent = 'Play Again';
+    Object.assign(playAgainBtn.style, {
+      display: 'none',
+      position: 'absolute',
+      bottom: '20px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    });
+    endContainer.appendChild(playAgainBtn);
+    playAgainBtn.addEventListener('click', () => {
+      score1 = score2 = 0;
+      updateScore(scoreBoard, score1, score2, p1Name, p2Name);
+      playAgainBtn.style.display = 'none';
+      resetBall();
+      acceptingInput = true;
+      paused = true;
+      awaitingStart = true;
+      updateStartPrompt(startPrompt, true);
+      updatePauseOverlay(pauseOverlay, paused, awaitingStart);
+    });
+
+    //Button press
     window.addEventListener("keydown", e => {
       if (!acceptingInput) return;
       keysPressed.add(e.key);
-
       if (e.key === "a") boostPressed.add("paddle1");
       if (e.key === "ArrowRight") boostPressed.add("paddle2");
-
       if (e.code === "Space") {
         if (awaitingStart) {
           awaitingStart = false;
@@ -70,6 +91,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
       }
     });
 
+    //Button release
     window.addEventListener("keyup", e => {
       keysPressed.delete(e.key);
       if (e.key === "a") boostPressed.delete("paddle1");
@@ -89,11 +111,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
       resetPaddles();
       updatePauseOverlay(pauseOverlay, paused, awaitingStart);
       updateStartPrompt(startPrompt, awaitingStart);
-
       ballMaterial.emissiveIntensity = 0;
       ballMaterial.emissiveColor     = new Color3(0, 0, 0);
-
-
       boostLevel = 0;
       resetFireTrail();
       updateFireTrail(0);
@@ -125,6 +144,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
         upperLimitZ
       );
     
+      //Calculate where the ball will be after a step
       const origin = ball.position.clone();
       const dir = new Vector3(stepX, 0, stepZ).scale(1 / stepLength);
       const radius = ball.getBoundingInfo().boundingSphere.radius;
@@ -152,13 +172,13 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
           const dot = Vector3.Dot(V, N);
           const R = V.subtract(N.scale(2 * dot));
     
+          //Boost logic
           let boostMultiplier = 1;
           if (pick.pickedMesh === paddle1 && boostPressed.has("paddle1")) {
             boostMultiplier = 1.25; boostLevel++; updateFireTrail(boostLevel); flashPaddle(paddle1, scene);
           } else if (pick.pickedMesh === paddle2 && boostPressed.has("paddle2")) {
             boostMultiplier = 1.25; boostLevel++; updateFireTrail(boostLevel); flashPaddle(paddle2, scene);
           }
-    
           if (boostLevel > 0) {
             ballMaterial.emissiveColor = new Color3(1, 0.4, 0);
             ballMaterial.emissiveIntensity = 0.05 * boostLevel ** 2;
@@ -167,7 +187,6 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
           vz = R.z * boostMultiplier;
     
           spawnFlash(ball.position, scene, warmYellow, flareTexture);
-    
           const leftover = stepLength - travel;
           ball.position = ball.position.add(new Vector3(vx, 0, vz).normalize().scale(leftover));
         } else {
@@ -176,20 +195,28 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
         }
       }
 
+      //Scoring
       if (ball.position.x < -paddleDistance - 1.5 || ball.position.x > paddleDistance + 1.5) {
         paused = true;
         acceptingInput = false;
-
         resetFireTrail();
-
         if (ball.position.x > paddleDistance + 1.5) score2++;
         else score1++;
-
         updateScore(scoreBoard, score1, score2, p1Name, p2Name);
         const lastVx = vx, lastVz = vz;
         ball.isVisible = false;
-
         explodeBall(scene, ball, ballMaterial, lastVx, lastVz);
+
+        //Match end logic
+        if (score1 === 3 || score2 === 3) {
+          const finalScore = `${score1}-${score2}`;
+          //sendMatchResult(finalScore); Add this once we have the backend
+          startPrompt.textContent = `${score1 === 3 ? p1Name : p2Name} wins!`;
+          updateStartPrompt(startPrompt, true);
+          return;
+        }
+
+        //Prevent input until animations finish
         setTimeout(() => {
           ballMaterial.emissiveIntensity = 0;
           ballMaterial.emissiveColor = new Color3(0, 0, 0);
@@ -205,7 +232,6 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
 
     engine.runRenderLoop(() => scene.render());
     window.addEventListener("resize", () => engine.resize());
-
     updateScore(scoreBoard, score1, score2, p1Name, p2Name);
     resetBall();
   }, [canvasRef, p1Name, p2Name]);

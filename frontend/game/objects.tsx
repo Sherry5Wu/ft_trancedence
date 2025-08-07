@@ -31,8 +31,8 @@ export function createObjects(
     { width: 0.3, height: 0.3, depth: 2 },
     scene
   );
-  paddle1.material = materials.paddleMaterial;
-  paddle2.material = materials.paddleMaterial;
+  paddle1.material = materials.paddle1Material;
+  paddle2.material = materials.paddle2Material;
 
   const paddleDistance = 8;
   paddle1.position.x = paddleDistance;

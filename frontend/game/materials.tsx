@@ -6,7 +6,8 @@ import { Color3 } from '@babylonjs/core/Maths/math.color';
 export type SceneMaterials = {
   warmYellow: Color3;
   wallMaterial: StandardMaterial;
-  paddleMaterial: StandardMaterial;
+  paddle1Material: StandardMaterial;
+  paddle2Material: StandardMaterial;
   ballMaterial: PBRMaterial;
   floorMat: StandardMaterial;
 };
@@ -19,8 +20,10 @@ export function createMaterials(scene: Scene): SceneMaterials {
   const wallMaterial = new StandardMaterial('wallMat', scene);
   wallMaterial.diffuseColor = warmYellow;
 
-  const paddleMaterial = new StandardMaterial('paddleMat', scene);
-  paddleMaterial.diffuseColor = warmYellow;
+  const basePaddleMaterial = new StandardMaterial('paddleMat', scene);
+  basePaddleMaterial.diffuseColor = warmYellow;
+  const paddle1Material = basePaddleMaterial.clone('paddleMat1');
+  const paddle2Material = basePaddleMaterial.clone('paddleMat2');
 
   // PBR material for ball to support emissive intensity
   const ballMaterial = new PBRMaterial('ballMat', scene);
@@ -36,7 +39,7 @@ export function createMaterials(scene: Scene): SceneMaterials {
   floorMat.ambientColor = new Color3(0.5, 0.5, 0.5);
 
   // Shared specular settings
-  [wallMaterial, paddleMaterial, floorMat].forEach((mat) => {
+  [wallMaterial, basePaddleMaterial, paddle1Material, paddle2Material, floorMat].forEach((mat) => {
     mat.specularColor = Color3.Black();
     mat.specularPower = 1;
   });
@@ -44,7 +47,8 @@ export function createMaterials(scene: Scene): SceneMaterials {
   return {
     warmYellow,
     wallMaterial,
-    paddleMaterial,
+    paddle1Material,
+    paddle2Material,
     ballMaterial,
     floorMat,
   };
