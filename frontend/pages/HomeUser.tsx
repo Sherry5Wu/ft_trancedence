@@ -5,9 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
-import { LineGraph } from '../components/LineGraph';
-import { BarGraph } from '../components/BarGraph';
-import { PieGraph } from '../components/PieGraph';
+import { Stats } from '../components/Stats';
 import { ResponsiveContainer } from 'recharts';
 import ProfileIcon from '../assets/noun-profile-7808629.svg';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
@@ -33,9 +31,9 @@ const HomeUserPage = () => {
   const WorstRivalPic = <img src='../assets/profilepics/B2.png' className='profilePic mt-1'/>
 
 
-  const showHidden = () => {
-      setHidden(!hidden);
-  }
+  // const showHidden = () => {
+  //     setHidden(!hidden);
+  // }
 
   const showStats = () => {
     setStats(!stats);
@@ -107,8 +105,8 @@ const HomeUserPage = () => {
       {/* Statistics */}
       
         <div aria-label='statistics' className='w-200'>
-          <div className='flex justify-center items-center ml-5 transition ease-in-out hover:scale-105'>
-            <button onClick={showStats} className='flex scale-90 group hover:cursor-pointer'>
+          <div className='flex justify-center items-center ml-5'>
+            <button onClick={showStats} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
               <h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>STATS</h3>
               <div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${stats ? '-rotate-180' : 'rotate-0'}`}>
                 <DownArrow className='' />
@@ -116,64 +114,12 @@ const HomeUserPage = () => {
             </button>
           </div>
 
-          {stats && (<div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>
-
-            <div>
-              <h4 className='h4 text-center font-semibold'>SCORE HISTORY</h4>
-              <LineGraph />
-            </div>
-
-            <div>
-              <h4 className='h4 text-center font-semibold'>SCORE GAINS/LOSSES</h4>
-              <div className=''>
-                <BarGraph />
-              </div>
-            </div>
-
-            <div className=''>
-              <h4 className='h4 text-center mb-5 font-semibold'>WIN RATE</h4>
-              <PieGraph/>
-            </div> 
-
-            <div className='grid grid-cols-2 scale-90 translate-y-[20px]'>
-
-              <div className='flex flex-col items-center'>
-                <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-                  <div className='text-5xl font-bold text-black'>{playedGames}</div>
-                </div>
-                <h4 className='h4 my-2 font-semibold'>PLAYED GAMES</h4>
-              </div>
-
-              <div className='flex flex-col items-center'>
-                <button className='group relative flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center}'>
-                  <div className='absolute text-3xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 
-                                  group-hover:opacity-100 transition-opacity ease-in-out'>{worstRival}</div>
-                  {WorstRivalPic}
-                </button>
-                <h4 className='h4 my-2 font-semibold'>WORST RIVAL</h4>
-              </div>
-
-              <div className='flex flex-col items-center translate-y-[30px]'>
-                <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-                  <div className='text-5xl font-bold text-black'>{winStreak}</div>
-                </div>
-                <h4 className='h4 my-2 font-semibold'>WIN STREAK</h4>
-              </div>
-
-              <div className='flex flex-col items-center translate-y-[30px]'>
-                <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-                  <div className='text-5xl font-bold text-black'>{longestWinStreak}</div>
-                </div>
-                <h4 className='h4 my-2 font-semibold text-center'>LONGEST WIN STREAK</h4>
-              </div>
-
-            </div>
-          </div>)}
+          {stats && (<Stats user={user?.username} />)}
         </div>
 
           <div aria-label='match history' className=''>
-            <div className='flex justify-center items-center ml-5 mb-5 transition ease-in-out hover:scale-105'>
-              <button onClick={showHistory} className='flex scale-90 group hover:cursor-pointer'>
+            <div className='flex justify-center items-center ml-5 mb-5'>
+              <button onClick={showHistory} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
                 <h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>MATCH HISTORY</h3>
                 <div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${history ? '-rotate-180' : 'rotate-0'}`}>
                   <DownArrow className='' />

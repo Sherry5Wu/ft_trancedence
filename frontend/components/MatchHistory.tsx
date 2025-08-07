@@ -1,6 +1,6 @@
 import { useEffect, ReactElement } from 'react';
 import { useUserContext } from '../context/UserContext';
-import { RivalIcon } from '../assets/noun-battle-7526810.svg?react'
+import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 
 interface MatchData {
     matchIndex: number,
@@ -47,7 +47,7 @@ const fetchMatchData = (user: string | undefined) => {
 };
 
 
-export const MatchHistory = ( { player1 }:  { player1: string } ) => {
+export const MatchHistory = ( player1: string ) => {
 
     const { user } = useUserContext();
 

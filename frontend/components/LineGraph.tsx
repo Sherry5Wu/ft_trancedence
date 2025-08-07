@@ -1,6 +1,6 @@
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const fetchData = () => {
+const fetchData = (user: string) => {
     //FETCH REAL DATA FROM BACKEND
 
     //mockdata
@@ -29,8 +29,8 @@ const fetchData = () => {
     return data;
 };
 
-export const LineGraph = () => {
-    const data = fetchData();
+export const LineGraph = (user: string) => {
+    const data = fetchData(user);
 
     return (
         <ResponsiveContainer width="100%" aspect={1.5}>
