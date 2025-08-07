@@ -107,7 +107,7 @@ const HomeUserPage = () => {
       {/* Statistics */}
       
         <div aria-label='statistics' className='w-200'>
-          <div className='flex justify-center items-center ml-5'>
+          <div className='flex justify-center items-center ml-5 transition ease-in-out hover:scale-105'>
             <button onClick={showStats} className='flex scale-90 group hover:cursor-pointer'>
               <h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>STATS</h3>
               <div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${stats ? '-rotate-180' : 'rotate-0'}`}>
@@ -172,7 +172,7 @@ const HomeUserPage = () => {
         </div>
 
           <div aria-label='match history' className=''>
-            <div className='flex justify-center items-center ml-5 mb-5'>
+            <div className='flex justify-center items-center ml-5 mb-5 transition ease-in-out hover:scale-105'>
               <button onClick={showHistory} className='flex scale-90 group hover:cursor-pointer'>
                 <h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>MATCH HISTORY</h3>
                 <div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${history ? '-rotate-180' : 'rotate-0'}`}>
@@ -180,7 +180,7 @@ const HomeUserPage = () => {
                 </div>
               </button>
             </div>
-            <div className='transition ease-in-out duration-300'>
+            <div className={`transition-all ease-in-out duration-300 ${history ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
               {history && <MatchHistory player1={user?.username} />}
             </div>
           </div>
