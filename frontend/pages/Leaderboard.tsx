@@ -149,9 +149,9 @@ const LeaderboardPage: React.FC = () => {
                 <li
                     key={player.username}
                     onClick={() => navigate(`/profile/${player.username}`)}
-                    className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 transition-colors ${
+                    className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 ${
                       isCurrentUser ? 'bg-[#FDFBD4] border-2' : 'bg-[#FFEE8C]'
-                    } hover: hover:cursor-pointer hover:scale-105 transform transition`}
+                    } hover: hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
                     aria-label={`Player ${player.username} at position ${idx + 1}`}
                   >
 
@@ -190,7 +190,7 @@ const LeaderboardPage: React.FC = () => {
      
                   <li
                     onClick={() => navigate(`/homeuser`)}
-                    className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 transition-colors bg-[#FDFBD4] border-2 hover:cursor-pointer hover:scale-105 transform transition`}
+                    className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 bg-[#FDFBD4] border-2 hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
                     aria-label={`Current user ${currentUserEntry.username} at position ${currentUserIndex + 1}`}
                   >
                     <span>{currentUserIndex + 1}</span>
