@@ -24,7 +24,7 @@ import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
 import GamePage from '../pages/Game';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/RivalsMain';
-
+import NotFoundPage from '../pages/NotFoundPage';
 
 const App = () => {
 
@@ -37,6 +37,7 @@ const App = () => {
           </header>
         <main className="flex-grow p-4">
           <Routes>
+
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
@@ -57,6 +58,8 @@ const App = () => {
             <Route path="/game" element={<GamePage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/rivals" element={<RivalsPage />} />
+            {/* 404 Catch-all route */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
 
