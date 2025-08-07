@@ -1,11 +1,13 @@
           
 const fetchRivalData = () => {
-  const rivalData = [
+  let rivalData = [
     {
       name: 'Alice',
       score: 1920,
-      winratio: 76,
+      winratio: 66,
       matches: 9,
+      wins: 6, 
+      losses: 3,
       picture: '../assets/profilepics/B2.png'
     },
     {
@@ -13,6 +15,8 @@ const fetchRivalData = () => {
       score: 816,
       winratio: 13,
       matches: 8,
+      wins: 1,
+      losses: 7,
       picture: '../assets/profilepics/image.jpg'
     },
     {
@@ -20,6 +24,8 @@ const fetchRivalData = () => {
       score: 640,
       winratio: 50,
       matches: 6,
+      wins: 3,
+      losses: 3,
       picture: '../assets/profilepics/Bandit.png'
     },
     {
@@ -27,6 +33,8 @@ const fetchRivalData = () => {
       score: 2048,
       winratio: 100,
       matches: 4,
+      wins: 4,
+      losses: 0,
       picture: '../assets/profilepics/paddington-poster.jpg'
     }
   ]
@@ -38,6 +46,11 @@ const fetchRivalData = () => {
 export const RivalRows = () => {
 
     const rivalData = fetchRivalData();
+
+    if (rivalData.length === 0)
+      return (
+        <div className='flex justify-center'>No rivals yet</div>
+      )
 
     return (
         <div aria-label='rivals data' className=''>
@@ -58,9 +71,38 @@ export const RivalRows = () => {
                 <span className={`col-span-2 ${rival.winratio >= 50 ? rival.winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{rival.winratio}%</span>
                 <span className='col-span-2'>{rival.matches}</span>
                 </li>
-            })
+                })
             }
             </ul>
+            <div className='flex justify-end mt-5'>
+              <div className='flex justify-center items-center h-8 w-50 bg-[#FFEE8C] rounded-full'>
+                  hello
+              </div>
+          </div>
         </div>
     )
 }
+
+    // return (
+    //     <div aria-label='rivals data' className=''>
+    //         <div aria-label='rivals data categories' className='grid grid-cols-9 mb-1 text-center font-semibold'>
+    //             <span className=''></span>
+    //             <span className='col-span-2'>Name</span>
+    //             <span className='col-span-2'>Score</span>
+    //             <span className='col-span-2'>Win ratio</span>
+    //             <span className='col-span-2'>Matches played against</span>
+    //         </div>
+
+    //         <ul>
+    //         {rivalData.map((rival, index: number) => {
+    //             return <li className='grid grid-cols-9 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center transition ease-in-out duration-300 hover:scale-105'>
+    //             <img src={rival.picture} className='profilePicSmall'/>
+    //             <span className='col-span-2'>{rival.name}</span>
+    //             <span className='col-span-2'>{rival.score}</span>
+    //             <span className={`col-span-2 ${rival.winratio >= 50 ? rival.winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{rival.winratio}%</span>
+    //             <span className='col-span-2'>{rival.matches}</span>
+    //             </li>
+    //             })
+    //         }
+    //         </ul>
+    //     </div>

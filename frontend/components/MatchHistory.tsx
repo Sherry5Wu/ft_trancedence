@@ -17,7 +17,7 @@ const fetchMatchData = (user: string | undefined) => {
     // FETCH MATCH HISTORY FROM PLAYER 1
 
     // MOCKUP DATA FOR TESTING
-    const matchData = [
+    let matchData = [
         {
             player1: user,
             player2: 'Rival1',
@@ -41,7 +41,7 @@ const fetchMatchData = (user: string | undefined) => {
             player2pic: '../assets/profilepics/image.jpg'
         },
     ];
-    // const matchData = [];
+    // matchData = [];
 
     return matchData;
 };

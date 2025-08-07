@@ -1,12 +1,20 @@
 import { LineGraph } from '../components/LineGraph';
 import { BarGraph } from '../components/BarGraph';
 import { PieGraph } from '../components/PieGraph';
+import { ReactElement } from 'react';
 
+interface UserStats {
+    playedGames: number,
+    winStreak: number,
+    longestWinStreak: number,
+    worstRival: string,
+    worstRivalPic: ReactElement
+}
 
-const fetchUserStats = (user: string) => {
+const fetchUserStats = (user: string): {} => {
 
     //mockdata
-    const userStats = 
+    let userStats = 
     {
         playedGames: 77,
         winStreak: 1,
@@ -21,6 +29,11 @@ const fetchUserStats = (user: string) => {
 export const Stats = (user: string) => 
 {
     const userStats = fetchUserStats(user);
+
+    if (Object.keys(userStats).length === 0)
+      return (<div className='flex justify-center my-5'>
+        No data available
+      </div>)
 
     return (
 
