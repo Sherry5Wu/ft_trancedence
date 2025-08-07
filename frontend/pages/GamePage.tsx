@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CloseButton } from '../components/CloseButton';
-import GameCanvas from '../game/main'; // main.tsx
+import GameCanvas from '../game/main';
 import { usePlayersContext } from '../context/PlayersContext'
 
 const GamePage: React.FC = () => {
@@ -11,6 +11,7 @@ const GamePage: React.FC = () => {
   const { players, resetPlayers } = usePlayersContext();
   const p1Name = players[0]?.username ?? 'Player 1';
   const p2Name = players[1]?.username ?? 'Player 2';
+  const isTournament = true; //Get the real value from the context after done
 
   return (
     <div className="flex flex-col items-center p-8 space-y-4">
@@ -27,6 +28,7 @@ const GamePage: React.FC = () => {
           <GameCanvas
           canvasRef={canvasRef}
           playerNames={[p1Name, p2Name]}
+          isTournament={isTournament}
           />
 
           {/* Babylon.js Canvas */}

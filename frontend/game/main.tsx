@@ -18,10 +18,10 @@ import { updatePauseOverlay, updateStartPrompt, updateScore } from './uiHelpers'
 type GameCanvasProps = {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   playerNames: [string, string];
+  isTournament: boolean;
 };
 
-const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
-  const [p1Name, p2Name] = playerNames;
+const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name, p2Name], isTournament }) => {
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -47,30 +47,6 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
     const pauseOverlay = document.getElementById("pauseOverlay")!;
     const startPrompt = document.getElementById("startPrompt") as HTMLElement;
     const scoreBoard = document.getElementById("scoreBoard") as HTMLElement;
-    const endContainer   = document.getElementById("endOverlay")!;
-
-    // create “Play Again” button
-    const playAgainBtn = document.createElement('button');
-    playAgainBtn.textContent = 'Play Again';
-    Object.assign(playAgainBtn.style, {
-      display: 'none',
-      position: 'absolute',
-      bottom: '20px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-    });
-    endContainer.appendChild(playAgainBtn);
-    playAgainBtn.addEventListener('click', () => {
-      score1 = score2 = 0;
-      updateScore(scoreBoard, score1, score2, p1Name, p2Name);
-      playAgainBtn.style.display = 'none';
-      resetBall();
-      acceptingInput = true;
-      paused = true;
-      awaitingStart = true;
-      updateStartPrompt(startPrompt, true);
-      updatePauseOverlay(pauseOverlay, paused, awaitingStart);
-    });
 
     //Button press
     window.addEventListener("keydown", e => {
@@ -212,6 +188,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
           const finalScore = `${score1}-${score2}`;
           //sendMatchResult(finalScore); Add this once we have the backend
           startPrompt.textContent = `${score1 === 3 ? p1Name : p2Name} wins!`;
+          //if (isTournament) do something
           updateStartPrompt(startPrompt, true);
           return;
         }
@@ -234,7 +211,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames }) => {
     window.addEventListener("resize", () => engine.resize());
     updateScore(scoreBoard, score1, score2, p1Name, p2Name);
     resetBall();
-  }, [canvasRef, p1Name, p2Name]);
+  }, [canvasRef, p1Name, p2Name, isTournament]);
 
   return null;
 };

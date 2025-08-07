@@ -47,7 +47,7 @@ export function createObjects(
   wallTop.material = materials.wallMaterial;
   const wallBottom = wallTop.clone('wallBottom') as Mesh;
 
-  const wallDistance = 5;
+  const wallDistance = 5.3;
   wallTop.position.z = wallDistance;
   wallBottom.position.z = -wallDistance;
 
