@@ -1,6 +1,6 @@
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
 
-const fetchData = () => {
+const fetchData = (user: string) => {
     //FETCH REAL DATA FROM BACKEND
 
     //mockdata
@@ -15,7 +15,7 @@ const fetchData = () => {
     return data;
 };
 
-const colors = ['#2E6F40', '#252525', '#cd1c18'];
+const colors = ['#2E6F40', '#252525', '#CD1C18'];
 
 // const customTooltip = ({ active, payload, label}) => {
 //     if (active && payload && payload.length)
@@ -26,8 +26,8 @@ const colors = ['#2E6F40', '#252525', '#cd1c18'];
 //     )
 // }
 
-export const PieGraph = () => {
-    const data = fetchData();
+export const PieGraph = (user: string) => {
+    const data = fetchData(user);
 
     return (
         <ResponsiveContainer width='100%' aspect={1.25}>

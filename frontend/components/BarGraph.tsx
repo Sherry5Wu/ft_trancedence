@@ -1,6 +1,6 @@
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, Cell, ResponsiveContainer } from 'recharts';
 
-const fetchData = () => {
+const fetchData = (user: string) => {
     //FETCH REAL DATA FROM BACKEND
 
     //mockdata
@@ -19,8 +19,8 @@ const fetchData = () => {
     return data;
 };
 
-export const BarGraph = () => {
-    const data = fetchData();
+export const BarGraph = (user: string) => {
+    const data = fetchData(user);
 
     // return (
     //     <BarChart width={600} height={300} data={data}>

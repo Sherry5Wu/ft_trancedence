@@ -126,9 +126,9 @@ const LeaderboardPage: React.FC = () => {
   return (
     <div className='pageLayout'>
 
-      <h3 className="font-semibold text-center" aria-label="Leaderboard title" >
-        Leaderboard
-      </h3>
+      <h1 className="h1 font-semibold text-center" aria-label="Leaderboard title" >
+        LEADERBOARD
+      </h1>
 
 
         <div className="p-4">
