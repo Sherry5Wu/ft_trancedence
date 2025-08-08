@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
-import { TopDownButton } from '../../components/TopDownButton';
+import { DropDownButton } from '../../components/DropDownButton';
 import { UserProfileBadge } from '../../components/UserProfileBadge';
 import { useValidationField } from '../../hooks/useValidationField';
 import { isValidTitle } from '../../utils/Validation';
@@ -102,7 +102,7 @@ const NewTournamentPage: React.FC = () => {
           errorMessage={titleField.error}
         />
 
-        <TopDownButton
+        <DropDownButton
           label="Total players"
           options={['4', '8', '16']}
           onSelect={handlePlayerCountSelect}

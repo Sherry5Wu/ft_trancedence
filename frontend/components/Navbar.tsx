@@ -21,7 +21,7 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 
 {/* HANDLE USER AND DARK MODE STATE */}
 export const Navbar = () => {
-    const [isOn, setIsOn] = useState(false);
+    // const [isOn, setIsOn] = useState(false);
     const { user, setUser } = useUserContext();
     const { darkMode, setDarkMode } = useDarkModeContext();
     const { largeText, setLargeText} = useAccessibilityContext();
