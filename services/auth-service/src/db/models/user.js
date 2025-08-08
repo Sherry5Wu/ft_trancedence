@@ -20,7 +20,19 @@ export default (sequelize) => {
         isEmail: true,
       },
     },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        len: [6, 20],
+      },
+    },
     passwordHash: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    pinCodeHash: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -46,6 +58,11 @@ export default (sequelize) => {
       allowNull: false,
       defaultValue: 'user',
     },
+    isVerified: { // Use for checking if the user finishs the registeration flow
+      type: DataTypes.BOOLESN,
+      allowNull: false,
+      defaultValue: false,
+    },
   }, {
     // timestamps: true, it tells Sequelize to add createdAt and updatedAt two columns
     // into User table
@@ -61,7 +78,7 @@ export default (sequelize) => {
     // Here by default, 'twoFASecret' and 'backupCodes' will NOT be included in any query result
     defaultScope: {
       attributes: {
-        exclude: ['passwordHash', 'twoFASecret', 'backupCodes']
+        exclude: ['pinCodeHash', 'passwordHash', 'twoFASecret', 'backupCodes']
       }
     },
     // Scopes are named sets of query options you can apply explicitly when needed.

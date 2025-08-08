@@ -74,7 +74,7 @@ async function buildApp() {
 
   app.register(authRoutes);
   app.register(twoFARoutes);
-  app.register(googleAuthRoutes, { prefix: '/auth/google' });
+  app.register(googleAuthRoutes);
   // Register routes with prefixes
   // app.register(authRoutes, { prefix: '/auth' });
   // app.register(twoFARoutes, { prefix: '/2fa' });

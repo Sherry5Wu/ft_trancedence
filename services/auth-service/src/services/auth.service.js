@@ -10,6 +10,7 @@
  *      ✔ Uses JWT system .
  *      ✔ Custom error handling using ValidationError and InvalidCredentialsError
  */
+import { Op } from 'sequelize';
 
 import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
@@ -19,37 +20,55 @@ import { ConflictError, InvalidCredentialsError, NotFoundError } from '../utils/
 const { User, RefreshToken } = models;
 
 /**
- * Register a new user.
+ * Register a new user.Email and username must be unique
  * @param {string} email - User email
  * @param {string} password - plaintext password
+ * @param {string} username - username
+ * @oaram {string} pinCode - plaintext pin code
  * @return {Promise<object>} Created user (without sensitive fields)
  */
-async function registerUser(email, password) {
+async function registerUser(email, password, username, pinCode) {
     // Normalize and validate email using fastify.validators in route handler
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await User.findOne({
+      where: {
+        [Op.or]: [{ email }, { username }]
+      }
+    });
+
     if (existingUser){
-      throw new ConflictError('Email already registered');
+      if (existingUser.email === email) throw new ConflictError('Email already registered');
+      if (existingUser.username === username) throw new ConflictError('Username already registered');
     }
 
     const passwordHash = await hashPassword(password);
-    const user = await User.create({ email, passwordHash, });
+    const pinCodeHash = await hashPassword(pinCode);
+
+    const user = await User.create({ email, username, passwordHash, pinCodeHash, isVerified: true });
 
     // Remove sensitive fields from returned user
     const userData = user.toJSON();
     delete userData.passwordHash;
+    delete userData.pinCodeHash;
 
     return userData;
 }
 
 /**
- * Authenticate user with email and password.
- * @param {string} email - User email
+ * Authenticate user with email/username and password.
+ * @param {string} indentifier - User email or username
  * @param {string} password - Plaintext password
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
-async function authenticateUser(email, password) {
-  // Find user with secrets
-  const user = await User.scope('withSecrets').findOne({ where: { email }});
+async function authenticateUser(indentifier, password) {
+  // Find user by email or username, including secrets
+  const user = await User.scope('withSecrets').findOne({
+    where: {
+      [Op.or]: [ // Sequelize's [Op.or] condition lets you check both fields.
+        { email: indentifier },
+        { username: indentifier }
+      ]
+    }
+  });
 
   if (!user){
     throw new InvalidCredentialsError('Invalid credentials');
@@ -64,6 +83,7 @@ async function authenticateUser(email, password) {
   const payload = {
     id: user.id,
     email: user.email,
+    username: user.username,
     role: user.role || 'user', // default role if not set
     is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
   };
@@ -81,6 +101,7 @@ async function authenticateUser(email, password) {
   // Return safe user data
   const userData = user.toJSON();
   delete userData.passwordHash;
+  delete userData.pinCodeHash;
   delete userData.twoFASecret;
   delete userData.backupCodes;
 
@@ -175,6 +196,16 @@ async function updatePassword(userId, newPassword) {
   await user.update({ passwordHash: newHash });
 }
 
+async function updatePinCode(userId, newPinCode) {
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  const newHash = await hashPassword(newPinCode);
+  await user.update({ pinCodeHash: newHash });
+}
+
 export {
   registerUser,
   authenticateUser,
@@ -183,4 +214,5 @@ export {
   disableTwoFA,
   validateBackupCode,
   updatePassword,
+  updatePinCode,
 };

@@ -1,22 +1,6 @@
 
- 1. const user = await User.findByPk(userId);
-						 findBy....
-
-2. But backend thinks session is still valid, because refresh token is still good., what is
-session????
-layers these concepts
-
 
 3. in auth-service.js, why not import { User, RefreshToken } from '../db/index.js';
-
-4. what are the differeces short-live token and long-live token? why can't just have
-long-live token?
-
-
-5. in jwt.service.js file:
-	why validateAccessToken don't return value, but validateRefreshToken does????
-	go through jwt.service.js file
-
 
 6. graceFullyShutDown() ????
 
@@ -25,17 +9,17 @@ Using alter: true in prod can be risky; explicit migrations (e.g. with Umzug) ar
 safer for production.
 
 
-8. What is schema for, how to use it? what items should contain in a schema,
-like User.
-
 9. auth.db doesn't be create succefully.
+
+10. Error: Cannot find module '/app/auth'
 
 
 Build and run docker
 
 1. Dockerize and run
-docker build -t auth-service .
-docker run -p 3000:3000 auth-service
+docker build --target dev -t auth-service .
+(-t === --tag)
+docker run -p 3001:3001 auth-service
 
 Auto-generate API docs
 1.

@@ -121,6 +121,7 @@ Payload for JWTs
 {
   "id": "UUID",          // Always required for identifying user
   "email": "user@email", // Useful for quick lookups
+  "usename": "userA",    // Use for showing the username for frontend
   "role": "user",        // Default role now, can expand later (admin, mod, etc.)
   "is2FAEnabled": true   // Optional, useful for enforcing flows
 }
@@ -155,3 +156,15 @@ Based on typical 2FA + OAuth + JWT services, here’s a forward-thinking integra
   - If token’s `is2FAEnabled` is `false` but route requires 2FA, you can reject with `ForbiddenError('2FA required')`.<br>
 
 This flow covers standard email/password, 2FA gating, OAuth login, rotation, and secure logout.<br>
+
+## AccessToken and RefreshToken
+**Access Token:**
+This is what the client needs to send with every request to the backend when accessing protected resources or APIs. The backend checks if this token is valid and not expired. If it’s valid, the backend processes the request.<br>
+
+**Refresh Token:**
+This token is not sent with every request. Instead, it’s used only when the Access Token expires. The client sends the Refresh Token to the backend to ask for a new Access Token. If the Refresh Token is valid (i.e., user is still “logged in”), the backend issues a fresh Access Token.<br>
+
+- If the Access Token is valid → backend allows access to data.
+- If the Access Token expired → client uses Refresh Token to get a new Access Token.
+- If Refresh Token is valid → user is considered logged in, and a new Access Token is given.
+- If Refresh Token expired or invalid → user needs to log in again.

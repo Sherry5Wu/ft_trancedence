@@ -1,6 +1,6 @@
 /**
- * checking email format, passwordformat, normalize the email(set all the letters
- * t lowercases)
+ * Checking the formats of email, username and password;
+ * normalize the email(set all the letters to lowercases)
  */
 
 import fp from 'fastify-plugin'
@@ -8,6 +8,8 @@ import fp from 'fastify-plugin'
 // Predefine the regular expression outside to improve performance.
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,72}$/; // lenght is between 8-72
+const USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9._-]{5,19}$/;
+const PINCODE_REGEX = /^\d{4}$/;
 
 export default fp(async (fastify) => {
   // Get ValidationError from fastify.errors
@@ -37,7 +39,6 @@ export default fp(async (fastify) => {
     return normalizedEmail;
   };
 
-
   const validatePassword = (password) => {
     if (typeof password !== 'string' || !password.trim()){
       throw new ValidationError ('Password is required and must be a string');
@@ -48,10 +49,21 @@ export default fp(async (fastify) => {
     }
   };
 
-
   const normalizeAndValidateEmail = (email) => {
     validateEmailFormat(email);
     return normalizeEmail(email);
+  };
+
+  const validateUsername = (username) => {
+    if (typeof username !== 'string' || !USERNAME_REGEX.test(username.trim())){
+      throw new ValidationError('Invalid username format');
+    }
+  };
+
+  const validatePincode = (pinCode) => {
+    if ( typeof pinCode !== 'string' || !PINCODE_REGEX.test(pinCode)){
+      throw new ValidationError('Invalid Pin code format');
+    }
   };
 
   fastify.decorate('validators', {
@@ -59,5 +71,7 @@ export default fp(async (fastify) => {
     normalizeEmail,
     validatePassword,
     normalizeAndValidateEmail,
+    validateUsername,
+    validatePincode
   });
 });

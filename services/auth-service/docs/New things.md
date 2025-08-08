@@ -5,8 +5,10 @@
 - [JWT](#jwt)
 - [Hash a password](#hash-a-password)
 - [Sequelize](#sequelize)
-- [package.json](#pakcage-jason)
-- [Run containder with Dockfile](#run-containder-with-dockfile)
+  - [DataTypes](#datatypes)
+  - [CRUD Operations](#crud-operations)
+- [package.json](#packagejson)
+- [Run container with Dockerfile](#run-container-with-dockerfile)
 - [Jest](#jest)
 - [dotenv](#dotenv)
 
@@ -251,6 +253,7 @@ console.log('Password match:', isMatch);
 
 # Sequelize
 
+
 Sequelize is a Node.js ORM (Object-Relational Mapping) for SQL databases like PostgreSQL, MySQL, MariaDB, SQLite, and MSSQL. It lets you interact with your database using JavaScript instead of writing raw SQL queries.<br>
 
 ```js
@@ -266,7 +269,90 @@ is using destructuring assignment to import the DataTypes object from the sequel
 - `DataTypes.DATE` – for dates/timestamps<br>
 - `DataTypes.FLOAT`, DataTypes.TEXT, etc.<br>
 
+## CRUD Operations
+**1. Create(Insert)**
+Creates a new record and returns the instance.<br>
+```js
+const user = await User.create({
+  name: 'Sherry',
+  email: 'sherry@example.com'
+});
+```
+**2. Read(Select)**
+  - **findOne**
+  Finds the first record that matches the condition.
+  ```js
+  const user = await User.findOne({ where: { email: 'sherry@example.com' } });
+  ```
+  - **findByPk**
+  Finds a record by its primary key.
+  ```js
+  const user = await User.findByPk('some-user-id');
+  ```
+  - **findAll**
+  Returns all matching records.
+  ```js
+  const users = await User.findAll({ where: { isActive: true } });
+  ```
+  **findAndCountAll**
+  ```js
+  const result = await User.findAndCountAll({
+    where: { role: 'admin' },
+    limit: 10,
+    offset: 20
+  });
+  ```
+  - **findOrCreate**
+  Finds a record or creates it if not found.
+  ```js
+  const [user, created] = await User.findOrCreate({
+    where: { email: 'sherry@example.com' },
+    defaults: { name: 'Sherry' }
+  });
+  ```
+**3. Update**
+  - **update**
+  Updates matching records.
+  ```js
+  await User.update(
+    { name: 'Sherry Updated' },
+    { where: { id: 'some-user-id' } }
+  );
+  ```
+  Returns [numberOfAffectedRows]<br>
+  - **Instance update**
+  You can also update an instance directly:
+  ```js
+  const user = await User.findByPk('some-id');
+  user.name = 'Updated Name';
+  await user.save();
+  ```
+  or
+  ```js
+  const user = await User.findByPk('some-id');
+  await user.update({ username: newUsername });
+  ```
+**4. Delete(Destroy)**
+  **destory**
+  Deletes matching records.
+  ```js
+  await User.destroy({ where: { email: 'sherry@example.com' } });
+  ```
+  - **Instance delete**
+  ```js
+  const user = await User.findByPk('some-id');
+  await user.destroy();
+  ```
+**5. Attributes (select specific columns)**
+```js
+const user = await User.findOne({
+  attributes: ['id', 'email'],
+  where: { isVerified: true }
+});
+```
+
 # package.json
+
 `package.json` is the metadata file that lives at the root of a Node.js project. It defines:<br>
 - Project name, version, and description<br>
 - Your dependencies<br>

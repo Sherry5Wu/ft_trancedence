@@ -117,6 +117,7 @@ async function rotateTokens(token, meta = {}) {
   const payload = {
     id: decoded.id,
     email: decoded.email,
+    username: decoded.username,
     role: decoded.role,
     is2FAEnabled: decoded.is2FAEnabled,
   };
