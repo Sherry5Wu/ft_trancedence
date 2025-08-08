@@ -106,7 +106,7 @@ const HomeUserPage = () => {
       
         <div aria-label='statistics' className='w-200'>
           <div className='flex justify-center items-center ml-5'>
-            <button onClick={showStats} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
+            <button onClick={showStats} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out'>
               <h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>STATS</h3>
               <div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${stats ? '-rotate-180' : 'rotate-0'}`}>
                 <DownArrow className='' />
@@ -119,7 +119,7 @@ const HomeUserPage = () => {
 
           <div aria-label='match history' className=''>
             <div className='flex justify-center items-center ml-5 mb-5'>
-              <button onClick={showHistory} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
+              <button onClick={showHistory} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out'>
                 <h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>MATCH HISTORY</h3>
                 <div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${history ? '-rotate-180' : 'rotate-0'}`}>
                   <DownArrow className='' />
