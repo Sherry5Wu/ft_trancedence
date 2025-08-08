@@ -46,8 +46,8 @@
 }
 
 .dropdown-option {
-  @apply py-2 px-3 cursor-pointer text-sm border-b-1 border-black/20
-  last:border-transparent hover:border-black
+  @apply py-2 px-3 cursor-pointer text-sm border-3 border-transparent origin-left
+        hover:font-bold hover:scale-110 transition-all ease-in-out duration-200
 }
 
 .profilePic {

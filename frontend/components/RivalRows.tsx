@@ -96,7 +96,7 @@ export const RivalRows = () => {
                                 hover:border-black transition ease-in-out duration-300  hover:cursor-pointer'> */}
                   {/* <SortIcon className='size-7 ml-2' /> */}
                   <DropDownButton aria-label='sorting options' label='Sort rivals' options={rivalsSortingItems} onSelect={handleSortSelection}
-                        className='overflow-hidden gap-3' />
+                        className='overflow-hidden gap-3 border-3 border-transparent hover:border-black transition ease-in-out duration-200' />
               {/* </button> */}
           </div>
         </div>
