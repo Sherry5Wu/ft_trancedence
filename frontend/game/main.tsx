@@ -31,8 +31,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
     const { ball, paddle1, paddle2, paddleDistance, wallTop, wallBottom, limits } = createObjects(scene, materials);
     const { upperLimitZ, lowerLimitZ } = limits;
 
-    const flareTexture = new Texture("https://playground.babylonjs.com/textures/flare.png", scene);
-    const flameTexture = new Texture("https://playground.babylonjs.com/textures/flame.png", scene);
+    const flareTexture = new Texture("../assets/game/flare.png", scene);
+    const flameTexture = new Texture("../assets/game/fire.jpg", scene);
 
     createFireTrail(ball, scene, flameTexture);
     updateFireTrail(0);

@@ -227,20 +227,17 @@ export function flashPaddle(
 }
 
 export function createFireTrail(
-  ball: AbstractMesh,          // <-- now typed as an AbstractMesh
+  ball: AbstractMesh,
   scene: Scene,
   flameTexture: Texture
 ): void {
   fireTrail = new GPUParticleSystem('fireTrail', { capacity: 2000 }, scene);
   fireTrail.particleTexture = flameTexture;
 
-  // Keep a properly typed emitter for SphereParticleEmitter
   const sphereEmitter = new SphereParticleEmitter();
   sphereEmitter.radius = 0.2;
   sphereEmitter.radiusRange = 1;
   fireTrail.particleEmitterType = sphereEmitter;
-
-  // Now assign the mesh directly—no TypeScript error:
   fireTrail.emitter = ball;
 
   fireTrail.color1 = new Color4(1, 1, 0, 0.6);
