@@ -1,6 +1,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from './Menu';
 import { OptionToggle } from './OptionToggle';
@@ -44,6 +44,13 @@ export const Navbar = () => {
         setLargeText(!largeText);
     }
 
+    useEffect(() => {
+        const value = largeText ? '1.3' : '1.0';
+        console.log('Setting --scale-modifier to:', value);
+        document.documentElement.style.setProperty('--scale-modifier', value);
+    }), [handleTextSize];
+
+
     const languageMenuItems = [
         {label: 'EN', Icon: <EnglishIcon />, onClick: () => console.log('English')},
         {label: 'FR', Icon: <FrenchIcon />, onClick: () => console.log('French')},
@@ -74,7 +81,6 @@ export const Navbar = () => {
         </div>
         <div className='flex flex-1 justify-center mb-5' >
             <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
-            {/* CHANGE THIS TO A LINK LATER */}
         </div>
         <div className='flex flex-1 justify-end scale-110 mr-7'>
             <Menu aria-label='profile menu' Icon={user ? user.profilePic : <ProfileIcon />} elements={profileMenuItems} className='menuIcon' user={true}/>

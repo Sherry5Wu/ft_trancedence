@@ -23,9 +23,11 @@ import NewTournamentPage from '../pages/Tournament/TournamentNew';
 import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/RivalsMain';
+import NotFoundPage from '../pages/NotFoundPage';
 import GamePage from '../pages/GamePage';
 
 const App = () => {
+
   return (
     <div className='bg-[#FFCC00]'>
       <Router>
@@ -33,9 +35,9 @@ const App = () => {
           <header className='sticky top-0 z-50'>
             <Navbar />
           </header>
-
         <main className="flex-grow p-4">
           <Routes>
+
             <Route path="/" element={<HomePage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
@@ -56,6 +58,8 @@ const App = () => {
             <Route path="/game" element={<GamePage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/rivals" element={<RivalsPage />} />
+            {/* 404 Catch-all route */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
 

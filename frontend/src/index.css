@@ -1,16 +1,25 @@
 @import 'tailwindcss';
-
-@tailwind base;
-@tailwind components;
+@import 'tailwindcss/preflight'
 @tailwind utilities;
 
-html, body {
-  @apply m-0 p-0 h-full w-full;
-  /* overflow: hidden; optional */
+:root {
+  --font-sans: 'Jost', sans-serif;
+  --scale-modifier: 1.0;
 }
 
+@layer utilities {
+  .scale-dynamic {
+    transform: scale(var(--scale-modifier));
+    transform-origin: center;
+    /* font-size: calc(var(--font-base) * var(--scale-modifier)); */
+  }
+}
+
+/* body, html {
+} */
+
 .pageLayout {
-  @apply flex flex-col items-center mr-7 space-y-5
+  @apply flex flex-col items-center mr-7 gap-y-5
 }
 
 .menuIcon {
@@ -28,15 +37,15 @@ html, body {
 }
 
 .profilePic {
-  @apply w-full h-full border-2 rounded-full object-cover mb-1 bg-[#FFEE8C]
+  @apply w-full h-full rounded-full object-cover mb-1 bg-[#FFEE8C]
 }
 
 .profilePicBig { 
-  @apply size-32 border-3 rounded-full bg-[#FFEE8C]
+  @apply size-32 rounded-full bg-[#FFEE8C]
 }
 
 .profilePicSmall {
-  @apply size-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C]
+  @apply h-11 w-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C]
 }
 
 .h1 {
