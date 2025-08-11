@@ -1,0 +1,184 @@
+{
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "message": "Oops! The page you're looking for doesn't exist.",
+    "aria": {
+      "errorIcon": "404 error illustration"
+    }
+  },
+
+  "home": {
+    "welcome": "Welcome to ft_transcendence!",
+    "aria": {
+
+    }
+  },
+
+  "homeUser": {
+    "stats": "Stats",
+    "matchHistory": "Match History",
+    "aria": {
+
+    }
+  },
+
+  "signIn": {
+    "title": "Sign In",
+    "usernamePlaceholder": "Username",
+    "passwordPlaceholder": "Password",
+    "logInButton": "Log In",
+    "notRegistered": "Not registered?",
+    "signUp": "Sign up",
+    "aria": {
+
+    }
+  },
+  
+  "signUp": {
+    "title": "Sign Up",
+    "usernamePlaceholder": "Username",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "pinPlaceholder": "Player PIN",
+    "confirmPinPlaceholder": "Confirm Player PIN",
+    "passwordMismatch": "Passwords do not match",
+    "pinMismatch": "PINs do not match",
+    "toggle2FA": "2FA with Google Authenticator",
+    "submitButton": "SIGN UP",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "aria": {
+      "usernameInput": "Enter your desired username",
+      "emailInput": "Enter your email address",
+      "passwordInput": "Enter your password",
+      "confirmPasswordInput": "Re-enter your password for confirmation",
+      "pinInput": "Enter your player PIN",
+      "confirmPinInput": "Re-enter your player PIN for confirmation",
+      "submitButton": "Submit registration form"
+    }
+  },
+
+  "logInPlayer": {
+    "title": "Log in a player",
+    "aria": {
+
+    }
+  },
+
+  "completeProfile": {
+    "title": "Complete user registration",
+    "aria": {
+
+    }
+  },
+
+  "verify2fa": {
+    "title": "Two-factor Authentication",
+    "verifyAccount": "Verify your account",
+    "instructions": "You have 2FA enabled on this account. Please enter the verification code from your Google Authenticator app to complete the login process.",
+    "verifyCode": "Verify the code from the app",
+    "cantFindDevice": "Can’t find your device?",
+    "useBackupCode": "Use a backup code",
+    "aria": {
+
+    }
+  },
+
+  "setUp2fa_main": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+  
+  "setUp2fa_backUp": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "setUp2fa_success": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "userSettings": {
+    "accountSettings": {
+
+    },
+    "secury": {
+
+    },
+    "2fa": {
+
+    }
+  },
+
+  "userChangePassword": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "userChangePIN": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "choosePlayers": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "tournament": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "tournament_new": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "tournament_confirm": {
+    "title": "",
+    "aria": {
+
+    }
+  },  
+
+  "rivals": {
+
+  },
+
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No players to show.",
+    "columns": {
+      "username": "Username",
+      "rival": "Rival",
+      "totalGames": "Total games",
+      "score": "Score"
+    },
+    "aria": {
+      "table": "Leaderboard table",
+      "columnUsername": "Leaderboard username column",
+      "columnRival": "Leaderboard rival column",
+      "columnTotalGames": "Leaderboard total games column",
+      "columnScore": "Leaderboard score column"
+    }
+  }
+}
