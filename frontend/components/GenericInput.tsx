@@ -48,7 +48,7 @@ export const GenericInput = ({
         disabled={disabled}
         aria-invalid={!!errorMessage}
         aria-describedby={errorMessage ? `${inputId}-error` : undefined}
-        className={`${className ? className : 'generic input pr-10'} ${value ? "filled" : ""}`}
+        className={`${className ? className : 'generic-input pr-10'} ${value ? "filled" : ""}`}
         onBlur={onBlur}
       />
       {shouldShowIcon && (
