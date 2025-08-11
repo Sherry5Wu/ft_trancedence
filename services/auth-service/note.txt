@@ -21,6 +21,9 @@ docker build --target dev -t auth-service .
 (-t === --tag)
 docker run -p 3001:3001 auth-service
 
+docker run --env-file ./path/to/your/.env -p 3001:3001 --name auth-service your-image-name
+
+
 Auto-generate API docs
 1.
 npm install @fastify/swagger @fastify/swagger-ui
@@ -52,3 +55,9 @@ Here’s what’s happening:
   docker images -q → lists only the IDs of all images.
   $(...) → passes that list to the docker rmi command.
   -f → forces removal, even if an image is used by stopped containers.
+
+// list all the dockers (running + stopped)
+docker ps -a
+
+// remove all the containers
+docker rm -f $(docker ps -aq)
