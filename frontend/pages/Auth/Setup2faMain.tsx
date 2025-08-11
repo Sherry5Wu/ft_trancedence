@@ -35,7 +35,7 @@ const Setup2faMainPage: React.FC = () => {
         <p className="text-center text-sm">
         Unable to scan? You can use the {' '}
         <Link to="/404" className="underline">
-          setup key</Link>
+        setup key</Link>
         {' '}to manually configure your authenticator app.
       </p>
 
