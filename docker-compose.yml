@@ -1,128 +1,88 @@
-name: ft_transcendence
-
 services:
-  # API Gateway
-  gateway:
-    build: ./gateway
-    ports:
-      - "80:3000"
-    depends_on:
-      auth-service:
-        condition: service_healthy
-      user-service:
-        condition: service_healthy
-      game-service:
-        condition: service_healthy
-      stats-service:
-        condition: service_healthy
-      i18n-service:
-        condition: service_healthy
-    networks:
-      - backend
-    env_file: .env
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  # Frontend
-  frontend:
-    build: ./frontend
-    ports:
-      - "3001:3000"
-    networks:
-      - frontend
-    env_file: .env
-
-  # Auth Service
-  auth-service:
-    build: ./services/auth-service
-    networks:
-      - backend
-    env_file: .env
-    volumes:
-      - ./services/auth-service:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  # User Service
-  user-service:
-    build: ./services/user-service
-    networks:
-      - backend
-    env_file: .env
-    volumes:
-      - ./services/user-service:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  # Game Service
-  game-service:
-    build: ./services/game-service
-    networks:
-      - backend
-    env_file: .env
-    volumes:
-      - ./services/game-service:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  # Stats Service
   stats-service:
-    build: ./services/stats-service
-    networks:
-      - backend
-    env_file: .env
+    build: 
+      context: ./services/stats-service
+    container_name: stats_container
+    env_file: "./.env"
     volumes:
-      - ./services/stats-service:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  # I18n Service
-  i18n-service:
-    build: ./services/i18n-service
+      - stats_data:/app/data
     networks:
-      - backend
-    env_file: .env
-    volumes:
-      - ./services/i18n-service:/app
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - trancendence-network
+    restart: unless-stopped
 
-networks:
-  backend:
-    driver: bridge
-  frontend:
-    driver: bridge
+  # Tournament Service
+  tournament-service:
+    build: 
+      context: ./services/tournament-service
+    container_name: tournament_container
+    env_file: "./.env"
+    volumes:
+      - tournament_data:/app/data
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+  
+  gateway-service:
+    build:
+      context: ./gateway
+    container_name: gateway_container
+    env_file: "./.env"
+    depends_on:
+      - stats-service
+      - tournament-service
+      - auth-service
+    ports:
+      - "8443:8443"
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      target: dev  # Use development stage for testing
+    container_name: auth_container
+    env_file: "./services/auth-service/.env"
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+    volumes:
+      - auth_data:/app/data
+
+  frontend-service:
+    build:
+      context: ./frontend
+    container_name: frontend_container
+    ports: 
+      - "9000:9000"
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+    volumes:
+      - ./frontend/:/app/
 
 volumes:
-  # Optional if using bind mounts, or replace with named volumes
-  gateway_code:
+  stats_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./gateway
+      device: ${PWD}/services/stats-service/data
+  tournament_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/tournament-service/data
+  auth_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/auth-service/data
+  
+networks:
+  trancendence-network:
+    name: trancendence-network
+    driver: bridge
 
-  frontend_code:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./frontend

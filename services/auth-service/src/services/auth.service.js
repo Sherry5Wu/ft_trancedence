@@ -81,8 +81,12 @@ async function authenticateUser(identifier, password) {
     }
   });
 
-  if (!user){
-    throw new InvalidCredentialsError('Invalid credentials');
+  if (!user) {
+  throw new InvalidCredentialsError('User not found.');
+  }
+  
+  if (!user.isVerified) {
+  throw new InvalidCredentialsError('Please verify your email address before logging in.');
   }
 
   const isMatch = await comparePassword(password, user.passwordHash);
