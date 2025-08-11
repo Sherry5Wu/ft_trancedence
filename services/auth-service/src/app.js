@@ -25,7 +25,7 @@ import healthRoutes from './routes/health.routes.js';
 
 // Import authenticate plugin and schemas
 import authenticate from './utils/authenticate.js';
-import userSchema from './schemas/user.schema.js';
+import userSchema from './schemas/publicUser.schema.js';
 
 async function buildApp() {
   const app = Fastify({ logger: true });

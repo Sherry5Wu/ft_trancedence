@@ -30,8 +30,14 @@ export default fp(async (fastify) => {
         properties: {
           email: { type: 'string', format: 'email' },
           username: { type: 'string', pattern: '^[a-zA-Z][a-zA-Z0-9._-]{5,19}$' },
-          password: { type: 'string', pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,72}$' },
-          pinCode: { type: 'string', pattern: '^\d{4}$' },
+          password: {
+            type: 'string',
+            pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,72}$' // here shold be "\\d" instead i=of "\d"
+          },
+          pinCode: {
+            type: 'string',
+            pattern: '^\\d{4}$'
+          },
         },
       },
       response: {
@@ -42,7 +48,7 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    const user = await registerUser(req.body.email, req.body.password);
+    const user = await registerUser(req.body.email, req.body.username, req.body.password, req.body.pinCode);
     return reply.code(201).send(user);
   });
 
@@ -83,7 +89,7 @@ export default fp(async (fastify) => {
   // Refresh token
   fastify.post('/auth/refresh', {
     schema: {
-      tags: ['Auth'], 
+      tags: ['Auth'],
       summary: 'Refresh tokens',
       description: 'Rotates tokens using a valid refresh token.',
       body: {

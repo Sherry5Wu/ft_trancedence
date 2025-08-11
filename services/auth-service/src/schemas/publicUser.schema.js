@@ -2,7 +2,7 @@
  * Public User schema (used in API responses) — excludes sensitive fields.
  */
 const publicUserSchema = {
-  $id: 'PublicUser',
+  $id: 'publicUser',
   type: 'object',
   properties: {
     id: { type: 'string', format: 'uuid' },

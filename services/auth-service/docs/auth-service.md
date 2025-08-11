@@ -37,6 +37,8 @@ auth-service/
 │   │   ├── health.routes.js   # Service health check (useful in microservices)
 │   │   ├── user.routes.js   # For profile management (view/update user info)
 │   │   └── 2fa.routes.js   # Two-Factor Authentication endpoints
+│   ├── schemas/ 
+│   │   ├── publicUser.schema.js
 │   ├── services/         # Business logic
 │   │   ├── auth.service.js # Core auth logic
 │   │   ├── jwt.service.js  # JWT generation/validation

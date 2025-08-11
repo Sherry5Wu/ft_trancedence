@@ -59,7 +59,7 @@ export default (sequelize) => {
       defaultValue: 'user',
     },
     isVerified: { // Use for checking if the user finishs the registeration flow
-      type: DataTypes.BOOLESN,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },

@@ -10,8 +10,8 @@ safer for production.
 
 
 9. auth.db doesn't be create succefully.
+10. the different between plugins and pure functions
 
-10. Error: Cannot find module '/app/auth'
 
 
 Build and run docker
@@ -36,7 +36,7 @@ curl http://localhost:3001/health
 Can  you curl / Postman
 curl -X POST http://localhost:3001/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"mypassword123"}'
+  -d '{"email":"test@example.com", "username":"usernameA","password":"myPassword*123", "pinCode":"5632"}'
 
 
 Force remove in one step:
@@ -44,3 +44,11 @@ docker rm -f $(docker ps -a -q)
 
 Clean up unused images/volumes/network
 docker system prune --all --volumes
+
+// remove all the docker images
+docker rmi -f $(docker images -q)
+
+Here’s what’s happening:
+  docker images -q → lists only the IDs of all images.
+  $(...) → passes that list to the docker rmi command.
+  -f → forces removal, even if an image is used by stopped containers.

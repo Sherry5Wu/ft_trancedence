@@ -16,6 +16,7 @@ import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import { ConflictError, InvalidCredentialsError, NotFoundError } from '../utils/errors.js';
+import { normalizeAndValidateEmail, normalizeEmail, validatePassword, validateUsername, validatePincode } from '../utils/validators.js';
 
 const { User, RefreshToken } = models;
 
@@ -24,14 +25,24 @@ const { User, RefreshToken } = models;
  * @param {string} email - User email
  * @param {string} password - plaintext password
  * @param {string} username - username
- * @oaram {string} pinCode - plaintext pin code
+ * @param {string} pinCode - plaintext pin code
  * @return {Promise<object>} Created user (without sensitive fields)
  */
-async function registerUser(email, password, username, pinCode) {
+async function registerUser(email, username, password, pinCode) {
+  let normalizedEmail;
+  try {
+      normalizedEmail = normalizeAndValidateEmail(email);
+      validateUsername(username);
+      validatePassword(password);
+      validatePincode(pinCode);
+    } catch (err) {
+      throw err;
+    }
+
     // Normalize and validate email using fastify.validators in route handler
     const existingUser = await User.findOne({
       where: {
-        [Op.or]: [{ email }, { username }]
+        [Op.or]: [{ normalizedEmail }, { username }]
       }
     });
 
@@ -43,7 +54,7 @@ async function registerUser(email, password, username, pinCode) {
     const passwordHash = await hashPassword(password);
     const pinCodeHash = await hashPassword(pinCode);
 
-    const user = await User.create({ email, username, passwordHash, pinCodeHash, isVerified: true });
+    const user = await User.create({ normalizedEmail, username, passwordHash, pinCodeHash, isVerified: true });
 
     // Remove sensitive fields from returned user
     const userData = user.toJSON();
@@ -59,13 +70,13 @@ async function registerUser(email, password, username, pinCode) {
  * @param {string} password - Plaintext password
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
-async function authenticateUser(indentifier, password) {
+async function authenticateUser(identifier, password) {
   // Find user by email or username, including secrets
   const user = await User.scope('withSecrets').findOne({
     where: {
       [Op.or]: [ // Sequelize's [Op.or] condition lets you check both fields.
-        { email: indentifier },
-        { username: indentifier }
+        { email: normalizeEmail(identifier) },
+        { username: identifier }
       ]
     }
   });
