@@ -23,7 +23,8 @@ FRONTEND_FILES= $(shell find frontend/ -type f)
 
 AUTH_FILES = services/auth-service/Dockerfile services/auth-service/package.json $(shell find services/auth-service/src -type f)
 BACKEND_FILES = $(DOCKER_COMPOSE_FILE) $(TOURNAMENT_FILES) $(STATS_FILES) $(GATEWAY_FILES) $(AUTH_FILES) $(ENV_FILE)
-FRONTEND_FILES = $(DOCKER_COMPOSE_FILE) 
+BACKEND_SERVICES = tournament-service gateway-service auth-service
+FRONTEND_SERVICES = frontend-service
 
 All: backend frontend
 
@@ -31,9 +32,9 @@ backend: $(BUILD_MARKER_BACKEND)
 
 $(BUILD_MARKER_BACKEND): $(BACKEND_FILES)
 				@echo "🚧 Building backend containers..."
-				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
-				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
-				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop $(BACKEND_SERVICES)
+				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build $(BACKEND_SERVICES)
+				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d $(BACKEND_SERVICES)
 				@touch $(BUILD_MARKER_BACKEND)
 				@echo "✅ Backend is up."
 
@@ -41,8 +42,8 @@ frontend: $(BUILD_MARKER_FRONTEND)
 
 $(BUILD_MARKER_FRONTEND): $(FRONTEND_FILES)
 					@echo "🚧 Building frontend container..."
-					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
-					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build $(FRONTEND_SERVICES)
+					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d $(FRONTEND_SERVICES)
 					@touch $(BUILD_MARKER_FRONTEND)
 					@echo "✅ Frontend is up."
 
