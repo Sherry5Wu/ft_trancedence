@@ -2,7 +2,7 @@ services:
   stats-service:
     build: 
       context: ./services/stats-service
-    container_name: stats-container
+    container_name: stats_container
     env_file: "./.env"
     volumes:
       - stats_data:/app/data
@@ -14,7 +14,7 @@ services:
   tournament-service:
     build: 
       context: ./services/tournament-service
-    container_name: tournament-container
+    container_name: tournament_container
     env_file: "./.env"
     volumes:
       - tournament_data:/app/data
@@ -27,6 +27,10 @@ services:
       context: ./gateway
     container_name: gateway_container
     env_file: "./.env"
+    depends_on:
+      - stats-service
+      - tournament-service
+      - auth-service
     ports:
       - "8443:8443"
     networks:
@@ -49,6 +53,8 @@ services:
     build:
       context: ./frontend
     container_name: frontend_container
+    ports: 
+      - "9000:9000"
     networks:
       - trancendence-network
     restart: unless-stopped
