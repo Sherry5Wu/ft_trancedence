@@ -1,0 +1,209 @@
+{
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "message": "Oops! The page you're looking for doesn't exist.",
+    "aria": {
+      "errorIcon": "404 error illustration"
+    }
+  },
+
+  "home": {
+    "welcome": "Welcome to ft_transcendence!",
+    "signInButton": "Sign in",
+    "aboutText": "This is a multiplayer ping pong game platform. Challenge friends, join tournaments, and climb the leaderboard.",
+    "aria": {
+      "signInButton": "Go to sign in page",
+      "toggleAboutText": "Toggle visibility of about section"
+    }
+  },
+
+  "homeUser": {
+    "score": "Score",
+    "rank": "Rank",
+    "stats": "Stats",
+    "matchHistory": "Match History",
+    "playButton": "Play",
+    "tournamentButton": "Tournament",
+    "rivalsButton": "Rivals",
+    "leaderboardButton": "Leaderboard",
+    "aria": {
+      "profilePicture": "User profile picture",
+      "statsToggle": "Toggle user statistics visibility",
+      "matchHistoryToggle": "Toggle user match history visibility",
+      "playButton": "Start a new game",
+      "tournamentButton": "Go to tournaments",
+      "rivalsButton": "View rivals",
+      "leaderboardButton": "View leaderboard"
+    }    
+  },
+
+  "signIn": {
+    "title": "Sign In",
+    "usernamePlaceholder": "Username",
+    "passwordPlaceholder": "Password",
+    "logInButton": "Log In",
+    "notRegistered": "Not registered?",
+    "signUp": "Sign up",
+    "aria": {
+      "usernameInput": "Enter your username",
+      "passwordInput": "Enter your password",
+      "logInButton": "Submit sign in form",
+      "signUpLink": "Go to sign up page"
+    }
+  },
+  
+  "signUp": {
+    "title": "Sign Up",
+    "usernamePlaceholder": "Username",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "pinPlaceholder": "Player PIN",
+    "confirmPinPlaceholder": "Confirm Player PIN",
+    "passwordMismatch": "Passwords do not match",
+    "pinMismatch": "PINs do not match",
+    "toggle2FA": "2FA with Google Authenticator",
+    "submitButton": "Sign Up",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "aria": {
+      "usernameInput": "Enter your desired username",
+      "emailInput": "Enter your email address",
+      "passwordInput": "Enter your password",
+      "confirmPasswordInput": "Re-enter your password for confirmation",
+      "pinInput": "Enter your player PIN",
+      "confirmPinInput": "Re-enter your player PIN for confirmation",
+      "toggle2FA": "Enable or disable two-factor authentication with Google Authenticator",
+      "submitButton": "Submit registration form",
+      "signInLink": "Go to sign in page"
+    }
+  },
+
+  "logInPlayer": {
+    "title": "Log in a player",
+    "usernamePlaceholder": "Username",
+    "pinPlaceholder": "Player PIN",
+    "okButton": "OK",
+    "aria": {
+      "usernameInput": "Enter the second player's username",
+      "pinInput": "Enter the second player's PIN",
+      "okButton": "Confirm player login"
+    }
+  },
+
+  "completeProfile": {
+    "title": "Complete user registration",
+    "aria": {
+
+    }
+  },
+
+  "verify2fa": {
+    "title": "Two-factor Authentication",
+    "verifyAccount": "Verify your account",
+    "instructions": "You have 2FA enabled on this account. Please enter the verification code from your Google Authenticator app to complete the login process.",
+    "verifyCode": "Verify the code from the app",
+    "cantFindDevice": "Can’t find your device?",
+    "useBackupCode": "Use a backup code",
+    "aria": {
+
+    }
+  },
+
+  "setUp2fa_main": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+  
+  "setUp2fa_backUp": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "setUp2fa_success": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "userSettings": {
+    "accountSettings": {
+
+    },
+    "secury": {
+
+    },
+    "2fa": {
+
+    }
+  },
+
+  "userChangePassword": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "userChangePIN": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "choosePlayers": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "tournament": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "tournament_new": {
+    "title": "",
+    "aria": {
+
+    }
+  },
+
+  "tournament_confirm": {
+    "title": "",
+    "aria": {
+
+    }
+  },  
+
+  "rivals": {
+
+  },
+
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No players to show.",
+    "columns": {
+      "username": "Username",
+      "rival": "Rival",
+      "totalGames": "Total games",
+      "score": "Score"
+    },
+    "aria": {
+      "table": "Leaderboard table",
+      "columnUsername": "Leaderboard username column",
+      "columnRival": "Leaderboard rival column",
+      "columnTotalGames": "Leaderboard total games column",
+      "columnScore": "Leaderboard score column"
+    }
+  }
+}

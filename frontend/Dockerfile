@@ -39,3 +39,4 @@ CMD ["sh", "/app/entrypoint.sh"]
 # in the project root:              npm install (for run with vite)
 #                                   npm install react-router-dom 
 #                                   npm install --save-dev @types/react-router-dom
+#                                   npm install react-i18next i18next
