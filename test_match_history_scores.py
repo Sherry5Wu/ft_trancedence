@@ -23,7 +23,10 @@ def login_user(email, password):
     """Login and get JWT token"""
     data = {
         "email": email,
-        "password": password
+        "password": password,
+        "pincode" : "123123",
+        "username" : "testuser123"
+
     }
     
     # ✅ KORJATTU: Oikea reitti auth-servicelle
@@ -59,7 +62,9 @@ def setup_test_users():
         # Register first user - ✅ KORJATTU: Vain email ja password
         register_data = {
             "email": TEST_USER_EMAIL,
-            "password": TEST_USER_PASSWORD
+            "password": TEST_USER_PASSWORD,
+            "pincode" : "123123",
+            "username" : "testuser123"
         }
         print(f"🔧 Registering user: {TEST_USER_EMAIL}")
         register_response = requests.post(f"{AUTH_URL}/auth/register", json=register_data, verify=False)
