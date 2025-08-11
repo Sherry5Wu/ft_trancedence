@@ -1,6 +1,7 @@
 DOCKER_COMPOSE_FILE = ./docker-compose.yml
 DOCKER_COMPOSE = docker compose
-BUILD_MARKER = .build
+BUILD_MARKER_BACKEND = .backend_build
+BUILD_MARKER_FRONTEND = .frontend_build
 ENV_FILE = .env
 
 # Explicitly list all relevant files
@@ -17,23 +18,39 @@ STATS_FILES = services/stats-service/dockerfile \
 				services/stats-service/utils/updateFunctions.js
 
 GATEWAY_FILES= gateway/dockerfile gateway/nginx.conf
+
+FRONTEND_FILES= $(shell find frontend/ -type f)
+
 AUTH_FILES = services/auth-service/Dockerfile services/auth-service/package.json $(shell find services/auth-service/src -type f)
 BACKEND_FILES = $(DOCKER_COMPOSE_FILE) $(TOURNAMENT_FILES) $(STATS_FILES) $(GATEWAY_FILES) $(AUTH_FILES) $(ENV_FILE)
+FRONTEND_FILES = $(DOCKER_COMPOSE_FILE) 
 
-backend: $(BUILD_MARKER)
+All: backend frontend
 
-$(BUILD_MARKER): $(BACKEND_FILES)
+backend: $(BUILD_MARKER_BACKEND)
+
+$(BUILD_MARKER_BACKEND): $(BACKEND_FILES)
 				@echo "🚧 Building backend containers..."
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
-				@touch $(BUILD_MARKER)
+				@touch $(BUILD_MARKER_BACKEND)
 				@echo "✅ Backend is up."
+
+frontend: $(BUILD_MARKER_FRONTEND)
+
+$(BUILD_MARKER_FRONTEND): $(FRONTEND_FILES)
+					@echo "🚧 Building frontend container..."
+					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
+					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+					@touch $(BUILD_MARKER_FRONTEND)
+					@echo "✅ Frontend is up."
 
 clean:
 	@echo "🧹 Stopping and removing containers..."
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down -v
-	@rm -f $(BUILD_MARKER)
+	@rm -f $(BUILD_MARKER_BACKEND)
+	@rm -f $(BUILD_MARKER_FRONTEND)
 
 # Show logs for debugging
 logs:
@@ -49,5 +66,7 @@ fclean:
 	@$(MAKE) clean
 	@docker system prune -a -f
 
+re: fclean frontend backend
 
-.PHONY: backend rebuild logs status fclean clean
+
+.PHONY: frontend backend rebuild logs status fclean clean

@@ -45,6 +45,14 @@ services:
     volumes:
       - auth_data:/app/data
 
+  frontend-service:
+    build:
+      context: ./frontend
+    container_name: frontend_container
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+
 volumes:
   stats_data:
     driver: local
