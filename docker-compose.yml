@@ -58,6 +58,8 @@ services:
     networks:
       - trancendence-network
     restart: unless-stopped
+    volumes:
+      - ./frontend/:/app/
 
 volumes:
   stats_data:
