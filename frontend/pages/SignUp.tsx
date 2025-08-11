@@ -39,7 +39,7 @@ interface UserProfile {
   pincode: string;
 }
 
-const SignUpPage = async () => {
+const SignUpPage = () => {
   
   const navigate = useNavigate();
 
