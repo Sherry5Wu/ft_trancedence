@@ -167,7 +167,11 @@ const LeaderboardPage: React.FC = () => {
                   <span className="truncate">{player.username}</span>
                   <span>{player.isRival}</span>
                   <span>{player.totalGames}</span>
+<<<<<<< HEAD
                   <span className='font-semibold'>{player.totalScore}</span>
+=======
+                  <span>{player.totalScore}</span>
+>>>>>>> origin/feature/frontend/game
                 </li>
               );
             })}

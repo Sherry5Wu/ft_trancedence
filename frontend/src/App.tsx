@@ -21,10 +21,10 @@ import ChangePINPage from '../pages/User/UserChangePIN';
 import TournamentsPage from '../pages/Tournament/TournamentMain';
 import NewTournamentPage from '../pages/Tournament/TournamentNew';
 import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
-import GamePage from '../pages/Game';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/RivalsMain';
 import NotFoundPage from '../pages/NotFoundPage';
+import GamePage from '../pages/GamePage';
 
 const App = () => {
 

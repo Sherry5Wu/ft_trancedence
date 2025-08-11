@@ -1,7 +1,4 @@
-import { useState } from 'react';
-import SortIcon from '../assets/noun-sort-7000784.svg?react';
-import { Menu } from './Menu.tsx'
-import { DropDownButton } from './DropDownButton.tsx';
+import SortIcon from '../assets/noun-sort-7706006.svg?react';
 
 const fetchRivalData = () => {
   let rivalData = [
@@ -21,7 +18,7 @@ const fetchRivalData = () => {
       matches: 8,
       wins: 1,
       losses: 7,
-      picture: '../assets/profilepics/Coco.png'
+      picture: '../assets/profilepics/image.jpg'
     },
     {
       name: 'David123',
@@ -30,7 +27,7 @@ const fetchRivalData = () => {
       matches: 6,
       wins: 3,
       losses: 3,
-      picture: '../assets/profilepics/Snickers.png'
+      picture: '../assets/profilepics/Bandit.png'
     },
     {
       name: 'Eve',
@@ -39,29 +36,16 @@ const fetchRivalData = () => {
       matches: 4,
       wins: 4,
       losses: 0,
-      picture: '../assets/profilepics/Winton.png'
+      picture: '../assets/profilepics/paddington-poster.jpg'
     }
   ]
 
   return rivalData;
 }
 
-const rivalsSortingItems = [
-  'Most matches played',
-  'Most wins',
-  'Most losses',
-  'Win ratio',
-  'Score',
-  'Rank'
-];
-
-const handleSortSelection = () => {
-
-}
-
-
           
 export const RivalRows = () => {
+
     const rivalData = fetchRivalData();
 
     if (rivalData.length === 0)
@@ -92,29 +76,14 @@ export const RivalRows = () => {
             }
             </ul>
             <div className='flex justify-end mt-5'>
-              {/* <button className='flex items-center h-8 w-55 bg-[#FFEE8C] rounded-full border-2 border-transparent 
-                                hover:border-black transition ease-in-out duration-300  hover:cursor-pointer'> */}
-                  {/* <SortIcon className='size-7 ml-2' /> */}
-                  <DropDownButton aria-label='sorting options' label='Sort rivals' options={rivalsSortingItems} onSelect={handleSortSelection}
-                        className='overflow-hidden gap-3 border-3 border-transparent hover:border-black transition ease-in-out duration-200' />
-              {/* </button> */}
+              <button className='flex items-center h-8 w-50 bg-[#FFEE8C] rounded-full'>
+                  <SortIcon className='size-7 ml-2' />
+                  hello
+              </button>
           </div>
         </div>
     )
 }
-
-
-
-
-
-          //   <div className='flex justify-end mt-5'>
-          //     <button className='flex items-center h-8 w-55 bg-[#FFEE8C] rounded-full border-2 border-transparent 
-          //                       hover:border-black transition ease-in-out duration-300  hover:cursor-pointer'>
-          //         {/* <SortIcon className='size-7 ml-2' /> */}
-          //         <Menu aria-label='sorting options' Icon={<SortIcon />} label={rivalsSortingItems[1].label} elements={rivalsSortingItems} sort={true}
-          //               className='flex flex-1 items-center ml-3 overflow-hidden gap-3 hover:cursor-pointer' />
-          //     </button>
-          // </div>
 
     // return (
     //     <div aria-label='rivals data' className=''>

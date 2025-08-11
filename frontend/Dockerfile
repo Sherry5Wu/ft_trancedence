@@ -8,7 +8,7 @@ WORKDIR /app
 # dependencies inside include: typescript, tailwindcss (both mandatory),
 # react, react-dom (for hooks, virtual DOMS, etc.),
 # postcss (so tailwind works), and vite (to run the dev server and to make typescript work with browsers)
-COPY package.json package-lock.json .
+COPY package.json package-lock.json ./
 
 # install node package manager
 RUN npm install
