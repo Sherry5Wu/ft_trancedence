@@ -15,7 +15,7 @@ print("Taulut:", tables)
 if ('Users',) in tables:
     cursor.execute("SELECT * FROM users;")
     users = cursor.fetchall()
-    print("Käyttäjät:", users)
+    print("Users:", users)
 
 # Sulje yhteys
 conn.close()
