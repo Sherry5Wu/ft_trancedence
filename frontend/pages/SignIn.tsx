@@ -9,6 +9,23 @@ import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../hooks/useValidationField';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
 
+const fetchUserData = async (userID: string | undefined): Promise<userData | null> => {
+    try {
+        const response = await fetch(`http://localhost:8443/as/auth/${userID}`);
+
+        if (!response.ok)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const userData: userData = await response.json();
+            return userData;
+    }
+
+    catch (error) {
+        console.error('Error: ', error);
+            return null;
+    }
+};
+
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
 

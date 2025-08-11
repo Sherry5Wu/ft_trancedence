@@ -30,7 +30,6 @@ root.render(
     </Providers>
 );
 
-
 // To set up Google OAuth authentication, the clientId is required to 
 // identify the app to Google's OAuth service when  rendering the component
 
