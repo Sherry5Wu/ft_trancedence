@@ -8,6 +8,30 @@ import { ToggleButton } from '../../components/ToggleButton';
 import { useValidationField } from '../../hooks/useValidationField';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 
+
+// async function createUser(player: Omit<Player, 'player_id'>): Promise<Player | null> {
+//   try {
+//     const response = await fetch('http://localhost:9000/', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(player)
+//     });
+    
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
+    
+//     return await response.json();
+//   } 
+  
+//   catch (error) {
+//     console.error('Error:', error);
+//     return null;
+//   }
+// }
+
 const CompleteProfilePage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -70,6 +94,7 @@ const CompleteProfilePage: React.FC = () => {
         disabled={!formFilled}
         onClick={() => {
           alert('Registered successfully!');
+          // createUser();
           navigate('/homeuser');
         }}
       />

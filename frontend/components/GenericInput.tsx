@@ -14,6 +14,7 @@ interface GenericInputProps {
   showEditIcon?: boolean;
   errorMessage?: string;
   onBlur?: () => void;
+  className?: string;
 }
 
 export const GenericInput = ({
@@ -26,6 +27,7 @@ export const GenericInput = ({
   showEditIcon = false,
   errorMessage = '',
   onBlur,
+  className = '',
 }: GenericInputProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFilled(e.target.value);
@@ -46,7 +48,7 @@ export const GenericInput = ({
         disabled={disabled}
         aria-invalid={!!errorMessage}
         aria-describedby={errorMessage ? `${inputId}-error` : undefined}
-        className={`generic-input ${value ? "filled" : ""} pr-10`}
+        className={`${className ? className : 'generic input pr-10'} ${value ? "filled" : ""}`}
         onBlur={onBlur}
       />
       {shouldShowIcon && (
