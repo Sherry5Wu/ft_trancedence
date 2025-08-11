@@ -9,17 +9,32 @@
 
   "home": {
     "welcome": "Welcome to ft_transcendence!",
+    "signInButton": "Sign in",
+    "aboutText": "This is a multiplayer ping pong game platform. Challenge friends, join tournaments, and climb the leaderboard.",
     "aria": {
-
+      "signInButton": "Go to sign in page",
+      "toggleAboutText": "Toggle visibility of about section"
     }
   },
 
   "homeUser": {
+    "score": "Score",
+    "rank": "Rank",
     "stats": "Stats",
     "matchHistory": "Match History",
+    "playButton": "Play",
+    "tournamentButton": "Tournament",
+    "rivalsButton": "Rivals",
+    "leaderboardButton": "Leaderboard",
     "aria": {
-
-    }
+      "profilePicture": "User profile picture",
+      "statsToggle": "Toggle user statistics visibility",
+      "matchHistoryToggle": "Toggle user match history visibility",
+      "playButton": "Start a new game",
+      "tournamentButton": "Go to tournaments",
+      "rivalsButton": "View rivals",
+      "leaderboardButton": "View leaderboard"
+    }    
   },
 
   "signIn": {
@@ -30,7 +45,10 @@
     "notRegistered": "Not registered?",
     "signUp": "Sign up",
     "aria": {
-
+      "usernameInput": "Enter your username",
+      "passwordInput": "Enter your password",
+      "logInButton": "Submit sign in form",
+      "signUpLink": "Go to sign up page"
     }
   },
   
@@ -45,7 +63,7 @@
     "passwordMismatch": "Passwords do not match",
     "pinMismatch": "PINs do not match",
     "toggle2FA": "2FA with Google Authenticator",
-    "submitButton": "SIGN UP",
+    "submitButton": "Sign Up",
     "alreadyHaveAccount": "Already have an account?",
     "signInLink": "Sign in",
     "aria": {
@@ -55,14 +73,21 @@
       "confirmPasswordInput": "Re-enter your password for confirmation",
       "pinInput": "Enter your player PIN",
       "confirmPinInput": "Re-enter your player PIN for confirmation",
-      "submitButton": "Submit registration form"
+      "toggle2FA": "Enable or disable two-factor authentication with Google Authenticator",
+      "submitButton": "Submit registration form",
+      "signInLink": "Go to sign in page"
     }
   },
 
   "logInPlayer": {
     "title": "Log in a player",
+    "usernamePlaceholder": "Username",
+    "pinPlaceholder": "Player PIN",
+    "okButton": "OK",
     "aria": {
-
+      "usernameInput": "Enter the second player's username",
+      "pinInput": "Enter the second player's PIN",
+      "okButton": "Confirm player login"
     }
   },
 

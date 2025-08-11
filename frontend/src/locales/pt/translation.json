@@ -1,12 +1,9 @@
 {
-  "welcome": "Bem-vindo ao ft_transcendence!",
-  "signIn": "Iniciar sessão",
-  "signUp": "",
-  "logIn": "",
-  "googleSignIn": "",
-  "cancel": "",
-  "next": "",
-  "download": "",
-  "done": ""
-
+  "notFound": {
+    "title": "404 - Página Não Encontrada",
+    "message": "Ops! A página que você está procurando não existe.",
+    "aria": {
+      "errorIcon": "Ilustração do erro 404"
+    }
+  }
 }

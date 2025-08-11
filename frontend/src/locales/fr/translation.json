@@ -1,4 +1,17 @@
 {
-  "welcome": "Bienvenue sur ft_transcendence!",
-  "signIn": "Se connecter"
+
+  "home": {
+    "signInButton": "Se connecter",
+    "welcome": "Bienvenue sur ft_transcendence!"
+  },
+
+
+
+   "notFound": {
+      "title": "404 - Page non trouvée",
+      "message": "Oups ! La page que vous recherchez n'existe pas.",
+      "aria": {
+        "errorIcon": "Illustration de l'erreur 404"
+      }
+    }
 }
