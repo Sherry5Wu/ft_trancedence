@@ -46,18 +46,18 @@ const fetchRivalData = () => {
   return rivalData;
 }
 
-const rivalsSortingItems = [
-  'Most matches played',
-  'Most wins',
-  'Most losses',
-  'Win ratio',
-  'Score',
-  'Rank'
-];
+// const rivalsSortingItems = [
+//   'Most matches played',
+//   'Most wins',
+//   'Most losses',
+//   'Win ratio',
+//   'Score',
+//   'Rank'
+// ];
 
-const handleSortSelection = () => {
+// const handleSortSelection = () => {
 
-}
+// }
 
 
           
@@ -95,8 +95,8 @@ export const RivalRows = () => {
               {/* <button className='flex items-center h-8 w-55 bg-[#FFEE8C] rounded-full border-2 border-transparent 
                                 hover:border-black transition ease-in-out duration-300  hover:cursor-pointer'> */}
                   {/* <SortIcon className='size-7 ml-2' /> */}
-                  <DropDownButton aria-label='sorting options' label='Sort rivals' options={rivalsSortingItems} onSelect={handleSortSelection}
-                        className='overflow-hidden gap-3 border-3 border-transparent hover:border-black transition ease-in-out duration-200' />
+                  {/* <DropDownButton aria-label='sorting options' label='Sort rivals' options={rivalsSortingItems} onSelect={handleSortSelection}
+                        className='overflow-hidden gap-3 border-(p3 border-transparent hover:border-black transition ease-in-out duration-200' /> */}
               {/* </button> */}
           </div>
         </div>

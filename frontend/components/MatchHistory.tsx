@@ -1,4 +1,4 @@
-import { useEffect, ReactElement } from 'react';
+import { useEffect, useState, ReactElement } from 'react';
 import { useUserContext } from '../context/UserContext';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 
@@ -13,53 +13,88 @@ interface MatchData {
     winner: string,
 }
 
-const fetchMatchData = (user: string | undefined) => {
+const fetchMatchData = async (userID: string | undefined): Promise<MatchData | null> => {
     // FETCH MATCH HISTORY FROM PLAYER 1
 
     // MOCKUP DATA FOR TESTING
-    let matchData = [
-        {
-            player1: user,
-            player2: 'Rival1',
-            date: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
-            duration: 300,
-            player1score: 2,
-            player2score: 1,
-            winner: user,
-            player1pic: '../assets/profilepics/Bluey.png',
-            player2pic: '../assets/profilepics/B2.png'
-        },
-        {
-            player1: user,
-            player2: 'Rival2',
-            date: new Date('2025-07-15 15:05').toLocaleString('en-GB'),
-            duration: 300,
-            player1score: 2,
-            player2score: 5,
-            winner: 'Rival2',
-            player1pic: '../assets/profilepics/Bluey.png',
-            player2pic: '../assets/profilepics/image.jpg'
-        },
-    ];
+    // let matchData = [
+    //     {
+    //         player1: user,
+    //         player2: 'Rival1',
+    //         date: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
+    //         duration: 300,
+    //         player1score: 2,
+    //         player2score: 1,
+    //         winner: user,
+    //         player1pic: '../assets/profilepics/Bluey.png',
+    //         player2pic: '../assets/profilepics/B2.png'
+    //     },
+    //     {
+    //         player1: user,
+    //         player2: 'Rival2',
+    //         date: new Date('2025-07-15 15:05').toLocaleString('en-GB'),
+    //         duration: 300,
+    //         player1score: 2,
+    //         player2score: 5,
+    //         winner: 'Rival2',
+    //         player1pic: '../assets/profilepics/Bluey.png',
+    //         player2pic: '../assets/profilepics/image.jpg'
+    //     },
+    // ];
     // matchData = [];
+    // return matchData;
 
-    return matchData;
+    try {
+        const response = await fetch(`http://localhost:3001/stats/${userID}`);
+
+        if (!response.ok)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const matchData: MatchData = await response.json();
+            return matchData;
+    }
+
+    catch (error) {
+        console.error('Error: ', error);
+            return null;
+    }
 };
 
 
-export const MatchHistory = ( player1: string ) => {
+export const MatchHistory = ( userID: string ) => {
 
-    const { user } = useUserContext();
+    const [matchData, setMatchData] = useState<MatchData | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    // FETCH MATCH HISTORY FROM PLAYER 1
-    const matchData = fetchMatchData(user?.username);
+    useEffect(() => {
+    setLoading(true);
+    fetchMatchData(userID).then((data) => {
+        setMatchData(data);
+        setLoading(false);
+    });
+    }, [userID]);
 
-    if (matchData.length  === 0)
+    if (loading)
+        return <div className='flex justify-center my-5'>Loading...</div>
+
+    if (!matchData)
+    {
         return (
             <div aria-label='empty match history' className='bg-[#FFEE8C] rounded-full text-center'>
-            -
+             -
             </div>
-    );
+    )};
+    
+
+    // FETCH MATCH HISTORY FROM PLAYER 1
+    // const matchData = fetchMatchData(user?.username);
+
+    // if (matchData.length  === 0)
+    //     return (
+    //         <div aria-label='empty match history' className='bg-[#FFEE8C] rounded-full text-center'>
+    //         -
+    //         </div>
+    // );
 
     return (
         <div aria-label='match history' className=''>
