@@ -195,6 +195,7 @@ import { GenericButton } from '../../components/GenericButton';
 import DownArrow from '../../assets/noun-down-arrow-down-1144832.svg?react';
 import ToBeDoneBracket from '../../components/ToBeDoneBracket';
 import BracketViewer from '../../components/BracketViewer';
+import ModularBracketViewer from '../../components/ModularBracketViewer';
 
 interface TournamentHistoryRow {
   tournament_id: string; // TEXT NOT NULL
@@ -259,6 +260,18 @@ const mockData: TournamentHistoryRow[] = [
     result: 'win',
     played_at: '2025-01-01T10:00:00',
   },
+  {
+    tournament_id: 'another',
+    total_players: 4,
+    stage_number: 1,
+    match_number: 2,
+    player_name: 'Bob',
+    opponent_name: 'Bob2',
+    result: 'win',
+    played_at: '2025-01-01T10:00:00',
+  },
+
+
   // Round 1 (Quarterfinals) - Stage 3
   {
     tournament_id: 'big',
@@ -334,41 +347,6 @@ const mockData: TournamentHistoryRow[] = [
     result: 'win',
     played_at: '2025-01-01T13:00:00',
   },  
-
-
-    // INCOMPLETE TOURNAMENTE Semifinals (Stage 2)
-  {
-    tournament_id: 'incomplete',
-    total_players: 4,
-    stage_number: 2,
-    match_number: 1,
-    player_name: 'Lily',
-    opponent_name: 'Anna',
-    result: 'win',
-    played_at: '2025-08-08T14:00:00',
-  },
-  {
-    tournament_id: 'incomplete',
-    total_players: 4,
-    stage_number: 2,
-    match_number: 2,
-    player_name: 'Zoe',
-    opponent_name: 'Maya',
-    result: 'win',
-    played_at: '2025-08-08T14:30:00',
-  },
-
-  // Finals (Stage 1) — not played yet, so no entry here
-  {
-    tournament_id: 'incomplete',
-    total_players: 4,
-    stage_number: 1,
-    match_number: 1,
-    player_name: '',
-    opponent_name: '',
-    result: 'draw',
-    played_at: '',
-  },  
 ];
 
 
@@ -443,7 +421,8 @@ const TournamentsPage: React.FC = () => {
                 {isExpanded && (
                   <li className="mt-2">
                     {/* <ToBeDoneBracket tournament={{ ...t, matches: t.matches! }} /> */}
-                    <BracketViewer matches={t.matches} />
+                    {/* <BracketViewer matches={t.matches} /> */}
+                    <ModularBracketViewer matches={t.matches} totalPlayers={t.totalPlayers} />
                   </li>
                 )}
               </React.Fragment>

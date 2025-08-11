@@ -1,3 +1,5 @@
+// components/BracketMatch.tsx
+ 
 import React from 'react';
 
 interface BracketMatchProps {
@@ -7,15 +9,24 @@ interface BracketMatchProps {
 }
 
 const BracketMatch: React.FC<BracketMatchProps> = ({ player1, player2, winner }) => {
-  const bgColor = (player: 'player1' | 'player2') => {
-    if (!winner) return 'bg-gray-300';
-    return winner === player ? 'bg-[#FFCC00]' : 'bg-[#FDFBD4]';
+  const getBorder = (player: 'player1' | 'player2') => {
+    if (!winner) return 'border-gray-400';
+    if (winner === player) return 'border-[#2E6F40]';
+    else return 'border-[#CD1C18]';
   };
 
   return (
-    <div className="flex flex-col w-48 ">
-      <div className={`p-2 mt-2 rounded-3xl border-2 text-center ${bgColor('player1')}`}>{player1 || 'TBD'}</div>
-      <div className={`p-2 mt-2 rounded-3xl border-2 text-center ${bgColor('player2')}`}>{player2 || 'TBD'}</div>
+    <div className="flex flex-col w-48">
+      <div
+        className={`p-2 bg-[#FDFBD4] mt-2 rounded-3xl border-3 text-center ${getBorder('player1')}`}
+      >
+        {player1 || 'TBD'}
+      </div>
+      <div
+        className={`p-2 bg-[#FDFBD4] mt-2 rounded-4xl border-3 text-center ${getBorder('player2')}`}
+      >
+        {player2 || 'TBD'}
+      </div>
     </div>
   );
 };

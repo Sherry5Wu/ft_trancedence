@@ -1,5 +1,8 @@
+// components/BracketViewer.tsx
+
 import React from 'react';
 import BracketMatch from './BracketMatch';
+import WinnerIcon from '../assets/noun-winner-7818361.svg?react'
 
 interface TournamentHistoryRow {
   stage_number: number;
@@ -37,9 +40,9 @@ const BracketViewer: React.FC<BracketViewerProps> = ({ matches }) => {
 
 
   return (
-    <div className="flex gap-10 p-6 overflow-x-auto bg-[#FFEE8C] rounded-xl scale-x-105">
+    <div className="flex gap-10 p-10 overflow-x-auto bg-[#FFEE8C] rounded-xl scale-x-105">
       {rounds.map(round => (
-        <div key={round} className="flex flex-col items-center gap-4">
+        <div key={round} className="flex flex-col items-center gap-8">
           <h4 className="font-semibold">Round {round}</h4>
           {matches
             .filter(m => m.stage_number === round)
@@ -61,16 +64,18 @@ const BracketViewer: React.FC<BracketViewerProps> = ({ matches }) => {
         </div>
       ))}
       {/* Winner column  */}
-      <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-8">
         <h4 className="font-semibold">Winner</h4>
         <div className="flex flex-col w-48">
-           <div className={`p-2 mt-2 rounded-3xl border-2 font-bold text-center
-                ${tournamentWinner === 'TBD' ? 'bg-gray-300' : 'bg-[#FFCC00]'}`}
-            >
+            <div
+            className={`p-2 bg-[#FDFBD4] mt-2 rounded-3xl border-3 font-bold
+                ${tournamentWinner === 'TBD' ? 'border-gray-400' : 'border-[#2E6F40]'}
+                flex items-center justify-center text-center`}>
             {tournamentWinner}
             </div>
         </div>
-      </div>
+    </div>
+
     </div>
   );
 };
