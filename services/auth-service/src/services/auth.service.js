@@ -42,7 +42,7 @@ async function registerUser(email, username, password, pinCode) {
     // Normalize and validate email using fastify.validators in route handler
     const existingUser = await User.findOne({
       where: {
-        [Op.or]: [{ normalizedEmail }, { username }]
+        [Op.or]: [{ email: normalizedEmail }, { username }]
       }
     });
 
@@ -54,7 +54,7 @@ async function registerUser(email, username, password, pinCode) {
     const passwordHash = await hashPassword(password);
     const pinCodeHash = await hashPassword(pinCode);
 
-    const user = await User.create({ normalizedEmail, username, passwordHash, pinCodeHash, isVerified: true });
+    const user = await User.create({ email: normalizedEmail, username, passwordHash, pinCodeHash, isVerified: true });
 
     // Remove sensitive fields from returned user
     const userData = user.toJSON();
