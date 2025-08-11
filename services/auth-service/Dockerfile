@@ -8,9 +8,6 @@ FROM node:20-alpine AS dev
 
 WORKDIR /app
 
-# Create folder for auth.db or any data persistence needs
-RUN mkdir -p /app/data
-
 # Install all dependencies (prod + dev) package-lock.json
 COPY package.json ./
 
@@ -30,9 +27,6 @@ CMD ["npx", "nodemon", "src/app.js"]
 FROM node:20-alpine AS prod
 
 WORKDIR /app
-
-# Create folder for auth.db or any data persistence needs
-RUN mkdir -p /app/data
 
 # Copy package files and install prod dependencies only
 COPY package.json package-lock.json ./

@@ -62,6 +62,7 @@ async function buildApp() {
         { url: `http://localhost:${process.env.PORT || 3001}`, description: 'Local server' },
       ],
     },
+    // with transform, Swagger uses the actual registered route URL, which includes the prefix
   });
 
   await app.register(swaggerUI, {
@@ -75,10 +76,6 @@ async function buildApp() {
   app.register(authRoutes);
   app.register(twoFARoutes);
   app.register(googleAuthRoutes);
-  // Register routes with prefixes
-  // app.register(authRoutes, { prefix: '/auth' });
-  // app.register(twoFARoutes, { prefix: '/2fa' });
-  // app.register(googleAuthRoutes, { prefix: '/auth/google' });
   app.register(userRoutes);
   app.register(healthRoutes);
 
