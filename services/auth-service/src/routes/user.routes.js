@@ -20,7 +20,7 @@ export default fp(async (fastify) => {
       response: {
         200: {
           description: 'User profile retrieved successfully',
-          $ref: 'User#'
+          $ref: 'publicUser#'
         },
         401: {
           description: 'Unauthorized - invalid or missing token',

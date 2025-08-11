@@ -25,7 +25,7 @@ import healthRoutes from './routes/health.routes.js';
 
 // Import authenticate plugin and schemas
 import authenticate from './utils/authenticate.js';
-import userSchema from './schemas/user.schema.js';
+import userSchema from './schemas/publicUser.schema.js';
 
 async function buildApp() {
   const app = Fastify({ logger: true });
@@ -74,7 +74,7 @@ async function buildApp() {
 
   app.register(authRoutes);
   app.register(twoFARoutes);
-  app.register(googleAuthRoutes, { prefix: '/auth/google' });
+  app.register(googleAuthRoutes);
   // Register routes with prefixes
   // app.register(authRoutes, { prefix: '/auth' });
   // app.register(twoFARoutes, { prefix: '/2fa' });
