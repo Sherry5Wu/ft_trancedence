@@ -88,6 +88,26 @@ def test_login_user():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     assert ACCESS_TOKEN != None
 
+def test_add_rival():
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{BASE_URL}/auth/verify_token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+
+    # Lisätään kilpailija
+    data = {
+        "rival_id": "valid_rival_id_here"
+    }
+    response = requests.post(f"{STATS_URL}/rivals/{user_id}", json=data, headers=headers, verify=False)
+    assert response.status_code == 200
+    json_response = response.json()
+    assert json_response["message"] == 'Rival added successfully'
+
+
 def test_post_match_history():
     """Test POST /match_history with JWT auth - all required fields"""
     headers = get_auth_headers(ACCESS_TOKEN)
