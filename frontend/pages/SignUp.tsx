@@ -9,28 +9,28 @@ import { useValidationField } from '../hooks/useValidationField';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 
 
-// const createUser = async (player: Omit<Player, 'player_id'>): Promise<Player | null> {
-//   try {
-//     const response = await fetch('http://localhost:9000', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(player)
-//     });
+const createUser = async (player: UserProfile): Promise<UserProfile | null> => {
+  try {
+    const response = await fetch('http://localhost:8443/as/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(player)
+    });
     
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! Status: ${response.status}`);
-//     }
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
     
-//     return await response.json();
-//   } 
+    return await response.json();
+  } 
   
-//   catch (error) {
-//     console.error('Error:', error);
-//     return null;
-//   }
-// }
+  catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+}
 
 interface UserProfile {
   username: string;
@@ -39,7 +39,8 @@ interface UserProfile {
   pincode: string;
 }
 
-const SignUpPage = () => {
+const SignUpPage = async () => {
+  
   const navigate = useNavigate();
 
   const usernameField = useValidationField('', isValidUsername);
@@ -139,20 +140,20 @@ const SignUpPage = () => {
         className="generic-button"
         text="SIGN UP"
         disabled={!formFilled}
-        onClick={() => {
-          // const newUser: UserProfile = {
-          //   username: usernameField.value,
-          //   email: emailField.value,
-          //   password: passwordField.value,
-          //   pincode: pinField.value
-          // };
-          // const registration = await createUser(newUser);
-          // if (registration) {
-          //   alert('Registered successfully!');
-          //   navigate('/homeuser');
-          // }
-          // else
-          //   alert('Registration failed. Please try again.'); // what went wrong? 
+        onClick={async () => {
+          const newUser: UserProfile = {
+            username: usernameField.value,
+            email: emailField.value,
+            password: passwordField.value,
+            pincode: pinField.value
+          };
+          const registration = await createUser(newUser);
+          if (registration) {
+            alert('Registered successfully!');
+            navigate('/homeuser');
+          }
+          else
+            alert('Registration failed. Please try again.'); // what went wrong? 
         }}
       />
 

@@ -19,7 +19,7 @@ const RivalsPage = () => {
           <RivalIcon className='size-20' />
         </div>
 
-        <div className='flex justify-left items-center'>
+        <div className='flex justify-start items-center'>
           <SearchIcon className='menuIcon' />
           <form className=''>
             <GenericInput placeholder='Search for new rivals' value='' className='h-8 w-56 bg-[#FFEE8C] rounded-full mb-3 border-2 border-transparent 
