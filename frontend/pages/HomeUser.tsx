@@ -37,13 +37,13 @@ const HomeUserPage = () => {
 
   const showStats = () => {
     setStats(!stats);
-
   }
 
   const showHistory = () => {
+    console.log(user);
+    console.log(user?.accessToken);
     setHistory(!history);
   } 
-
 
     return (
     <div className='pageLayout'>
@@ -127,7 +127,7 @@ const HomeUserPage = () => {
               </button>
             </div>
             <div className={`transition-all ease-in-out duration-300 ${history ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
-              {history && <MatchHistory player1={user?.username} />}
+              {history && <MatchHistory player1={user?.accessToken} />}
             </div>
           </div>
           </div>)}
