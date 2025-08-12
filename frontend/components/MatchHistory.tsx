@@ -1,48 +1,31 @@
 import { useEffect, useState, ReactElement } from 'react';
-import { useUserContext } from '../context/UserContext';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 
 interface MatchData {
-    matchIndex: number,
-    date: number,
+    played_at: string,
+    player_name: string,
+    opponent_name: string, 
+    opponent_id: string,
+    player_score: number,
+    opponent_score: number,
+    result: string,
     duration: number,
-    player1: string,
-    player2: string, 
-    player1score: number,
-    player2score: number,
-    winner: string,
 }
 
-const fetchMatchData = async (userID: string | undefined): Promise<MatchData | null> => {
-    // FETCH MATCH HISTORY FROM PLAYER 1
+const postMatchData = async (accessToken: string) => {
 
-    // MOCKUP DATA FOR TESTING
-    // let matchData = [
-    //     {
-    //         player1: user,
-    //         player2: 'Rival1',
-    //         date: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
-    //         duration: 300,
-    //         player1score: 2,
-    //         player2score: 1,
-    //         winner: user,
-    //         player1pic: '../assets/profilepics/Bluey.png',
-    //         player2pic: '../assets/profilepics/B2.png'
-    //     },
-    //     {
-    //         player1: user,
-    //         player2: 'Rival2',
-    //         date: new Date('2025-07-15 15:05').toLocaleString('en-GB'),
-    //         duration: 300,
-    //         player1score: 2,
-    //         player2score: 5,
-    //         winner: 'Rival2',
-    //         player1pic: '../assets/profilepics/Bluey.png',
-    //         player2pic: '../assets/profilepics/image.jpg'
-    //     },
-    // ];
-    // matchData = [];
-    // return matchData;
+    console.log(accessToken);
+    const matchData: MatchData = 
+        {
+            player_name: 'User',
+            opponent_name: 'Rival1',
+            played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
+            duration: 300,
+            player_score: 2,
+            opponent_score: 1,
+            opponent_id: '1',
+            result: 'win',
+        }
 
     try {
         const response = await fetch(`http://localhost:8443/stats/match_history/${userID}`);
@@ -50,8 +33,29 @@ const fetchMatchData = async (userID: string | undefined): Promise<MatchData | n
         if (!response.ok)
             throw new Error(`HTTP error! Status: ${response.status}`);
 
-        const matchData: MatchData = await response.json();
-            return matchData;
+        return await response.json();
+    }
+
+    catch (error) {
+        console.error('Error: ', error);
+            return null;
+    }
+};
+
+const getMatchData = async (userID: string | undefined): Promise<MatchData | null> => {
+    try {
+        const response = await fetch(`http://localhost:8443/stats/match_history`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const matchData = await response.json();
+        return matchData;
     }
 
     catch (error) {
@@ -61,18 +65,18 @@ const fetchMatchData = async (userID: string | undefined): Promise<MatchData | n
 };
 
 
-export const MatchHistory = ( userID: string ) => {
-
+export const MatchHistory = ( accessToken: string ) => {
     const [matchData, setMatchData] = useState<MatchData | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-    setLoading(true);
-    fetchMatchData(userID).then((data) => {
-        setMatchData(data);
-        setLoading(false);
+        setLoading(true);
+        postMatchData(accessToken); //FOR TESTING REMOVE LATER
+        getMatchData(accessToken).then((data) => {
+            setMatchData(data);
+            setLoading(false);
     });
-    }, [userID]);
+    }, [accessToken]);
 
     if (loading)
         return <div className='flex justify-center my-5'>Loading...</div>
