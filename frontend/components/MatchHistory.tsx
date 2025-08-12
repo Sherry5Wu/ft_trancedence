@@ -72,7 +72,6 @@ const getMatchData = async (userID: string): Promise<MatchData | null> => {
     }
 };
 
-
 export const MatchHistory = () => {
     const [matchData, setMatchData] = useState<MatchData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -121,15 +120,15 @@ export const MatchHistory = () => {
             <ul aria-label='match history rows' className=''>
                 {matchData.map((match, index: number) => {
                     return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'>
-                        <span className='ml-3'>{match.date}</span>
+                        <span className='ml-3'>{match.played_at}</span>
                         <span className='col-span-2 truncate flex items-center justify-center gap-2'>
-                            <span className=''>{match.player1} </span> 
-                            <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.player1 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
+                            <span className=''>{match.player_name} </span> 
+                            <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
                             <span>vs</span>
-                            <img src={match.player2pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.player2 === match.winner ? 'border-[#2E6F40]' : 'border-[#CD1C18]'}`} />
-                            <span className=''>{match.player2}</span>
+                            <img src={match.player2pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
+                            <span className=''>{match.opponent_name}</span>
                         </span> 
-                        <span className=''>{match.player1score} - {match.player2score}</span>
+                        <span className=''>{match.player_score} - {match.opponent_score}</span>
                         <span className=''>{match.duration}</span>
                     </li>
                 })}

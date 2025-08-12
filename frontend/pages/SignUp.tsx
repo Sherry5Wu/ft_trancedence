@@ -148,10 +148,11 @@ const SignUpPage = () => {
             password: passwordField.value,
             pinCode: pinField.value
           };
-          const registration = await createUser(newUser);
-          if (registration) {
+          const signUpData = await createUser(newUser);
+          if (signUpData) {
             alert('Registered successfully!');
-            navigate('/homeuser');
+            console.log(signUpData);
+            navigate('/signin');
           }
           else
             alert('Registration failed. Please try again.'); // what went wrong? 

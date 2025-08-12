@@ -104,16 +104,12 @@ const SignInPage = () => {
               username: signInData.data.user.username,
               id: signInData.data.user.id,
               email: signInData.data.user.email,
-              profilePic: signInData.data.user.profilepic,
+              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic border-2' />,
               score: signInData.stats.score,
               rank: signInData.stats.score,
               accessToken: signInData.data.accessToken,
               refreshToken: signInData.data.refreshToken,
             });
-            console.log(signInData);
-            console.log(signInData.data.accessToken);
-            console.log(user);
-            console.log(user?.accessToken);
             navigate('/homeuser');
           }
           else
