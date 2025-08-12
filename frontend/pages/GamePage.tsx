@@ -11,17 +11,11 @@ const GamePage: React.FC = () => {
   const { players, resetPlayers } = usePlayersContext();
   const p1Name = players[0]?.username ?? 'Player 1';
   const p2Name = players[1]?.username ?? 'Player 2';
-  const isTournament = true; //Get the real value from the context after done
+  const isTournament = false; //Get the real value from the context after done
 
   return (
-    <div className="flex flex-col items-center p-8 space-y-4">
+    <div className="flex flex-col items-center pt-4 p-8 space-y-4">
       <div className="w-9/10 mx-auto">
-        {/* Close Button */}
-        <CloseButton className="ml-auto" />
-
-        {/* Page Title */}
-        <h3 className="font-semibold text-center mb-4">Game</h3>
-
         {/* Game Container */}
         <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
           {/* Babylon.js Game Logic */}
@@ -62,6 +56,51 @@ const GamePage: React.FC = () => {
           >
             <div className="text-4xl font-bold mb-2">Game Paused</div>
             <div className="text-base opacity-75">Press Space to continue</div>
+          </div>
+        </div>
+        {/* Controls */}
+        <div
+        className="mt-4 rounded-2xl bg-black text-white border border-white/10 p-4"
+        role="note"
+        aria-label="Game controls"
+        >
+        <div className="grid gap-3 sm:grid-cols-2 text-sm text-zinc-700 dark:text-zinc-300">
+            <div>
+              <div className="font-medium mb-1">{p1Name}</div>
+              <ul className="space-y-1">
+                <li>
+                  Move:&nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
+                    W
+                  </kbd>
+                  &nbsp;/&nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
+                    S
+                  </kbd>
+                </li>
+                <li>
+                  Boost:&nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
+                    A
+                  </kbd>
+                </li>
+              </ul>
+            </div>
+            <div className="sm:justify-self-end sm:text-right">
+              <div className="font-medium mb-1">{p2Name}</div>
+              <ul className="space-y-1">
+                <li>
+                  Move:&nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">↑</kbd>
+                  &nbsp;/&nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">↓</kbd>
+                </li>
+                <li>
+                  Boost:&nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">→</kbd>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

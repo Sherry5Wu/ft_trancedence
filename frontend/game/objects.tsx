@@ -1,4 +1,7 @@
-import { Scene, Mesh, AbstractMesh, MeshBuilder, GroundMesh } from '@babylonjs/core';
+import {
+  Scene, Mesh, AbstractMesh, MeshBuilder, GroundMesh,
+  DynamicTexture, StandardMaterial, Color3, Vector3
+} from '@babylonjs/core';
 import { SceneMaterials } from './materials';
 
 export type ObjectsResult = {
@@ -9,13 +12,99 @@ export type ObjectsResult = {
   wallTop: Mesh;
   wallBottom: Mesh;
   floor: GroundMesh;
+  namePlate1?: Mesh;
+  namePlate2?: Mesh;
   limits: { upperLimitZ: number; lowerLimitZ: number };
 };
 
+type CreateObjectsOpts = {
+  playerNames?: [string, string];
+  nameOffset?: number;
+  nameScale?: number;
+};
+
+// Nameplates behind the scoring line
+function makeVerticalNameTexture(scene: Scene, text: string, fontPx = 64) {
+  const padding = 16;
+  const texW = Math.max(1, Math.floor(text.length * (fontPx * 0.75) + padding * 2));
+  const texH = Math.max(1, Math.floor(fontPx + padding * 2));
+
+  const dt = new DynamicTexture(`nameDT-${text}`, { width: texW, height: texH }, scene, true);
+  const ctx = dt.getContext() as CanvasRenderingContext2D;
+
+  ctx.clearRect(0, 0, texW, texH);
+  ctx.fillStyle = '#fff8e7';
+  ctx.font = `bold ${fontPx}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,0.35)';
+  ctx.shadowBlur = 12;
+  ctx.fillText(text, texW / 2, texH / 2);
+
+  dt.update();
+  return { texture: dt, texW, texH, fontPx };
+}
+
+function createNamePlate(
+  scene: Scene,
+  name: string,
+  x: number,
+  floorY: number,
+  lowerLimitZ: number,
+  upperLimitZ: number,
+  faceInward: boolean,
+  margin = 0.2,
+  scale = 1
+) {
+  const { texture, texW, texH } = makeVerticalNameTexture(scene, name, 64);
+
+  const mat = new StandardMaterial(`nameMat-${name}`, scene);
+  mat.diffuseTexture = texture;
+  (mat.diffuseTexture as DynamicTexture).hasAlpha = true;
+  mat.useAlphaFromDiffuseTexture = true;
+  mat.specularColor = Color3.Black();
+
+  const spanZ = Math.max(0, upperLimitZ - lowerLimitZ);
+  const maxLenZ = Math.max(0, spanZ - 2 * margin);
+  const centerZ = lowerLimitZ + spanZ / 2;
+  const base = 1.2 * scale;
+
+  // Natural sizes in world units
+  const naturalU_alongZ = base * (texW / 64); // LONG axis (text width) intended to map to Z
+  const naturalV_alongX = base * (texH / 64); // SHORT axis (glyph height) maps to X
+
+  // Clamp ONLY the U length (along Z). Keep V (glyph height) constant.
+  const widthAlongZ  = Math.min(naturalU_alongZ, maxLenZ); // shrink for long names
+  const heightAlongX = naturalV_alongX;                    // keep glyph height unchanged
+
+  // - plane.width corresponds to U (texture width)
+  // - plane.height corresponds to V (texture height)
+  // We'll rotate so plane.width → world Z and plane.height → world X.
+  const plane = MeshBuilder.CreatePlane(`namePlate-${name}`, {
+    width:  widthAlongZ,
+    height: heightAlongX,
+  }, scene);
+
+  plane.material = mat;
+  plane.isPickable = false;
+
+  // Lay flat on floor
+  plane.rotation.x = Math.PI / 2;
+  // Rotate so plane.width (U) runs along world Z instead of X
+  // +90° around Y maps local X → Z. Use inward/outward to flip facing.
+  plane.rotation.y = faceInward ? Math.PI / 2 : -Math.PI / 2;
+
+  plane.position.set(x, floorY, centerZ);
+  return plane;
+}
+
 export function createObjects(
   scene: Scene,
-  materials: SceneMaterials
+  materials: SceneMaterials,
+  opts: CreateObjectsOpts = {}
 ): ObjectsResult {
+  const { playerNames, nameOffset = 3, nameScale = 1 } = opts;
+
   // Ball
   const ball = MeshBuilder.CreateSphere('ball', { diameter: 0.4 }, scene);
   ball.material = materials.ballMaterial;
@@ -67,6 +156,33 @@ export function createObjects(
   const upperLimitZ = wallTop.position.z - wallHalfZ - paddleHalfZ;
   const lowerLimitZ = wallBottom.position.z + wallHalfZ + paddleHalfZ;
 
+  let namePlate1: Mesh | undefined;
+  let namePlate2: Mesh | undefined;
+  if (playerNames) {
+    const [p1Name, p2Name] = playerNames;
+    const margin = 0.2;
+    const floorY = floor.position.y + 0.001;
+    const inwardshift = 1;
+
+    namePlate1 = createNamePlate(
+      scene, p1Name,
+      +paddleDistance + nameOffset - inwardshift,
+      floorY,
+      lowerLimitZ, upperLimitZ,
+      true,
+      margin, 1
+    );
+
+    namePlate2 = createNamePlate(
+      scene, p2Name,
+      -paddleDistance - nameOffset + inwardshift,
+      floorY,
+      lowerLimitZ, upperLimitZ,
+      false,
+      margin, 1
+    );
+  }
+
   return {
     ball,
     paddle1,
@@ -75,6 +191,8 @@ export function createObjects(
     wallTop,
     wallBottom,
     floor,
+    namePlate1,
+    namePlate2,
     limits: { upperLimitZ, lowerLimitZ },
   };
 }
