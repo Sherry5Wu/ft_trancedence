@@ -5,3 +5,4 @@ node_modules
 services/auth-service/data/
 services/stats-service/data/
 service/tournament-service/data/
+frontend/.vite/
