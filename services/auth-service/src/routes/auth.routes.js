@@ -186,6 +186,7 @@ export default fp(async (fastify) => {
     }
   }, async (req, reply) => {
     await fastify.authenticate(req, reply);
+    console.log(req);
     return {
       id: req.user.id,
       email: req.user.email,

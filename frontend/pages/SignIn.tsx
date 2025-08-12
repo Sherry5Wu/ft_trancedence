@@ -31,23 +31,22 @@ const signInUser = async (player: UserProfile) => {
 
       const data = await response.json();
 
-      return data;
+      const userID = data.user.id;
+      console.log(userID);
 
-    //   const userID = data.user.id;
-
-    //   const statResponse = await fetch (`http://localhost:8443/stats/user_match_data/${userID}`, {
-    //     method: 'GET',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   });
+      const statResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       
-    //   if (!statResponse.ok) {
-    //     throw new Error(`HTTP error! Status: ${statResponse.status}`);
-    //   }
+      if (!statResponse.ok) {
+        throw new Error(`HTTP error! Status: ${statResponse.status}`);
+      }
       
-    //   const stats = await statResponse.json();
-    //   return {data, stats};
+      const stats = await statResponse.json();
+      return {data, stats};
     }
 
     catch (error) {
@@ -58,7 +57,7 @@ const signInUser = async (player: UserProfile) => {
 
 const SignInPage = () => {
   const navigate = useNavigate();
-  const { setUser } = useUserContext();
+  const { user, setUser } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername);
   const passwordField = useValidationField('', isValidPassword);
@@ -102,15 +101,19 @@ const SignInPage = () => {
           if (signInData) {
             alert('Signed in successfully!');
             setUser({
-              username: signInData.user.username,
-              id: signInData.user.id,
-              email: signInData.user.email,
-              profilePic: signInData.user.profilepic,
-              score: 0,
-              rank: 0,
-              accessToken: signInData.accessToken,
-              refreshToken: signInData.refreshToken,
+              username: signInData.data.user.username,
+              id: signInData.data.user.id,
+              email: signInData.data.user.email,
+              profilePic: signInData.data.user.profilepic,
+              score: signInData.stats.score,
+              rank: signInData.stats.score,
+              accessToken: signInData.data.accessToken,
+              refreshToken: signInData.data.refreshToken,
             });
+            console.log(signInData);
+            console.log(signInData.data.accessToken);
+            console.log(user);
+            console.log(user?.accessToken);
             navigate('/homeuser');
           }
           else
