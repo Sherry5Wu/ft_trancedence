@@ -3,7 +3,7 @@ import { requireAuth } from '../utils/auth.js';
 
 export default async function rivalsRoutes(fastify) {
     // /rivals/:player_id
-    fastify.get('/rivals/:player_id', (request, reply) => {
+    fastify.get('/:player_id', (request, reply) => {
         const { player_id } = request.params;
         try {
         const stmt = db.prepare('SELECT * FROM rivals WHERE player_id = ?');
@@ -15,8 +15,22 @@ export default async function rivalsRoutes(fastify) {
         reply.status(500).send({ error: err.message });
         }
     });
+
+    fastify.get('/', (request, reply) => {
+        try {
+        const stmt = db.prepare('SELECT * FROM rivals');
+        const rows = stmt.all();
+        reply.send(rows);
+        }
+        catch (err)
+        {
+        reply.status(500).send({ error: err.message });
+        }
+    });
+
     // post /rivals
-    fastify.post('/rivals', { preHandler: requireAuth }, (request, reply) => {
+    fastify.post('/', { preHandler: requireAuth }, (request, reply) => {
+        console.log("Inserting into rivals..")
         const player_id = request.id;
         const { rival_id } = request.body;
         
@@ -52,7 +66,7 @@ export default async function rivalsRoutes(fastify) {
     
     // DELETE rival
     // /rivals/:rival_id
-    fastify.delete('/rivals/:rival_id', { preHandler: requireAuth }, (request, reply) => {
+    fastify.delete('/:rival_id', { preHandler: requireAuth }, (request, reply) => {
         const player_id = request.id;
         const { rival_id } = request.params;
         
