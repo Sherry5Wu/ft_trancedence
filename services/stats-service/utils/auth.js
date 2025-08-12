@@ -4,7 +4,7 @@ export const requireAuth = async (request, reply) => {
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
           return reply.status(401).send({ error: 'Missing or invalid authorization header' });
         }
-    
+        console.log("Authenticating...")
         const response = await fetch('http://auth-service:3001/auth/verify-token', {
           method: 'POST',
           headers: {

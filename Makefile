@@ -31,6 +31,9 @@ All: backend frontend
 backend: $(BUILD_MARKER_BACKEND)
 
 $(BUILD_MARKER_BACKEND): $(BACKEND_FILES)
+				mkdir -p services/stats-service/data
+				mkdir -p services/auth-service/data 
+				mkdir -p services/tournament-service/data
 				@echo "🚧 Building backend containers..."
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop $(BACKEND_SERVICES)
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build $(BACKEND_SERVICES)

@@ -10,9 +10,8 @@ fastify.get('/', (request, reply) => {
     }
   });
 // /user_match_data/:player_id
-fastify.get('/user_match_data/:player_id', (request, reply) => {
+fastify.get('/:player_id', (request, reply) => {
     const { player_id } = request.params;
-  
     try {
       const stmt = db.prepare(`SELECT * FROM user_match_data WHERE player_id = ?`);
       const row = stmt.get(player_id);
