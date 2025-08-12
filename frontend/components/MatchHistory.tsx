@@ -45,7 +45,7 @@ const fetchMatchData = async (userID: string | undefined): Promise<MatchData | n
     // return matchData;
 
     try {
-        const response = await fetch(`http://localhost:3001/stats/${userID}`);
+        const response = await fetch(`http://localhost:8443/stats/match_history/${userID}`);
 
         if (!response.ok)
             throw new Error(`HTTP error! Status: ${response.status}`);
