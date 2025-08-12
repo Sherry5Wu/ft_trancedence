@@ -1,5 +1,6 @@
 import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
+import { useUserContext } from '../context/UserContext';
 
 interface MatchData {
     played_at: string,
@@ -28,7 +29,14 @@ const postMatchData = async (accessToken: string) => {
         }
 
     try {
-        const response = await fetch(`http://localhost:8443/stats/match_history/${userID}`);
+        const response = await fetch(`http://localhost:8443/stats/match_history/`, {
+        method: 'POST',
+        headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(matchData)
+    });
 
         if (!response.ok)
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -42,9 +50,9 @@ const postMatchData = async (accessToken: string) => {
     }
 };
 
-const getMatchData = async (userID: string | undefined): Promise<MatchData | null> => {
+const getMatchData = async (userID: string): Promise<MatchData | null> => {
     try {
-        const response = await fetch(`http://localhost:8443/stats/match_history`, {
+        const response = await fetch(`http://localhost:8443/stats/match_history/${userID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -65,18 +73,19 @@ const getMatchData = async (userID: string | undefined): Promise<MatchData | nul
 };
 
 
-export const MatchHistory = ( accessToken: string ) => {
+export const MatchHistory = () => {
     const [matchData, setMatchData] = useState<MatchData | null>(null);
     const [loading, setLoading] = useState(true);
+    const { user } = useUserContext();
 
     useEffect(() => {
         setLoading(true);
-        postMatchData(accessToken); //FOR TESTING REMOVE LATER
-        getMatchData(accessToken).then((data) => {
+        postMatchData(user.accessToken); //FOR TESTING REMOVE LATER
+        getMatchData(user.id).then((data) => {
             setMatchData(data);
             setLoading(false);
     });
-    }, [accessToken]);
+    }, [user.accessToken, user.id]);
 
     if (loading)
         return <div className='flex justify-center my-5'>Loading...</div>
