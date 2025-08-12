@@ -9,22 +9,35 @@ import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../hooks/useValidationField';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
 
-const fetchUserData = async (userID: string | undefined): Promise<userData | null> => {
-    try {
-        const response = await fetch(`http://localhost:8443/as/auth/${userID}`);
+interface UserProfile {
+  indentifier: string,
+  password: string
+}
 
-        if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-
-        const userData: userData = await response.json();
-            return userData;
+const signInUser = async (player: UserProfile): Promise<UserProfile | null> => {
+  console.log('Sending user:', player);
+  try {
+    const response = await fetch('http://localhost:8443/as/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(player)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    
+    return await response.json();
+  } 
+  
+  catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+}
 
-    catch (error) {
-        console.error('Error: ', error);
-            return null;
-    }
-};
 
 const SignInPage: React.FC = () => {
   const navigate = useNavigate();
@@ -62,7 +75,19 @@ const SignInPage: React.FC = () => {
         className="generic-button"
         text="LOG IN"
         disabled={!formFilled}
-        onClick={() => { navigate('/homeuser')}}
+        onClick={async () => {
+          const newUser: UserProfile = {
+            indentifier: usernameField.value,
+            password: passwordField.value,
+          };
+          const signIn = await signInUser(newUser);
+          if (signIn) {
+            alert('Signed in successfully!');
+            navigate('/homeuser');
+          }
+          else
+            alert('Sign in failed. Please try again.'); // what went wrong? 
+        }}
       />
 
       {/* GoogleLogin Button */}
