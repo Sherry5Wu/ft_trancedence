@@ -16,6 +16,7 @@ export default async function rivalsRoutes(fastify) {
         }
     });
 
+    // get /rivals
     fastify.get('/', (request, reply) => {
         try {
         const stmt = db.prepare('SELECT * FROM rivals');

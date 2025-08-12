@@ -112,7 +112,7 @@ def test_add_rival():
 
     # Lisätään kilpailija
     data = {
-        "rival_id": "valid_rival_id_here"
+        "rival_id": f"rival2{TIMESTAMP}"
     }
     print(f"{STATS_URL}/rivals/")
     response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
