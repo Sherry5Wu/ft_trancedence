@@ -4,5 +4,5 @@ node_modules
 .DS_Store
 services/auth-service/data/
 services/stats-service/data/
-service/tournament-service/data/
+services/tournament-service/data/
 frontend/.vite/
