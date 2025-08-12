@@ -28,7 +28,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
     const { engine, scene } = createScene(canvas);
     const materials = createMaterials(scene);
     const { ballMaterial, warmYellow } = materials;
-    const { ball, paddle1, paddle2, paddleDistance, wallTop, wallBottom, limits } = createObjects(scene, materials);
+    const { ball, paddle1, paddle2, paddleDistance, wallTop, wallBottom, limits } =
+      createObjects(scene, materials, { playerNames: [p1Name, p2Name], nameOffset: 3, nameScale: 1 });
     const { upperLimitZ, lowerLimitZ } = limits;
 
     const flareTexture = new Texture("../assets/game/flare.png", scene);
@@ -41,6 +42,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
     let paused = true;
     let awaitingStart = true;
     let acceptingInput = true;
+    let matchOver = false;
     let boostLevel = 0;
     const boostPressed = new Set<string>();
     const keysPressed = new Set<string>();
@@ -49,7 +51,13 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
     const scoreBoard = document.getElementById("scoreBoard") as HTMLElement;
 
     //Button press
-    window.addEventListener("keydown", e => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      // Allow rematch trigger even if acceptingInput is false
+      if (matchOver && key === 'r' && !isTournament) {
+        resetMatch();
+        return;
+      }
       if (!acceptingInput) return;
       keysPressed.add(e.key);
       if (e.key === "a") boostPressed.add("paddle1");
@@ -65,14 +73,17 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
           updatePauseOverlay(pauseOverlay, paused, awaitingStart);
         }
       }
-    });
+    };
 
     //Button release
-    window.addEventListener("keyup", e => {
+    const onKeyUp = (e: KeyboardEvent) => {
       keysPressed.delete(e.key);
       if (e.key === "a") boostPressed.delete("paddle1");
       if (e.key === "ArrowRight") boostPressed.delete("paddle2");
-    });
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
 
     function resetPaddles() {
       paddle1.position.z = 0;
@@ -94,6 +105,29 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
       updateFireTrail(0);
     }
 
+    // Reset after match end
+    function resetMatch() {
+      score1 = 0;
+      score2 = 0;
+      matchOver = false;
+      acceptingInput = true;
+      paused = true;
+      awaitingStart = true;
+        
+      updateScore(scoreBoard, score1, score2, p1Name, p2Name);
+      startPrompt.textContent = "Press Space to start";
+      updateStartPrompt(startPrompt, true);
+        
+      ballMaterial.emissiveIntensity = 0;
+      ballMaterial.emissiveColor = new Color3(0, 0, 0);
+      ball.position.set(0, 0, 0);
+      resetFireTrail();
+      updateFireTrail(0);
+        
+      resetPaddles();
+      resetBall();
+    }
+
     // Main game loop
     scene.onBeforeRenderObservable.add(() => {
       if (paused) return;
@@ -105,7 +139,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
       if (stepLength === 0) return;
     
       //Paddle movement
-      const paddleSpeed = 0.125 * deltaFactor;
+      const paddleSpeed = 0.15 * deltaFactor;
       if (keysPressed.has('ArrowUp'))   paddle2.position.z -= paddleSpeed;
       if (keysPressed.has('ArrowDown')) paddle2.position.z += paddleSpeed;
       if (keysPressed.has('w')) paddle1.position.z -= paddleSpeed;
@@ -127,18 +161,18 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
       const ray = new Ray(origin, dir, stepLength + radius);
       const bounceables: AbstractMesh[] = [paddle1, paddle2, wallTop, wallBottom];
     
-      // 1) Get picks for checking collision (coalesce null into [])
+      // Get picks for checking collision (coalesce null into [])
       const picks = scene.multiPickWithRay(ray, mesh => bounceables.includes(mesh)) ?? [];
     
-      // 2) No hits → just move the ball
+      // No hits → just move the ball
       if (picks.length === 0) {
         ball.position = origin.add(dir.scale(stepLength));
       } else {
-        // 3) We have at least one hit → pick nearest
+        // We have at least one hit → pick nearest
         picks.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
         const pick = picks[0];
     
-        // 4) If it’s really in range, bounce
+        // If it’s really in range, bounce
         if (pick.hit && pick.distance! <= stepLength + radius) {
           const travel = Math.max(pick.distance! - radius, 0);
           ball.position = origin.add(dir.scale(travel));
@@ -186,9 +220,14 @@ const GameCanvas: React.FC<GameCanvasProps> = ({ canvasRef, playerNames: [p1Name
         //Match end logic
         if (score1 === 3 || score2 === 3) {
           const finalScore = `${score1}-${score2}`;
-          //sendMatchResult(finalScore); Add this once we have the backend
-          startPrompt.textContent = `${score1 === 3 ? p1Name : p2Name} wins!`;
-          //if (isTournament) do something
+          // sendMatchResult(finalScore);
+          matchOver = true;
+          if (isTournament) {
+            startPrompt.textContent = `${score1 === 3 ? p1Name : p2Name} wins!`;
+          } else {
+            startPrompt.textContent =
+              `${score1 === 3 ? p1Name : p2Name} wins! Press R to play again`;
+          }
           updateStartPrompt(startPrompt, true);
           return;
         }
