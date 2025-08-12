@@ -16,19 +16,6 @@ export default async function rivalsRoutes(fastify) {
         }
     });
 
-    // get /rivals
-    fastify.get('/', (request, reply) => {
-        try {
-        const stmt = db.prepare('SELECT * FROM rivals');
-        const rows = stmt.all();
-        reply.send(rows);
-        }
-        catch (err)
-        {
-        reply.status(500).send({ error: err.message });
-        }
-    });
-
     // post /rivals
     fastify.post('/', { preHandler: requireAuth }, (request, reply) => {
         console.log("Inserting into rivals..")
@@ -80,7 +67,9 @@ export default async function rivalsRoutes(fastify) {
         if (result.changes === 0) {
             reply.status(404).send({ error: 'Rival not found' });
         } else {
-            reply.send({ message: 'Rival removed successfully' });
+            reply.send({
+                id: result.lastInsertRowid, 
+                message: 'Rival removed successfully' });
         }
         }
         catch (err) {

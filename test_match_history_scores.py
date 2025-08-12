@@ -14,6 +14,7 @@ TEST_USER_EMAIL = f"testuser@example.com"
 TEST_USER_PASSWORD = "P*assword123"
 TEST_USER2_EMAIL = f"testuser2@example.com"
 TEST_USER2_PASSWORD = "P*assword123"
+RIVAL = f"rival2{TIMESTAMP}"
 
 # Global variables to store tokens
 ACCESS_TOKEN = None
@@ -112,13 +113,54 @@ def test_add_rival():
 
     # Lisätään kilpailija
     data = {
-        "rival_id": f"rival2{TIMESTAMP}"
+        "rival_id": RIVAL
     }
     print(f"{STATS_URL}/rivals/")
     response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
     assert response.status_code == 200
     json_response = response.json()
     assert json_response["message"] == 'Rival added successfully'
+
+def test_get_rival_by_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+    response = requests.get(f"{STATS_URL}/rivals/{user_id}", verify=False)
+    print(response.json())
+    assert isinstance(response.json(), list)
+
+def test_delete_rival_by_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+
+    # Lisätään kilpailija
+    data = {
+        "rival_id": "rival2"
+    }
+    print(f"{STATS_URL}/rivals/")
+    response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
+    assert response.status_code == 200
+    json_response = response.json()
+    assert json_response["message"] == 'Rival added successfully'
+
+    response = requests.delete(f"{STATS_URL}/rivals/rival2",headers=headers, verify=False)
+    print(response.json())
+    assert response.status_code == 200
+    json_response = response.json()
+    assert json_response["message"] == 'Rival removed successfully'
 
 
 def test_post_match_history():
