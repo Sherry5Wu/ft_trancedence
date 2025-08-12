@@ -2,3 +2,6 @@ __pycache/
 node_modules
 .vscode
 .DS_Store
+services/auth-service/data/
+services/stats-service/data/
+service/tournament-service/data/
