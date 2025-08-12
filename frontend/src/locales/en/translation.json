@@ -183,11 +183,12 @@
       "success": {
         "title": "Setup Two-factor Authentication",
         "subtitle": "Two-factor authentication (2FA) is now enabled!",
-        "shortInfo": "From now on, you’ll use Google Authenticator to sign in.",
+        "successInfo": "From now on, you’ll use Google Authenticator to sign in.",
+        "successMessage": "You have successfully enabled two-factor app authentication on your account. 2FA will be required even when signing in via Google or any third-party login method. From now on, whenever you sign in to your account, you’ll need to enter both your password and an authentication code.",
         "aria": {
           "label": "Two-factor Authentication Success Setup Page",
           "description": "Two-factor authentication (2FA) is now enabled for your account. From now on, you’ll use Google Authenticator to sign in. You will need both your password and the authentication code from your app every time you log in.",
-          "successMessage": "Confirmation that two-factor authentication is enabled"
+          "securityIcon": "Security shield icon, indicating two-factor authentication is enabled."
         }
       },
       "verify": {

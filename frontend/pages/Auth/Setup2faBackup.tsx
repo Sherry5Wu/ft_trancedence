@@ -34,14 +34,17 @@ const Setup2faBackupPage: React.FC = () => {
         {t('pages.twoFactorAuth.backup.title')}
       </h1>
 
-      <ProgressBar currentStep={2} stepCompletion={{ 1: true, 2: hasDownloaded }} />
+      <ProgressBar
+        currentStep={2}
+        stepCompletion={{ 1: true, 2: hasDownloaded }}
+      />
 
       <section className="max-w-md text-center space-y-4">
         <h2 className="font-semibold text-center text-lg">
           {t('pages.twoFactorAuth.backup.backupTitle')}
         </h2>
 
-        <p className="text-sm">
+        <p>
           {t('pages.twoFactorAuth.backup.backupInstructions')}
         </p>
 
@@ -67,7 +70,7 @@ const Setup2faBackupPage: React.FC = () => {
           {t('pages.twoFactorAuth.backup.warningTitle')}
         </h2>
 
-        <p className="text-sm">
+        <p>
           {t('pages.twoFactorAuth.backup.warningInfo')}
         </p>
       </section>
