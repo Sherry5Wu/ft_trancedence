@@ -11,9 +11,9 @@ import datetime
 TIMESTAMP = int(time.time())
 DATETIME = datetime.datetime.now()
 TEST_USER_EMAIL = f"testuser@example.com"
-TEST_USER_PASSWORD = "password123"
+TEST_USER_PASSWORD = "P*assword123"
 TEST_USER2_EMAIL = f"testuser2@example.com"
-TEST_USER2_PASSWORD = "password123"
+TEST_USER2_PASSWORD = "P*assword123"
 
 # Global variables to store tokens
 ACCESS_TOKEN = None
@@ -22,11 +22,8 @@ ACCESS_TOKEN_USER2 = None
 def login_user(email, password):
     """Login and get JWT token"""
     data = {
-        "email": email,
+        "indentifier": email,
         "password": password,
-        "pincode" : "123123",
-        "username" : "testuser123"
-
     }
     
     # ✅ KORJATTU: Oikea reitti auth-servicelle
@@ -63,11 +60,12 @@ def setup_test_users():
         register_data = {
             "email": TEST_USER_EMAIL,
             "password": TEST_USER_PASSWORD,
-            "pincode" : "123123",
+            "pinCode" : "1231",
             "username" : "testuser123"
         }
         print(f"🔧 Registering user: {TEST_USER_EMAIL}")
         register_response = requests.post(f"{AUTH_URL}/auth/register", json=register_data, verify=False)
+        print(register_response.headers)
         print(f"Register response: {register_response.status_code} - {register_response.text}")
         ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     assert ACCESS_TOKEN != None
@@ -76,7 +74,9 @@ def setup_test_users():
         # Register second user - ✅ KORJATTU: Vain email ja password
         register_data = {
             "email": TEST_USER2_EMAIL,
-            "password": TEST_USER2_PASSWORD
+            "password": TEST_USER2_PASSWORD,
+            "pinCode" : "1234",
+            "username" : "testuser2"
         }
         print(f"🔧 Registering user: {TEST_USER2_EMAIL}")
         register_response = requests.post(f"{AUTH_URL}/auth/register", json=register_data, verify=False)
