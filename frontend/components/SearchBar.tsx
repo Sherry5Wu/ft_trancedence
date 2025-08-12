@@ -82,7 +82,7 @@ export const SearchBar = ({
             {options.map((opt, index) => (
                 <li
                 key={index}
-                className={'dropdown-option bg-[#FFEE8C] border-black border-3 z-20'}
+                className={'dropdown-option bg-[#FFEE8C] border-black border-3 z-20 shadow-2xl opacity-100 rounded-xl'}
                 onClick={() => handleOptionClick(opt)}
                 >
                     {opt}

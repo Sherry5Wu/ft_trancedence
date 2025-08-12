@@ -59,8 +59,9 @@ const RivalsPage = () => {
           />
             </div>
           </div>
-
-          <RivalRows />
+          <div className={searchField.value ? 'blur-[3px] opacity-90' : 'blur-none opacity-100'}>
+            <RivalRows />
+          </div>
         </div>
 
       </div>
