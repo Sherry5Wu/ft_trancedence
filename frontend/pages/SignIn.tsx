@@ -3,7 +3,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { useState } from "react";
+import { useUserContext } from '../context/UserContext';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../hooks/useValidationField';
@@ -14,33 +14,51 @@ interface UserProfile {
   password: string
 }
 
-const signInUser = async (player: UserProfile): Promise<UserProfile | null> => {
-  console.log('Sending user:', player);
-  try {
-    const response = await fetch('http://localhost:8443/as/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(player)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+const signInUser = async (player: UserProfile) => {
+    console.log(player);
+    try {
+      const response = await fetch('http://localhost:8443/as/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(player)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      return data;
+
+    //   const userID = data.user.id;
+
+    //   const statResponse = await fetch (`http://localhost:8443/stats/user_match_data/${userID}`, {
+    //     method: 'GET',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //   });
+      
+    //   if (!statResponse.ok) {
+    //     throw new Error(`HTTP error! Status: ${statResponse.status}`);
+    //   }
+      
+    //   const stats = await statResponse.json();
+    //   return {data, stats};
     }
-    
-    return await response.json();
-  } 
-  
-  catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-}
 
+    catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+} 
 
-const SignInPage: React.FC = () => {
+const SignInPage = () => {
   const navigate = useNavigate();
+  const { setUser } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername);
   const passwordField = useValidationField('', isValidPassword);
@@ -80,9 +98,19 @@ const SignInPage: React.FC = () => {
             indentifier: usernameField.value,
             password: passwordField.value,
           };
-          const signIn = await signInUser(newUser);
-          if (signIn) {
+          const signInData = await signInUser(newUser);
+          if (signInData) {
             alert('Signed in successfully!');
+            setUser({
+              username: signInData.user.username,
+              id: signInData.user.id,
+              email: signInData.user.email,
+              profilePic: signInData.user.profilepic,
+              score: 0,
+              rank: 0,
+              accessToken: signInData.accessToken,
+              refreshToken: signInData.refreshToken,
+            });
             navigate('/homeuser');
           }
           else

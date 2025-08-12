@@ -2,13 +2,13 @@ import { useState, createContext, useContext, ReactElement, ReactNode, useEffect
 
 interface User {
     username: string;
+    id: string;
     profilePic: ReactElement;
     email: string;
     score: number;
     rank: number;
-    firstName: string;
-    lastName: string;
-    password: any; // for testing
+    // firstName: string;
+    // lastName: string;
     accessToken: string;
     refreshToken: string;
 };
