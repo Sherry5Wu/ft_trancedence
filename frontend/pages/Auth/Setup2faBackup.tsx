@@ -1,83 +1,98 @@
-// pages/Auth/Setup2faBackup.tsx
-// user downloads recovery codes or sets backup
+// /src/pages/Auth/Setup2faBackup.tsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
 
 const Setup2faBackupPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [hasDownloaded, setHasDownloaded] = useState(false);
 
-  // Simulate file download or real API call
+  // Simulate or handle actual backup code download logic here
   const handleDownload = () => {
-    // Here actually fetch the backup codes (trigger the download)
-    console.log('Recovery codes downloaded'); // replace with actual logic
+    console.log('Recovery codes downloaded');  // TODO: implement actual download logic
     setHasDownloaded(true);
   };
 
   return (
-    <div className="flex flex-col items-center p-8 space-y-6">
-      <div>
-        <h3 className="font-semibold text-center">
-          Setup Two-factor authentication
-        </h3>
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.twoFactorAuth.backup.aria.description')}
+      />
 
-        {/* Progress bar component */}
-        <ProgressBar currentStep={2} stepCompletion={{ 1: true, 2: hasDownloaded }} />
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
+        {t('pages.twoFactorAuth.backup.title')}
+      </h1>
 
-        <h4 className="font-semibold text-center">
-          Backup verification codes
-        </h4>
-        <p className="text-center text-sm">
-          With 2FA enabled for your account, you can use the recovery codes as a second factor to authenticate 
-          in case you lose your device. We recommend keeping them in a secure place.
+      <ProgressBar currentStep={2} stepCompletion={{ 1: true, 2: hasDownloaded }} />
+
+      <section className="max-w-md text-center space-y-4">
+        <h2 className="font-semibold text-center text-lg">
+          {t('pages.twoFactorAuth.backup.backupTitle')}
+        </h2>
+
+        <p className="text-sm">
+          {t('pages.twoFactorAuth.backup.backupInstructions')}
         </p>
 
-        {/* Download Button */}
+        {/* Recovery codes fetch from backend
+            TODO: black frame with round border with codes in 2 columns */} 
+        <div className="border-2 border-black rounded-3xl p-4 space-y-2">
+          <div className="grid grid-cols-2 gap-4">
+            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">ABCD-1234</span>
+            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">EFGH-5678</span>
+            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">IJKL-9101</span>
+            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">MNOP-1122</span>
+          </div>
+        </div>
+
         <GenericButton
           className="generic-button"
-          text="DOWNLOAD"
-          icon={undefined}
-          hoverLabel={undefined}
-          disabled={false}
+          text={t('common.buttons.download')}
           onClick={handleDownload}
+          aria-label={t('common.aria.buttons.download')}
         />
 
-        <h4 className="font-semibold text-center">
-          Keep your recovery codes in a safe spot
-        </h4>
-        <p className="text-center text-sm">
-          If you lose your device and can’t find your recovery codes, you will lose access to your account.
-        </p>
-      </div>
+        <h2 className="font-semibold text-center text-lg mt-6">
+          {t('pages.twoFactorAuth.backup.warningTitle')}
+        </h2>
 
-      {/* Cancel and Next Button */}
+        <p className="text-sm">
+          {t('pages.twoFactorAuth.backup.warningInfo')}
+        </p>
+      </section>
+
       <div className="flex flex-wrap justify-center gap-6">
         <GenericButton
           className="generic-button"
-          text="CANCEL"
-          icon={undefined}
-          hoverLabel={undefined}
-          disabled={false}
-          onClick={() => {
-            navigate('/signup');
-          }}
+          text={t('common.buttons.cancel')}
+          onClick={() =>
+            navigate('/signup')
+          }
+          aria-label={t('common.aria.buttons.cancel')}
         />
 
         <GenericButton
           className="generic-button"
-          text="NEXT"
-          icon={undefined}
-          hoverLabel={undefined}
+          text={t('common.buttons.next')}
           disabled={!hasDownloaded}
-          onClick={() => {
-            navigate('/setup2fa-success');
-          }}
+          onClick={() =>
+            navigate('/setup2fa-success')
+          }
+          aria-label={t('common.aria.buttons.next')}
         />
       </div>
-    </div>
+    </main>
   );
 };
 

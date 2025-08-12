@@ -16,7 +16,7 @@ const Setup2faMainPage: React.FC = () => {
 
   return (
     <main
-      className="flex flex-col items-center p-8 space-y-6"
+      className="pageLayout"
       role="main"
       aria-labelledby="pageTitle"
       aria-describedby="pageDescription"

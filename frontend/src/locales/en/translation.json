@@ -168,9 +168,11 @@
         }
       },
       "backup": {
-        "title": "Backup verification codes",
-        "info": "Keep your recovery codes in a safe spot.",
-        "warning": "If you lose your device and can’t find your recovery codes, you will lose access to your account.",
+        "title": "Setup Two-factor Authentication",
+        "backupTitle": "Backup verification codes",
+        "backupInstructions": "With 2FA enabled for your account, you can use the recovery codes as a second factor to authenticate in case you lose your device. We recommend keeping them in a secure place.",
+        "warningTitle": "Keep your recovery codes in a safe spot.",
+        "warningInfo": "If you lose your device and can’t find your recovery codes, you will lose access to your account.",
         "aria": {
           "aria": "Two-factor Authentication Backup Setup Page",
           "description": "This page allows the user to download recovery codes for two-factor authentication (2FA) in case they lose access to their device. The user is encouraged to keep the recovery codes in a secure place for future use.",
@@ -179,7 +181,8 @@
         }
       },
       "success": {
-        "title": "Two-factor authentication (2FA) is now enabled!",
+        "title": "Setup Two-factor Authentication",
+        "subtitle": "Two-factor authentication (2FA) is now enabled!",
         "shortInfo": "From now on, you’ll use Google Authenticator to sign in.",
         "aria": {
           "label": "Two-factor Authentication Success Setup Page",
