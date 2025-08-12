@@ -1,6 +1,6 @@
 // pages/Rivals/RivalsMain.tsx
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RivalRows } from '../../components/RivalRows';
 // import { GenericInput } from '../../components/GenericInput';
@@ -10,13 +10,28 @@ import { isValidUsername } from '../../utils/Validation';
 import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import SearchIcon from '../../assets/noun-search-7526678.svg?react';
 
+// export interface RivalData {
+//   username: string;
+//   profilePic?: string;
+// }
+
+const fetchRivalData = async () => {
+  return ['B2', 'Coco', 'Winston'];
+}
+
 const RivalsPage = () => {
     const navigate = useNavigate();
     const searchField = useValidationField('', isValidUsername);
+    const [rivalData, setRivalData] = useState<string[]>([]);
 
     useEffect(() => {
-
-    })
+      const fetchRivals = async () => {
+        console.log('fetching rival data');
+        const data = await fetchRivalData();
+        setRivalData(data);
+      };
+      fetchRivals();
+    }, [searchField.value])
   
     return (
       <div className='pageLayout'>
@@ -28,17 +43,19 @@ const RivalsPage = () => {
         </div>
 
         <div className='min-w-100'>
-          <div aria-label='rival search bar' className='flex justify-start items-center group -translate-x-12'>
-            <SearchIcon className='size-12 translate-x-12 -translate-y-0.5 z-10 group-focus-within:opacity-50 transition ease-in-out duration-300'/>
+          <div aria-label='rival search bar' className='flex mb-3 justify-start items-center group -translate-x-10'>
+            <SearchIcon className='size-10 translate-x-11 -translate-y-0.5 z-10 transition ease-in-out duration-30
+                                  group-focus-within:opacity-50'/>
             <div className=''>
                 <SearchBar
                   type="username"
                   placeholder="Search for new rivals"
                   value={searchField.value}
+                  options={rivalData}
                   onFilled={searchField.onFilled}
-                  className='h-10 w-64 pl-12 bg-[#FFEE8C] rounded-full mb-3 border-2 border-transparent 
-                                hover:border-black transition-all ease-in-out duration-200 hover:cursor-pointer
-                                focus:border-[#4682B4]'
+                  onSelect={() => navigate('/homeuser')}
+                  className='h-10 w-55 pl-11 bg-[#FFEE8C] rounded-full mb-3 border-2 border-transparent transition-all ease-in-out duration-200 
+                                hover:border-black focus:border-[#4682B4]'
           />
             </div>
           </div>
