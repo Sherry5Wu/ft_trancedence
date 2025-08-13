@@ -8,13 +8,18 @@ interface UserStats {
     winStreak: number;
     longestWinStreak: number;
     worstRival: string;
-    worstRivalPic: string;
+    // worstRivalPic: string;
 }
 
 const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
 
   try {
-    const response = await fetch(`http://localhost:3001/stats/${userID}`);
+    const response = await fetch(`http://localhost:8443/stats/${userID}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     if (!response.ok)
       throw new Error(`HTTP error! Status: ${response.status}`);
