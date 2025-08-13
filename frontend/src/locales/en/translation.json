@@ -16,6 +16,7 @@
       "signUp": "Sign Up",
       "logIn": "Log In",
       "play": "Play",
+      "start": "Start",
       "tournament": "Tournament",
       "rivals": "Rivals",
       "leaderboard": "Leaderboard",
@@ -46,6 +47,7 @@
         "signUp": "Navigate to the sign up page",
         "logIn": "Log in to your account",
         "play": "Start a new game",
+        "start": "Start the tournament with selected players",
         "tournament": "View tournaments list",
         "rivals": "View your rivals",
         "leaderboard": "View leaderboard rankings",
@@ -315,9 +317,11 @@
       },
       "confirm": {
         "title": "Confirm Tournament Details",
+        "defaultPlayer": "Player {{number}}",
         "aria": {
           "label": "Confirm tournament details",
           "description": "Review the tournament title, players, and settings before confirming to start the tournament.",
+          "aliasesSection": "Section to edit player aliases",
           "aliasInput": "Input field to edit player alias for player {{index}}"
         }
       }

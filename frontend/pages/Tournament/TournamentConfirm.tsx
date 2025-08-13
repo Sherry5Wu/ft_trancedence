@@ -1,6 +1,8 @@
-// pages/Tornament/TournamenConfirm.tsx
+// /src/pages/Tornament/TournamenConfirm.tsx
 
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
@@ -15,12 +17,18 @@ interface AliasField {
 }
 
 const TournamentConfirm: React.FC = () => {
+  const { t } = useTranslation();  
   const navigate = useNavigate();
-  const { players, totalPlayers, setPlayerUsername } = usePlayersContext();
+  const {
+    players,
+    totalPlayers,
+    setPlayerUsername,
+  } = usePlayersContext();
 
   const [aliasFields, setAliasFields] = useState<AliasField[]>([]);
 
   // 1. Sync players into alias fields on mount
+  // Initialize alias fields from players
   useEffect(() => {
     const fields = Array.from({ length: totalPlayers ?? 0 }, (_, i) => {
       const player = players[i];
@@ -52,14 +60,15 @@ const TournamentConfirm: React.FC = () => {
 
   const validateAlias = (value: string, index: number, allAliases: string[]): string => {
     const trimmed = value.trim();
-    if (!isValidAlias(trimmed)) return 'Invalid alias';
+    if (!isValidAlias(trimmed)) return t('common.errors.invalidAlias');
 
     const lowerValue = trimmed.toLowerCase();
     const occurrences = allAliases.filter(
       (v, i) => i !== index && v.trim().toLowerCase() === lowerValue
     );
 
-    if (occurrences.length > 0) return 'Alias must be unique';
+    if (occurrences.length > 0) return t('common.errors.duplicateAlias');
+    
     return '';
   };
 
@@ -83,6 +92,7 @@ const TournamentConfirm: React.FC = () => {
 
       const allAliases = updated.map((f) => f.value);
       updated[index].error = validateAlias(updated[index].value, index, allAliases);
+      
       return updated;
     });
   };
@@ -91,45 +101,114 @@ const TournamentConfirm: React.FC = () => {
     aliasFields.every((f) => f.value.trim() !== '') &&
     aliasFields.every((f) => f.error === '');
 
-  return (
-    <div className="flex flex-col items-center p-8 space-y-6">
-      <h3 className="font-semibold text-center text-xl">Choose player aliases</h3>
+//   return (
 
-      <div className="flex flex-col gap-4 mt-6 w-full max-w-xl">
+    
+//     <div className="flex flex-col items-center p-8 space-y-6">
+//       <h3 className="font-semibold text-center text-xl">Choose player aliases</h3>
+
+//       <div className="flex flex-col gap-4 mt-6 w-full max-w-xl">
+//         {aliasFields.map((field, idx) => {
+//           const player = players[idx] ?? null;
+
+//           return (
+//             <div key={idx} className="flex items-center gap-4">
+//               <UserProfileBadge size="sm" user={player} disabled />
+//               <GenericInput
+//                 type="text"
+//                 placeholder={`Player ${idx + 1}`}
+//                 value={field.value}
+//                 onFilled={(val: string) => handleAliasChange(idx, val)}
+//                 onBlur={() => handleBlur(idx)}
+//                 showEditIcon
+//                 errorMessage={field.error}
+//               />
+//             </div>
+//           );
+//         })}
+//       </div>
+
+//       <div className="flex flex-wrap justify-center gap-4 mt-8">
+//         <GenericButton
+//           className="generic-button"
+//           text="BACK"
+//           onClick={() => navigate('/tournaments/new')}
+//         />
+//         <GenericButton
+//           className="generic-button"
+//           text="START"
+//           disabled={!formFilled}
+//           onClick={() => navigate('/game')}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TournamentConfirm;
+
+  return (
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="tournament-confirm-title"
+      aria-describedby="tournament-confirm-description"
+    >
+      <AccessiblePageDescription
+        id="tournament-confirm-description"
+        text={t('pages.tournament.confirm.aria.description')}
+      />
+
+      <h1 id="tournament-confirm-title" className="font-semibold text-center text-xl">
+        {t('pages.tournament.confirm.title')}
+      </h1>
+
+      <section
+        className="flex flex-col gap-4 mt-6 w-full max-w-xl"
+        aria-label={t('pages.tournament.confirm.aria.aliasesSection')}
+      >
         {aliasFields.map((field, idx) => {
           const player = players[idx] ?? null;
-
           return (
             <div key={idx} className="flex items-center gap-4">
-              <UserProfileBadge size="sm" user={player} disabled />
+              <UserProfileBadge 
+                size="sm"
+                user={player}
+                disabled 
+              />
               <GenericInput
+                id={`player-alias-${idx}`}
                 type="text"
-                placeholder={`Player ${idx + 1}`}
+                placeholder={t('tournament.confirm.defaultPlayer', { number: idx + 1 })}
                 value={field.value}
-                onFilled={(val: string) => handleAliasChange(idx, val)}
+                onFilled={(val) => handleAliasChange(idx, val)}
                 onBlur={() => handleBlur(idx)}
                 showEditIcon
                 errorMessage={field.error}
-              />
+                aria-describedby={`player-alias-${idx}-error`}
+                aria-label={t('pages.tournament.confirm.aria.aliasInput', { index: idx + 1 })}
+                />
             </div>
           );
         })}
-      </div>
+      </section>
 
       <div className="flex flex-wrap justify-center gap-4 mt-8">
         <GenericButton
           className="generic-button"
-          text="BACK"
+          text={t('common.buttons.back')}
+          aria-label={t('common.aria.buttons.back')}
           onClick={() => navigate('/tournaments/new')}
         />
         <GenericButton
           className="generic-button"
-          text="START"
+          text={t('common.buttons.start')}
+          aria-label={t('common.aria.buttons.start')}
           disabled={!formFilled}
           onClick={() => navigate('/game')}
         />
       </div>
-    </div>
+    </main>
   );
 };
 
