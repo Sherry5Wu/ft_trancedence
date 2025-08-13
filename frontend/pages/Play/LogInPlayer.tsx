@@ -27,6 +27,8 @@ const LogInPlayerPage: React.FC = () => {
   const returnTo: string = location.state?.returnTo ?? '/';
 
   const formFilled =
+    usernameField.value.trim() !== '' &&
+    pinField.value.trim() !== '' &&
     !usernameField.error &&
     !pinField.error;
 
