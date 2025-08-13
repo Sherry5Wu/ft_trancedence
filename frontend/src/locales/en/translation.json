@@ -65,7 +65,8 @@
       "newSameAsOldPIN": "New PIN must be different from the current PIN code.",
       "aliasNotUnique": "This alias is already taken. Please choose a different one.",
       "invalidAlias": "Invalid alias format. Please check and try again.",
-      "duplicateAlias": "Player aliases must be different from each other."
+      "duplicateAlias": "Player aliases must be different from each other.",
+      "invalidLogin": "Invalid login. Please check and try again."
     }
   },
 
