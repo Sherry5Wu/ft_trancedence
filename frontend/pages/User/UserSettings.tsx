@@ -1,67 +1,71 @@
-// pages/User/UserSettings.tsx
+// /src/pages/User/UserSettings.tsx
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
 import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
-import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
+// import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
 
 const SettingsPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, setUser } = useUserContext();
 
-  // Local state for editable fields
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Populate local state from user context
-  useEffect(() => {
-    if (user) {
-      setFirstName(user?.firstname ?? '');
-      setLastName(user?.lastname ?? '');
-    }
-  }, [user]);
-
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Image = reader.result as string;
-      const newProfilePic = (
-        <img src={base64Image} className="profilePic" alt="Uploaded profile" />
-      );
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Image = reader.result as string;
+        const newProfilePic = (
+          <img
+            src={base64Image}
+            className="profilePic"
+            alt={t('pages.userSettings.aria.uploadedProfileAlt', 'Uploaded profile')}
+          />
+        );
 
-      setUser({
-        ...user!,
-        profilePic: newProfilePic,
-      });
-    };
-    reader.readAsDataURL(file);
-  }
-};
+        setUser({
+          ...user!,
+          profilePic: newProfilePic,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-  
   return (
-    <div className='pageLayout'>
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    > 
+    <p id="pageTitle" className="sr-only">
+        {t('pages.userSettings.aria.label')}
+    </p>
+    <AccessiblePageDescription
+      id="pageDescription"
+      text={t('pages.userSettings.aria.description')}
+    />
 
-      {/* Profile picture */}
-        <div >
+      <div className="text-center">
         <UserProfileBadge
           size="lg"
           user={{
             username: user?.username,
-            photo: (user?.profilePic as React.ReactElement)?.props?.src // extract the image URL from JSX
-            // photo: user?.profilePic ? user.profilePic.props?.src : undefined // if user.profilePic isn't present yet 
+            photo: (user?.profilePic as React.ReactElement)?.props?.src,
           }}
           onClick={() => fileInputRef.current?.click()}
           alwaysShowPlus
+          aria-label={t('pages.userSettings.aria.uploadProfile')}
         />
         <input
           type="file"
@@ -69,94 +73,90 @@ const SettingsPage: React.FC = () => {
           ref={fileInputRef}
           style={{ display: 'none' }}
           onChange={handleImageUpload}
+          aria-label={t('pages.userSettings.aria.uploadProfile')}
         />
       </div>
 
-      <div>
-        <h2 className='h2 mb-3'>{user?.username}</h2>      
+     <div className='w-56 truncate mb-8'>
+        <h2 className='h2 text-center font-semibold scale-dynamic'>
+          {user?.username}
+        </h2>
       </div>
-
-      {/* Account Settings */}
-      <div className="flex flex-row w-full max-w-4xl gap-8 mt-6">
-        <div className="flex flex-col p-4">
-          <h3 className="text-lg font-semibold mb-4">Account Settings</h3>
-
-          {/* First Name - Editable */}
+           
+      <div className="flex flex-col items-center text-center w-full mx-auto">
+        <div className="">
+          <h3 className="text-lg font-semibold mb-4">
+            {t('pages.userSettings.accountSettings.title')}
+          </h3>
+          
           <GenericInput
-            placeholder="First Name"
-            value={firstName}
-            onFilled={setFirstName}
-            showEditIcon={true}
-          />
-
-          {/* Last Name - Editable */}
-          <GenericInput
-            placeholder="Last Name"
-            value={lastName}
-            onFilled={setLastName}
-            showEditIcon={true}
-          />
-
-          {/* Email - Not editable */}
-          <GenericInput
-            placeholder="Email"
+            placeholder={t('common.placeholders.email')}
+            aria-label={t('common.aria.inputs.email')}
             value={user?.email || ''}
             onFilled={() => {}}
-            disabled={true}
+            disabled
           />
 
-          {/* Username - Not editable */}
           <GenericInput
-            placeholder="Username"
+            placeholder={t('common.placeholders.username')}
+            aria-label={t('common.aria.inputs.username')}
             value={user?.username || ''}
             onFilled={() => {}}
-            disabled={true}
-          />
-
-          {/* Save changes button */}
-          <GenericButton
-            className="generic-button"
-            text="Save changes"
-            onClick={() => {
-              alert('Profile updated!');
-              // send to backend later
-              setUser({
-                ...user!,
-                firstname: firstName,
-                lastname: lastName,
-              });
-            }}
+            disabled
           />
         </div>
 
-        {/* Security and 2FA */}
-        <div className="flex flex-col flex-1 p-4">
-          <h3 className="text-lg font-semibold mb-4">Security</h3>
-
+        <div className="p-4">
+          <h3 className="text-lg font-semibold mb-4">
+            {t('pages.userSettings.security.title')}
+          </h3>
+          
           <GenericButton
             className="generic-button"
-            text="Change Password"
+            text={t('pages.changePassword.title')}
+            aria-label={t('pages.userSettings.aria.changePassword')}
             onClick={() => navigate('/change-password')}
           />
 
           <GenericButton
             className="generic-button"
-            text="Change PIN"
+            text={t('pages.changePIN.title')}
+            aria-label={t('pages.userSettings.aria.changePIN')}
             onClick={() => navigate('/change-pin')}
           />
+        </div>
 
-          <h3 className="text-lg font-semibold mb-4 mt-6">Two-factor authentication</h3>
-          <p className="text-left text-sm">
-            Two-factor authentication is an enhanced security measure. Once enabled, you’ll be required to give two types of identification when you log into this website. Google Authenticator is supported.
-          </p>
+        <div className="p-4">
+          <h3 className="text-lg font-semibold">
+            {t('pages.userSettings.twoFactor.title')}
+          </h3>
+          <p className="max-w-sm text-center p-4">
+            {t('pages.userSettings.twoFactor.description')}
 
           <ToggleButton
-            label='2FA with Google Authenticator'
-            onClick={() => navigate('/setup2fa')} // Enabled or disabled; fetch from user context?
+            label={t('pages.userSettings.twoFactor.title')}
+            aria-label={t('pages.userSettings.aria.2faToggle')}
+            onClick={() => 
+              navigate('/setup2fa')
+            }
           />
+          </p>
         </div>
+
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.save')}
+          aria-label={t('pages.userSettings.aria.saveChanges')}
+          onClick={() => {
+            alert(t('common.alerts.success'));
+            setUser({
+              ...user!,
+            });
+            navigate('/homeuser');
+          }}
+        />
       </div>
-    </div>
+    </main>
   );
 };
 

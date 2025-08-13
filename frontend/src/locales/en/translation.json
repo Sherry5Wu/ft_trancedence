@@ -221,7 +221,9 @@
 
     "userSettings": {
       "accountSettings": {
-        "title": "Account Settings"
+        "title": "Account Settings",
+        "uploadProfile": "",
+        "uploadedProfileAlt": ""
       },
       "security": {
         "title": "Security"
@@ -232,7 +234,7 @@
       },
       "aria": {
         "label": "User settings page, manage your profile, account settings, and security preferences.",
-        "description": "Edit your personal information, change your password and PIN, and enable two-factor authentication for enhanced security.",
+        "description": "See your personal information, change your password and PIN, and enable two-factor authentication for enhanced security.",
         "saveChanges": "Save account settings changes",
         "changePassword": "Go to change password page",
         "changePIN": "Go to change PIN page",
