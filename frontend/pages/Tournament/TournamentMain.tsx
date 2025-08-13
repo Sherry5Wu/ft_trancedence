@@ -300,6 +300,25 @@ const TournamentsPage: React.FC = () => {
           </button>
         </div>
       )}
+
+      <div className="flex flex-wrap justify-center gap-4 mt-12">
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.back')}
+          aria-label={t('common.aria.buttons.back')}
+          onClick={() =>
+            navigate('/homeuser')
+          }
+        />
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.new')}
+          aria-label={t('common.aria.buttons.new')}
+          onClick={() =>
+            navigate('/tournaments/new')
+          }
+        />
+      </div>
     </main>
   );
 };

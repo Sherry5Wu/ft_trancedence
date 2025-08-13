@@ -11,7 +11,7 @@
       "back": "Back",
       "ok": "OK",
       "done": "Done",
-      "create": "Create",
+      "new": "New",
       "signIn": "Sign In",
       "signUp": "Sign Up",
       "logIn": "Log In",
@@ -39,7 +39,10 @@
         "cancel": "Cancel the current action and discard changes",
         "save": "Save changes",
         "next": "Proceed to the next step in the process",
+        "back": "Go back to the previous page",
         "ok": "Confirm and proceed with the action",
+        "done": "Mark the process as completed",
+        "new": "Create a new tournament",
         "signIn": "Navigate to the sign in page",
         "signUp": "Navigate to the sign up page",
         "logIn": "Log in to your account",
@@ -48,8 +51,7 @@
         "rivals": "View your rivals",
         "leaderboard": "View leaderboard rankings",
         "download": "Download the file",
-        "verify": "Verify the entered information",
-        "done": "Mark the process as completed"
+        "verify": "Verify the entered information"
       },
       "inputs": {
         "username": "Input field to enter your username",
