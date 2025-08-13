@@ -45,7 +45,7 @@ const SignInPage: React.FC = () => {
         className="generic-button"
         text="LOG IN"
         disabled={!formFilled}
-        onClick={() => { navigate('/homeuser')}}
+        onClick={() => { navigate(`/user/${usernameField.value}`)}}
       />
 
       {/* GoogleLogin Button */}
