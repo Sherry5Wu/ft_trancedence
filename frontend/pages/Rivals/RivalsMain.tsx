@@ -42,8 +42,8 @@ const RivalsPage = () => {
           <RivalIcon className='size-20' />
         </div>
 
-        <div className='min-w-100'>
-          <div aria-label='rival search bar' className='flex mb-3 justify-start items-center group -translate-x-10'>
+        <div className='min-w-100 relative'>
+          <div aria-label='rival search bar' className='flex relative z-10 mb-3 justify-start items-center group -translate-x-10'>
             <SearchIcon className='size-10 translate-x-11 -translate-y-0.5 z-10 transition ease-in-out duration-30
                                   group-focus-within:opacity-50'/>
             <div className=''>
@@ -56,11 +56,11 @@ const RivalsPage = () => {
                   onSelect={() => navigate('/homeuser')}
                   className='h-10 w-55 pl-11 bg-[#FFEE8C] rounded-full mb-3 border-2 border-transparent transition-all ease-in-out duration-200 
                                 hover:border-black focus:border-[#4682B4]'
-          />
+                />
             </div>
           </div>
 
-          <div className={searchField.value ? 'opacity-50' : 'opacity-100'}>
+          <div className={`relative z-0 transition ease-in-out duration-100 ${searchField.value ? 'opacity-50' : 'opacity-100'}`}>
             <RivalRows />
           </div>
 

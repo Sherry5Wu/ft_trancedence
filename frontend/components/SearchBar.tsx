@@ -78,14 +78,14 @@ export const SearchBar = ({
             className={`${className} ${value ? "text-black" : ""}`}
         />
         {isOpen && (
-            <ul className="dropdown-menu border-2 z-20 -translate-y-2">
+            <ul className="dropdown-menu !bg-[#FFEE8C] border-2 -translate-y-2">
             {options.map((opt, index) => (
                 <li
                 key={index}
-                className={'dropdown-option bg-[#FFEE8C] border-black border-3 z-20 shadow-2xl opacity-100 rounded-2xl'}
+                className={'dropdown-option'}
                 onClick={() => handleOptionClick(opt)}
                 >
-                    {opt}
+                {opt}
                 </li>
             ))}
             </ul>
