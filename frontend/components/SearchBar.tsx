@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState, useEffect, useRef } from "react";
+import { useClickOutside } from "./Hooks";
 
 
 interface SearchBarInputProps {
@@ -26,21 +27,14 @@ export const SearchBar = ({
   };
   
     const [isOpen, setIsOpen] = useState(false);
-    const wrapperRef = useRef<HTMLDivElement>(null);
+    const ref = useRef<HTMLDivElement>(null);
 
     const handleOptionClick = (value: string) => {
         onSelect(value);
         // setIsOpen(false);
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node))
-                setIsOpen(false);
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+    useClickOutside(ref, () => {setIsOpen(false), onFilled('')});
 
     useEffect(() => {
         if (value)
@@ -50,7 +44,7 @@ export const SearchBar = ({
     }, [value])
 
     return (
-        <div className="relative w-full max-w-md mx-auto">
+        <div ref={ref} className="relative w-full max-w-md mx-auto">
             <input
                 type={type}
                 value={value}
