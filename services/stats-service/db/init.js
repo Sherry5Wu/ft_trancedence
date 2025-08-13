@@ -49,7 +49,9 @@ db.prepare(`
       games_played INTEGER NOT NULL,
       games_won INTEGER NOT NULL,
       games_lost INTEGER NOT NULL,
-      win_streak DEFAULT 0
+      games_draw INTEGER NOT NULL,
+      win_streak DEFAULT 0,
+      longest_win_streak DEFAULT 0
     )
   `).run();
   

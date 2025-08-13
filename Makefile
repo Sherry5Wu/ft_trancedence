@@ -6,16 +6,7 @@ ENV_FILE = .env
 
 # Explicitly list all relevant files
 TOURNAMENT_FILES = services/tournament-service/dockerfile services/tournament-service/tournamentdata.js
-STATS_FILES = services/stats-service/dockerfile \
-				services/stats-service/app.js \
-				services/stats-service/db/init.js \
-				services/stats-service/routes/matchHistory.js \
-				services/stats-service/routes/rivals.js \
-				services/stats-service/routes/scoreHistory.js \
-				services/stats-service/routes/userMatchData.js \
-				services/stats-service/utils/auth.js \
-				services/stats-service/utils/calculations.js \
-				services/stats-service/utils/updateFunctions.js
+STATS_FILES = $(shell find services/stats-service -type f)
 
 GATEWAY_FILES= gateway/dockerfile gateway/nginx.conf
 
@@ -36,8 +27,7 @@ $(BUILD_MARKER_BACKEND): $(BACKEND_FILES)
 				mkdir -p services/tournament-service/data
 				@echo "🚧 Building backend containers..."
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop $(BACKEND_SERVICES)
-				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build $(BACKEND_SERVICES)
-				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d $(BACKEND_SERVICES)
+				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --build $(BACKEND_SERVICES)
 				@touch $(BUILD_MARKER_BACKEND)
 				@echo "✅ Backend is up."
 
@@ -45,8 +35,7 @@ frontend: $(BUILD_MARKER_FRONTEND)
 
 $(BUILD_MARKER_FRONTEND): $(FRONTEND_FILES)
 					@echo "🚧 Building frontend container..."
-					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build $(FRONTEND_SERVICES)
-					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d $(FRONTEND_SERVICES)
+					@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d --build $(FRONTEND_SERVICES)
 					@touch $(BUILD_MARKER_FRONTEND)
 					@echo "✅ Frontend is up."
 
@@ -69,6 +58,9 @@ status:
 fclean:
 	@$(MAKE) clean
 	@docker system prune -a -f
+	rm -rf services/stats-service/data
+	rm -rf services/auth-service/data 
+	rm -rf services/tournament-service/data
 
 re: fclean frontend backend
 

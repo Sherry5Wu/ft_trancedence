@@ -20,7 +20,7 @@ export default async function scoreHistoryRoutes(fastify) {
     fastify.get('/:player_id', (request, reply) => {
         const { player_id } = request.params;
         try {
-        const stmt = db.prepare('SELECT * FROM score_history WHERE player_id = ?');
+        const stmt = db.prepare('SELECT * FROM score_history WHERE player_id = ? ORDER BY played_at DESC');
         const rows = stmt.all(player_id);
         reply.send(rows);
         }
