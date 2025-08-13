@@ -95,15 +95,15 @@ const NewTournamentPage: React.FC = () => {
     <main
       className="pageLayout"
       role="main"
-      aria-labelledby="tournament-new-title"
-      aria-describedby="tournament-new-description"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
     >
       <AccessiblePageDescription
         id="pageDescription"
         text={t('pages.tournament.new.aria.description')}
       />
 
-      <h1 id="tournament-new-title" className="font-semibold text-center text-xl">
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
         {t('pages.tournament.new.title')}
       </h1>
 

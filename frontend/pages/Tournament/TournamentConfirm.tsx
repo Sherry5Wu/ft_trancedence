@@ -151,15 +151,15 @@ const TournamentConfirm: React.FC = () => {
     <main
       className="pageLayout"
       role="main"
-      aria-labelledby="tournament-confirm-title"
-      aria-describedby="tournament-confirm-description"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
     >
       <AccessiblePageDescription
-        id="tournament-confirm-description"
+        id="pageDescription"
         text={t('pages.tournament.confirm.aria.description')}
       />
 
-      <h1 id="tournament-confirm-title" className="font-semibold text-center text-xl">
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
         {t('pages.tournament.confirm.title')}
       </h1>
 
