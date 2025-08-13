@@ -1,9 +1,10 @@
 // pages/Home.tsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
-import { useTranslation } from 'react-i18next';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
 
 const HomePage: React.FC = () => {
@@ -16,46 +17,111 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="pageLayout">
-      <p>{t('home.welcome')}</p>
-      
-      <div>
-        <h1 className="h1 mb-30">P | N G - P · N G</h1>
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="home-title"
+      aria-describedby="home-description"
+    >
+    <AccessiblePageDescription
+      id="pageDescription"
+      text={t('pages.home.aria.description')}
+    />
+
+      <div className="text-center mt-6">
+        <h1 id="home-title" className="font-bold text-3xl mb-4">
+          P | N G - P · N G
+        </h1>
+
+        <p id="home-description" className="text-lg mb-6">
+          {t('pages.home.welcome')}
+        </p>
       </div>
 
-      <div className="flex flex-wrap justify-center align-middle gap-6">
+      <div className="flex flex-wrap justify-center gap-6 mb-6">
         <GenericButton
           className="generic-button"
-          // add on component    ariaLabel={t('signIn')}  
-          text={t('home.signInButton')}
-          icon={undefined}
-          hoverLabel={undefined}
-          disabled={false}
+          text={t('common.buttons.signIn')}
+          ariaLabel={t('common.aria.buttons.signIn')}
           onClick={() => navigate('/signin')}
         />
       </div>
 
-      {/* Arrow down button */}
-      <button onClick={toggleText} aria-label="Toggle About Text">
-        <div
-          className={`transition-transform duration-300 ${
-            showText ? '-rotate-180' : 'rotate-0'
-          }`}
+      <div className="flex justify-center mb-4">
+        <button
+          onClick={toggleText}
+          aria-expanded={showText}
+          aria-controls="home-about-section"
+          aria-label={t('pages.home.welcome')}
         >
-          <DownArrow className="w-20 h-20" />
-        </div>
-      </button>
+          <div
+            className={`transition-transform duration-300 ${
+              showText ? '-rotate-180' : 'rotate-0'
+            }`}
+          >
+            <DownArrow className="w-8 h-8" />
+          </div>
+        </button>
+      </div>
 
-      {/* About the project */}
-      {showText && (
-        <div className="mt-4 text-center px-4 max-w-xl text-black">
-          <p>
-            {t('home.aboutText')}
-          </p>
-        </div>
-      )}
-    </div>
+      <section
+        id="home-about-section"
+        className={`mt-4 text-center px-4 max-w-xl text-black transition-all duration-300 ${
+          showText ? 'block' : 'hidden'
+        }`}
+        aria-hidden={!showText}
+      >
+        <p aria-live="polite">{t('pages.home.aboutText')}</p>
+      </section>
+    </main>
   );
 };
 
 export default HomePage;
+
+
+
+//   return (
+//     <div className="pageLayout">
+//       <p>{t('home.welcome')}</p>
+      
+//       <div>
+//         <h1 className="h1 mb-30">P | N G - P · N G</h1>
+//       </div>
+
+//       <div className="flex flex-wrap justify-center align-middle gap-6">
+//         <GenericButton
+//           className="generic-button"
+//           // add on component    ariaLabel={t('signIn')}  
+//           text={t('home.signInButton')}
+//           icon={undefined}
+//           hoverLabel={undefined}
+//           disabled={false}
+//           onClick={() => navigate('/signin')}
+//         />
+//       </div>
+
+//       {/* Arrow down button */}
+//       <button onClick={toggleText} aria-label="Toggle About Text">
+//         <div
+//           className={`transition-transform duration-300 ${
+//             showText ? '-rotate-180' : 'rotate-0'
+//           }`}
+//         >
+//           <DownArrow className="w-20 h-20" />
+//         </div>
+//       </button>
+
+//       {/* About the project */}
+//       {showText && (
+//         <div className="mt-4 text-center px-4 max-w-xl text-black">
+//           <p>
+//             {t('home.aboutText')}
+//           </p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default HomePage;
