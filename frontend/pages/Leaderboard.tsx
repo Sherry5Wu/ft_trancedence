@@ -132,10 +132,8 @@ const LeaderboardPage: React.FC = () => {
       <h1 id="pageTitle" className="h1 font-semibold text-center">
         {t('pages.leaderboard.title')}
       </h1>
-
-      <div className="">
-        {leaderboardData.length > 0 && (
-          <>
+ 
+      {leaderboardData.length > 0 && (
         <div
           aria-label={t('pages.leaderboard.aria.table')}
           className="grid grid-cols-6 mb-1 text-center font-medium"
@@ -155,9 +153,7 @@ const LeaderboardPage: React.FC = () => {
             {t('pages.leaderboard.columns.score')}
           </span>
         </div>
-          </>
         )}
-      </div>
 
         <ul aria-label={t('pages.leaderboard.aria.label')}>
           {leaderboardData.length === 0 ? (
