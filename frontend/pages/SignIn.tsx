@@ -110,7 +110,7 @@ const SignInPage = () => {
               accessToken: signInData.data.accessToken,
               refreshToken: signInData.data.refreshToken,
             });
-            navigate('/homeuser');
+            navigate(`/user/${usernameField.value}`)
           }
           else
             alert('Sign in failed. Please try again.'); // what went wrong? 

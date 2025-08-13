@@ -1,5 +1,3 @@
-// pages/HomeUser.tsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
@@ -7,15 +5,14 @@ import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
 import { Stats } from '../components/Stats';
 import { ResponsiveContainer } from 'recharts';
-import ProfileIcon from '../assets/noun-profile-7808629.svg';
-import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
+import PlayIcon from '../assets/noun-ping-pong-7327427.svg?';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
 import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
-// import DownArrow from '../assets/noun-arrow-2333164.svg?react';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
+import { useParams } from 'react-router-dom';
 
-const HomeUserPage = () => {
+const UserPage = () => {
   const navigate = useNavigate(); // to access other pages
   const { user, setUser } = useUserContext();
   const [hidden, setHidden] = useState(false);
@@ -24,31 +21,21 @@ const HomeUserPage = () => {
 
 
   //mockdata
-  const playedGames = 77;
-  const winStreak = 1;
-  const longestWinStreak =3;
-  const worstRival = 'Alice';
-  const WorstRivalPic = <img src='../assets/profilepics/B2.png' className='profilePic mt-1'/>
+  // const playedGames = 77;
+  // const winStreak = 1;
+  // const longestWinStreak =3;
+  // const worstRival = 'Alice';
+  // const WorstRivalPic = <img src='../assets/profilepics/B2.png' className='profilePic mt-1'/>
 
+  const showStats = () => setStats(!stats);
+  const showHistory = () => setHistory(!history);
 
-  // const showHidden = () => {
-  //     setHidden(!hidden);
-  // }
-
-  const showStats = () => {
-    setStats(!stats);
-  }
-
-  const showHistory = () => {
-    console.log(user);
-    console.log(user?.accessToken);
-    setHistory(!history);
-  } 
+  const param = useParams();
 
     return (
     <div className='pageLayout'>
       
-      {/* Username header */}
+      {/* User header */}
 
       <div className='profilePicBig'>
         {user?.profilePic}
@@ -66,7 +53,9 @@ const HomeUserPage = () => {
         </div>
       </div>
 
-      {/* Round-big-button group */}
+      {/* Buttons */}
+
+      {param.username === user?.username ? 
       <div className="flex flex-wrap justify-center gap-6">
         <GenericButton
           className="round-icon-button"
@@ -102,6 +91,19 @@ const HomeUserPage = () => {
         />
       </div>
 
+      :
+
+        <GenericButton
+          className="round-icon-button"
+          text={undefined}
+          icon={<img src={RivalsIcon} alt="Rivals icon" />}
+          hoverLabel="RIVALS"
+          onClick={() => 
+            navigate('/rivals')}
+        />
+
+      }
+
       {/* Statistics */}
       
         <div aria-label='statistics' className='w-200'>
@@ -134,7 +136,7 @@ const HomeUserPage = () => {
     
 
 
-export default HomeUserPage;
+export default UserPage;
 
       // <button onClick={showStats}> <DownArrow className='size-20 -mb-15' /> </button>
       // {/* Statistics */}

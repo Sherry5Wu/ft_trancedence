@@ -14,8 +14,10 @@
     "@babylonjs/core": "^6.0.0",
     "cannon-es": "^0.20.0",
     "@tailwindcss/vite": "^4.1.11",
+    "i18next": "^25.3.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-i18next": "^15.6.1",
     "react-router-dom": "^7.7.1",
     "recharts": "^3.1.0"
   },

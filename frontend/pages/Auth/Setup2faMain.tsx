@@ -1,83 +1,97 @@
-// pages/Auth/Setup2faMain.tsx
-// user enters code from authenticator app to verify it works
+// /src/pages/Auth/Setup2faMain.tsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
 
 const Setup2faMainPage: React.FC = () => {
-  const navigate = useNavigate(); // to access other pages
-  
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [code, setCode] = useState('');
-  const formFilled = /^\d{6}$/.test(code); // Only valid when 6 digits
- 
+  const formFilled = /^\d{6}$/.test(code);
+
   return (
-    <div className="flex flex-col items-center p-8 space-y-6">
-      <div>
-        {/* Page title */}
-        <h3 className="font-semibold text-center">
-          Setup Two-factor authentication</h3>
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.twoFactorAuth.setup.aria.description')}
+      />
 
-        {/* Progress bar component */}
-        <ProgressBar currentStep={1} stepCompletion={{ 1: formFilled }} />
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
+        {t('pages.twoFactorAuth.setup.title')}
+      </h1>
 
-        {/* QR code */}
-        <h4 className="font-semibold text-center">
-          Scan the QR code</h4>
-        <p className="text-center text-sm">
-          Open the Google Authenticator app and scan this QR code.
-      </p>
+      <ProgressBar 
+        currentStep={1}
+        stepCompletion={{ 1: formFilled }}
+      />
 
+      <section aria-labelledby="scanQrTitle" className="max-w-md text-center space-y-2">
+        <h2 id="scanQrTitle" className="font-semibold text-center text-lg">
+          {t('pages.twoFactorAuth.setup.scanQrTitle')}
+        </h2>
+
+        <p>
+          {t('pages.twoFactorAuth.setup.scanQrInstructions')}
+        </p>
         
-        {/* Redirect user to Set up keys manually */}  
-        <p className="text-center text-sm">
-        Unable to scan? You can use the {' '}
-        <Link to="/404" className="underline">
-        setup key</Link>
-        {' '}to manually configure your authenticator app.
-      </p>
+        {/* QR code fetch from backend */}
 
-        {/* Message to user */} 
-        <p className="text-center text-sm">
-          Don’t have the app? Google Authenticator is a free 2FA app. 
-          Download it on your mobile device by searching for “Google Authenticator” on the Play Store or Apple Store.
-      </p>
-        
-        {/* User input for TOTP (6-digit code)*/} 
-        <h4 className="font-semibold text-center">
-          Verify the code from the app</h4>
-        <VerificationCodeInput 
+        <p>
+          {t('pages.twoFactorAuth.setup.manualSetupPrompt')}{' '}
+          <Link to="/404" className="underline" aria-label={t('pages.twoFactorAuth.setup.aria.manualSetupLink')}>
+            {t('pages.twoFactorAuth.setup.manualSetupLink')}
+          </Link>{' '}{t('pages.twoFactorAuth.setup.manualSetupSuffix')}
+        </p>
+
+        <p>
+          {t('pages.twoFactorAuth.setup.downloadAppInfo')}
+        </p>
+      </section>
+
+      <section aria-labelledby="verifyCodeTitle" className="max-w-md text-center space-y-2">
+        <h2 id="verifyCodeTitle" className="font-semibold text-center text-lg">
+          {t('pages.twoFactorAuth.setup.verifyCodeTitle')}
+        </h2>
+
+        <VerificationCodeInput
           onComplete={setCode}
+          aria-label={t('pages.twoFactorAuth.setup.aria.verifyInput')}
+          // Error handling: If user input fails validation, ensure accessible error messages
+          // are displayed and linked with aria-describedby or aria-invalid attributes.
+          // Check this when backend is connected to frontend
         />
-      </div>
+      </section>
 
-      {/* Cancel and Next Button */}
       <div className="flex flex-wrap justify-center gap-6">
         <GenericButton
           className="generic-button"
-          text="CANCEL"
-          icon={undefined}
-          hoverLabel={undefined}
-          disabled={false}
-          onClick={() => {
-            // navigate('/signup');
-            navigate(-1);
-        }}
+          text={t('common.buttons.cancel')}
+          onClick={() =>
+            navigate(-1)
+          }
+          aria-label={t('common.aria.buttons.cancel')}
         />
         <GenericButton
           className="generic-button"
-          text="NEXT"
-          icon={undefined}
-          hoverLabel={undefined}
+          text={t('common.buttons.next')}
           disabled={!formFilled}
-          onClick={() => {
-            navigate('/setup2fa-backup');
-        }}
+          onClick={() =>
+            navigate('/setup2fa-backup')
+          }
+          aria-label={t('common.aria.buttons.next')}
         />
       </div>
-    </div>
+    </main>
   );
 };
 

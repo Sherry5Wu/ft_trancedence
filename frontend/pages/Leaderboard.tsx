@@ -189,7 +189,7 @@ const LeaderboardPage: React.FC = () => {
                   </div>
      
                   <li
-                    onClick={() => navigate(`/homeuser`)}
+                    onClick={(selected) => navigate(`/userpage/${selected}`)}
                     className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 bg-[#FDFBD4] border-2 hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
                     aria-label={`Current user ${currentUserEntry.username} at position ${currentUserIndex + 1}`}
                   >

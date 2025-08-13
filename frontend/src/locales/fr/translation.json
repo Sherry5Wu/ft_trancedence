@@ -1,0 +1,11 @@
+{
+  "pages": {
+   "notFound": {
+      "title": "404 - Page non trouvée",
+      "message": "Oups ! La page que vous recherchez n'existe pas.",
+      "aria": {
+        "errorIcon": "Illustration de l'erreur 404"
+      }
+    }
+  }
+}
