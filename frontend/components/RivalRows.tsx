@@ -70,7 +70,7 @@ export const RivalRows = () => {
       )
 
     return (
-        <div aria-label='rivals data' className=''>
+        <div aria-label='rivals data' className='z-10'>
             <div aria-label='rivals data categories' className='grid grid-cols-9 mb-1 text-center font-semibold'>
                 <span className=''></span>
                 <span className='col-span-2'>Name</span>
