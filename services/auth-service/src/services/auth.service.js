@@ -15,7 +15,7 @@ import { Op } from 'sequelize';
 import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
-import { ConflictError, InvalidCredentialsError, NotFoundError } from '../utils/errors.js';
+import { ConflictError, InvalidCredentialsError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { normalizeAndValidateEmail, normalizeEmail, validatePassword, validateUsername, validatePincode } from '../utils/validators.js';
 
 const { User, RefreshToken } = models;
@@ -82,9 +82,9 @@ async function authenticateUser(identifier, password) {
   });
 
   if (!user) {
-  throw new InvalidCredentialsError('User not found.');
+  throw new NotFoundError('User not found.');
   }
-  
+
   if (!user.isVerified) {
   throw new InvalidCredentialsError('Please verify your email address before logging in.');
   }
@@ -221,6 +221,26 @@ async function updatePinCode(userId, newPinCode) {
   await user.update({ pinCodeHash: newHash });
 }
 
+async function updateAvatar(userId, newAvatarUrl) {
+  // 1. Check if user exists
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+  // 2. Validate avatar URL format
+  try {
+    new URL(newAvatarUrl);
+  } catch (err) {
+    throw new ValidationError('Invalid avatar URL');
+  }
+  // 3. enforce HTTPS only
+//  if (!newAvatarUrl.startsWith('https://')) {
+//    throw new ValidationError('Avatar URL must use HTTPS');
+//  }
+  // 4. Save to DB
+  await user.update({ avatarUrl: newAvatarUrl });
+}
+
 export {
   registerUser,
   authenticateUser,
@@ -230,4 +250,5 @@ export {
   validateBackupCode,
   updatePassword,
   updatePinCode,
+  updateAvatar,
 };

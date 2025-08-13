@@ -48,8 +48,12 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    const user = await registerUser(req.body.email, req.body.username, req.body.password, req.body.pinCode);
-    return reply.code(201).send(user);
+    try {
+      const user = await registerUser(req.body.email, req.body.username, req.body.password, req.body.pinCode);
+      return reply.code(201).send(user);
+    } catch (err) {
+      reply.code(err.statusCode || 500).send({ error: err.message });
+    }
   });
 
   // Login
@@ -60,9 +64,9 @@ export default fp(async (fastify) => {
       description: 'Authenticates a user using email/username and password.',
       body: {
         type: 'object',
-        required: ['indentifier', 'password'],
+        required: ['identifier', 'password'],
         properties: {
-          indentifier: { type: 'string' }, // can be email or username
+          identifier: { type: 'string' }, // can be email or username
           password: { type: 'string' }
         }
       },
@@ -79,11 +83,15 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    const { accessToken, refreshToken, user } = await authenticateUser(
-      req.body.indentifier,
-      req.body.password,
-    );
-    return { accessToken, refreshToken, user };
+    try {
+      const { accessToken, refreshToken, user } = await authenticateUser(
+        req.body.indentifier,
+        req.body.password,
+      );
+      return { accessToken, refreshToken, user };
+    } catch (err) {
+      reply.code(err.statusCode || 500).send({ error: err.message });
+    }
   });
 
   // Refresh token

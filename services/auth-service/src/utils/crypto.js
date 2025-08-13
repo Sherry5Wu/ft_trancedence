@@ -1,5 +1,5 @@
 /**
- * Hashing the password/pinCode
+ * Hashing the password or pin code
  */
 import bcrypt from 'bcrypt';
 const SALT_ROUNDS = 10;
