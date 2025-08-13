@@ -31,7 +31,6 @@
       "confirmPin": "Confirm your player PIN",
       "player1": "Player 1",
       "player2": "Player 2",
-      "tournamentTitle": "Tournament title",
       "playerAlias": "Player alias"
     },
     "aria": {
@@ -298,13 +297,20 @@
       },
       "new": {
         "title": "Create New Tournament",
-        "totalPlayersOptions": ["4", "8", "16"],
+        "placeholders": {
+          "tournamentTitle": "Enter the tournament title",
+          "totalPlayers": "Total players",
+          "totalPlayersOptions": ["4", "8", "16"]
+        },
         "aria": {
           "label": "Create a new tournament",
           "description": "Enter tournament title, select total players, and add registered players by clicking on player badges.",          
+          "form": "Form for creating a new tournament with title and player details",
           "titleInput": "Input field for the tournament title",
           "totalPlayersSelect": "Dropdown to select total number of players in the tournament",
-          "playerBadge": "Player profile badge, click to login or change player"
+          "playersSection": "Section displaying player profile badges. Click to log in or select a player",
+          "playerBadge": "Player profile badge, click to login or change player",
+          "playerEmpty": "Empty player profile badge, no player selected yet"
         }
       },
       "confirm": {
