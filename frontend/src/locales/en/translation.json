@@ -350,6 +350,7 @@
         "label": "Top players ranking list",
         "description": "View the top 10 players ranked by score in descending order, with your ranking visible even if you're not in the top 10.",
         "table": "Table displaying the top players in the leaderboard",
+        "emptyTable": "No players on the leaderboard yet",
         "columnUsername": "Leaderboard username column",
         "columnRival": "Leaderboard rival column",
         "columnTotalGames": "Leaderboard total games column",
