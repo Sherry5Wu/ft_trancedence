@@ -16,7 +16,8 @@ import SearchIcon from '../../assets/noun-search-7526678.svg?react';
 // }
 
 const fetchRivalData = async () => {
-  return ['B2', 'Coco', 'Winston'];
+  const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
+  return rivalData.sort();
 }
 
 const RivalsPage = () => {

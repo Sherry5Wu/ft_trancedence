@@ -4,25 +4,21 @@ import React, { ChangeEvent, useState, useEffect, useRef } from "react";
 interface SearchBarInputProps {
     type?: string;
     placeholder: string;
+    value: string;
+    options: string[];
     onFilled: (value: string) => void;
     onSelect: (value: string) => void;
-    value: string;
     className?: string;
-    options: string[];
-    selected?: string;
-    disabled?: boolean;
     isOpen: boolean;
 }
 
 export const SearchBar = ({
     type = "text",
     placeholder,
+    value,
+    options,
     onFilled,
     onSelect,
-    options,
-    selected,
-    disabled,
-    value,
     className = '',
 }: SearchBarInputProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,22 +26,9 @@ export const SearchBar = ({
   };
   
     const [isOpen, setIsOpen] = useState(false);
-    // const [internalSelected, setInternalSelected] = useState<string>("");
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const [filterText, setFilterText] = useState('');
-
-    // useEffect(() => {
-    // if (selected && selected !== internalSelected) {
-    //     setInternalSelected(selected);
-    // }
-    // }, [selected]);
-
-    // const handleToggle = () => {
-    // if (!disabled) setIsOpen((prev) => !prev);
-    // };
 
     const handleOptionClick = (value: string) => {
-        // setInternalSelected(value);
         onSelect(value);
         // setIsOpen(false);
     };
@@ -66,31 +49,36 @@ export const SearchBar = ({
             setIsOpen(false);
     }, [value])
 
-    // const filled = !!selected;
-
     return (
         <div className="relative w-full max-w-md mx-auto">
-        <input
-            type={type}
-            value={value}
-            onChange={handleChange}
-            placeholder={placeholder}
-            className={`${className} ${value ? "text-black" : ""}`}
-        />
-        {isOpen && (
-            <ul className="dropdown-menu !bg-[#FFEE8C] border-2 -translate-y-2">
-            {options.map((opt, index) => (
-                <li
-                key={index}
-                className={'dropdown-option'}
-                onClick={() => handleOptionClick(opt)}
-                >
-                {opt}
-                </li>
-            ))}
-            </ul>
-        )}
+            <input
+                type={type}
+                value={value}
+                onChange={handleChange}
+                placeholder={placeholder}
+                className={`${className} ${value ? "text-black" : ""}`}
+            />
+            {isOpen && (
+                <ul className="dropdown-menu !bg-[#FFEE8C] border-2 -translate-y-2">
+                {options.filter((option) => option.toLowerCase().includes(value.toLowerCase())).length > 0 ?
+                    options.filter((option) => option.toLowerCase().includes(value.toLowerCase()))
+                    .map((option, index) => (
+                        <li
+                            key={index}
+                            className={'dropdown-option'}
+                            onClick={() => handleOptionClick(option)}
+                        >
+                        {option}
+                        </li>
+                    ))
+                    :
+                    <li className='flex justify-center text-[#CD1C18] font-semibold'>No users found</li>
+                }</ul>
+            )}
         </div>
-
     );
 };
+
+//   const removePlayer = (userToRemove: string) => {
+//     setPlayers((prevPlayers) => prevPlayers.filter((player) => player.id !== userToRemove))
+//   };
