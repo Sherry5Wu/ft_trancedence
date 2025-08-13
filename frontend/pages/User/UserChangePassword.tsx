@@ -1,6 +1,8 @@
 // pages/User/UserChangePassword.tsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
@@ -9,6 +11,7 @@ import { useValidationField } from '../../hooks/useValidationField';
 import { isValidPassword } from '../../utils/Validation';
 
 const ChangePasswordPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const passwordField = useValidationField('', isValidPassword);
@@ -34,16 +37,39 @@ const ChangePasswordPage: React.FC = () => {
     !newPasswordField.error &&
     !passwordMismatch &&
     !newPasswordIsSame;
-  
-  return (
-    <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
-      <CloseButton className="ml-auto" />
 
-      <h3 className="font-semibold text-center">Change password</h3>
+    
+  return (
+    <main
+      className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+
+      <h1 id="pageTitle" className="sr-only">
+        {t('pages.changePassword.aria.label')}
+      </h1>
+
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.changePassword.aria.description')}
+      />
+
+      <CloseButton
+        className="ml-auto"
+        aria-label={t('common.aria.buttons.cancel')}
+        onClick={() => navigate('/settings')}
+      />
+
+      <h2 className="font-semibold text-center">
+        {t('pages.changePassword.title')}
+      </h2>
 
       <GenericInput
         type="password"
-        placeholder="Password"
+        placeholder={t('common.placeholders.password')}
+        aria-label={t('common.aria.inputs.password')}
         value={passwordField.value}
         onFilled={passwordField.onFilled}
         onBlur={passwordField.onBlur}
@@ -52,34 +78,37 @@ const ChangePasswordPage: React.FC = () => {
 
       <GenericInput
         type="password"
-        placeholder="New password"
+        placeholder={t('pages.changePassword.newPassword')}
+        aria-label={t('pages.changePassword.aria.newPassword')}
         value={newPasswordField.value}
         onFilled={newPasswordField.onFilled}
         onBlur={newPasswordField.onBlur}
         errorMessage={
           newPasswordField.error ||
-          (newPasswordIsSame ? 'New password must be different from current password' : '')
+          (newPasswordIsSame ? t('common.errors.newSameAsOldPassword') : '')
         }
       />
 
       <GenericInput
         type="password"
-        placeholder="Confirm new password"
+        placeholder={t('pages.changePassword.confirmNewPassword')}
+        aria-label={t('pages.changePassword.aria.confirmNewPassword')}
         value={confirmNewPassword}
         onFilled={setConfirmNewPassword}
-        errorMessage={passwordMismatch ? "New passwords do not match" : ''}
+        errorMessage={passwordMismatch ? t('common.errors.passwordMismatch') : ''}
       />
 
       <GenericButton
         className="generic-button"
-        text="SAVE"
+        text={t('common.buttons.save')}
+        aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
         onClick={() => {
-            alert('Password updated');
-            navigate('/settings');
+          alert(t('common.alerts.success'));
+          navigate('/settings');
         }}
       />
-    </div>
+    </main>
   );
 };
 

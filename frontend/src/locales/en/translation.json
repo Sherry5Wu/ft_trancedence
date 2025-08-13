@@ -244,9 +244,13 @@
 
     "changePassword": {
       "title": "Change password",
+      "newPassword": "Enter new password",
+      "confirmNewPassword": "Confirm new password",
       "aria": {
         "label": "Change Password Page",
-        "description": "Page to change your account password. Enter your current password, a new password, and confirm the new password."
+        "description": "Page to change your account password. Enter your current password, a new password, and confirm the new password.",
+        "password": "Input field to enter your new password",
+        "confirmPassword": "Input field to confirm your new password"
       }
       
     },
