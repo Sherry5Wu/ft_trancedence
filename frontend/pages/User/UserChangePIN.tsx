@@ -1,6 +1,8 @@
 // pages/User/UserChangePIN.tsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
@@ -9,6 +11,7 @@ import { useValidationField } from '../../hooks/useValidationField';
 import { isValidPin } from '../../utils/Validation';
 
 const ChangePINPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const currentPinField = useValidationField('', isValidPin);
@@ -36,14 +39,84 @@ const ChangePINPage: React.FC = () => {
     !newPinIsSame;
 
   return (
-    <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
-      <CloseButton className="ml-auto" />
+//     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
+//       <CloseButton className="ml-auto" />
 
-      <h3 className="font-semibold text-center">Change PIN</h3>
+//       <h3 className="font-semibold text-center">Change PIN</h3>
+
+//       <GenericInput
+//         type="password"
+//         placeholder="Current PIN code"
+//         value={currentPinField.value}
+//         onFilled={currentPinField.onFilled}
+//         onBlur={currentPinField.onBlur}
+//         errorMessage={currentPinField.error}
+//       />
+
+//       <GenericInput
+//         type="password"
+//         placeholder="New PIN code"
+//         value={newPinField.value}
+//         onFilled={newPinField.onFilled}
+//         onBlur={newPinField.onBlur}
+//         errorMessage={
+//           newPinField.error ||
+//           (newPinIsSame ? 'New PIN must be different from current PIN code' : '')
+//         }
+//       />
+
+//       <GenericInput
+//         type="password"
+//         placeholder="Confirm new PIN code"
+//         value={confirmNewPin}
+//         onFilled={setConfirmNewPin}
+//         errorMessage={pinMismatch ? 'PIN codes do not match' : ''}
+//       />
+
+//       <GenericButton
+//         className="generic-button"
+//         text="SAVE"
+//         disabled={!formFilled}
+//         onClick={() => {
+//           alert('PIN code updated');
+//           navigate('/settings');
+//         }}
+//       />
+//     </div>
+//   );
+// };
+
+// export default ChangePINPage;
+
+    <main
+      className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+      <h1 id="pageTitle" className="sr-only">
+        {t('pages.changePIN.aria.label')}
+      </h1>
+
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.changePIN.aria.description')}
+      />
+
+      <CloseButton
+        className="ml-auto"
+        aria-label={t('common.aria.buttons.cancel')}
+        onClick={() => navigate('/settings')}
+      />
+
+      <h2 className="font-semibold text-center">
+        {t('pages.changePIN.title')}
+      </h2>
 
       <GenericInput
         type="password"
-        placeholder="Current PIN code"
+        placeholder={t('common.placeholders.pin')}
+        aria-label={t('common.aria.inputs.pin')}
         value={currentPinField.value}
         onFilled={currentPinField.onFilled}
         onBlur={currentPinField.onBlur}
@@ -52,34 +125,37 @@ const ChangePINPage: React.FC = () => {
 
       <GenericInput
         type="password"
-        placeholder="New PIN code"
+        placeholder={t('pages.changePIN.newPIN')}
+        aria-label={t('pages.changePIN.aria.PIN')}
         value={newPinField.value}
         onFilled={newPinField.onFilled}
         onBlur={newPinField.onBlur}
         errorMessage={
           newPinField.error ||
-          (newPinIsSame ? 'New PIN must be different from current PIN code' : '')
+          (newPinIsSame ? t('common.errors.newSameAsOldPIN') : '')
         }
       />
 
       <GenericInput
         type="password"
-        placeholder="Confirm new PIN code"
+        placeholder={t('pages.changePIN.confirmNewPIN')}
+        aria-label={t('pages.changePIN.aria.confirmNewPIN')}
         value={confirmNewPin}
         onFilled={setConfirmNewPin}
-        errorMessage={pinMismatch ? 'PIN codes do not match' : ''}
+        errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
       />
 
       <GenericButton
         className="generic-button"
-        text="SAVE"
+        text={t('common.buttons.save')}
+        aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
         onClick={() => {
-          alert('PIN code updated');
+          alert(t('common.alerts.success'));
           navigate('/settings');
         }}
       />
-    </div>
+    </main>
   );
 };
 

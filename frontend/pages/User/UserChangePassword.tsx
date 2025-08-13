@@ -1,4 +1,4 @@
-// pages/User/UserChangePassword.tsx
+// /src/pages/User/UserChangePassword.tsx
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';

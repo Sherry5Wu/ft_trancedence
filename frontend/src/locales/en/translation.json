@@ -244,21 +244,26 @@
 
     "changePassword": {
       "title": "Change password",
-      "newPassword": "Enter new password",
+      "newPassword": "Enter your new password",
       "confirmNewPassword": "Confirm new password",
       "aria": {
         "label": "Change Password Page",
         "description": "Page to change your account password. Enter your current password, a new password, and confirm the new password.",
         "password": "Input field to enter your new password",
-        "confirmPassword": "Input field to confirm your new password"
+        "confirmNewPassword": "Input field to confirm your new password"
       }
       
     },
+
     "changePIN": {
       "title": "Change PIN",
+      "newPIN": "Enter your new player PIN",
+      "confirmNewPIN": "Confirm new player PIN",
       "aria": {
         "label": "Change PIN code Page",
-        "description": "Page to change your PIN code. Enter your current PIN code, a new PIN, and confirm the new PIN."
+        "description": "Page to change your PIN code. Enter your current PIN code, a new PIN, and confirm the new PIN.",
+        "PIN": "Input field to enter your new PIN code",
+        "confirmNewPIN": "Input field to confirm your new PIN code"
       }
     },
 
