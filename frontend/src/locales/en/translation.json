@@ -1,5 +1,9 @@
 {
   "common": {
+    "alerts": {
+      "success": "Temporary success message!",
+      "failure": "Temporary failure message!"
+    },
     "buttons": {
       "cancel": "Cancel",
       "save": "Save",
@@ -135,9 +139,11 @@
 
     "completeProfile": {
       "title": "Complete user registration",
+      "toggle2FA": "2FA with Google Authenticator",
       "aria": {
         "label": "Complete profile page",
-        "description": "This page allows users to complete their registration after sign in with Google by setting their username and player PIN. It also provides an option to enable two-factor authentication using Google Authenticator."
+        "description": "This page allows users to complete their registration after sign in with Google by setting their username and player PIN. It also provides an option to enable two-factor authentication using Google Authenticator.",
+        "toggle2FA": "Enable or disable two-factor authentication with Google Authenticator"
       }
     },
 
