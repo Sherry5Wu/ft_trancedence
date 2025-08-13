@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import { Menu } from './Menu.tsx'
 import { DropDownButton } from './DropDownButton.tsx';
@@ -63,6 +64,7 @@ const fetchRivalData = () => {
           
 export const RivalRows = () => {
     const rivalData = fetchRivalData();
+    const navigate = useNavigate();
 
     if (rivalData.length === 0)
       return (
@@ -71,23 +73,30 @@ export const RivalRows = () => {
 
     return (
         <div aria-label='rivals data' className='z-10'>
-            <div aria-label='rivals data categories' className='grid grid-cols-9 mb-1 text-center font-semibold'>
+            <div aria-label='rivals data categories' className='grid grid-cols-7 mb-1 text-center font-semibold'>
                 <span className=''></span>
-                <span className='col-span-2'>Name</span>
-                <span className='col-span-2'>Score</span>
-                <span className='col-span-2'>Win ratio</span>
-                <span className='col-span-2'>Matches played against</span>
+                <span className='col-span-1'>Name</span>
+                <span className='col-span-1'>Score</span>
+                <span className='col-span-1'>Win ratio</span>
+                <span className='col-span-1'>Your wins</span>
+                <span className='col-span-1'>Your losses</span>
+                <span className='col-span-1'>Matches played</span>
             </div>
 
             <ul>
             {rivalData.map((rival, index: number) => {
-                return <li className='grid grid-cols-9 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center transition ease-in-out duration-300 hover:scale-105'>
+                return (
+                  <li 
+                      className='grid grid-cols-7 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'
+                      onClick={() => navigate(`/user/${rival.name}`)}>
                 <img src={rival.picture} className='profilePicSmall'/>
-                <span className='col-span-2'>{rival.name}</span>
-                <span className='col-span-2'>{rival.score}</span>
-                <span className={`col-span-2 ${rival.winratio >= 50 ? rival.winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{rival.winratio}%</span>
-                <span className='col-span-2'>{rival.matches}</span>
-                </li>
+                <span className='col-span-1'>{rival.name}</span>
+                <span className='col-span-1'>{rival.score}</span>
+                <span className={`col-span-1 ${rival.winratio >= 50 ? rival.winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{rival.winratio}%</span>
+                <span className='col-span-1'>{rival.wins}</span>
+                <span className='col-span-1'>{rival.losses}</span>
+                <span className='col-span-1'>{rival.matches}</span>
+                </li>)
                 })
             }
             </ul>

@@ -31,7 +31,6 @@ export const SearchBar = ({
 
     const handleOptionClick = (value: string) => {
         onSelect(value);
-        // setIsOpen(false);
     };
 
     useClickOutside(ref, () => {setIsOpen(false), onFilled('')});
@@ -72,7 +71,3 @@ export const SearchBar = ({
         </div>
     );
 };
-
-//   const removePlayer = (userToRemove: string) => {
-//     setPlayers((prevPlayers) => prevPlayers.filter((player) => player.id !== userToRemove))
-//   };

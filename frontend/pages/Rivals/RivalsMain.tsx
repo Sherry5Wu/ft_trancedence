@@ -24,6 +24,7 @@ const RivalsPage = () => {
     const navigate = useNavigate();
     const searchField = useValidationField('', isValidUsername);
     const [rivalData, setRivalData] = useState<string[]>([]);
+    const [selected, setSelection] = useState('');
 
     useEffect(() => {
       const fetchRivals = async () => {
@@ -43,7 +44,7 @@ const RivalsPage = () => {
           <RivalIcon className='size-20' />
         </div>
 
-        <div className='min-w-100 relative'>
+        <div className='min-w-150 relative'>
           <div aria-label='rival search bar' className='flex relative z-10 mb-3 justify-start items-center group -translate-x-10'>
             <SearchIcon className='size-10 translate-x-11 -translate-y-0.5 z-10 transition ease-in-out duration-30
                                   group-focus-within:opacity-50'/>
@@ -54,7 +55,7 @@ const RivalsPage = () => {
                   value={searchField.value}
                   options={rivalData}
                   onFilled={searchField.onFilled}
-                  onSelect={() => navigate('/homeuser')}
+                  onSelect={(selection) => navigate(`/user/${selection}`)}
                   className='h-10 w-55 pl-11 bg-[#FFEE8C] rounded-full mb-3 border-2 border-transparent transition-all ease-in-out duration-200 
                                 hover:border-black focus:border-[#4682B4]'
                 />
