@@ -8,7 +8,10 @@
       "cancel": "Cancel",
       "save": "Save",
       "next": "Next",
+      "back": "Back",
       "ok": "OK",
+      "done": "Done",
+      "create": "Create",
       "signIn": "Sign In",
       "signUp": "Sign Up",
       "logIn": "Log In",
@@ -17,8 +20,7 @@
       "rivals": "Rivals",
       "leaderboard": "Leaderboard",
       "download": "Download",
-      "verify": "Verify",
-      "done": "Done"
+      "verify": "Verify"
     },
     "placeholders": {
       "username": "Enter your username",
@@ -266,6 +268,7 @@
 
     "tournament": {
       "list": {
+        "title": "Tournament List",
         "columnHeaders": {
           "title": "Title",
           "date": "Date",
