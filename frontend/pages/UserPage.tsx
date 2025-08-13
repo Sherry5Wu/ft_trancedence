@@ -5,20 +5,22 @@ import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
 import { Stats } from '../components/Stats';
 import { ResponsiveContainer } from 'recharts';
-import PlayIcon from '../assets/noun-ping-pong-7327427.svg?';
+import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
 import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
 import { useParams } from 'react-router-dom';
 
+const fetchUserPage = async () => {
+  
+}
+
 const UserPage = () => {
   const navigate = useNavigate(); // to access other pages
   const { user, setUser } = useUserContext();
-  const [hidden, setHidden] = useState(false);
   const [stats, setStats] = useState(false);
   const [history, setHistory] = useState(false);
-
 
   //mockdata
   // const playedGames = 77;
