@@ -1,21 +1,21 @@
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
+import { UserStats } from './Stats';
+// const fetchData = (user: string) => {
+//     //FETCH REAL DATA FROM BACKEND
 
-const fetchData = () => {
-    //FETCH REAL DATA FROM BACKEND
+//     //mockdata
+//     const data = [
+//         {key: 'wins', value: 7},
+//         {key: 'draws', value: 1},
+//         {key: 'losses', value: 5}
+//     ];
 
-    //mockdata
-    const data = [
-        {key: 'wins', value: 7},
-        {key: 'draws', value: 1},
-        {key: 'losses', value: 5}
-    ];
+//     const newData = [];
 
-    const newData = [];
+//     return data;
+// };
 
-    return data;
-};
-
-const colors = ['#2E6F40', '#252525', '#cd1c18'];
+const colors = ['#2E6F40', '#252525', '#CD1C18'];
 
 // const customTooltip = ({ active, payload, label}) => {
 //     if (active && payload && payload.length)
@@ -26,11 +26,9 @@ const colors = ['#2E6F40', '#252525', '#cd1c18'];
 //     )
 // }
 
-export const PieGraph = () => {
-    const data = fetchData();
+export const PieGraph = (data: UserStats) => {
 
     return (
-        <div className='p-4'>
         <ResponsiveContainer width='100%' aspect={1.25}>
             <PieChart width={500} height={300} data={data}>
                 <Pie dataKey='value' fill='#FFF' stroke='#000' strokeWidth={2} labelLine={false}
@@ -48,6 +46,5 @@ export const PieGraph = () => {
                 />
             </PieChart>
         </ResponsiveContainer>
-        </div>
     );
 }

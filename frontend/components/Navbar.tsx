@@ -1,6 +1,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from './Menu';
 import { OptionToggle } from './OptionToggle';
@@ -18,18 +18,28 @@ import MoonIcon from '../assets/noun-moon-5258339.svg?react';
 import ProfileIcon from '../assets/noun-profile-7808629.svg?react';
 import SettingsIcon from '../assets/noun-setting-2060937.svg?react';
 import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
+import { useTranslation } from 'react-i18next';
 
 {/* HANDLE USER AND DARK MODE STATE */}
 export const Navbar = () => {
-    const [isOn, setIsOn] = useState(false);
+    // const [isOn, setIsOn] = useState(false);
     const { user, setUser } = useUserContext();
     const { darkMode, setDarkMode } = useDarkModeContext();
     const { largeText, setLargeText} = useAccessibilityContext();
     const navigate = useNavigate();
-
+    
+    const { t, i18n } = useTranslation();
+    const changeLanguage = (lang) => {
+      i18n.changeLanguage(lang);
+      localStorage.setItem('lang', lang);
+    };
+     
     const handleTitleClick = () => {
         console.log('Going to title/profile page');
-        navigate('/homeuser');
+        if (user)
+            navigate(`/user/${user?.username}`);
+        else
+            navigate('/signin')
     } 
 
     const handleLogOut = () => {
@@ -44,11 +54,22 @@ export const Navbar = () => {
         setLargeText(!largeText);
     }
 
+    useEffect(() => {
+        const value = largeText ? '1.3' : '1.0';
+        console.log('Setting --scale-modifier to:', value);
+        document.documentElement.style.setProperty('--scale-modifier', value);
+    }), [handleTextSize];
+
+
     const languageMenuItems = [
-        {label: 'EN', Icon: <EnglishIcon />, onClick: () => console.log('English')},
-        {label: 'FR', Icon: <FrenchIcon />, onClick: () => console.log('French')},
-        {label: 'PT', Icon: <PortugueseIcon />, onClick: () => console.log('Portuguese')},
-        {label: 'FI', Icon: <FinnishIcon />, onClick: () => console.log('Finnish')}
+        {label: 'EN', Icon: <EnglishIcon />, onClick: () => changeLanguage('en')},
+        {label: 'FR', Icon: <FrenchIcon />, onClick: () => changeLanguage('fr')},
+        {label: 'PT', Icon: <PortugueseIcon />, onClick: () => changeLanguage('pt')},
+        // {label: 'FI', Icon: <FinnishIcon />, onClick: () => changeLanguage('fi')}
+        // {label: 'EN', Icon: <EnglishIcon />, onClick: () => console.log('English')},
+        // {label: 'FR', Icon: <FrenchIcon />, onClick: () => console.log('French')},
+        // {label: 'PT', Icon: <PortugueseIcon />, onClick: () => console.log('Portuguese')},
+        // {label: 'FI', Icon: <FinnishIcon />, onClick: () => console.log('Finnish')}
          /* ACTUALLY CHANGE THESE LATER */
     ]
 

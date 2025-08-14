@@ -5,13 +5,11 @@ Plan to do:
 		-Minor module: Use a database for the backend.
 
 	User management:
-		-Major module: Standard user management, authentication, users across
-	tournaments.
+		-Major module: Standard user management, authentication, users across tournaments.
 		-Major module: Implementing a remote authentication.
 
 	Gameplay and user experience:
 		-Minor module: Game customization options.
-		-Major module: Live chat.
 
 	AI-AIgo:
 		-Minor module: User and game stats dashboards
@@ -25,13 +23,13 @@ Plan to do:
 	Accessibility:
 		-Minor module: Supports multiple languages.
 
+	Graphics
+		- Major module: Use advanced 3D techniques.
 
 Maybe consider to do:
 	Gameplay and user experience
 		-Major module: Remote players
-
-	Graphics
-		- Major module: Use advanced 3D techniques.
+		-Major module: Live chat.
 
 	Accessibility:
 		-Minor module: Minor module: Expanding browser compatibility.
@@ -40,3 +38,7 @@ Maybe consider to do:
 	Server-Side Pong
 		-Major module: Replace basic Pong with server-side Pong and implement an
 API.(sherry)
+
+Services:
+	frontend, gateway, auth-service, stats-service, user-services, i18n-service and
+	game-service(this one not sure yet)

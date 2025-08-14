@@ -1,19 +1,22 @@
 @import 'tailwindcss';
-
-@tailwind base;
-@tailwind components;
+@import 'tailwindcss/preflight'
 @tailwind utilities;
 
-@layer base {
-  html {
-    @apply font-sans;
+:root {
+  --font-sans: 'Jost', sans-serif;
+  --scale-modifier: 1.0;
+}
+
+@layer utilities {
+  .scale-dynamic {
+    transform: scale(var(--scale-modifier));
+    transform-origin: center;
+    /* font-size: calc(var(--font-base) * var(--scale-modifier)); */
   }
 }
 
-html, body {
-  @apply m-0 p-0 h-full w-full;
-  /* overflow: hidden; optional */
-}
+/* body, html {
+} */
 
 .pageLayout {
   @apply flex flex-col items-center mr-7 gap-y-5
@@ -21,24 +24,67 @@ html, body {
 
 .menuIcon {
     @apply size-15 overflow-hidden border-b-3 border-transparent my-1 mx-2 
-        hover:border-black hover:cursor-pointer
+        hover:border-black hover:cursor-pointer transition ease-in-out duration-200
         focus:border-black
         active:fill-[#4682B4] active:border-[#4682B4]
 }
 
 .title {
-    @apply border-b-3 border-transparent 
+    @apply border-b-3 border-transparent transition ease-in-out duration-200
         hover:border-black hover:cursor-pointer
         focus:border-black
         active:text-[#4682B4] active:border-[#4682B4]
 }
 
+.dropdown-button {
+  @apply flex justify-between items-center h-9 w-full max-w-75 py-2 px-4 text-sm bg-[#FDFBD4] 
+        rounded-full cursor-pointer box-border
+}
+
+.dropdown-menu {
+  @apply absolute mt-1 top-full left-50 -translate-x-50 w-full max-w-75 bg-[#FDFBD4] rounded-2xl shadow-sm
+}
+
+.dropdown-option {
+  @apply py-2 px-3 cursor-pointer text-sm border-3 border-transparent origin-left
+        hover:font-bold hover:scale-110 transition-all ease-in-out duration-200
+}
+
+.round-icon-button {
+  @apply flex items-center justify-center mx-auto w-[100px] h-[100px] border-4 border-transparent rounded-full bg-black text-white shadow-md cursor-pointer transition ease-in-out duration-200
+    hover:border-white active:bg-[#4682B4]
+}
+
+.transparent-round-icon-button {
+  @apply flex items-center justify-center mx-auto w-[100px] h-[100px] border-4 border-black rounded-full text-black shadow-md cursor-pointer transition ease-in-out duration-200
+    hover:border-black hover:bg-[#FDFBD4] active:bg-[#4682B4]
+}
+
+.round-icon-button img,
+.round-icon-button svg {
+  @apply w-[80px] h-[80px] invert pointer-events-none;
+}
+
+.transparent-round-icon-button img,
+.transparent-round-icon-button svg {
+  @apply w-[80px] h-[80px] pointer-events-none;
+}
+
+.hover-label {
+  @apply mt-3 text-black opacity-0 -translate-y-3 transition duration-200 ease-in-out;
+}
+
+.button-wrapper:hover .hover-label {
+  @apply opacity-100 translate-y-0;
+}
+
 .profilePic {
-  @apply w-full h-full border-2 rounded-full object-cover mb-1 bg-[#FFEE8C]
+  @apply w-full h-full rounded-full object-cover mb-1 bg-[#FFEE8C] 
+  active:border-[#4682B4] transition ease-in-out duration-200
 }
 
 .profilePicBig { 
-  @apply size-32 border-3 rounded-full bg-[#FFEE8C]
+  @apply size-32 rounded-full bg-[#FFEE8C]
 }
 
 .profilePicSmall {
@@ -168,7 +214,7 @@ html, body {
 
 
 /* Round button style */
-.round-icon-button {
+/* .round-icon-button {
   display: flex;
   margin: 0 auto; 
   width: 100px;
@@ -189,7 +235,7 @@ html, body {
 .round-icon-button svg {
   width: 80px;
   height: 80px;
-  filter: invert(100%); /* 100% makes black SVG white */
+  filter: invert(100%);
   pointer-events: none;
 }
 .round-icon-button:hover {
@@ -197,7 +243,7 @@ html, body {
 }
 .round-icon-button:active {
   background-color: #d635e8;
-}
+} */
 /* .round-icon-button:focus,
 .round-icon-button:focus-visible {
   outline: 2px solid #ffffff;
@@ -213,18 +259,18 @@ html, body {
   position: relative;
 }
 /* Hidden by default */
-.hover-label {
+/* .hover-label {
   margin-top: 0.2rem;
   font-size: 14px;
   color: #4e4e4e;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   pointer-events: none;
-}
+} */
 /* Shown on hover */
-.button-wrapper:hover .hover-label {
+/* .button-wrapper:hover .hover-label {
   opacity: 1;
-}
+} */
 
 /* Prop for Generic button */
 .disabled-button {
@@ -243,7 +289,7 @@ html, body {
   max-width: 300px;
   padding: 10px 14px;
   font-size: 14px;
-  font-family: "Roboto", Arial, sans-serif;
+  /* font-family: "Roboto", Arial, sans-serif; */
   background-color: #fdfBD4;
   color: black;
   border:none;
@@ -273,14 +319,14 @@ html, body {
 
 
 
-/* TopDownButton */
-.topdown-wrapper {
+/* DropDownButton */
+.DropDown-wrapper {
   position: relative;
   display: flex;
   justify-content: center;
   margin: 0.5rem 0;
 }
-.topdown-button {
+.DropDown-button {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -299,18 +345,18 @@ html, body {
   transition: border-color 0.3s ease;
   color: gray; /* default gray */
 }
-.topdown-button.filled {
+.DropDown-button.filled {
   color: black;
 }
-.topdown-label {
+.DropDown-label {
   flex-grow: 1;
   text-align: left;
 }
-.topdown-arrow {
+.DropDown-arrow {
   margin-left: auto;
 }
 /* Dropdown menu */
-.topdown-menu {
+.DropDown-menu {
   position: absolute;
   top: 100%;
   left: 50%;
@@ -325,7 +371,7 @@ html, body {
   padding: 0;
   z-index: 10;
 }
-.topdown-option {
+.DropDown-option {
   padding: 10px 14px;
   cursor: pointer;
   font-size: 14px;
@@ -333,10 +379,10 @@ html, body {
   color: black;
   border-bottom: 1px solid #eee;
 }
-.topdown-option:last-child {
+.DropDown-option:last-child {
   border-bottom: none;
 }
-.topdown-option:hover {
+.DropDown-option:hover {
   background-color: #f0f0f0;
   border-radius: 20px;
 }

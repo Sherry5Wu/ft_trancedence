@@ -1,17 +1,14 @@
-// pages/Tornament/TournamenConfirm.tsx
+// /src/pages/Tornament/TournamenConfirm.tsx
 
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
-import { UserProfileBadge } from '../../components/UserProfileBadge';
 import { GenericInput } from '../../components/GenericInput';
+import { UserProfileBadge } from '../../components/UserProfileBadge';
 import { isValidAlias } from '../../utils/Validation';
-
-interface Player {
-  id: number;
-  avatarUrl?: string;
-}
+import { usePlayersContext } from '../../context/PlayersContext';
 
 interface AliasField {
   value: string;
@@ -19,186 +16,116 @@ interface AliasField {
   touched: boolean;
 }
 
-const TournamentPlayersPage: React.FC = () => {
+const TournamentConfirm: React.FC = () => {
+  const { t } = useTranslation();  
   const navigate = useNavigate();
-  const totalPlayers = 4;
+  const {
+    players,
+    totalPlayers,
+    setPlayerUsername,
+  } = usePlayersContext();
 
-  const initialFields: AliasField[] = Array.from({ length: totalPlayers }, (_, i) => ({
-    value: `Player ${i + 1}`,
-    error: '',
-    touched: false,
-  }));
+  const [aliasFields, setAliasFields] = useState<AliasField[]>([]);
 
-  const [aliasFields, setAliasFields] = useState<AliasField[]>(initialFields);
+  // 1. Sync players into alias fields on mount
+  // Initialize alias fields from players
+  useEffect(() => {
+    const fields = Array.from({ length: totalPlayers ?? 0 }, (_, i) => {
+      const player = players[i];
+      const name = player?.username || `Player ${i + 1}`;
+      return {
+        value: name,
+        error: '',
+        touched: false,
+      };
+    });
+
+    setAliasFields(fields);
+  }, [players, totalPlayers]);
+
+  // 2. AFTER aliasFields is initialized, sync back valid usernames to context
+  useEffect(() => {
+    aliasFields.forEach((field, idx) => {
+      const player = players[idx];
+      if (
+        player &&
+        field.value &&
+        field.error === '' &&
+        player.username !== field.value
+      ) {
+        setPlayerUsername(player.id, field.value);
+      }
+    });
+  }, [aliasFields, players, setPlayerUsername]);
+
+  const validateAlias = (value: string, index: number, allAliases: string[]): string => {
+    const trimmed = value.trim();
+    if (!isValidAlias(trimmed)) return t('common.errors.invalidAlias');
+
+    const lowerValue = trimmed.toLowerCase();
+    const occurrences = allAliases.filter(
+      (v, i) => i !== index && v.trim().toLowerCase() === lowerValue
+    );
+
+    if (occurrences.length > 0) return t('common.errors.duplicateAlias');
+    
+    return '';
+  };
 
   const handleAliasChange = (index: number, newValue: string) => {
-    setAliasFields(prev => {
+    setAliasFields((prev) => {
       const updated = [...prev];
       updated[index].value = newValue;
       updated[index].touched = true;
 
-      const isValid = isValidAlias(newValue);
-      updated[index].error = isValid ? '' : 'Invalid alias';
+      const allAliases = updated.map((f) => f.value);
+      updated[index].error = validateAlias(newValue, index, allAliases);
+
       return updated;
     });
   };
 
   const handleBlur = (index: number) => {
-    setAliasFields(prev => {
+    setAliasFields((prev) => {
       const updated = [...prev];
       updated[index].touched = true;
 
-      const isValid = isValidAlias(updated[index].value);
-      updated[index].error = isValid ? '' : 'Invalid alias';
+      const allAliases = updated.map((f) => f.value);
+      updated[index].error = validateAlias(updated[index].value, index, allAliases);
+      
       return updated;
     });
   };
 
-  // Check for duplicates
-  useEffect(() => {
-    const lowerValues = aliasFields.map(f => f.value.trim().toLowerCase());
-    const counts = lowerValues.reduce<Record<string, number>>((acc, alias) => {
-      acc[alias] = (acc[alias] || 0) + 1;
-      return acc;
-    }, {});
-
-    setAliasFields(prev =>
-      prev.map((field, i) => {
-        const alias = field.value.trim().toLowerCase();
-        const hasDuplicate = alias && counts[alias] > 1;
-        const error = field.touched
-          ? (!isValidAlias(field.value)
-              ? 'Invalid alias'
-              : hasDuplicate
-              ? 'Alias must be unique'
-              : '')
-          : '';
-        return { ...field, error };
-      })
-    );
-  }, [aliasFields.map(f => f.value).join('|')]);
-
   const formFilled =
-    aliasFields.every(f => f.value.trim() !== '') &&
-    aliasFields.every(f => f.error === '');
-
-  return (
-    <div className="flex flex-col items-center p-8 space-y-6">
-      <h3 className="font-semibold text-center text-xl">Choose player aliases</h3>
-
-      <div className="flex flex-col gap-4 mt-6 w-full max-w-xl">
-        {aliasFields.map((field, idx) => (
-          <div key={idx} className="flex items-center gap-4">
-            <UserProfileBadge user={{ id: idx + 1, avatarUrl: '' }} disabled />
-            <GenericInput
-              type="text"
-              placeholder={`Player ${idx + 1}`}
-              value={field.value}
-              onFilled={(val: string) => handleAliasChange(idx, val)}
-              onBlur={() => handleBlur(idx)}
-              showEditIcon
-              errorMessage={field.error}
-            />
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap justify-center gap-4 mt-8">
-        <GenericButton
-          className="generic-button"
-          text="BACK"
-          onClick={() => navigate('/tournaments/new')}
-        />
-        <GenericButton
-          className="generic-button"
-          text="START"
-          disabled={!formFilled}
-          onClick={() => navigate('/game')}
-        />
-      </div>
-    </div>
-  );
-};
-
-export default TournamentPlayersPage;
-
-
-// import React, { useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { GenericButton } from '../../components/GenericButton';
-// import { UserProfileBadge } from '../../components/UserProfileBadge';
-// import { GenericInput } from '../../components/GenericInput';
-// import { useValidationField } from '../../hooks/useValidationField';
-// import { isValidAlias } from '../../utils/Validation';
-
-// interface Player {
-//   id: number;
-//   avatarUrl?: string; // optional for badge
-// }
-
-// const TournamentPlayersPage: React.FC = () => {
-//   const navigate = useNavigate();
-
-//   // Hardcoded players list (replace with localStorage/backend later)
-//   const totalPlayers = 4;
-//   const playersMeta: Player[] = Array.from({ length: totalPlayers }, (_, i) => ({
-//     id: i + 1,
-//     avatarUrl: '', // use default or avatar string if available
-//   }));
-
-//   const [playerFields, setPlayerFields] = useState(
-//     () =>
-//       playersMeta.map((_, i) =>
-//         useValidationField(`Player ${i + 1}`, isValidAlias)
-//       ) // initialize with default values
-//   );
-
-//   // Check for duplicate aliases (case-insensitive)
-//   const aliasList = playerFields.map((field) => field.value.trim().toLowerCase());
-//   const hasDuplicate = aliasList.some(
-//     (alias, idx) => aliasList.indexOf(alias) !== idx
-//   );
-
-//   // Update error state for duplicates
-//   useEffect(() => {
-//     if (!hasDuplicate) return;
-
-//     const seen = new Map<string, number>();
-//     aliasList.forEach((alias, idx) => {
-//       if (seen.has(alias)) {
-//         const first = seen.get(alias)!;
-//         playerFields[first].setError('Alias must be unique');
-//         playerFields[idx].setError('Alias must be unique');
-//       } else {
-//         seen.set(alias, idx);
-//       }
-//     });
-//   }, [aliasList.join('|')]); // react to changes in alias values
-
-//   const formFilled =
-//     playerFields.every((field) => field.value.trim() !== '') &&
-//     playerFields.every((field) => !field.error) &&
-//     !hasDuplicate;
+    aliasFields.every((f) => f.value.trim() !== '') &&
+    aliasFields.every((f) => f.error === '');
 
 //   return (
+
+    
 //     <div className="flex flex-col items-center p-8 space-y-6">
 //       <h3 className="font-semibold text-center text-xl">Choose player aliases</h3>
 
 //       <div className="flex flex-col gap-4 mt-6 w-full max-w-xl">
-//         {playerFields.map((field, idx) => (
-//           <div key={playersMeta[idx].id} className="flex items-center gap-4">
-//             <UserProfileBadge user={{ id: playersMeta[idx].id, avatarUrl: '' }} disabled />
-//             <GenericInput
-//               type="text"
-//               placeholder={`Player ${idx + 1}`}
-//               value={field.value}
-//               onFilled={field.onFilled}
-//               onBlur={field.onBlur}
-//               showEditIcon={true}
-//               errorMessage={field.error}
-//             />
-//           </div>
-//         ))}
+//         {aliasFields.map((field, idx) => {
+//           const player = players[idx] ?? null;
+
+//           return (
+//             <div key={idx} className="flex items-center gap-4">
+//               <UserProfileBadge size="sm" user={player} disabled />
+//               <GenericInput
+//                 type="text"
+//                 placeholder={`Player ${idx + 1}`}
+//                 value={field.value}
+//                 onFilled={(val: string) => handleAliasChange(idx, val)}
+//                 onBlur={() => handleBlur(idx)}
+//                 showEditIcon
+//                 errorMessage={field.error}
+//               />
+//             </div>
+//           );
+//         })}
 //       </div>
 
 //       <div className="flex flex-wrap justify-center gap-4 mt-8">
@@ -218,4 +145,71 @@ export default TournamentPlayersPage;
 //   );
 // };
 
-// export default TournamentPlayersPage;
+// export default TournamentConfirm;
+
+  return (
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.tournament.confirm.aria.description')}
+      />
+
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
+        {t('pages.tournament.confirm.title')}
+      </h1>
+
+      <section
+        className="flex flex-col gap-4 mt-6 w-full max-w-xl"
+        aria-label={t('pages.tournament.confirm.aria.aliasesSection')}
+      >
+        {aliasFields.map((field, idx) => {
+          const player = players[idx] ?? null;
+          return (
+            <div key={idx} className="flex items-center gap-4">
+              <UserProfileBadge 
+                size="sm"
+                user={player}
+                disabled 
+              />
+              <GenericInput
+                id={`player-alias-${idx}`}
+                type="text"
+                placeholder={t('tournament.confirm.defaultPlayer', { number: idx + 1 })}
+                value={field.value}
+                onFilled={(val) => handleAliasChange(idx, val)}
+                onBlur={() => handleBlur(idx)}
+                showEditIcon
+                errorMessage={field.error}
+                aria-describedby={`player-alias-${idx}-error`}
+                aria-label={t('pages.tournament.confirm.aria.aliasInput', { index: idx + 1 })}
+                />
+            </div>
+          );
+        })}
+      </section>
+
+      <div className="flex flex-wrap justify-center gap-4 mt-8">
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.back')}
+          aria-label={t('common.aria.buttons.back')}
+          onClick={() => navigate('/tournaments/new')}
+        />
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.start')}
+          aria-label={t('common.aria.buttons.start')}
+          disabled={!formFilled}
+          onClick={() => navigate('/game')}
+        />
+      </div>
+    </main>
+  );
+};
+
+export default TournamentConfirm;

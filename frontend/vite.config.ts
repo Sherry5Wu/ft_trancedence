@@ -19,4 +19,7 @@ export default defineConfig ({
         port: 9000,
         host: true,
     },
+    optimizeDeps: {
+        force: true,
+    }
 });

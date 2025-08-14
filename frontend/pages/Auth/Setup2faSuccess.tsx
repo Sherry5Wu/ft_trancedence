@@ -1,59 +1,68 @@
-// pages/Auth/Setup2faSuccess.tsx
-// 2FA enabled confirmation screen
+// /src/pages/Auth/Setup2faSuccess.tsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
-import SecurityIcon from '../../assets/noun-security-6758282.svg';
+import SecurityIcon from '../../assets/noun-security-6758282.svg?react';
 
 const Setup2faSuccessPage: React.FC = () => {
-  const navigate = useNavigate(); // to access other pages
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center p-8 space-y-6">
-      <div>
-        {/* Page title */}
-        <h3 className="font-semibold text-center">
-          Setup Two-factor authentication</h3>
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.twoFactorAuth.success.aria.description')}
+      />
 
-        {/* Progress bar component */}
-        <ProgressBar currentStep={3} stepCompletion={{ 1: true, 2: true, 3: true }} />
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
+        {t('pages.twoFactorAuth.success.title')}
+      </h1>
 
-
-        <h4 className="font-semibold text-center">
-          Two-factor authentication (2FA) is now enabled for you account!
-        </h4>
-        <p className="text-center text-sm">
-          From now on, you’ll use Google Authenticator to sign in.
-        </p>
-
-        {/* Icon image */}
-        <img 
-          src={SecurityIcon} 
-          alt="Security Icon" 
-          className="w-40 h-40 mx-auto mb-4"
+      <ProgressBar
+        currentStep={3}
+        stepCompletion={{ 1: true, 2: true, 3: true }}
         />
 
-        <p className="text-center text-sm">
-          You have successfully enabled two-factor app authentication on your account. 2FA will be required even when signing in via Google or any third-party login method. From now on, whenever you sign in to your account, you’ll need to enter both your password and an authentication code. 
+      <section className="max-w-md text-center space-y-4">
+        <h2 className="font-semibold text-center text-lg">
+          {t('pages.twoFactorAuth.success.subtitle')}
+        </h2>
+
+        <p>
+          {t('pages.twoFactorAuth.success.successInfo')}
         </p>
 
-      </div>
-      {/* Cancel and Next Button */}
-      <div className="flex flex-wrap justify-center gap-6">
+        <SecurityIcon
+          className="mx-auto h-40 w-40 mb-4"
+          role="img"
+          aria-label={t('pages.twoFactorAuth.success.aria.securityIcon')}
+          focusable="false"
+        />
+
+        <p>
+          {t('pages.twoFactorAuth.success.successMessage')}
+        </p>
+      </section>
+
+      <div className="flex flex-wrap justify-center gap-6 mt-6">
         <GenericButton
           className="generic-button"
-          text="DONE"
-          icon={undefined}
-          hoverLabel={undefined}
-          disabled={false}
-          onClick={() => {
-            navigate('/homeuser'); // or this should redirect to 'signup' page? how to the infos already fill saved on the page?
-          }}
+          text={t('common.buttons.done')}
+          onClick={() => navigate('/homeuser')}
+          aria-label={t('common.aria.buttons.done')}
         />
       </div>
-    </div>
+    </main>
   );
 };
 

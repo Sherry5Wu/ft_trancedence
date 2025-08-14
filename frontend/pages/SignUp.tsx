@@ -8,7 +8,40 @@ import { ToggleButton } from '../components/ToggleButton';
 import { useValidationField } from '../hooks/useValidationField';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 
-const SignUpPage: React.FC = () => {
+
+const createUser = async (player: UserProfile): Promise<UserProfile | null> => {
+  console.log('Sending user:', player);
+  try {
+    const response = await fetch('http://localhost:8443/as/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(player)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } 
+  
+  catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+}
+
+interface UserProfile {
+  username: string;
+  email: string;
+  password: string;
+  pinCode: string;
+}
+
+const SignUpPage = () => {
+  
   const navigate = useNavigate();
 
   const usernameField = useValidationField('', isValidUsername);
@@ -108,9 +141,21 @@ const SignUpPage: React.FC = () => {
         className="generic-button"
         text="SIGN UP"
         disabled={!formFilled}
-        onClick={() => {
-          alert('Registered successfully!');
-          navigate('/homeuser');
+        onClick={async () => {
+          const newUser: UserProfile = {
+            username: usernameField.value,
+            email: emailField.value,
+            password: passwordField.value,
+            pinCode: pinField.value
+          };
+          const signUpData = await createUser(newUser);
+          if (signUpData) {
+            alert('Registered successfully!');
+            console.log(signUpData);
+            navigate('/signin');
+          }
+          else
+            alert('Registration failed. Please try again.'); // what went wrong? 
         }}
       />
 

@@ -8,7 +8,7 @@ WORKDIR /app
 # dependencies inside include: typescript, tailwindcss (both mandatory),
 # react, react-dom (for hooks, virtual DOMS, etc.),
 # postcss (so tailwind works), and vite (to run the dev server and to make typescript work with browsers)
-COPY package.json package-lock.json .
+COPY package.json package-lock.json ./
 
 # install node package manager
 RUN npm install
@@ -39,3 +39,4 @@ CMD ["sh", "/app/entrypoint.sh"]
 # in the project root:              npm install (for run with vite)
 #                                   npm install react-router-dom 
 #                                   npm install --save-dev @types/react-router-dom
+#                                   npm install react-i18next i18next

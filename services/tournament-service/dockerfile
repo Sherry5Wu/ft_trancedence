@@ -1,0 +1,12 @@
+FROM node:20-bullseye-slim
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY tournamentdata.js ./
+
+RUN npm install
+
+EXPOSE 3001
+
+CMD ["node", "tournamentdata.js"]

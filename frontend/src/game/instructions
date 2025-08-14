@@ -1,0 +1,9 @@
+In the terminal:
+python3 -m http.server 8000
+-In firefox, go to:
+http://localhost:8000/index.html
+
+The final index.html file will likely be at /frontend/
+This is just to be able to run the game independently for testing
+I will probably only use JavaScript, since it is allowed after choosing the graphics module
+The Game can be put in a separate .js file so that the main html file stays clean

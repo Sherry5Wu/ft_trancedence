@@ -1,6 +1,8 @@
-// pages/CompleteProfile.tsx
+// /src/pages/CompleteProfile.tsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
@@ -8,7 +10,32 @@ import { ToggleButton } from '../../components/ToggleButton';
 import { useValidationField } from '../../hooks/useValidationField';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 
+
+// async function createUser(player: Omit<Player, 'player_id'>): Promise<Player | null> {
+//   try {
+//     const response = await fetch('http://localhost:9000/', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(player)
+//     });
+    
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
+    
+//     return await response.json();
+//   } 
+  
+//   catch (error) {
+//     console.error('Error:', error);
+//     return null;
+//   }
+// }
+
 const CompleteProfilePage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const usernameField = useValidationField('', isValidUsername);
@@ -30,12 +57,25 @@ const CompleteProfilePage: React.FC = () => {
     !pinMismatch;
 
   return (
-    <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
-      <h3 className="font-semibold text-center">Complete user registration</h3>
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.completeProfile.aria.description')}
+      />
+
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
+        {t('pages.completeProfile.title')}
+      </h1>
 
       <GenericInput
-        type="username"
-        placeholder="Username"
+        type="text"
+        placeholder={t('common.placeholders.username')}
+        aria-label={t('common.aria.inputs.username')}
         value={usernameField.value}
         onFilled={usernameField.onFilled}
         onBlur={usernameField.onBlur}
@@ -44,7 +84,8 @@ const CompleteProfilePage: React.FC = () => {
 
       <GenericInput
         type="password"
-        placeholder="Player PIN"
+        placeholder={t('common.placeholders.pin')}
+        aria-label={t('common.aria.inputs.pin')}
         value={pinField.value}
         onFilled={pinField.onFilled}
         onBlur={pinField.onBlur}
@@ -53,28 +94,30 @@ const CompleteProfilePage: React.FC = () => {
 
       <GenericInput
         type="password"
-        placeholder="Confirm Player PIN"
+        placeholder={t('common.placeholders.confirmPin')}
+        aria-label={t('common.aria.inputs.confirmPin')}
         value={confirmPin}
         onFilled={setConfirmPin}
-        errorMessage={pinMismatch ? "PINs do not match" : ''}
+        errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
       />
 
       <ToggleButton
-        label="2FA with Google Authenticator"
+        label={t('pages.completeProfile.toggle2FA')}
+        aria-label={t('pages.completeProfile.aria.toggle2FA')}
         onClick={() => navigate('/setup2fa')}
       />
 
       <GenericButton
         className="generic-button"
-        text="SAVE"
+        text={t('common.buttons.save')}
+        aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
         onClick={() => {
-          alert('Registered successfully!');
+          alert(t('common.alerts.something')); // Temporary success message
           navigate('/homeuser');
         }}
       />
-
-    </div>
+    </main>
   );
 };
 

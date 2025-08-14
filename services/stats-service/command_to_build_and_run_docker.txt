@@ -1,0 +1,13 @@
+To build docker run 
+
+sudo docker build -t pong-backend .
+
+
+to run the docker use 
+ sudo docker run --env-file .env -p 3000:3000 -v $(pwd)/data:/app/data pong-backend
+
+ to stop the docker 
+  docker stop interesting_feistel 
+
+  interesting_feistel is the docker container name
+

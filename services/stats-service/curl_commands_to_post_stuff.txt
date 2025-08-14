@@ -1,0 +1,27 @@
+curl -X POST http://localhost:3000/match_history \
+  -H "Content-Type: application/json" \
+  -d '{
+    "player_id": "123abc",
+    "player_name": "PlayerOne",
+    "opponent_name": "PlayerTwo",
+    "result": "win"
+  }'
+
+
+curl http://localhost:3000/match_history
+
+curl http://localhost:3000/match_history/123abc
+
+
+
+curl -X POST http://localhost:3000/scores \
+  -H "Content-Type: application/json" \
+  -d '{
+    "player_id": "123abc",
+    "player_name": "PlayerOne",
+    "elo_score": 1040
+  }'
+
+curl -X PUT http://localhost:3000/scores/123abc \
+  -H "Content-Type: application/json" \
+  -d '{"elo_score": 1350}'

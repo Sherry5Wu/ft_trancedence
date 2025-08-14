@@ -1,0 +1,347 @@
+{
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "message": "Oops! The page you're looking for doesn't exist.",
+    "aria": {
+      "errorIcon": "404 error illustration"
+    }
+  },
+
+  "home": {
+    "welcome": "Welcome to ft_transcendence!",
+    "signInButton": "Sign in",
+    "aboutText": "This is a multiplayer ping pong game platform. Challenge friends, join tournaments, and climb the leaderboard.",
+    "aria": {
+      "signInButton": "Go to sign in page",
+      "toggleAboutText": "Toggle visibility of about section"
+    }
+  },
+
+  "homeUser": {
+    "score": "Score",
+    "rank": "Rank",
+    "stats": "Stats",
+    "matchHistory": "Match History",
+    "playButton": "Play",
+    "tournamentButton": "Tournament",
+    "rivalsButton": "Rivals",
+    "leaderboardButton": "Leaderboard",
+    "aria": {
+      "profilePicture": "User profile picture",
+      "statsToggle": "Toggle user statistics visibility",
+      "matchHistoryToggle": "Toggle user match history visibility",
+      "playButton": "Start a new game",
+      "tournamentButton": "Go to tournaments",
+      "rivalsButton": "View rivals",
+      "leaderboardButton": "View leaderboard"
+    }    
+  },
+
+  "signIn": {
+    "title": "Sign In",
+    "usernamePlaceholder": "Username",
+    "passwordPlaceholder": "Password",
+    "logInButton": "Log In",
+    "notRegistered": "Not registered?",
+    "signUp": "Sign up",
+    "aria": {
+      "usernameInput": "Enter your username",
+      "passwordInput": "Enter your password",
+      "logInButton": "Submit sign in form",
+      "signUpLink": "Go to sign up page"
+    }
+  },
+  
+  "signUp": {
+    "title": "Sign Up",
+    "usernamePlaceholder": "Username",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "pinPlaceholder": "Player PIN",
+    "confirmPinPlaceholder": "Confirm Player PIN",
+    "passwordMismatch": "Passwords do not match",
+    "pinMismatch": "PINs do not match",
+    "toggle2FA": "2FA with Google Authenticator",
+    "submitButton": "Sign Up",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "aria": {
+      "usernameInput": "Enter your desired username",
+      "emailInput": "Enter your email address",
+      "passwordInput": "Enter your password",
+      "confirmPasswordInput": "Re-enter your password for confirmation",
+      "pinInput": "Enter your player PIN",
+      "confirmPinInput": "Re-enter your player PIN for confirmation",
+      "toggle2FA": "Enable or disable two-factor authentication with Google Authenticator",
+      "submitButton": "Submit registration form",
+      "signInLink": "Go to sign in page"
+    }
+  },
+
+  "logInPlayer": {
+    "title": "Log in a player",
+    "usernamePlaceholder": "Username",
+    "pinPlaceholder": "Player PIN",
+    "okButton": "OK",
+    "aria": {
+      "usernameInput": "Enter the second player's username",
+      "pinInput": "Enter the second player's PIN",
+      "okButton": "Confirm player login"
+    }
+  },
+
+  "completeProfile": {
+    "title": "Complete user registration",
+    "usernamePlaceholder": "Username",
+    "pinPlaceholder": "Player PIN",
+    "confirmPinPlaceholder": "Confirm Player PIN",
+    "pinMismatch": "PINs do not match",
+    "toggle2FA": "2FA with Google Authenticator",
+    "saveButton": "Save",
+    "successMessage": "Registered successfully!",
+    "aria": {
+      "usernameInput": "Enter your desired username",
+      "pinInput": "Enter your player PIN",
+      "confirmPinInput": "Re-enter your player PIN for confirmation",
+      "toggle2FA": "Enable or disable two-factor authentication with Google Authenticator",
+      "saveButton": "Submit completed profile form"
+    }
+  },
+
+  "verify2fa": {
+    "title": "Two-factor Authentication",
+    "subtitle": "Verify your account",
+    "instructions": "You have 2FA enabled on this account. Please enter the verification code from your Google Authenticator app to complete the login process.",
+    "verifyCodeTitle": "Verify the code from the app",
+    "verifyButton": "VERIFY",
+    "backupPrompt": "Can’t find your device?",
+    "backupLink": "Use a backup code",
+    "aria": {
+      "codeInput": "Enter your 6-digit two-factor authentication code",
+      "verifyButton": "Submit verification code",
+      "backupLink": "Use a backup code instead"
+    }
+  },
+
+  "setup2faMain": {
+    "title": "Setup Two-factor Authentication",
+    "scanQrTitle": "Scan the QR code",
+    "scanQrInstructions": "Open the Google Authenticator app and scan this QR code.",
+    "manualSetupPrompt": "Unable to scan? You can use the",
+    "manualSetupLink": "setup key",
+    "manualSetupSuffix": "to manually configure your authenticator app.",
+    "downloadAppInfo": "Don’t have the app? Google Authenticator is a free 2FA app. Download it on your mobile device by searching for “Google Authenticator” on the Play Store or Apple Store.",
+    "verifyCodeTitle": "Verify the code from the app",
+    "cancelButton": "CANCEL",
+    "nextButton": "NEXT",
+    "aria": {
+      "codeInput": "Enter the 6-digit verification code from your authenticator app",
+      "cancelButton": "Cancel two-factor authentication setup",
+      "nextButton": "Continue to backup code setup"
+    }
+  },
+  
+  "setup2faBackup": {
+    "title": "Setup Two-factor Authentication",
+    "backupCodesTitle": "Backup verification codes",
+    "backupCodesInfo": "With 2FA enabled for your account, you can use the recovery codes as a second factor to authenticate in case you lose your device. We recommend keeping them in a secure place.",
+    "downloadButton": "DOWNLOAD",
+    "keepSafeTitle": "Keep your recovery codes in a safe spot",
+    "keepSafeInfo": "If you lose your device and can’t find your recovery codes, you will lose access to your account.",
+    "cancelButton": "CANCEL",
+    "nextButton": "NEXT",
+    "aria": {
+      "downloadButton": "Download your recovery codes",
+      "cancelButton": "Cancel two-factor authentication setup",
+      "nextButton": "Finish two-factor authentication setup"
+    }
+  },
+
+  "setup2faSuccess": {
+    "title": "Setup Two-factor Authentication",
+    "successTitle": "Two-factor authentication (2FA) is now enabled for your account!",
+    "shortInfo": "From now on, you’ll use Google Authenticator to sign in.",
+    "longInfo": "You have successfully enabled two-factor app authentication on your account. 2FA will be required even when signing in via Google or any third-party login method. From now on, whenever you sign in to your account, you’ll need to enter both your password and an authentication code.",
+    "doneButton": "DONE",
+    "aria": {
+      "doneButton": "Finish two-factor authentication setup and return to homepage"
+    }
+  },
+
+  "userSettings": {
+    "profile": {
+      "ariaUpload": "Upload a new profile picture",
+      "altUploaded": "Uploaded profile picture"
+    },
+    "usernameHeading": "Username",
+    "accountSettings": {
+      "title": "Account Settings",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "username": "Username",
+      "saveChanges": "Save changes",
+      "ariaSaveChanges": "Save account settings changes"
+    },
+    "security": {
+      "title": "Security",
+      "changePassword": "Change Password",
+      "changePIN": "Change PIN",
+      "ariaChangePassword": "Go to change password page",
+      "ariaChangePIN": "Go to change PIN page"
+    },
+    "twoFactor": {
+      "title": "Two-factor authentication",
+      "description": "Two-factor authentication is an enhanced security measure. Once enabled, you’ll be required to give two types of identification when you log into this website. Google Authenticator is supported.",
+      "toggleLabel": "2FA with Google Authenticator",
+      "ariaToggle": "Enable or disable Google Authenticator two-factor authentication"
+    }
+  },
+
+  "changePassword": {
+    "title": "Change password",
+    "currentPassword": "Password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "errors": {
+      "newSameAsOld": "New password must be different from current password",
+      "mismatch": "New passwords do not match"
+    },
+    "saveButton": "SAVE",
+    "ariaSaveButton": "Save new password"
+  },
+
+  "changePIN": {
+    "title": "Change PIN",
+    "currentPIN": "Current PIN code",
+    "newPIN": "New PIN code",
+    "confirmNewPIN": "Confirm new PIN code",
+    "errors": {
+      "newSameAsOld": "New PIN must be different from current PIN code",
+      "mismatch": "PIN codes do not match"
+    },
+    "saveButton": "SAVE",
+    "ariaSaveButton": "Save new PIN code"
+  },
+
+
+  "choosePlayers": {
+    "title": "Choose players",
+    "player1Placeholder": "Player 1",
+    "player2Placeholder": "Player 2",
+    "player2TypeRegistered": "Registered",
+    "player2TypeGuest": "Guest",
+    "player2GuestAlert": "Fill the guest player!",
+    "errorDuplicateAlias": "Player aliases must be different",
+    "buttonCancel": "Cancel",
+    "buttonPlay": "Play",
+    "aria": {
+      "label": "Form to choose Player 1 and Player 2, with options for Registered or Guest players",
+      "description": "Enter aliases for two players. Player 2 can be a registered user or guest.",
+      "choosePlayersSection": "Section for selecting player 1 and player 2",
+      "player1Input": "Input for player 1 alias",
+      "player2Input": "Input for player 2 alias",
+      "player2TypeRegisteredButton": "Select player 2 as registered player, requires login",
+      "player2TypeGuestButton": "Select player 2 as guest player",
+      "playButton": "Start the game if both player aliases are valid and different",
+      "cancelButton": "Cancel player selection and go back"
+    }
+  },
+
+
+  "tournamentMain": {
+   "tournamentMain": {
+    "title": "Tournament List",
+    "columnHeaders": {
+      "title": "Title",
+      "date": "Date",
+      "players": "Players",
+      "winner": "Winner",
+      "expandBracketButton": "Expand bracket for tournament {{tournamentId}}"
+    },
+    "buttons": {
+      "back": "Back",
+      "create": "Create",
+      "loadMore": "Load more tournaments",
+      "showLess": "Show fewer tournaments"
+    },
+    "aria": {
+      "label": "List of tournaments",
+      "description": "Browse existing tournaments with details like date, players count, and winner. Expand for bracket view.",
+      "tournamentList": "List of tournaments with details such as title, date, number of players, and winner",
+      "tournamentRow": "Tournament row with title, date, player count, and winner",
+      "expandButton": "Button to expand or collapse the tournament bracket",
+      "loadMoreButton": "Button to load more tournaments",
+      "showLessButton": "Button to collapse tournament list"
+    }
+  },
+
+  "tournamentNew": {
+    "title": "Create New Tournament",
+    "input": {
+      "titlePlaceholder": "Tournament title",
+      "totalPlayersLabel": "Total players",
+      "totalPlayersOptions": ["4", "8", "16"]
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "next": "Next"
+    },
+    "aria": {
+      "label": "Create a new tournament",
+      "description": "Enter tournament title, select total players, and add registered players by clicking on player badges.",
+      "titleInput": "Input field for the tournament title",
+      "totalPlayersDropdown": "Dropdown to select total number of players in the tournament",
+      "playerBadge": "Player profile badge, click to login or change player",
+      "cancelButton": "Cancel new tournament creation and return to tournaments list",
+      "nextButton": "Proceed to next step of tournament creation"
+    }
+  },
+
+  "tournamentConfirm": {
+    "title": "Confirm Tournament Details",
+    "aliasInputPlaceholder": "Player alias",
+    "errors": {
+      "invalidAlias": "Invalid alias",
+      "aliasNotUnique": "Alias must be unique"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "aria": {
+      "label": "Confirm tournament details",
+      "description": "Review the tournament title, players, and settings before confirming to start the tournament.",
+      "aliasInput": "Input field to edit player alias for player {{index}}",
+      "aliasErrorInvalid": "Alias is invalid",
+      "aliasErrorNotUnique": "Alias is already taken",
+      "cancelButton": "Cancel tournament confirmation and return",
+      "confirmButton": "Confirm tournament player aliases and continue"
+    }
+  },
+
+  "rivals": {
+
+  },
+
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No players to show.",
+    "columns": {
+      "username": "Username",
+      "rival": "Rival",
+      "totalGames": "Total games",
+      "score": "Score"
+    },
+    "aria": {
+      "table": "Leaderboard table",
+      "columnUsername": "Leaderboard username column",
+      "columnRival": "Leaderboard rival column",
+      "columnTotalGames": "Leaderboard total games column",
+      "columnScore": "Leaderboard score column"
+    }
+  }
+
+
+}
