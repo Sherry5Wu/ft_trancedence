@@ -12,7 +12,7 @@ import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
 import { useParams } from 'react-router-dom';
 
-const fetchUserPage = async () => {
+const fetchUserPageData = async () => {
   
 }
 
@@ -44,7 +44,7 @@ const UserPage = () => {
       </div>
 
       <div className='w-56 truncate mb-12'>
-        <h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{user?.username} </h2>
+        <h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{param.username} </h2>
         <div className='flex justify-between'>
           <h4 className='h4 ml-2 scale-dynamic'>Score</h4>
           <h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{user?.score}</h4>
@@ -58,6 +58,7 @@ const UserPage = () => {
       {/* Buttons */}
 
       {param.username === user?.username ? 
+
       <div className="flex flex-wrap justify-center gap-6">
         <GenericButton
           className="round-icon-button"
@@ -94,16 +95,26 @@ const UserPage = () => {
       </div>
 
       :
-
+      //CHECK IF PAGE BELONGS TO A RIVAL
         <GenericButton
-          className="round-icon-button"
+          className="transparent-round-icon-button"
           text={undefined}
           icon={<img src={RivalsIcon} alt="Rivals icon" />}
-          hoverLabel="RIVALS"
+          hoverLabel='ADD TO RIVALS'
           onClick={() => 
-            navigate('/rivals')}
+            navigate('/rivals') //add to Rivals instead
+          }
         />
 
+        //   <GenericButton
+        //   className="round-icon-button"
+        //   text={undefined}
+        //   icon={<img src={RivalsIcon} alt="Rivals icon" />}
+        //   hoverLabel='REMOVE FROM RIVALS'
+        //   onClick={() => 
+        //     navigate('/rivals') //add to Rivals instead
+        //   }
+        // />
       }
 
       {/* Statistics */}
@@ -134,7 +145,8 @@ const UserPage = () => {
               {history && <MatchHistory player1={user} />}
             </div>
           </div>
-          </div>)}
+          </div>)
+}
     
 
 
