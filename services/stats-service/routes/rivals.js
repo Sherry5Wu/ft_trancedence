@@ -6,9 +6,16 @@ export default async function rivalsRoutes(fastify) {
     fastify.get('/:player_id', (request, reply) => {
         const { player_id } = request.params;
         try {
-        const stmt = db.prepare('SELECT * FROM rivals WHERE player_id = ?');
-        const rows = stmt.all(player_id);
-        reply.send(rows);
+            const stmt = db.prepare('SELECT * FROM rivals WHERE player_id = ?');
+            const rows = stmt.all(player_id);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player_id was not found' });
+            }
         }
         catch (err)
         {
@@ -19,13 +26,20 @@ export default async function rivalsRoutes(fastify) {
     fastify.get('/username/:player_username', (request, reply) => {
         const { player_username } = request.params;
         try {
-        const stmt = db.prepare('SELECT * FROM rivals WHERE player_username = ?');
-        const rows = stmt.all(player_username);
-        reply.send(rows);
+            const stmt = db.prepare('SELECT * FROM rivals WHERE player_username = ?');
+            const rows = stmt.all(player_username);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player username was not found' });
+            }
         }
         catch (err)
         {
-        reply.status(500).send({ error: err.message });
+            reply.status(500).send({ error: err.message });
         }
     });
 
@@ -72,7 +86,6 @@ export default async function rivalsRoutes(fastify) {
     fastify.delete('/:rival_id', { preHandler: requireAuth }, (request, reply) => {
         const player_id = request.id;
         const { rival_id } = request.params;
-        
         try {
         const stmt = db.prepare(`
             DELETE FROM rivals 

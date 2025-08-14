@@ -113,6 +113,51 @@ def test_get_user_match_data_by_id():
     print(response.json())
     assert response.status_code == 200
 
+def test_get_user_match_data_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    print(f"{STATS_URL}/user_match_data/{username}")
+    response = requests.get(f"{STATS_URL}/user_match_data/username/{username}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
+def test_get_score_history():
+    """Test GET /score_history - public route"""
+    response = requests.get(f"{STATS_URL}/score_history", verify=False)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_get_score_history_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+    print(f"{STATS_URL}/user_match_data/{user_id}")
+    response = requests.get(f"{STATS_URL}/score_history/{user_id}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
+def test_get_score_history_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    print(f"{STATS_URL}/user_match_data/{username}")
+    response = requests.get(f"{STATS_URL}/score_history/username/{username}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
 def test_add_rival():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     headers = get_auth_headers(ACCESS_TOKEN)
@@ -145,6 +190,20 @@ def test_get_rival_by_id():
     assert response1.status_code == 200
     user_id = response1.json()["id"]
     response = requests.get(f"{STATS_URL}/rivals/{user_id}", verify=False)
+    print(response.json())
+    assert isinstance(response.json(), list)
+
+def test_get_rival_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    response = requests.get(f"{STATS_URL}/rivals/username/{username}", verify=False)
     print(response.json())
     assert isinstance(response.json(), list)
 
@@ -219,7 +278,21 @@ def test_get_match_history_by_id():
     response = requests.get(f"{STATS_URL}/match_history/test-user-id", verify=False)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
-    print("✅ GET match_history by ID test passed")
+
+def test_get_match_history_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    response = requests.get(f"{STATS_URL}/match_history/username/{username}", verify=False)
+    print(response.json())
+    assert isinstance(response.json(), list)
+
 
 def test_different_users():
     """Test with different JWT tokens - updated with new fields"""

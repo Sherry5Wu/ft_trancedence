@@ -21,7 +21,14 @@ export default async function scoreHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare('SELECT * FROM score_history WHERE player_id = ? ORDER BY played_at DESC');
             const rows = stmt.all(player_id);
-            reply.send(rows);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player id was not found' });
+            }
         }
         catch (err)
         {
@@ -35,7 +42,14 @@ export default async function scoreHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare('SELECT * FROM score_history WHERE player_username = ? ORDER BY played_at DESC');
             const rows = stmt.all(player_username);
-            reply.send(rows);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player username was not found' });
+            }
         }
         catch (err)
         {

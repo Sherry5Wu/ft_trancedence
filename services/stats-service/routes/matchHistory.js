@@ -7,27 +7,56 @@ export default async function matchHistoryRoutes(fastify) {
     // /match_history
     fastify.get('/', (request, reply) => {
         try {
-        const rows = db.prepare('SELECT * FROM match_history').all();
-        reply.send(rows);
+            const rows = db.prepare('SELECT * FROM match_history').all();
+            reply.send(rows);
         } catch (err) {
-        reply.status(500).send({ error: err.message });
+            reply.status(500).send({ error: err.message });
         }
     });
     
     // /match_history/:player_id
     fastify.get('/:player_id', (request, reply) => {
-        const { player_id } = request.params;
-    
+        const { player_id } = request.params
         try {
-        const stmt = db.prepare(`
-            SELECT * FROM match_history
-            WHERE player_id = ?
-            ORDER BY played_at DESC
-        `);
-        const rows = stmt.all(player_id);
-        reply.send(rows);
+            const stmt = db.prepare(`
+                SELECT * FROM match_history
+                WHERE player_id = ?
+                ORDER BY played_at DESC
+            `);
+            const rows = stmt.all(player_id);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player id was not found' });
+            }
         } catch (err) {
-        reply.status(500).send({ error: err.message });
+            reply.status(500).send({ error: err.message });
+        }
+    });
+
+     // /match_history/username/:player_username
+    fastify.get('/username/:player_username', (request, reply) => {
+        const { player_username } = request.params
+        try {
+            const stmt = db.prepare(`
+                SELECT * FROM match_history
+                WHERE player_username = ?
+                ORDER BY played_at DESC
+            `);
+            const rows = stmt.all(player_username);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player id was not found' });
+            }
+        } catch (err) {
+            reply.status(500).send({ error: err.message });
         }
     });
 
