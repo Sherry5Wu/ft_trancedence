@@ -1,7 +1,7 @@
 import requests
 import json
 
-BASE_URL = "http://localhost:8443"
+BASE_URL = "https://localhost:8443"
 STATS_URL = f"{BASE_URL}/stats"
 AUTH_URL = f"{BASE_URL}/as"
 
