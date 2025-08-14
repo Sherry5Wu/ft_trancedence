@@ -4,8 +4,8 @@ import { useUserContext } from '../context/UserContext';
 
 interface MatchData {
     played_at: string,
-    player_name: string,
-    opponent_name: string, 
+    player_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
+    opponent_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
     opponent_id: string,
     player_score: number,
     opponent_score: number,
@@ -98,17 +98,6 @@ export const MatchHistory = () => {
              -
             </div>
     )};
-    
-
-    // FETCH MATCH HISTORY FROM PLAYER 1
-    // const matchData = fetchMatchData(user?.username);
-
-    // if (matchData.length  === 0)
-    //     return (
-    //         <div aria-label='empty match history' className='bg-[#FFEE8C] rounded-full text-center'>
-    //         -
-    //         </div>
-    // );
 
     return (
         <div aria-label='match history' className=''>

@@ -40,13 +40,14 @@ const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>
     if (!response.ok)
       throw new Error(`HTTP error! Status: ${response.status}`);
   
-    const data: ScoreHistory[] = await response.json();
+    const data = await response.json();
     
     // Mapataan ja muokataan API-vastauksesta oikea muoto
-    const filteredData: ScoreHistory[] = data.map(item => ({
+    const filteredData: ScoreHistory[] = data.map((item: ScoreHistory) => (
+      {
         id: item.id,
         elo_score: item.elo_score,  // Jos API:sta puuttuu tämä kenttä, se voidaan jättää pois
-    }));
+      }));
     console.log('from fetchScoreHistory ');
     console.log(filteredData);
     return filteredData;
@@ -103,15 +104,11 @@ export const Stats = ({ user }: StatsProps) =>
 
   useEffect(() => {
     if (!user) return;
-    setLoading(true);
-    fetchUserStats(user).then((data) => {
-      setUserStats(data);
-    });
-    fetchScoreHistory(user).then((data) => {
-      setScoreHistory(data);
-      setLoading(false);
-    })
-  }, [user]);
+    Promise.all([
+      fetchUserStats(user).then((data) => setUserStats(data)),
+      fetchScoreHistory(user).then((data) => setScoreHistory(data),)])
+    .finally(() => setLoading(false));
+    }, [user]);
 
   if (loading)
     return <div className='flex justify-center my-5'>Loading...</div>
