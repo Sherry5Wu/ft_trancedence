@@ -1,17 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
-import { Menu } from './Menu.tsx'
-import { DropDownButton } from './DropDownButton.tsx';
-import { userContext, useUserContext } from '../context/UserContext';
+// import { Menu } from './Menu.tsx'
+// import { DropDownButton } from './DropDownButton.tsx';
+import { useUserContext } from '../context/UserContext';
 
 const fetchRivalData = async () => {
 	const { user } = useUserContext();
-	let rivalDataArray: any[] = [];
+
+	if (!user)
+		return [];
  
 	try {
-		for (let i = 0; user?.rivals.at(i); i++) {
-			const response = await fetch(`http://localhost:8443/as/auth/login/${user.rivals.at(i)}`, { //FIX LATER
+		const promises = user.rivals.map(async (rivalName) => {
+			const response = await fetch(`http://localhost:8443/as/auth/login/${rivalName}`, { //FIX LATER
 				method: 'GET',
 				headers: {
 				'Content-Type': 'application/json',
@@ -22,16 +24,16 @@ const fetchRivalData = async () => {
 				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
 
-			const data = await response.json();
-			rivalDataArray.push(data);
-		}
+			return response.json();
+		})
+
+		const rivalDataArray = await Promise.all(promises);
+		return rivalDataArray.sort(); //sort alphabetically
 	}
 	catch (error) {
 		console.error('Error:', error);
 		return null;
     }
-
-	return rivalDataArray.sort(); //alphabetically
 
   // let rivalData =[
   //   {
@@ -91,13 +93,26 @@ const fetchRivalData = async () => {
 export const RivalRows = () => {
 	const { user } = useUserContext();
     const navigate = useNavigate();
+	const [loading, setLoading] = useState(true);
+	const [rivalData, setRivalData] = useState('');
 
-  	if (!user?.rivals)
-      return (
-        <div className='flex justify-center'>No rivals yet</div>
-    )
-	
-    const rivalData = fetchRivalData();
+	useEffect(() => {
+		const fetchData = async () => {
+			const fetchedData = await fetchRivalData();
+			if (fetchedData)
+			{
+				setLoading(false);
+				setRivalData(fetchedData);
+			}
+		}
+		fetchData();
+	}, [user])
+
+  	if (!user?.rivals && !loading)
+    	return <div className='flex justify-center'>No rivals yet</div>;
+
+	if (loading)
+		return <div className='flex justify-center'>Loading rivals...</div>;
 
     return (
         <div aria-label='rivals data' className='z-10'>
