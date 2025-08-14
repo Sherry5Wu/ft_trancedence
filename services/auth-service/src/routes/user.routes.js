@@ -15,6 +15,9 @@ export default fp(async (fastify) => {
   // --- Configure upload directory and static service ---
   // Treat env as uploads root (default ./uploads). Avatars are stored in uploads/avatars.
   const avatarUploadPathEnv = process.env.AVATAR_UPLOAD_PATH || './uploads/avatars';
+  // cwd: current work directory
+  // path.reslove(): resolves a series of paths into an absolute path.
+  // path.resolve('/app', './uploads/avatars') // => '/app/uploads/avatars'
   const uploadsRoot = path.resolve(process.cwd(), avatarUploadPathEnv); // e.g. /app/uploads/avatars
 
   // Public prefix used by fastify-static and returned avatar URLs
@@ -22,6 +25,7 @@ export default fp(async (fastify) => {
 
   // Ensure the directory exists (use promise API)
   try {
+    // The recursive: true option prevents an error if the directory already exists.
     await fsp.mkdir(uploadsRoot, { recursive: true });
   } catch (err) {
     fastify.log.error({ err }, 'Failed to ensure upload directory exists');
@@ -30,8 +34,8 @@ export default fp(async (fastify) => {
 
   // Register fastify-static to provide static file access at /uploads/...
   await fastify.register(fastifyStatic, {
-    root: uploadsRoot,
-    prefix: `${uploadsPrefix}/`, // e.g. request to /uploads/avatars/xxx.jpg will serve file uploadsRoot/avatars/xxx.jpg
+    root: uploadsRoot, // directory for storing the avatars on local: /app/uploads/avatars
+    prefix: `${uploadsPrefix}/`, // Client accesses URL prefix. e.g. request to /uploads/avatars/xxx.jpg will serve file uploadsRoot/avatars/xxx.jpg
     decorateReply: false // Disable automatic handling
   });
 

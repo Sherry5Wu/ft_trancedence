@@ -52,7 +52,7 @@ async function buildApp() {
   // Register plugins and routes with async/await to catch errors early
   app.register(multipart, {
     limits: {
-      fizeSize: 5 * 1024 * 1024, // 5MB
+      fileSize: 5 * 1024 * 1024, // 5MB
       files: 1,
     }
   });

@@ -1,16 +1,12 @@
 
+1. graceFullyShutDown() ????
 
-3. in auth-service.js, why not import { User, RefreshToken } from '../db/index.js';
-
-6. graceFullyShutDown() ????
-
-7. DB Bootstrap (src/db/index.js)
+2. DB Bootstrap (src/db/index.js)
 Using alter: true in prod can be risky; explicit migrations (e.g. with Umzug) are
 safer for production.
 
+3. consider the avatar image dimensions limitation function.
 
-9. auth.db doesn't be create succefully.
-10. the different between plugins and pure functions
 
 
 
