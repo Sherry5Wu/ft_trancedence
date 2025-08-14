@@ -129,6 +129,13 @@
       }
     },
 
+    "signInWithGoogle": {
+      "button": "Sign in with Google",
+      "aria": {
+        "signInWithGoogle": "Navigate to the sign in with yourGoogle "
+      }
+    },
+
     "signUp": {
       "title": "Sign Up",
       "toggle2FA": "2FA with Google Authenticator",
