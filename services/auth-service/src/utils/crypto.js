@@ -2,6 +2,7 @@
  * Hashing the password or pin code
  */
 import bcrypt from 'bcrypt';
+
 const SALT_ROUNDS = 10;
 
 const hashPassword = (password) => bcrypt.hash(password, SALT_ROUNDS);

@@ -1,11 +1,10 @@
 import fp from 'fastify-plugin';
-import fs from 'fs';
+import { promises as fsp } from 'fs';
 import path from 'path';
-import { pipeline } from 'stream/promises';
 import { Writable } from 'stream';
 import crypto from 'crypto';
-import multipart from '@fastify/multipart';
-import fastifyStatic from 'fastify-static';
+import fastifyStatic from '@fastify/static';
+import { fileTypeFromBuffer } from 'file-type';
 
 import { getUserById, updatePassword, updatePinCode, updateAvatar } from '../services/auth.service.js';
 import { ValidationError } from '../utils/errors.js';
@@ -13,44 +12,28 @@ import { comparePassword } from '../utils/crypto.js';
 
 export default fp(async (fastify) => {
   // --- Configure upload directory and static service ---
-  const avatarUploadPathEnv = process.env.AVATAR_UPLOAD_PATH || './uploads/avatars';
-  // Resolve to an absolute path (based on the current working directory of the process)
-  const uploadDir = path.resolve(process.cwd(), avatarUploadPathEnv);
-  const uploadsRoot = path.dirname(uploadDir); // e.g. /proj/uploads
+  // Treat env as uploads root (default ./uploads). Avatars are stored in uploads/avatars.
+  const avatarUploadPathEnv = process.env.AVATAR_UPLOAD_PATH || './uploads';
+  const uploadsRoot = path.resolve(process.cwd(), avatarUploadPathEnv); // e.g. /app/uploads
+  const avatarsRelativePath = 'avatars';
+  const uploadDir = path.resolve(uploadsRoot, avatarsRelativePath); // e.g. /app/uploads/avatars
 
-  // avatarsRelativePath must be a posix-like path suitable for URLs.
-  // If the resolved relative path goes "up" (starts with '..'), fallback to the basename
-  let avatarsRelativePath = path.relative(uploadsRoot, uploadDir).split(path.sep).join('/');
-  if (!avatarsRelativePath || avatarsRelativePath.startsWith('..')) {
-    avatarsRelativePath = path.basename(uploadDir);
-  }
-
-  // Set a static access prefix (the prefix for front-end URL access)
+  // Public prefix used by fastify-static and returned avatar URLs
   const uploadsPrefix = '/uploads';
 
-  // Ensure the directory exists
+  // Ensure the directory exists (use promise API)
   try {
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    await fsp.mkdir(uploadDir, { recursive: true });
   } catch (err) {
-    // If we can't create the upload dir, fail fast — the server shouldn't continue
     fastify.log.error({ err }, 'Failed to ensure upload directory exists');
     throw err;
   }
-
-  // Register fastify-multipart (to handle file uploads) and limit single file size
-  await fastify.register(multipart, {
-    limits: {
-      fileSize: 5 * 1024 * 1024, // 5MB
-      files: 1,
-    }
-  });
 
   // Register fastify-static to provide static file access at /uploads/...
   await fastify.register(fastifyStatic, {
     root: uploadsRoot,
     prefix: `${uploadsPrefix}/`, // e.g. request to /uploads/avatars/xxx.jpg will serve file uploadsRoot/avatars/xxx.jpg
+    decorateReply: false // Disable automatic handling
   });
 
   // Cross-platform "black hole" writable stream to consume and discard readable streams safely
@@ -229,81 +212,118 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    // req.file() will parse the first file in the multipart form
-    const file = await req.file(); // fastify-multipart
+    const file = await req.file();
+    if (!file) throw new ValidationError('No file uploaded (field name must be "avatar")');
 
-    if (!file) {
-      throw new ValidationError('No file uploaded (field name must be "avatar")');
-    }
-
-    // Basic mime-type check
-    if (!file.mimetype || !file.mimetype.startsWith('image/')) {
-      // consume stream to avoid resource leak
-      try {
-        await pipeline(file.file, devNull);
-      } catch (e) {
-        fastify.log.warn({ err: e }, 'Failed to discard invalid upload stream');
-      }
-      throw new ValidationError('Uploaded file is not an image');
-    }
-
-    // Allowed extensions and mimetype map
-    const allowedExt = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
-    const mimeToExt = {
-      'image/jpeg': '.jpg',
-      'image/png': '.png',
-      'image/webp': '.webp',
-      'image/gif': '.gif'
-    };
-
-    // Determine extension: prefer the filename extension, otherwise map from mimetype
-    let ext = path.extname(file.filename || '').toLowerCase();
-    if (!allowedExt.has(ext)) {
-      ext = mimeToExt[file.mimetype];
-      if (!ext || !allowedExt.has(ext)) {
-        await pipeline(file.file, devNull);
-        throw new ValidationError('Unsupported image format');
-      }
-    }
-
-    // If extension exists but is not allowed -> reject
-    if (ext && !allowedExt.has(ext)) {
-      try { await pipeline(file.file, devNull); } catch (e) { /* ignore */ }
-      throw new ValidationError('Unsupported image extension. Allowed: .jpg, .jpeg, .png, .webp, .gif');
-    }
-
-    const safeExt = ext || mappedExt;
-
-    // Generate a safe, unique filename
-    // Note: crypto.randomUUID() is available in Node 14.17+ / 16+. Adjust if using older runtimes.
-    const filename = `${req.user.id}-${Date.now()}-${crypto.randomUUID()}${safeExt}`;
-    const filepath = path.join(uploadDir, filename);
-
-    // Write stream to disk
+    // Read buffer (5MB limit configured above). If you increase limits, consider streaming.
+    let buffer;
     try {
-      const writeStream = fs.createWriteStream(filepath, { flags: 'wx' }); // fail if exists
-      await pipeline(file.file, writeStream);
+      buffer = await file.toBuffer();
     } catch (err) {
-      // remove any partially written file
-      try { if (fs.existsSync(filepath)) fs.unlinkSync(filepath); } catch (e) { /* ignore */ }
-      // surface a friendly validation error for the API consumer
+      fastify.log.warn({ err }, 'Failed to read uploaded file');
+      throw new ValidationError('Failed to process uploaded file');
+    }
+
+    // Validate using magic bytes
+    const ft = await fileTypeFromBuffer(buffer);
+    const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+    if (!ft || !allowedMimeTypes.has(ft.mime)) {
+      throw new ValidationError('Unsupported image format');
+    }
+
+    // Normalize extension (map common variants)
+    const extMap = { jpeg: 'jpg' };
+    const ext = '.' + (extMap[ft.ext] || ft.ext);
+
+    // Generate filename and path
+    const filename = `${req.user.id}-${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`;
+    const filepath = path.join(uploadDir, filename);
+    const resolved = path.resolve(filepath);
+    const uploadsRootResolved = path.resolve(uploadsRoot);
+
+    // Ensure we won't write outside uploads root (defense-in-depth)
+    if (!resolved.startsWith(uploadsRootResolved + path.sep) && resolved !== uploadsRootResolved) {
+      throw new ValidationError('Invalid filename / path resolution');
+    }
+
+    // Write file to disk
+    try {
+      await fsp.writeFile(resolved, buffer);
+    } catch (err) {
       fastify.log.error({ err }, 'Failed to save uploaded avatar');
       throw new ValidationError('Failed to save uploaded file');
     }
 
-    // Build the public URL relative to static prefix
-    // Example: /uploads/avatars/<filename>
+    // Build relative public URL (served by fastify-static at /uploads/)
     const avatarUrl = `${uploadsPrefix}/${path.posix.join(avatarsRelativePath, filename)}`;
 
-    // Update DB, but if DB update fails, remove the written file to avoid junk
+    // Fetch previous avatar (pre-read) to attempt cleanup later
+    let previousAvatar = null;
     try {
+      const userRecord = await fastify.models.User.findByPk(req.user.id);
+      previousAvatar = userRecord?.avatarUrl || null;
+    } catch (err) {
+      // Non-fatal to fetch user, but we log. We still proceed: updateAvatar may still work.
+      fastify.log.warn({ err }, 'Failed to read existing user avatar (non-fatal)');
+      previousAvatar = null;
+    }
+
+    // Update DB via service, and cleanup on DB failure
+    try {
+      // Expectation: updateAvatar(userId, avatarUrl) updates DB and throws on failure.
       await updateAvatar(req.user.id, avatarUrl);
     } catch (err) {
-      // cleanup file
-      try { fs.unlinkSync(filepath); } catch (e) { /* ignore unlink error */ }
-      // rethrow the original error (service layer should throw ValidationError or similar)
+      // Remove the newly uploaded file to avoid orphaning
+      try {
+        await fsp.unlink(resolved);
+      } catch (cleanupErr) {
+        fastify.log.error({ cleanupErr }, 'Failed to remove new avatar after DB failure');
+      }
       throw err;
     }
+
+    // Best-effort: delete previous avatar file if it's inside uploadsRoot and not equal to newly uploaded file
+    if (previousAvatar) {
+      try {
+        // Extract relative path from previousAvatar
+        let prevPathFromPrefix = null;
+
+        // If previousAvatar is an absolute URL, take URL.pathname
+        try {
+          if (/^https?:\/\//i.test(previousAvatar)) {
+            const u = new URL(previousAvatar);
+            prevPathFromPrefix = u.pathname.replace(/^\/+/, ''); // "uploads/avatars/old.jpg"
+          }
+        } catch (e) {
+          // ignore URL parsing errors and fallthrough
+          prevPathFromPrefix = null;
+        }
+
+        // If not parsed as absolute URL, handle relative possibilities
+        if (!prevPathFromPrefix) {
+          if (previousAvatar.startsWith(uploadsPrefix)) {
+            prevPathFromPrefix = previousAvatar.slice(uploadsPrefix.length).replace(/^\/+/, '');
+          } else {
+            prevPathFromPrefix = previousAvatar.replace(/^\/+/, '');
+          }
+        }
+
+        const prevResolved = path.resolve(uploadsRoot, prevPathFromPrefix);
+
+        // Only unlink if inside uploadsRoot and not the same file we just wrote
+        if ((prevResolved.startsWith(uploadsRootResolved + path.sep) || prevResolved === uploadsRootResolved) && prevResolved !== resolved) {
+          await fsp.unlink(prevResolved).catch((e) => {
+            fastify.log.warn({ e, prevResolved }, 'Failed to delete previous avatar (non-fatal)');
+          });
+        } else {
+          fastify.log.warn({ prevResolved }, 'Previous avatar outside uploads root or same as new file - skipping delete');
+        }
+      } catch (err) {
+        fastify.log.warn({ err }, 'Failed to clean up previous avatar (non-fatal)');
+      }
+    }
+
     return reply.code(200).send({ avatarUrl });
   });
 });
+
