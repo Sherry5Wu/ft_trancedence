@@ -17,7 +17,7 @@ interface UserProfile {
 const signInUser = async (player: UserProfile) => {
     console.log(player);
     try {
-      const response = await fetch('http://localhost:8443/as/auth/login', {
+      const response = await fetch('https://localhost:8443/as/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ const signInUser = async (player: UserProfile) => {
       const userID = data.user.id;
       console.log(userID);
 
-      const statResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
+      const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const signInUser = async (player: UserProfile) => {
       
       const stats = await statResponse.json();
 
-      const rivalResponse = await fetch (`http://localhost:8443/stats/rivals/${data.user.id}`, {
+      const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

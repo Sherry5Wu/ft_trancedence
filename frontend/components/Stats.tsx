@@ -34,7 +34,7 @@ const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>
     // ];
 
     try {
-        const response = await fetch(`http://localhost:8443/stats/score_history/${userID}`, {
+        const response = await fetch(`https://localhost:8443/stats/score_history/${userID}`, {
         method: 'GET'
     });
     if (!response.ok)
@@ -61,7 +61,7 @@ const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>
 const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
 
   try {
-    const response = await fetch(`http://localhost:8443/stats/user_match_data/${userID}`, {
+    const response = await fetch(`https://localhost:8443/stats/user_match_data/${userID}`, {
       method: 'GET'
     });
 
