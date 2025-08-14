@@ -130,7 +130,7 @@ const SettingsPage: React.FC = () => {
           <h3 className="text-lg font-semibold">
             {t('pages.userSettings.twoFactor.title')}
           </h3>
-          <p className="max-w-sm text-center p-4">
+          <div className="max-w-sm text-center p-4">
             {t('pages.userSettings.twoFactor.description')}
 
           <ToggleButton
@@ -140,7 +140,7 @@ const SettingsPage: React.FC = () => {
               navigate('/setup2fa')
             }
           />
-          </p>
+          </div>
         </div>
 
         <GenericButton
