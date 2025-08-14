@@ -126,7 +126,6 @@ export const Stats = ({ user }: StatsProps) =>
   //     <div className='flex justify-center my-5'>
   //       No data available
   //     </div>)
-
   return (
 
       <div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>
