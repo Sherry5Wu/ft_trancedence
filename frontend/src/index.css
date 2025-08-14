@@ -71,7 +71,7 @@
 }
 
 .hover-label {
-  @apply mt-2 text-black opacity-0 -translate-y-3 transition duration-200 ease-in-out;
+  @apply mt-3 text-black opacity-0 -translate-y-3 transition duration-200 ease-in-out;
 }
 
 .button-wrapper:hover .hover-label {

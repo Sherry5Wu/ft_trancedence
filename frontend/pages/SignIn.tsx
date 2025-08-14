@@ -46,7 +46,21 @@ const signInUser = async (player: UserProfile) => {
       }
       
       const stats = await statResponse.json();
-      return {data, stats};
+
+      const rivalResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!rivalResponse.ok) {
+        throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
+      }
+      
+      const rivals = await rivalResponse.json();
+
+      return {data, stats, rivals};
     }
 
     catch (error) {
@@ -104,9 +118,10 @@ const SignInPage = () => {
               username: signInData.data.user.username,
               id: signInData.data.user.id,
               email: signInData.data.user.email,
-              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic border-2' />,
+              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic w-full h-full border-2' />,
               score: signInData.stats.score,
               rank: signInData.stats.score,
+              rivals: signInData.rivals,
               accessToken: signInData.data.accessToken,
               refreshToken: signInData.data.refreshToken,
             });

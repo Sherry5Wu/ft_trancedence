@@ -24,7 +24,6 @@ const RivalsPage = () => {
     const navigate = useNavigate();
     const searchField = useValidationField('', isValidUsername);
     const [rivalData, setRivalData] = useState<string[]>([]);
-    const [selected, setSelection] = useState('');
 
     useEffect(() => {
       const fetchRivals = async () => {

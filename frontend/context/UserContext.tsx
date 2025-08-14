@@ -9,6 +9,7 @@ interface User {
     rank: number;
     // firstName: string;
     // lastName: string;
+    rivals: string[];
     accessToken: string;
     refreshToken: string;
 };
