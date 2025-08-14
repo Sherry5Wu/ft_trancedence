@@ -125,7 +125,7 @@ return (
           onBlur={passwordField.onBlur}
           errorMessage={passwordField.error}
         />
-
+        
         <GenericInput
           type="password"
           placeholder={t('common.placeholders.confirmPassword')}
@@ -137,18 +137,19 @@ return (
           }
         />
 
-        <div className='flex items-center space-x-2'>  
-        <GenericInput
-          type="password"
-          placeholder={t('common.placeholders.pin')}
-          aria-label={t('common.aria.inputs.pin')}
-          value={pinField.value}
-          onFilled={pinField.onFilled}
-          onBlur={pinField.onBlur}
-          errorMessage={pinField.error}
-        />
-
-        <Tooltip text="This is a very long tooltip message that should wrap into multiple lines to improve readability and prevent it from overflowing the screen." />
+        <div className="relative inline-flex items-center">
+          <GenericInput 
+            type="password"
+            placeholder={t('common.placeholders.pin')}
+            aria-label={t('common.aria.inputs.pin')}
+            value={pinField.value}
+            onFilled={pinField.onFilled}
+            onBlur={pinField.onBlur}
+            errorMessage={pinField.error}
+          /> 
+          <div className="absolute right-[-30px]">
+            <Tooltip text={t('common.tooltips.PINcode')} />
+          </div>
         </div>
 
         <GenericInput
@@ -160,11 +161,16 @@ return (
           errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
         />
 
-        <ToggleButton
-          label={t('pages.signUp.toggle2FA')}
-          aria-label={t('common.aria.toggles.toggle2FA')}
-          onClick={() => navigate('/setup2fa')}
-        />
+        <div className="relative inline-flex items-center">
+          <ToggleButton
+            label={t('pages.signUp.toggle2FA')}
+            aria-label={t('common.aria.toggles.toggle2FA')}
+            onClick={() => navigate('/setup2fa')}
+          />
+          <div className="absolute right-[-30px]">
+            <Tooltip text={t('common.tooltips.2fa')} />
+          </div>
+        </div>
 
         <GenericButton
           className="generic-button"

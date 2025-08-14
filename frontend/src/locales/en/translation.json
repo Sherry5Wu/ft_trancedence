@@ -34,6 +34,11 @@
       "player2": "Player 2",
       "playerAlias": "Player alias"
     },
+    "tooltips": {
+      "PINcode": "You need your PIN code to confirm your presence when playing locally against other players",
+      "2fa": "Enhances account security by requiring a code from Google Authenticator each time you sign in.",
+      "guestPlayer": "If you play against a guest the game data won’t be saved and the result won’t affect your score"
+    },
     "aria": {
       "buttons": {
         "cancel": "Cancel the current action and discard changes",

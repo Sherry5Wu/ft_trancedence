@@ -257,8 +257,7 @@
 .generic-input {
   /* display: flex; */
   /* margin: 0 auto; */
-    /* display: block; */
-  /* margin: 0;      remove auto centering */
+  /* margin: 0;  */
   height: 40px;   
   width: 100%;
   max-width: 300px;
