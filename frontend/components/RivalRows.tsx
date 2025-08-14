@@ -3,48 +3,74 @@ import { useNavigate } from 'react-router-dom';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import { Menu } from './Menu.tsx'
 import { DropDownButton } from './DropDownButton.tsx';
+import { userContext, useUserContext } from '../context/UserContext';
 
-const fetchRivalData = () => {
-  let rivalData = [
-    {
-      name: 'Alice',
-      score: 1920,
-      winratio: 66,
-      matches: 9,
-      wins: 6, 
-      losses: 3,
-      picture: '../assets/profilepics/B2.png'
-    },
-    {
-      name: 'Charles',
-      score: 816,
-      winratio: 13,
-      matches: 8,
-      wins: 1,
-      losses: 7,
-      picture: '../assets/profilepics/image.jpg'
-    },
-    {
-      name: 'David123',
-      score: 640,
-      winratio: 50,
-      matches: 6,
-      wins: 3,
-      losses: 3,
-      picture: '../assets/profilepics/Bandit.png'
-    },
-    {
-      name: 'Eve',
-      score: 2048,
-      winratio: 100,
-      matches: 4,
-      wins: 4,
-      losses: 0,
-      picture: '../assets/profilepics/paddington-poster.jpg'
+const fetchRivalData = async () => {
+	const { user } = useUserContext();
+	let rivalDataArray: any[] = [];
+ 
+	try {
+		for (let i = 0; user?.rivals.at(i); i++) {
+			const response = await fetch(`http://localhost:8443/as/auth/login/${user.rivals.at(i)}`, { //FIX LATER
+				method: 'GET',
+				headers: {
+				'Content-Type': 'application/json',
+				},
+			});
+			
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const data = await response.json();
+			rivalDataArray.push(data);
+		}
+	}
+	catch (error) {
+		console.error('Error:', error);
+		return null;
     }
-  ]
 
-  return rivalData;
+	return rivalDataArray.sort(); //alphabetically
+
+  // let rivalData =[
+  //   {
+  //     name: 'Alice',
+  //     score: 1920,
+  //     winratio: 66,
+  //     matches: 9,
+  //     wins: 6, 
+  //     losses: 3,
+  //     picture: '../assets/profilepics/B2.png'
+  //   },
+  //   {
+  //     name: 'Charles',
+  //     score: 816,
+  //     winratio: 13,
+  //     matches: 8,
+  //     wins: 1,
+  //     losses: 7,
+  //     picture: '../assets/profilepics/image.jpg'
+  //   },
+  //   {
+  //     name: 'David123',
+  //     score: 640,
+  //     winratio: 50,
+  //     matches: 6,
+  //     wins: 3,
+  //     losses: 3,
+  //     picture: '../assets/profilepics/Bandit.png'
+  //   },
+  //   {
+  //     name: 'Eve',
+  //     score: 2048,
+  //     winratio: 100,
+  //     matches: 4,
+  //     wins: 4,
+  //     losses: 0,
+  //     picture: '../assets/profilepics/paddington-poster.jpg'
+  //   }
+  // ]
 }
 
 // const rivalsSortingItems = [
@@ -63,14 +89,15 @@ const fetchRivalData = () => {
 
           
 export const RivalRows = () => {
-
-    const rivalData = fetchRivalData();
+	const { user } = useUserContext();
     const navigate = useNavigate();
 
-    if (rivalData.length === 0)
+  	if (!user?.rivals)
       return (
         <div className='flex justify-center'>No rivals yet</div>
-      )
+    )
+	
+    const rivalData = fetchRivalData();
 
     return (
         <div aria-label='rivals data' className='z-10'>
