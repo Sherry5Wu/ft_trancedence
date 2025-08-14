@@ -9,21 +9,20 @@ import { fileTypeFromBuffer } from 'file-type';
 import { getUserById, updatePassword, updatePinCode, updateAvatar } from '../services/auth.service.js';
 import { ValidationError } from '../utils/errors.js';
 import { comparePassword } from '../utils/crypto.js';
+import { NotFoundError } from '../utils/errors.js';
 
 export default fp(async (fastify) => {
   // --- Configure upload directory and static service ---
   // Treat env as uploads root (default ./uploads). Avatars are stored in uploads/avatars.
-  const avatarUploadPathEnv = process.env.AVATAR_UPLOAD_PATH || './uploads';
-  const uploadsRoot = path.resolve(process.cwd(), avatarUploadPathEnv); // e.g. /app/uploads
-  const avatarsRelativePath = 'avatars';
-  const uploadDir = path.resolve(uploadsRoot, avatarsRelativePath); // e.g. /app/uploads/avatars
+  const avatarUploadPathEnv = process.env.AVATAR_UPLOAD_PATH || './uploads/avatars';
+  const uploadsRoot = path.resolve(process.cwd(), avatarUploadPathEnv); // e.g. /app/uploads/avatars
 
   // Public prefix used by fastify-static and returned avatar URLs
   const uploadsPrefix = '/uploads';
 
   // Ensure the directory exists (use promise API)
   try {
-    await fsp.mkdir(uploadDir, { recursive: true });
+    await fsp.mkdir(uploadsRoot, { recursive: true });
   } catch (err) {
     fastify.log.error({ err }, 'Failed to ensure upload directory exists');
     throw err;
@@ -188,17 +187,11 @@ export default fp(async (fastify) => {
    * Accepts multipart/form-data with field name `avatar` (single file)
    */
   fastify.post('/users/me/upload-avatar', {
-    preHandler: [fastify.authenticate],
+    // preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
       summary: 'Upload user avatar',
       consumes: ['multipart/form-data'],
-      body: {
-        type: 'object',
-        properties: {
-          avatar: { type: 'string', format: 'binary' }
-        }
-      },
       response: {
         200: {
           description: 'Avatar uploaded successfully',
@@ -214,7 +207,6 @@ export default fp(async (fastify) => {
   }, async (req, reply) => {
     const file = await req.file();
     if (!file) throw new ValidationError('No file uploaded (field name must be "avatar")');
-
     // Read buffer (5MB limit configured above). If you increase limits, consider streaming.
     let buffer;
     try {
@@ -236,13 +228,18 @@ export default fp(async (fastify) => {
     const ext = '.' + (extMap[ft.ext] || ft.ext);
 
     // Generate filename and path
-    const filename = `${req.user.id}-${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`;
-    const filepath = path.join(uploadDir, filename);
+    if (!req.user) {
+      throw new NotFoundError('User not found');
+    }
+    const userId = req.user.id
+
+    const filename = `${userId}-${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`;
+    const filepath = path.join(uploadsRoot, filename);
     const resolved = path.resolve(filepath);
-    const uploadsRootResolved = path.resolve(uploadsRoot);
+    // const uploadsRootResolved = path.resolve(uploadsRoot);
 
     // Ensure we won't write outside uploads root (defense-in-depth)
-    if (!resolved.startsWith(uploadsRootResolved + path.sep) && resolved !== uploadsRootResolved) {
+    if (!resolved.startsWith(uploadsRoot + path.sep) && resolved !== uploadsRoot) {
       throw new ValidationError('Invalid filename / path resolution');
     }
 
@@ -255,12 +252,12 @@ export default fp(async (fastify) => {
     }
 
     // Build relative public URL (served by fastify-static at /uploads/)
-    const avatarUrl = `${uploadsPrefix}/${path.posix.join(avatarsRelativePath, filename)}`;
+    const avatarUrl = `${uploadsPrefix}/${filename}`;
 
     // Fetch previous avatar (pre-read) to attempt cleanup later
     let previousAvatar = null;
     try {
-      const userRecord = await fastify.models.User.findByPk(req.user.id);
+      const userRecord = await fastify.models.User.findByPk(userId);
       previousAvatar = userRecord?.avatarUrl || null;
     } catch (err) {
       // Non-fatal to fetch user, but we log. We still proceed: updateAvatar may still work.
@@ -271,7 +268,7 @@ export default fp(async (fastify) => {
     // Update DB via service, and cleanup on DB failure
     try {
       // Expectation: updateAvatar(userId, avatarUrl) updates DB and throws on failure.
-      await updateAvatar(req.user.id, avatarUrl);
+      await updateAvatar(userId, avatarUrl);
     } catch (err) {
       // Remove the newly uploaded file to avoid orphaning
       try {

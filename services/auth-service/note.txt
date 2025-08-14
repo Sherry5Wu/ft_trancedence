@@ -51,13 +51,14 @@ docker system prune --all --volumes
 // remove all the docker images
 docker rmi -f $(docker images -q)
 
-Here’s what’s happening:
-  docker images -q → lists only the IDs of all images.
-  $(...) → passes that list to the docker rmi command.
-  -f → forces removal, even if an image is used by stopped containers.
-
 // list all the dockers (running + stopped)
 docker ps -a
 
 // remove all the containers
 docker rm -f $(docker ps -aq)
+
+Testing uploading a avatar
+curl -X POST http://localhost:3000/user/avatar \
+  -F "avatar=@/path/to/your/avatar.jpg"
+
+docker exec -it <docker-name> sh
