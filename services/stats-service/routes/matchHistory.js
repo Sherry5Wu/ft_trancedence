@@ -36,20 +36,21 @@ export default async function matchHistoryRoutes(fastify) {
     fastify.post('/', { preHandler: requireAuth }, (request, reply) => {
         // TURVALLISUUS: player_id vain tokenista
         const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
-        const {opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at} = request.body;  // Display name voi vaihtua
+        const player_username = request.username;
+        const {opponent_username, opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at} = request.body;  // Display name voi vaihtua
     
 
         /// add type checking for the values before updating
-        if (!played_at || !player_score || !opponent_score || !duration || !player_id || !opponent_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
-        return reply.status(400).send({ error: 'Played_at, Player_id, opponent_id, player_name, opponent_name, result(win, loss, draw) is required' });
+        if (!opponent_username || !played_at || !player_score || !opponent_score || !duration || !player_id || !opponent_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
+        return reply.status(400).send({ error: 'Opponent_username, Played_at, Player_id, opponent_id, player_name, opponent_name, result(win, loss, draw) is required' });
         }
     
         try {
         const stmt = db.prepare(`
-            INSERT INTO match_history (played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO match_history (player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
-        const resultDb = stmt.run(played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
+        const resultDb = stmt.run(player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
 
         let outcome;
         if (result === 'win')
@@ -97,10 +98,10 @@ export default async function matchHistoryRoutes(fastify) {
         const opponentGamesDraw = calculateGamesDraw(opponent_id);
 
         // Add type checking for the values before updating
-        updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw);
-        updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw);
-        updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at);
-        updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at);
+        updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username);
+        updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username);
+        updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at, player_username);
+        updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at, opponent_username);
         reply.send({ 
             id: resultDb.lastInsertRowid, 
             player_id, 

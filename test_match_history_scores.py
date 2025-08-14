@@ -122,7 +122,6 @@ def test_add_rival():
     print(headers)
     print(response1)
     assert response1.status_code == 200
-    user_id = response1.json()["id"]
 
     # Lisätään kilpailija
     data = {

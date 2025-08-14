@@ -189,6 +189,7 @@ export default fp(async (fastify) => {
     console.log(req);
     return {
       id: req.user.id,
+      username: req.user.username,
       email: req.user.email,
       role: req.user.role || 'user'
     };
