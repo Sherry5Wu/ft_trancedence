@@ -1,7 +1,9 @@
-// pages/SignUp.tsx
+// /src/pages/SignUp.tsx
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput } from '../components/GenericInput';
 import { ToggleButton } from '../components/ToggleButton';
@@ -40,6 +42,7 @@ interface UserProfile {
 }
 
 const SignUpPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const usernameField = useValidationField('', isValidUsername);
@@ -74,97 +77,125 @@ const SignUpPage = () => {
     !passwordMismatch &&
     !pinMismatch;
 
-  return (
-    <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
-      <h3 className="font-semibold text-center">Sign Up</h3>
 
-      <GenericInput
-        type="username"
-        placeholder="Username"
-        value={usernameField.value}
-        onFilled={usernameField.onFilled}
-        onBlur={usernameField.onBlur}
-        errorMessage={usernameField.error}
-      />
+return (
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+    <AccessiblePageDescription
+      id="pageDescription"
+      text={t('pages.signUp.aria.description')}
+    />
 
-      <GenericInput
-        type="email"
-        placeholder="Email"
-        value={emailField.value}
-        onFilled={emailField.onFilled}
-        onBlur={emailField.onBlur}
-        errorMessage={emailField.error}
-      />
+      <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
+        <h2 id="pageTitle" className="font-semibold text-center">
+          {t('pages.signUp.title')}
+        </h2>
 
-      <GenericInput
-        type="password"
-        placeholder="Password"
-        value={passwordField.value}
-        onFilled={passwordField.onFilled}
-        onBlur={passwordField.onBlur}
-        errorMessage={passwordField.error}
-      />
+        <GenericInput
+          type="text"
+          placeholder={t('common.placeholders.username')}
+          aria-label={t('common.aria.inputs.username')}
+          value={usernameField.value}
+          onFilled={usernameField.onFilled}
+          onBlur={usernameField.onBlur}
+          errorMessage={usernameField.error}
+        />
 
-      <GenericInput
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onFilled={setConfirmPassword}
-        errorMessage={passwordMismatch ? "Passwords do not match" : ''}
-      />
+        <GenericInput
+          type="email"
+          placeholder={t('common.placeholders.email')}
+          aria-label={t('common.aria.inputs.email')}
+          value={emailField.value}
+          onFilled={emailField.onFilled}
+          onBlur={emailField.onBlur}
+          errorMessage={emailField.error}
+        />
 
-      <GenericInput
-        type="password"
-        placeholder="Player PIN"
-        value={pinField.value}
-        onFilled={pinField.onFilled}
-        onBlur={pinField.onBlur}
-        errorMessage={pinField.error}
-      />
+        <GenericInput
+          type="password"
+          placeholder={t('common.placeholders.password')}
+          aria-label={t('common.aria.inputs.password')}
+          value={passwordField.value}
+          onFilled={passwordField.onFilled}
+          onBlur={passwordField.onBlur}
+          errorMessage={passwordField.error}
+        />
 
-      <GenericInput
-        type="password"
-        placeholder="Confirm Player PIN"
-        value={confirmPin}
-        onFilled={setConfirmPin}
-        errorMessage={pinMismatch ? "PINs do not match" : ''}
-      />
+        <GenericInput
+          type="password"
+          placeholder={t('common.placeholders.confirmPassword')}
+          aria-label={t('common.aria.inputs.confirmPassword')}
+          value={confirmPassword}
+          onFilled={setConfirmPassword}
+          errorMessage={
+            passwordMismatch ? t('common.errors.passwordMismatch') : ''
+          }
+        />
 
-      <ToggleButton
-        label="2FA with Google Authenticator"
-        onClick={() => navigate('/setup2fa')}
-      />
+        <GenericInput
+          type="password"
+          placeholder={t('common.placeholders.pin')}
+          aria-label={t('common.aria.inputs.pin')}
+          value={pinField.value}
+          onFilled={pinField.onFilled}
+          onBlur={pinField.onBlur}
+          errorMessage={pinField.error}
+        />
 
-      <GenericButton
-        className="generic-button"
-        text="SIGN UP"
-        disabled={!formFilled}
-        onClick={() => {
-          // const newUser: UserProfile = {
-          //   username: usernameField.value,
-          //   email: emailField.value,
-          //   password: passwordField.value,
-          //   pincode: pinField.value
-          // };
-          // const registration = await createUser(newUser);
-          // if (registration) {
-          //   alert('Registered successfully!');
-          //   navigate('/homeuser');
-          // }
-          // else
-          //   alert('Registration failed. Please try again.'); // what went wrong? 
-        }}
-      />
+        <GenericInput
+          type="password"
+          placeholder={t('common.placeholders.confirmPin')}
+          aria-label={t('common.aria.inputs.confirmPin')}
+          value={confirmPin}
+          onFilled={setConfirmPin}
+          errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
+        />
 
-      <p className="text-center text-sm">
-        Already have an account?{' '}
-        <Link to="/signin" className="underline">
-          Sign in
-        </Link>
-      </p>
-    </div>
+        <ToggleButton
+          label={t('pages.signUp.toggle2FA')}
+          aria-label={t('common.aria.toggles.toggle2FA')}
+          onClick={() => navigate('/setup2fa')}
+        />
+
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.signUp')}
+          aria-label={t('common.aria.buttons.signUp')}
+          disabled={!formFilled}
+          onClick={() => {
+            // const newUser: UserProfile = {
+            //   username: usernameField.value,
+            //   email: emailField.value,
+            //   password: passwordField.value,
+            //   pincode: pinField.value
+            // };
+            // const registration = await createUser(newUser);
+            // if (registration) {
+            //   alert('Registered successfully!');
+            //   navigate('/homeuser');
+            // }
+            // else
+            //   alert('Registration failed. Please try again.'); // what went wrong? 
+          }}
+        />
+
+        <p className="text-center text-sm">
+          {t('pages.signUp.alreadyHaveAccount')}{' '}
+          <Link
+            to="/signin"
+            className="underline"
+            aria-label={t('pages.signUp.aria.signInLink')}
+          >
+            {t('common.buttons.signIn')}
+          </Link>
+        </p>
+      </div>
+    </main>
   );
 };
 
-export default SignUpPage;
-
+export default SignUpPage; 

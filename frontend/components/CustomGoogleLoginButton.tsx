@@ -4,16 +4,36 @@ import { useTranslation } from 'react-i18next';
 const CustomGoogleLoginButton = () => {
   const { t } = useTranslation();  // Destructure `t` from useTranslation hook
 
+  // const login = useGoogleLogin({
+  //   onSuccess: tokenResponse => {
+  //     console.log("Login Success:", tokenResponse);
+  //     // You can call Google APIs or decode token if needed
+  //   },
+  //   onError: () => {
+  //     console.error("Login Failed");
+  //   }
+  // });
+
   const login = useGoogleLogin({
-    onSuccess: tokenResponse => {
+    onSuccess: (tokenResponse) => {
       console.log("Login Success:", tokenResponse);
-      // You can call Google APIs or decode token if needed
+      
+      // Instead of directly using window.opener, we postMessage the data back to the parent
+      if (window.opener) {
+        // Post message to the opener when login is successful
+        window.opener.postMessage('googleLoginSuccess', '*');
+      }
     },
     onError: () => {
       console.error("Login Failed");
+
+      // Post message to the opener if login fails
+      if (window.opener) {
+        window.opener.postMessage('googleLoginFailed', '*');
+      }
     }
   });
-
+  
   return (
     <button
     type="button"

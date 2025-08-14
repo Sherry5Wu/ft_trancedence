@@ -1,6 +1,6 @@
 // /src/pages/SignIn.tsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import CustomGoogleLoginButton from "../components/CustomGoogleLoginButton";
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
@@ -25,6 +25,25 @@ const SignInPage: React.FC = () => {
   const formFilled =
     usernameField.value !== '' &&
     passwordField.value !== '';
+
+  useEffect(() => {
+    const handlePopupMessage = (event) => {
+      // Ensure the message is coming from the correct origin
+      if (event.origin === 'https://accounts.google.com') {
+        if (event.data === 'googleLoginSuccess') {
+          console.log('User logged in successfully');
+          // You can navigate the user or update state
+          navigate('/homeuser');
+        } else if (event.data === 'googleLoginFailed') {
+          console.error('Login failed');
+        }
+      }
+    };
+    window.addEventListener('message', handlePopupMessage);
+    return () => {
+      window.removeEventListener('message', handlePopupMessage);
+    };
+  }, [navigate]);
 
 return (
     <GoogleOAuthProvider clientId={clientId}>
