@@ -9,7 +9,7 @@ import { GenericInput } from '../components/GenericInput';
 import { ToggleButton } from '../components/ToggleButton';
 import { useValidationField } from '../hooks/useValidationField';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
-
+import { Tooltip } from '../components/Tooltip';
 
 const createUser = async (player: UserProfile): Promise<UserProfile | null> => {
   console.log('Sending user:', player);
@@ -91,7 +91,7 @@ return (
       text={t('pages.signUp.aria.description')}
     />
 
-      <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
+      <div className="flex flex-col justify-center p-8 ">
         <h2 id="pageTitle" className="font-semibold text-center">
           {t('pages.signUp.title')}
         </h2>
@@ -137,6 +137,7 @@ return (
           }
         />
 
+        <div className='flex items-center space-x-2'>  
         <GenericInput
           type="password"
           placeholder={t('common.placeholders.pin')}
@@ -146,6 +147,9 @@ return (
           onBlur={pinField.onBlur}
           errorMessage={pinField.error}
         />
+
+        <Tooltip text="This is a very long tooltip message that should wrap into multiple lines to improve readability and prevent it from overflowing the screen." />
+        </div>
 
         <GenericInput
           type="password"
@@ -167,21 +171,21 @@ return (
           text={t('common.buttons.signUp')}
           aria-label={t('common.aria.buttons.signUp')}
           disabled={!formFilled}
-        onClick={async () => {
-          const newUser: UserProfile = {
-            username: usernameField.value,
-            email: emailField.value,
-            password: passwordField.value,
-            pinCode: pinField.value
-          };
-          const signUpData = await createUser(newUser);
-          if (signUpData) {
-            alert('Registered successfully!');
-            console.log(signUpData);
-            navigate('/signin');
-          }
-          else
-            alert('Registration failed. Please try again.'); // what went wrong? 
+          onClick={async () => {
+            const newUser: UserProfile = {
+              username: usernameField.value,
+              email: emailField.value,
+              password: passwordField.value,
+              pinCode: pinField.value
+            };
+            const signUpData = await createUser(newUser);
+            if (signUpData) {
+              alert('Registered successfully!');
+              console.log(signUpData);
+              navigate('/signin');
+            }
+            else
+              alert('Registration failed. Please try again.'); // what went wrong? 
         }}
         />
 
