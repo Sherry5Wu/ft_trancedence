@@ -3,28 +3,74 @@ import { BarGraph } from '../components/BarGraph';
 import { PieGraph } from '../components/PieGraph';
 import { ReactElement, useEffect, useState } from 'react';
 
-interface UserStats {
-    playedGames: number;
-    winStreak: number;
-    longestWinStreak: number;
+export interface UserStats {
+    games_played: number;
+    win_streak: number;
+    longest_win_streak: number;
     worstRival: string;
+    games_draw: number;
+    games_lost: number;
+    games_won: number;
     // worstRivalPic: string;
 }
+
+export interface ScoreHistory {
+    id: number,
+    elo_score: number,
+}
+
+const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>  => {
+    //FETCH REAL DATA FROM BACKEND
+
+    //mockdata
+    // const data = [
+    //     {key: 0, value: 100},
+    //     {key: 1, value: 85},
+    //     {key: 2, value: 60},
+    //     {key: 3, value: 45},
+    //     {key: 4, value: 55},
+    //     {key: 5, value: 70},
+    //     {key: 6, value: 30}
+    // ];
+
+    try {
+        const response = await fetch(`http://localhost:8443/stats/score_history/${userID}`, {
+        method: 'GET'
+    });
+    if (!response.ok)
+      throw new Error(`HTTP error! Status: ${response.status}`);
+  
+    const data: ScoreHistory[] = await response.json();
+    
+    // Mapataan ja muokataan API-vastauksesta oikea muoto
+    const filteredData: ScoreHistory[] = data.map(item => ({
+        id: item.id,
+        elo_score: item.elo_score,  // Jos API:sta puuttuu tämä kenttä, se voidaan jättää pois
+    }));
+    console.log('from fetchScoreHistory ');
+    console.log(filteredData);
+    return filteredData;
+  }
+
+  catch (error) {
+    console.error('Error: ', error);
+    return null;
+  }
+};
 
 const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
 
   try {
-    const response = await fetch(`http://localhost:8443/stats/${userID}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const response = await fetch(`http://localhost:8443/stats/user_match_data/${userID}`, {
+      method: 'GET'
     });
 
+    console.log(userID);
     if (!response.ok)
       throw new Error(`HTTP error! Status: ${response.status}`);
 
     const userStats: UserStats = await response.json();
+    console.log(userStats);
     return userStats;
   }
 
@@ -45,19 +91,27 @@ const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
     // return userStats;
 }
 
+interface StatsProps {
+  user: string | undefined;
+}
 
-export const Stats = (userID: string) => 
+export const Stats = ({ user }: StatsProps) => 
 {
   const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const [scoreHistory, setScoreHistory] = useState<ScoreHistory[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user) return;
     setLoading(true);
-    fetchUserStats(userID).then((data) => {
+    fetchUserStats(user).then((data) => {
       setUserStats(data);
-      setLoading(false);
     });
-  }, [userID]);
+    fetchScoreHistory(user).then((data) => {
+      setScoreHistory(data);
+      setLoading(false);
+    })
+  }, [user]);
 
   if (loading)
     return <div className='flex justify-center my-5'>Loading...</div>
@@ -79,24 +133,24 @@ export const Stats = (userID: string) =>
 
           <div>
               <h4 className='h4 text-center font-semibold'>SCORE HISTORY</h4>
-              <LineGraph user={user}/>
+              <LineGraph data={scoreHistory}/>
           </div>
 
           <div>
               <h4 className='h4 text-center font-semibold'>SCORE GAINS/LOSSES</h4>
-              <BarGraph user={user}/>
+              <BarGraph data={scoreHistory}/>
           </div>
 
           <div className=''>
               <h4 className='h4 text-center mb-5 font-semibold'>WIN RATE</h4>
-              <PieGraph user={user}/>
+              <PieGraph data={userStats}/>
           </div> 
 
           <div className='grid grid-cols-2 scale-90 translate-y-[20px]'>
 
             <div className='flex flex-col items-center'>
               <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-                <div className='text-5xl font-bold text-black'>{userStats.playedGames}</div>
+                <div className='text-5xl font-bold text-black'>{userStats.games_played}</div>
               </div>
               <h4 className='h4 my-2 font-semibold'>PLAYED GAMES</h4>
             </div>
@@ -112,14 +166,14 @@ export const Stats = (userID: string) =>
 
             <div className='flex flex-col items-center translate-y-[30px]'>
               <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-                <div className='text-5xl font-bold text-black'>{userStats.winStreak}</div>
+                <div className='text-5xl font-bold text-black'>{userStats.win_streak}</div>
               </div>
               <h4 className='h4 my-2 font-semibold'>WIN STREAK</h4>
             </div>
 
             <div className='flex flex-col items-center translate-y-[30px]'>
               <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-                <div className='text-5xl font-bold text-black'>{userStats.longestWinStreak}</div>
+                <div className='text-5xl font-bold text-black'>{userStats.longest_win_streak}</div>
               </div>
               <h4 className='h4 my-2 font-semibold text-center'>LONGEST WIN STREAK</h4>
             </div>

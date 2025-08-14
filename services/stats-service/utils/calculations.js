@@ -57,14 +57,21 @@ function getMatchHistoryForPlayer(player_id)
 }
 
 export function calculateLongestWinStreak(player_id) {
+  console.log("Calculating longest winstreak");
   const rows = getMatchHistoryForPlayer(player_id);
-  numberofwins = 0;
+  let currentStreak = 0;
+  let longestStreak = 0;
   rows.forEach((item) => {
+    currentStreak = 0;
     if (item.result === 'win')
-        numberofwins += 1;
+    {
+      currentStreak += 1;
+      longestStreak = Math.max(longestStreak, currentStreak);
+    }
     else
-      return numberofwins;
+      currentStreak = 0;
   });
+  return longestStreak;
 }
 
 export function calculateGamesPlayed(player_id) {
@@ -73,6 +80,10 @@ export function calculateGamesPlayed(player_id) {
   
 export function calculateGamesWon(player_id) {
     return getMatchHistoryForPlayer(player_id).filter(row => row.result === 'win').length;
+}
+
+export function calculateGamesDraw(player_id) {
+  return getMatchHistoryForPlayer(player_id).filter(row => row.result === 'draw').length;
 }
   
 export function calculateGamesLost(player_id) {

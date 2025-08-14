@@ -1,4 +1,4 @@
-import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon} from '../utils/calculations.js'
+import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon, calculateLongestWinStreak, calculateGamesDraw} from '../utils/calculations.js'
 import { updateUserMatchDataTable, updateScoreHistoryTable } from '../utils/updateFunctions.js';
 import { db } from '../db/init.js';
 import { requireAuth } from '../utils/auth.js';
@@ -87,14 +87,18 @@ export default async function matchHistoryRoutes(fastify) {
         const gamesPlayed = calculateGamesPlayed(player_id);
         const gamesLost = calculateGamesLost(player_id);
         const gamesWon = calculateGamesWon(player_id);
+        const longestWinStreak = calculateLongestWinStreak(player_id);
+        const gamesDraw = calculateGamesDraw(player_id);
         const eloChanges = calculateEloScore(player_id, opponent_id, outcome, player_name, opponent_name);
         const opponentGamesPlayed = calculateGamesPlayed(opponent_id);
         const opponentGamesLost = calculateGamesLost(opponent_id);
         const opponentGamesWon = calculateGamesWon(opponent_id);
+        const opponentlongestWinStreak = calculateLongestWinStreak(opponent_id);
+        const opponentGamesDraw = calculateGamesDraw(opponent_id);
 
         // Add type checking for the values before updating
-        updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon);
-        updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon);
+        updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw);
+        updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw);
         updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at);
         updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at);
         reply.send({ 

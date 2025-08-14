@@ -1,19 +1,19 @@
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
+import { UserStats } from './Stats';
+// const fetchData = (user: string) => {
+//     //FETCH REAL DATA FROM BACKEND
 
-const fetchData = (user: string) => {
-    //FETCH REAL DATA FROM BACKEND
+//     //mockdata
+//     const data = [
+//         {key: 'wins', value: 7},
+//         {key: 'draws', value: 1},
+//         {key: 'losses', value: 5}
+//     ];
 
-    //mockdata
-    const data = [
-        {key: 'wins', value: 7},
-        {key: 'draws', value: 1},
-        {key: 'losses', value: 5}
-    ];
+//     const newData = [];
 
-    const newData = [];
-
-    return data;
-};
+//     return data;
+// };
 
 const colors = ['#2E6F40', '#252525', '#CD1C18'];
 
@@ -26,8 +26,7 @@ const colors = ['#2E6F40', '#252525', '#CD1C18'];
 //     )
 // }
 
-export const PieGraph = (user: string) => {
-    const data = fetchData(user);
+export const PieGraph = (data: UserStats) => {
 
     return (
         <ResponsiveContainer width='100%' aspect={1.25}>

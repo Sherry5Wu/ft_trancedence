@@ -100,6 +100,19 @@ def test_get_user_match_data():
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
+def test_get_user_match_data_by_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+    print(f"{STATS_URL}/user_match_data/{user_id}")
+    response = requests.get(f"{STATS_URL}/user_match_data/{user_id}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
 def test_add_rival():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     headers = get_auth_headers(ACCESS_TOKEN)
