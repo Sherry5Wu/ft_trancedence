@@ -135,6 +135,7 @@ const SignUpPage = () => {
       <ToggleButton
         label="2FA with Google Authenticator"
         onClick={() => navigate('/setup2fa')}
+        disabled={!formFilled}
       />
 
       <GenericButton

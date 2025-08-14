@@ -88,8 +88,6 @@ const fetchRivalData = async () => {
 
 // }
 
-
-          
 export const RivalRows = () => {
 	const { user } = useUserContext();
     const navigate = useNavigate();

@@ -33,12 +33,14 @@ const UserPage = () => {
 	const showStats = () => setStats(!stats);
 	const showHistory = () => setHistory(!history);
 
-	useEffect(() => {
-		if (!user)
-			navigate('/signin');
-	}, [user])
+	// useEffect(() => {
+	// 	if (!user)
+	// 		navigate('/signin');
+	// }, [user])
 
-	if (user)
+	if (!user)
+		navigate('/signin');
+	else
 		return (
 		<div className='pageLayout'>
 		
@@ -151,8 +153,6 @@ const UserPage = () => {
 				</div>
 			</div>
 			</div>)
-	else
-		return null;
 }
     
 
