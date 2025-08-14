@@ -27,7 +27,7 @@ fastify.get('/:player_id', (request, reply) => {
   });
 
   // /user_match_data/:player_username
-  fastify.get('/:player_username', (request, reply) => {
+  fastify.get('/username/:player_username', (request, reply) => {
     const { player_username } = request.params;
     try {
         const stmt = db.prepare(`SELECT * FROM user_match_data WHERE player_username = ?`);

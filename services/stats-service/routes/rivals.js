@@ -16,7 +16,7 @@ export default async function rivalsRoutes(fastify) {
         }
     });
     // /rivals/:player_username
-    fastify.get('/:player_username', (request, reply) => {
+    fastify.get('/username/:player_username', (request, reply) => {
         const { player_username } = request.params;
         try {
         const stmt = db.prepare('SELECT * FROM rivals WHERE player_username = ?');
@@ -37,7 +37,7 @@ export default async function rivalsRoutes(fastify) {
         const { rival_username } = request.body;
         const { rival_id } = request.body;
         
-        if (!rival_id || rival_username) {
+        if (!rival_id || !rival_username) {
         return reply.status(400).send({ error: 'Rival id and rival username is required' });
         }
         if (player_id === rival_id) {

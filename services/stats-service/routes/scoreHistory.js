@@ -1,6 +1,5 @@
 
 import { db } from '../db/init.js';
-import { requireAuth } from '../utils/auth.js';
 
 export default async function scoreHistoryRoutes(fastify) {
     // /score_history
@@ -31,7 +30,7 @@ export default async function scoreHistoryRoutes(fastify) {
     });
 
     // /score_history/:player_username
-    fastify.get('/:player_username', (request, reply) => {
+    fastify.get('/username/:player_username', (request, reply) => {
         const { player_username } = request.params;
         try {
             const stmt = db.prepare('SELECT * FROM score_history WHERE player_username = ? ORDER BY played_at DESC');

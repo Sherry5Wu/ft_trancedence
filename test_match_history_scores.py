@@ -125,12 +125,13 @@ def test_add_rival():
 
     # Lisätään kilpailija
     data = {
-        "rival_id": RIVAL
+        "rival_id": RIVAL,
+        "rival_username" : "rivalname"
     }
     print(f"{STATS_URL}/rivals/")
     response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
-    assert response.status_code == 200
     json_response = response.json()
+    assert response.status_code == 200
     assert json_response["message"] == 'Rival added successfully'
 
 def test_get_rival_by_id():
@@ -160,7 +161,8 @@ def test_delete_rival_by_id():
 
     # Lisätään kilpailija
     data = {
-        "rival_id": "rival2"
+        "rival_id": "rival2",
+        "rival_username" : "rivalname"
     }
     print(f"{STATS_URL}/rivals/")
     response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
@@ -177,6 +179,7 @@ def test_delete_rival_by_id():
 
 def test_post_match_history():
     """Test POST /match_history with JWT auth - all required fields"""
+    test_setup_users()
     headers = get_auth_headers(ACCESS_TOKEN)
     print(headers)
     
@@ -189,6 +192,7 @@ def test_post_match_history():
         "player_name": "PlayerOne",
         "opponent_name": "PlayerTwo", 
         "result": "win",
+        "opponent_username" : "opponentusername",
         "played_at": f"{DATETIME}"
     }
     
@@ -231,6 +235,7 @@ def test_different_users():
         "player_name": "Player1",
         "opponent_name": "Enemy1",
         "result": "win",
+        "opponent_username" : "opponentusername",
         "played_at": f"{DATETIME}"
     }
     response1 = requests.post(f"{STATS_URL}/match_history", json=data1, headers=user1_headers, verify=False)
@@ -245,6 +250,7 @@ def test_different_users():
         "player_name": "Player2", 
         "opponent_name": "Enemy2",
         "result": "loss",
+        "opponent_username" : "opponentusername",
         "played_at": f"{DATETIME}"
     }
     response2 = requests.post(f"{STATS_URL}/match_history", json=data2, headers=user2_headers, verify=False)
@@ -306,6 +312,7 @@ def test_duration_formats():
             "player_name": "TestPlayer",
             "opponent_name": "TestOpponent",
             "result": "win",
+            "opponent_username" : "opponentusername",
             "played_at": f"{DATETIME}"
         }
         
