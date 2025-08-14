@@ -16,7 +16,7 @@ import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validat
 const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
 
 interface UserProfile {
-  identifier: string,
+  indentifier: string,
   password: string
 }
 
@@ -53,20 +53,20 @@ const signInUser = async (player: UserProfile) => {
     
     const stats = await statResponse.json();
 
-    const rivalResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    // const rivalResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
     
-    if (!rivalResponse.ok) {
-      throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
-    }
+    // if (!rivalResponse.ok) {
+    //   throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
+    // }
     
-    const rivals = await rivalResponse.json();
+    // const rivals = await rivalResponse.json();
 
-    return {data, stats, rivals};
+    return {data, stats};
   }
 
   catch (error) {
@@ -150,7 +150,7 @@ return (
           disabled={!formFilled}
           onClick={async () => {
             const newUser: UserProfile = {
-              identifier: usernameField.value,
+              indentifier: usernameField.value,
               password: passwordField.value,
             };
             const signInData = await signInUser(newUser);
@@ -163,7 +163,7 @@ return (
                 profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic w-full h-full border-2' />,
                 score: signInData.stats.score,
                 rank: signInData.stats.score,
-                rivals: signInData.rivals,
+                rivals: [],
                 accessToken: signInData.data.accessToken,
                 refreshToken: signInData.data.refreshToken,
               });

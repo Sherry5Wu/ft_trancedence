@@ -9,7 +9,6 @@ import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
-// import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
 
 const SettingsPage: React.FC = () => {
   const { t } = useTranslation();

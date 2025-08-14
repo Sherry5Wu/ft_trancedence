@@ -172,6 +172,7 @@
         "title": "Setup Two-factor Authentication",
         "scanQrTitle": "Scan the QR code",
         "scanQrInstructions": "Open the Google Authenticator app and scan this QR code.",
+        "loadingQr": "Loading QR Code...",
         "manualSetupPrompt": "Unable to scan? You can use the",
         "manualSetupLink": "setup key",
         "manualSetupSuffix": "to manually configure your authenticator app.",
