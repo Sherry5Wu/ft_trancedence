@@ -7,7 +7,7 @@ import { AccessiblePageDescription } from '../components/AccessiblePageDescripti
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { useState } from "react";
+import { useUserContext } from '../context/UserContext';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../hooks/useValidationField';
@@ -15,9 +15,70 @@ import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validat
 
 const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
 
+interface UserProfile {
+  identifier: string,
+  password: string
+}
+
+const signInUser = async (player: UserProfile) => {
+  console.log(player);
+  try {
+    const response = await fetch('http://localhost:8443/as/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(player)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    const userID = data.user.id;
+    console.log(userID);
+
+    const statResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!statResponse.ok) {
+      throw new Error(`HTTP error! Status: ${statResponse.status}`);
+    }
+    
+    const stats = await statResponse.json();
+
+    const rivalResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!rivalResponse.ok) {
+      throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
+    }
+    
+    const rivals = await rivalResponse.json();
+
+    return {data, stats, rivals};
+  }
+
+  catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+} 
+
 const SignInPage: React.FC = () => {
-  const { t } = useTranslation();  
+  const { t } = useTranslation(); 
   const navigate = useNavigate();
+  const { user, setUser } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername);
   const passwordField = useValidationField('', isValidPassword);
@@ -87,8 +148,31 @@ return (
           text={t('common.buttons.logIn')}
           aria-label={t('common.aria.buttons.logIn')}
           disabled={!formFilled}
-          onClick={() => navigate('/homeuser')}
-        />
+          onClick={async () => {
+            const newUser: UserProfile = {
+              identifier: usernameField.value,
+              password: passwordField.value,
+            };
+            const signInData = await signInUser(newUser);
+            if (signInData) {
+              alert('Signed in successfully!');
+              setUser({
+                username: signInData.data.user.username,
+                id: signInData.data.user.id,
+                email: signInData.data.user.email,
+                profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic w-full h-full border-2' />,
+                score: signInData.stats.score,
+                rank: signInData.stats.score,
+                rivals: signInData.rivals,
+                accessToken: signInData.data.accessToken,
+                refreshToken: signInData.data.refreshToken,
+              });
+              navigate(`/user/${usernameField.value}`)
+            }
+            else
+              alert('Sign in failed. Please try again.'); // what went wrong? 
+        }}
+      />
 
         {/* Google Sign-In */}
         <CustomGoogleLoginButton

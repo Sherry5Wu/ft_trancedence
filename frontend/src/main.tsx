@@ -30,23 +30,3 @@ root.render(
         <App />
     </Providers>
 );
-
-
-// To set up Google OAuth authentication, the clientId is required to 
-// identify the app to Google's OAuth service when  rendering the component
-
-// import React from "react";
-// import ReactDOM from "react-dom/client";
-// import App from "./App";
-// import "./index.css";
-// import { GoogleOAuthProvider } from "@react-oauth/google";
-
-// const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
-
-// ReactDOM.createRoot(document.getElementById("root")!).render(
-//   <React.StrictMode>
-//     <GoogleOAuthProvider clientId={clientId}>
-//       <App />
-//     </GoogleOAuthProvider>
-//   </React.StrictMode>
-// );

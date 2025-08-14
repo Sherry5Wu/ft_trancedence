@@ -36,7 +36,10 @@ export const Navbar = () => {
      
     const handleTitleClick = () => {
         console.log('Going to title/profile page');
-        navigate('/homeuser');
+        if (user)
+            navigate(`/user/${user?.username}`);
+        else
+            navigate('/signin')
     } 
 
     const handleLogOut = () => {

@@ -2,13 +2,16 @@ import { useState, createContext, useContext, ReactElement, ReactNode, useEffect
 
 interface User {
     username: string;
+    id: string;
     profilePic: ReactElement;
     email: string;
     score: number;
     rank: number;
-    firstname: string;
-    lastname: string;
-    password: any; // for testing
+    // firstName: string;
+    // lastName: string;
+    rivals: string[];
+    accessToken: string;
+    refreshToken: string;
 };
 
 interface UserType {
@@ -29,19 +32,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
 
     // MOCKUP FOR TESTING, REMOVE LATER
-    useEffect(() => {
-    const mockUser: User = {
-      username: 'Paddington',
-      profilePic: <img src='../assets/profilepics/Bluey.png' className='profilePic border-2' />,
-      email: 'mock@user.com',
-      score: 128,
-      rank: 66,
-      firstname: 'Bob',
-      lastname: 'Smith',
-      password: 12345,
-    };
-    setUser(mockUser);
-  }, []);
+//     useEffect(() => {
+//     const mockUser: User = {
+//       username: 'Paddington',
+//       profilePic: <img src='../assets/profilepics/Bluey.png' className='profilePic border-2' />,
+//       email: 'mock@user.com',
+//       score: 128,
+//       rank: 66,
+//       firstName: 'Bob',
+//       lastName: 'Smith',
+//       password: 12345,
+//     };
+//     setUser(mockUser);
+//   }, []);
 
     return (
         <userContext.Provider value={{ user, setUser }}>

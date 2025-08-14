@@ -1,0 +1,63 @@
+
+
+3. in auth-service.js, why not import { User, RefreshToken } from '../db/index.js';
+
+6. graceFullyShutDown() ????
+
+7. DB Bootstrap (src/db/index.js)
+Using alter: true in prod can be risky; explicit migrations (e.g. with Umzug) are
+safer for production.
+
+
+9. auth.db doesn't be create succefully.
+10. the different between plugins and pure functions
+
+
+
+Build and run docker
+
+1. Dockerize and run
+docker build --target dev -t auth-service .
+(-t === --tag)
+docker run -p 3001:3001 auth-service
+
+docker run --env-file ./path/to/your/.env -p 3001:3001 --name auth-service your-image-name
+
+
+Auto-generate API docs
+1.
+npm install @fastify/swagger @fastify/swagger-ui
+
+2. Now, after you start your container/app, you can open http://localhost:3001/docs to
+see interactive API docs generated from your route schemas automatically.
+
+
+1. checking the health:
+curl http://localhost:3001/health
+
+2. Send a regiter request
+Can  you curl / Postman
+curl -X POST http://localhost:3001/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com", "username":"usernameA","password":"myPassword*123", "pinCode":"5632"}'
+
+
+Force remove in one step:
+docker rm -f $(docker ps -a -q)
+
+Clean up unused images/volumes/network
+docker system prune --all --volumes
+
+// remove all the docker images
+docker rmi -f $(docker images -q)
+
+Here’s what’s happening:
+  docker images -q → lists only the IDs of all images.
+  $(...) → passes that list to the docker rmi command.
+  -f → forces removal, even if an image is used by stopped containers.
+
+// list all the dockers (running + stopped)
+docker ps -a
+
+// remove all the containers
+docker rm -f $(docker ps -aq)

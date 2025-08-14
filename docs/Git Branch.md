@@ -81,3 +81,19 @@ develop
                                                 |
                                                 └──> delete feature branch
 ```
+
+## sync `develop` branch with the latest `main` branch
+Merge main into develop (keeps history)
+```bash
+# Step 1: Checkout develop branch
+git checkout develop
+
+# Step 2: Pull the latest changes from origin
+git pull origin develop
+
+# Step 3: Merge main into develop
+git merge main
+
+# Step 4: Push the updated develop branch
+git push origin develop
+```

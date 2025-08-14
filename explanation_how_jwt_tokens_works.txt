@@ -1,0 +1,11 @@
+When user logs in with email, password .. etc
+Backend checks the username, password ... etc
+Signs them with the secrect key and constructs  the JWT token
+JWT token is send to front end
+When frontend sends requests to backend.
+Backend dismantles the token to 3 pieces (HEADER, PAYLOAD, SIGNATURE) then calculates
+the signature agan from header and payload with the secret key and then checks
+the calculated signature with the signature from the token.
+
+In our backend the function verifyAccessToken does this is decodes the payload 
+which has the user data and checks the signature with the calculated signature.

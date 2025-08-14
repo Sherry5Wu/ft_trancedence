@@ -8,7 +8,7 @@ import HomePage from '../pages/Home';
 import SignInPage from '../pages/SignIn';
 import SignUpPage from '../pages/SignUp';
 import CompleteProfilePage from '../pages/Registration/CompleteProfile';
-import HomeUserPage from '../pages/HomeUser';
+import UserPage from '../pages/UserPage';
 import Setup2faMainPage from '../pages/Auth/Setup2faMain';
 import Setup2faBackupPage from '../pages/Auth/Setup2faBackup';
 import Setup2faSuccessPage from '../pages/Auth/Setup2faSuccess';
@@ -21,10 +21,10 @@ import ChangePINPage from '../pages/User/UserChangePIN';
 import TournamentsPage from '../pages/Tournament/TournamentMain';
 import NewTournamentPage from '../pages/Tournament/TournamentNew';
 import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
-import GamePage from '../pages/Game';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/RivalsMain';
 import NotFoundPage from '../pages/NotFoundPage';
+import GamePage from '../pages/GamePage';
 
 const App = () => {
 
@@ -42,7 +42,7 @@ const App = () => {
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/signup/complete-profile" element={<CompleteProfilePage />} />
-            <Route path="/homeuser" element={<HomeUserPage />} /> {/* Could we have custom-login-name instead of homeuser? */}
+            <Route path='/user/:username' element={<UserPage />} />
             <Route path="/setup2fa" element={<Setup2faMainPage />} />
             <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
             <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
