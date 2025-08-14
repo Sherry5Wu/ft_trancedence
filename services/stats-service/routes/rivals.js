@@ -6,13 +6,40 @@ export default async function rivalsRoutes(fastify) {
     fastify.get('/:player_id', (request, reply) => {
         const { player_id } = request.params;
         try {
-        const stmt = db.prepare('SELECT * FROM rivals WHERE player_id = ?');
-        const rows = stmt.all(player_id);
-        reply.send(rows);
+            const stmt = db.prepare('SELECT * FROM rivals WHERE player_id = ?');
+            const rows = stmt.all(player_id);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player_id was not found' });
+            }
         }
         catch (err)
         {
         reply.status(500).send({ error: err.message });
+        }
+    });
+    // /rivals/:player_username
+    fastify.get('/username/:player_username', (request, reply) => {
+        const { player_username } = request.params;
+        try {
+            const stmt = db.prepare('SELECT * FROM rivals WHERE player_username = ?');
+            const rows = stmt.all(player_username);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player username was not found' });
+            }
+        }
+        catch (err)
+        {
+            reply.status(500).send({ error: err.message });
         }
     });
 
@@ -20,10 +47,12 @@ export default async function rivalsRoutes(fastify) {
     fastify.post('/', { preHandler: requireAuth }, (request, reply) => {
         console.log("Inserting into rivals..")
         const player_id = request.id;
+        const player_username = request.username;
+        const { rival_username } = request.body;
         const { rival_id } = request.body;
         
-        if (!rival_id) {
-        return reply.status(400).send({ error: 'Rival id is required' });
+        if (!rival_id || !rival_username) {
+        return reply.status(400).send({ error: 'Rival id and rival username is required' });
         }
         if (player_id === rival_id) {
         return reply.status(400).send({ error: 'Cannot add yourself as rival' });
@@ -31,10 +60,10 @@ export default async function rivalsRoutes(fastify) {
         
         try {
         const stmt = db.prepare(`
-            INSERT INTO rivals (player_id, rival_id)
-            VALUES (?, ?)
+            INSERT INTO rivals (player_id, rival_id, player_username, rival_username)
+            VALUES (?, ?, ?, ?)
         `);
-        const result = stmt.run(player_id, rival_id);
+        const result = stmt.run(player_id, rival_id, player_username, rival_username);
         reply.send({ 
             id: result.lastInsertRowid,
             player_id, 
@@ -57,7 +86,6 @@ export default async function rivalsRoutes(fastify) {
     fastify.delete('/:rival_id', { preHandler: requireAuth }, (request, reply) => {
         const player_id = request.id;
         const { rival_id } = request.params;
-        
         try {
         const stmt = db.prepare(`
             DELETE FROM rivals 

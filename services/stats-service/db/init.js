@@ -20,6 +20,8 @@ export function initDB(fastify) {
 db.prepare(`
     CREATE TABLE IF NOT EXISTS match_history (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      player_username TEXT NOT NULL,
+      opponent_username TEXT NOT NULL,
       player_id TEXT NOT NULL,
       opponent_id TEXT NOT NULL,
       player_name TEXT NOT NULL,
@@ -35,6 +37,7 @@ db.prepare(`
 db.prepare(`
     CREATE TABLE IF NOT EXISTS score_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_username TEXT NOT NULL,
     player_id TEXT NOT NULL,
     elo_score INTEGER,
     played_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -44,6 +47,7 @@ db.prepare(`
 db.prepare(`
     CREATE TABLE IF NOT EXISTS user_match_data (
       player_id TEXT PRIMARY KEY,
+      player_username TEXT NOT NULL,
       player_name TEXT NOT NULL,
       elo_score INTEGER DEFAULT 1000,
       games_played INTEGER NOT NULL,
@@ -59,10 +63,12 @@ db.prepare(`
 db.prepare(`
     CREATE TABLE IF NOT EXISTS rivals (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      player_username TEXT NOT NULL,
+      rival_username TEXT NOT NULL,
       player_id TEXT NOT NULL,
       rival_id TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(player_id, rival_id)
+      UNIQUE(player_id, rival_id, player_username, rival_username)
     )
   `).run();
 }

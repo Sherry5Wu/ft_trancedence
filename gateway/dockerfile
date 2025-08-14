@@ -1,7 +1,7 @@
 FROM debian:bullseye
 
 # Install NGINX and OpenSSL for TLS
-RUN apt-get update && apt-get install -y nginx curl gettext-base && \
+RUN apt-get update && apt-get install -y nginx openssl curl gettext-base && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create directories for SSL certificates

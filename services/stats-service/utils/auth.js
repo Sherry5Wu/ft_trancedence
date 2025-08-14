@@ -22,6 +22,8 @@ export const requireAuth = async (request, reply) => {
         request.id = userData.id;
         request.email = userData.email;
         request.username = userData.username;
+        console.log("loggin userData");
+        console.log(userData);
         
         console.log(`✅ Authenticated user: ${userData.username} (${userData.id})`);
         

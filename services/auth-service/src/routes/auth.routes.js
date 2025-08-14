@@ -179,16 +179,18 @@ export default fp(async (fastify) => {
           properties: {
             id: { type: 'string' },
             email: { type: 'string' },
-            role: { type: 'string' }
+            role: { type: 'string' },
+            username: { type: 'string'}
           }
         }
       }
     }
   }, async (req, reply) => {
     await fastify.authenticate(req, reply);
-    console.log(req);
+    console.log(req.user.username);
     return {
       id: req.user.id,
+      username: req.user.username,
       email: req.user.email,
       role: req.user.role || 'user'
     };
