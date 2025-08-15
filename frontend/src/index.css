@@ -38,15 +38,13 @@
 
 /* Styling for the Google login button */
 .google-signin-button {
-  @apply flex items-center justify-center bg-black text-white px-4 py-2 border-4 border-transparent rounded-full cursor-pointer 
+  @apply flex items-center justify-center bg-black text-white px-3 py-2 border-3 border-transparent rounded-full cursor-pointer 
        hover:border-white hover:shadow-2xl
-       /* focus:ring-white focus:ring-offset-2 */
        active:text-[#4682B4] active:border-[#4682B4]
 }
 
-/* Styling for the SVG icon inside the button */
 .google-signin-button svg {
-  @apply w-5 h-5 mr-3; /* Adjusted size and spacing for the icon */
+  @apply w-5 h-5 mr-3;
 }
 
 .dropdown-button {
@@ -104,6 +102,59 @@
   @apply h-11 w-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C]
 }
 
+
+/* Default button */
+.generic-button {
+  @apply flex mx-auto items-center justify-center gap-2 px-4 h-10
+         max-w-[300px] bg-black text-white border-3 border-transparent 
+         rounded-full cursor-pointer select-none shadow-md
+         transition-colors duration-300 ease-in-out;
+}
+
+.generic-button:hover {
+  @apply hover:border-white
+         hover:bg-black hover:shadow-2xl
+         active:bg-[#4682B4];
+}
+
+/* Icon size + white color for default */
+.generic-button .icon-wrapper svg,
+.generic-button .icon-wrapper img {
+  @apply w-[18px] h-[18px] pointer-events-none;
+  filter: invert(100%);
+}
+
+/* Unclicked button style */
+.generic-button.unclicked-button {
+  @apply bg-transparent text-black border-2 border-black shadow-none;
+}
+
+.generic-button.unclicked-button:hover {
+  @apply bg-black text-white;
+}
+
+.generic-button.unclicked-button:active {
+  @apply bg-[#e0e0e0];
+}
+
+/* Make icons normal color in unclicked state */
+.generic-button.unclicked-button .icon-wrapper svg,
+.generic-button.unclicked-button .icon-wrapper img {
+  filter: invert(0%);
+}
+
+/* Wrap for button + label */
+.button-wrapper {
+  @apply flex flex-col items-center relative;
+}
+
+/* Disabled button */
+.disabled-button {
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
+
+
+
 .h1 {
   @apply text-4xl flex justify-center
 }
@@ -125,7 +176,7 @@
 }
 
 /* Default button */
-.generic-button {
+/* .generic-button {
   display: flex;
   margin: 0 auto; 
   align-items: center;
@@ -133,9 +184,8 @@
   gap: 0.5rem;
   padding: 0 16px;
   height: 40px;
-  /* width: 100%;
-  max-width: 300px; */
-  font-family: "Roboto", Arial, sans-serif;
+  width: 100%;
+  max-width: 300px;
   background-color: #000000;
   color: white;
   border: none;
@@ -150,21 +200,21 @@
 }
 .generic-button:active {
   background-color: #d635e8;
-}
+} */
 /* .generic-button:focus {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 } */
-.generic-button .icon-wrapper svg,
+/* .generic-button .icon-wrapper svg,
 .generic-button .icon-wrapper img {
   width: 18px;
   height: 18px;
-  filter: invert(100%); /* 100% makes black SVG white */
+  filter: invert(100%); 100% makes black SVG white
   pointer-events: none;
-}
+} */
 
 /* Unclicked button style */
-.generic-button.unclicked-button {
+/* .generic-button.unclicked-button {
   background-color: transparent;
   color: black;
   border: 2px solid black;
@@ -177,13 +227,13 @@
 
 .generic-button.unclicked-button:active {
   background-color: #e0e0e0;
-}
+} */
 
 /* Optional: to keep icon colors consistent */
-.generic-button.unclicked-button .icon-wrapper svg,
+/* .generic-button.unclicked-button .icon-wrapper svg,
 .generic-button.unclicked-button .icon-wrapper img {
   filter: invert(0%);
-}
+} */
 
 
 /* Round button style */
@@ -225,12 +275,12 @@
 
 
 /* Wrap for button + label */
-.button-wrapper {
+/* .button-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-}
+} */
 /* Hidden by default */
 /* .hover-label {
   margin-top: 0.2rem;
@@ -246,11 +296,11 @@
 } */
 
 /* Prop for Generic button */
-.disabled-button {
+/* .disabled-button {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
-}
+} */
 
 
 /* GenericInput */
