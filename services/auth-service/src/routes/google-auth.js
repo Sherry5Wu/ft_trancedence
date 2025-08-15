@@ -1,5 +1,5 @@
 import fp from 'fastify-plugin';
-import { models } from '../db/index.js';
+
 import { registerGoogleUser } from '../services/google-auth.service.js';
 
 export default fp(async (fastify) => {
