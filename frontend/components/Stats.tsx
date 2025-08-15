@@ -5,8 +5,15 @@ import { UserStats } from '../pages/UserPage';
 import { ScoreHistory } from '../pages/UserPage';
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
-  console.log("in stats");
+
+  console.log('Userstats: ');
   console.log(userStats);
+  console.log('Score history: ')
+  console.log(scoreHistory);
+
+  if (!userStats || !scoreHistory)
+    return <div className='flex justify-center my-5'>No data</div>
+
 	return (
       <div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>
 

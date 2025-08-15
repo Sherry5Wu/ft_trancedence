@@ -10,7 +10,7 @@ interface SearchBarInputProps {
     onFilled: (value: string) => void;
     onSelect: (value: string) => void;
     className?: string;
-    isOpen: boolean;
+    isOpen?: boolean;
 }
 
 export const SearchBar = ({

@@ -103,6 +103,7 @@ const UserPage = () => {
 
 			setUserStats(stats);
 			setScoreHistory(score);
+
 			console.log('stats and score: ');
 			console.log(stats);
 			console.log(score);
@@ -115,8 +116,8 @@ const UserPage = () => {
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
-	if (!userStats || !scoreHistory)
-    	return <div className='flex justify-center my-5'>Unable to load player</div>
+	// if (!userStats || !scoreHistory)
+    // 	return <div className='flex justify-center my-5'>Unable to load player</div>
 
 	return (
 		<div className='pageLayout'>
@@ -131,11 +132,11 @@ const UserPage = () => {
 			<h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{pageOwner} </h2>
 			<div className='flex justify-between'>
 				<h4 className='h4 ml-2 scale-dynamic'>Score</h4>
-				<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{userStats.elo_score}</h4>
+				<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{userStats ? userStats.elo_score : 0}</h4>
 			</div>
 			<div className='flex justify-between'>
 				<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
-				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats.rank}</h4>
+				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '?'}</h4>
 			</div>
 		</div>
 

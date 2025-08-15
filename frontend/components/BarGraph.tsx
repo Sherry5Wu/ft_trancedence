@@ -26,7 +26,7 @@ const calculateDifference = ({ data }: { data: ScoreHistory[] | null }) => {
     console.log("in bar graph");
     console.log(data);
 	const newData = data.map((score, index, array) => {
-		if (index !== array.length - 1)
+		if (index < (array.length - 1))
 		{
 			const nextScore = array[index + 1];
 			return (

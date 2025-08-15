@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RivalRows } from '../../components/RivalRows';
-// import { GenericInput } from '../../components/GenericInput';
 import { SearchBar } from '../../components/SearchBar';
 import { useValidationField } from '../../hooks/useValidationField';
 import { isValidUsername } from '../../utils/Validation';

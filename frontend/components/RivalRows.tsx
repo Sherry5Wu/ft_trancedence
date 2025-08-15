@@ -17,74 +17,74 @@ interface RivalData {
 }
 
 const fetchRivalData = async () => {
-	// const { user } = useUserContext();
+	const { user } = useUserContext();
 
-	// if (!user)
-	// 	return [];
+	if (!user)
+		return [];
  
-	// try {
-	// 	const promises = user.rivals.map(async (rivalName) => {
-	// 		const response = await fetch(`https://localhost:8443/as/auth/login/${rivalName}`, { //FIX LATER
-	// 			method: 'GET',
-	// 			headers: {
-	// 			'Content-Type': 'application/json',
-	// 			},
-	// 		});
+	try {
+		const promises = user.rivals.map(async (rivalName) => {
+			const response = await fetch(`https://localhost:8443/as/auth/login/${rivalName}`, { //FIX LATER
+				method: 'GET',
+				headers: {
+				'Content-Type': 'application/json',
+				},
+			});
 			
-	// 		if (!response.ok) {
-	// 			throw new Error(`HTTP error! Status: ${response.status}`);
-	// 		}
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
 
-	// 		return response.json();
-	// 	})
+			return response.json();
+		})
 
-	// 	const rivalDataArray = await Promise.all(promises);
-	// 	return rivalDataArray.sort(); //sort alphabetically
-	// }
-	// catch (error) {
-	// 	console.error('Error:', error);
-	// 	return null;
-    // }
-
-  let rivalData =[
-    {
-      name: 'Alice',
-      score: 1920,
-      winratio: 66,
-      matches: 9,
-      wins: 6, 
-      losses: 3,
-      picture: '../assets/profilepics/B2.png'
-    },
-    {
-      name: 'Charles',
-      score: 816,
-      winratio: 13,
-      matches: 8,
-      wins: 1,
-      losses: 7,
-      picture: '../assets/profilepics/image.jpg'
-    },
-    {
-      name: 'David123',
-      score: 640,
-      winratio: 50,
-      matches: 6,
-      wins: 3,
-      losses: 3,
-      picture: '../assets/profilepics/Bandit.png'
-    },
-    {
-      name: 'Eve',
-      score: 2048,
-      winratio: 100,
-      matches: 4,
-      wins: 4,
-      losses: 0,
-      picture: '../assets/profilepics/paddington-poster.jpg'
+		const rivalDataArray = await Promise.all(promises);
+		return rivalDataArray.sort(); //sort alphabetically
+	}
+	catch (error) {
+		console.error('Error:', error);
+		return null;
     }
-  ]
-  return rivalData;
+
+  // let rivalData =[
+  //   {
+  //     name: 'Alice',
+  //     score: 1920,
+  //     winratio: 66,
+  //     matches: 9,
+  //     wins: 6, 
+  //     losses: 3,
+  //     picture: '../assets/profilepics/B2.png'
+  //   },
+  //   {
+  //     name: 'Charles',
+  //     score: 816,
+  //     winratio: 13,
+  //     matches: 8,
+  //     wins: 1,
+  //     losses: 7,
+  //     picture: '../assets/profilepics/image.jpg'
+  //   },
+  //   {
+  //     name: 'David123',
+  //     score: 640,
+  //     winratio: 50,
+  //     matches: 6,
+  //     wins: 3,
+  //     losses: 3,
+  //     picture: '../assets/profilepics/Bandit.png'
+  //   },
+  //   {
+  //     name: 'Eve',
+  //     score: 2048,
+  //     winratio: 100,
+  //     matches: 4,
+  //     wins: 4,
+  //     losses: 0,
+  //     picture: '../assets/profilepics/paddington-poster.jpg'
+  //   }
+  // ]
+  // return rivalData;
 }
 
 // const rivalsSortingItems = [
