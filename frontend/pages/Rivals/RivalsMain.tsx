@@ -14,9 +14,34 @@ import SearchIcon from '../../assets/noun-search-7526678.svg?react';
 //   profilePic?: string;
 // }
 
-const fetchRivalData = async () => {
-  const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
-  return rivalData.sort();
+const fetchUsers = async () => {
+  // const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
+  // return rivalData.sort();
+ 
+  try {
+    const promises = (async () => {
+      const response = await fetch(`https://localhost:8443/stats/user_match_data`, {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+        const userDataArray = await response.json();
+        const filteredUserDataArray = userDataArray.filter((username: string) => {
+          return username === 'player_username';
+        })
+        return filteredUserDataArray.sort(); //sort alphabetically
+    })
+  }
+  catch (error) {
+    console.error('Error:', error);
+    return null;
+    }
 }
 
 const RivalsPage = () => {
@@ -27,7 +52,7 @@ const RivalsPage = () => {
     useEffect(() => {
       const fetchRivals = async () => {
         console.log('fetching rival data');
-        const data = await fetchRivalData();
+        const data = await fetchUsers();
         setRivalData(data);
       };
       fetchRivals();
