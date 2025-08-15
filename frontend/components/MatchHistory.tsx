@@ -28,7 +28,7 @@ const postMatchData = async (accessToken: string) => {
             opponent_score: 5,
             opponent_id: '1',
             opponent_username: "opponentusername",
-            player_username: 'user alias'
+            player_username: 'user alias',
             result: 'loss',
         }
 
