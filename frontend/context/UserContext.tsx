@@ -43,7 +43,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       lastName: 'Smith',
       passWord: 12345,
     };
-    setUser(mockUser);
+    //setUser(mockUser);
   }, []);
 
     return (
