@@ -7,10 +7,10 @@ export interface MatchData {
     player_name: string,
     player_username: string,
     opponent_name: string,
+    opponent_username: string,
     opponent_id: string,
     player_score: number,
     opponent_score: number,
-    opponent_username: string,
     result: string,
     duration: number,
 }
@@ -21,14 +21,14 @@ const postMatchData = async (accessToken: string) => {
     const matchData: MatchData = 
         {
             player_name: 'User',
-            opponent_name: 'Rival1',
+            player_username: 'user alias',
             played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
             duration: 300,
             player_score: 2,
             opponent_score: 5,
             opponent_id: '1',
+            opponent_name: 'Rival1',
             opponent_username: "opponentusername",
-            player_username: 'user alias',
             result: 'loss',
         }
 
@@ -115,11 +115,11 @@ export const MatchHistory = () => {
                     return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'>
                         <span className='ml-3'>{match.played_at}</span>
                         <span className='col-span-2 truncate flex items-center justify-center gap-2'>
-                            <span className=''>{match.player_name} </span> 
+                            <span className=''>{match.player_username ? match.player_username : match.player_name} </span> 
                             <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
                             <span>vs</span>
                             <img src={match.player2pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
-                            <span className=''>{match.opponent_name}</span>
+                            <span className=''>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
                         </span> 
                         <span className=''>{match.player_score} - {match.opponent_score}</span>
                         <span className=''>{match.duration}</span>

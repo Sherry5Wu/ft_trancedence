@@ -22,7 +22,7 @@ import TournamentsPage from '../pages/Tournament/TournamentMain';
 import NewTournamentPage from '../pages/Tournament/TournamentNew';
 import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
 import LeaderboardPage from '../pages/Leaderboard';
-import RivalsPage from '../pages/Rivals/RivalsMain';
+import RivalsPage from '../pages/Rivals/Rivals';
 import NotFoundPage from '../pages/NotFoundPage';
 import GamePage from '../pages/GamePage';
 

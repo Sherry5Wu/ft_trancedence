@@ -8,97 +8,61 @@ import TrashIcon from '../assets/noun-trash-3552649.svg?react'
 
 interface RivalData {
 	name: string,
-	score: number,
-	winratio: number,
-	matches: number,
-	wins: number, 
-	losses: number,
+	score?: number,
+	winratio?: number,
+	matches?: number,
+	wins?: number, 
+	losses?: number,
 	//picture: '../assets/profilepics/B2.png'
 }
 
-const fetchRivalData = async () => {
-	const { user } = useUserContext();
+const fetchRivalData = async (userID: string) => {
 
-	if (!user)
-		return [];
- 
 	try {
-		const promises = user.rivals.map(async (rivalName) => {
-			const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, { //FIX LATER
-				method: 'GET',
-				headers: {
-				'Content-Type': 'application/json',
-				},
-			});
+    const rivals = await fetch(`https://localhost:8443/stats/rivals/${userID}`{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        });
+
+    if (!rivals.ok) {
+        throw new Error(`HTTP error! Status: ${rivals.status}`);
+    }
+
+    const rawData: string[] = await rivals.json();
+
+    const rivalsData: RivalData[] = rawData.map(entry => ({ name: entry }));
+
+    return rivalsData;
+    
+    }
+
+    
+		// const promises = user.rivals.map(async () => {
+		// 	const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, {
+		// 		method: 'GET',
+		// 		headers: {
+		// 		'Content-Type': 'application/json',
+		// 		},
+		// 	});
 			
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
+		// 	if (!response.ok) {
+		// 		throw new Error(`HTTP error! Status: ${response.status}`);
+		// 	}
 
-			return response.json();
-		})
+		// 	return response.json();
+		// })
 
-		const rivalDataArray = await Promise.all(promises);
-		return rivalDataArray.sort(); //sort alphabetically
+		// const rivalDataArray = await Promise.all(promises);
+		// return rivalDataArray.sort(); //sort alphabetically
 	}
+
 	catch (error) {
 		console.error('Error:', error);
 		return null;
-    }
-
-  // let rivalData =[
-  //   {
-  //     name: 'Alice',
-  //     score: 1920,
-  //     winratio: 66,
-  //     matches: 9,
-  //     wins: 6, 
-  //     losses: 3,
-  //     picture: '../assets/profilepics/B2.png'
-  //   },
-  //   {
-  //     name: 'Charles',
-  //     score: 816,
-  //     winratio: 13,
-  //     matches: 8,
-  //     wins: 1,
-  //     losses: 7,
-  //     picture: '../assets/profilepics/image.jpg'
-  //   },
-  //   {
-  //     name: 'David123',
-  //     score: 640,
-  //     winratio: 50,
-  //     matches: 6,
-  //     wins: 3,
-  //     losses: 3,
-  //     picture: '../assets/profilepics/Bandit.png'
-  //   },
-  //   {
-  //     name: 'Eve',
-  //     score: 2048,
-  //     winratio: 100,
-  //     matches: 4,
-  //     wins: 4,
-  //     losses: 0,
-  //     picture: '../assets/profilepics/paddington-poster.jpg'
-  //   }
-  // ]
-  // return rivalData;
+  }
 }
-
-// const rivalsSortingItems = [
-//   'Most matches played',
-//   'Most wins',
-//   'Most losses',
-//   'Win ratio',
-//   'Score',
-//   'Rank'
-// ];
-
-// const handleSortSelection = () => {
-
-// }
 
 export const RivalRows = () => {
 	const { user } = useUserContext();
@@ -109,7 +73,7 @@ export const RivalRows = () => {
 	useEffect(() => {
 		const loadRivals = async () => {
 			setLoading(true);
-			const data = await fetchRivalData();
+			const data = await fetchRivalData(user?.id);
 			setRivalData(data);
 			setLoading(false);
 		}
@@ -121,7 +85,6 @@ export const RivalRows = () => {
 
 	if (!rivalData)
     	return <div className='flex justify-center'>No rivals yet</div>;
-
 
     return (
         <div aria-label='rivals data' className=''>

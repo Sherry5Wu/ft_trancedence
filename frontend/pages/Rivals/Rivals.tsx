@@ -1,4 +1,4 @@
-// pages/Rivals/RivalsMain.tsx
+// pages/Rivals/Rivals.tsx
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -14,8 +14,6 @@ import { MatchData } from '../../components/MatchHistory';
 //   username: string;
 //   profilePic?: string;
 // }
-
-
 
 const fetchUsers = async () => {
   // const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
@@ -56,7 +54,6 @@ const RivalsPage = () => {
 
     useEffect(() => {
       const fetchRivals = async () => {
-        console.log('fetching rival data');
         const data = await fetchUsers();
         setRivalData(data);
       };
@@ -90,9 +87,9 @@ const RivalsPage = () => {
             </div>
           </div>
 
-          <div className={`relative z-0 transition ease-in-out duration-100 ${searchField.value ? 'opacity-50' : 'opacity-100'}`}>
+          {/* <div className={`relative z-0 transition ease-in-out duration-100 ${searchField.value ? 'opacity-50' : 'opacity-100'}`}>
             <RivalRows />
-          </div>
+          </div> */}
 
         </div>
 
