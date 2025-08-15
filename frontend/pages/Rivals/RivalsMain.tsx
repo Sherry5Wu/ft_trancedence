@@ -8,18 +8,20 @@ import { useValidationField } from '../../hooks/useValidationField';
 import { isValidUsername } from '../../utils/Validation';
 import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import SearchIcon from '../../assets/noun-search-7526678.svg?react';
+import { MatchData } from '../../components/MatchHistory';
 
 // export interface RivalData {
 //   username: string;
 //   profilePic?: string;
 // }
 
+
+
 const fetchUsers = async () => {
   // const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
   // return rivalData.sort();
  
   try {
-    const promises = (async () => {
       const response = await fetch(`https://localhost:8443/stats/user_match_data`, {
         method: 'GET',
         headers: {
@@ -32,12 +34,15 @@ const fetchUsers = async () => {
       }
 
         const userDataArray = await response.json();
-        const filteredUserDataArray = userDataArray.filter((username: string) => {
-          return username === 'player_username';
+        console.log("fetching usernames in rivals");
+        console.log(userDataArray);
+        const filteredUserDataArray = userDataArray.filter((user: MatchData) => {
+          return user.player_username;
         })
+        console.log(filteredUserDataArray);
         return filteredUserDataArray.sort(); //sort alphabetically
-    })
-  }
+    }
+  
   catch (error) {
     console.error('Error:', error);
     return null;

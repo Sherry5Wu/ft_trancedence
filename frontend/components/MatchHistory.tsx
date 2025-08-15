@@ -2,10 +2,11 @@ import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
 
-interface MatchData {
+export interface MatchData {
     played_at: string,
-    player_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
-    opponent_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
+    player_name: string,
+    player_username: string,
+    opponent_name: string,
     opponent_id: string,
     player_score: number,
     opponent_score: number,
@@ -26,7 +27,8 @@ const postMatchData = async (accessToken: string) => {
             player_score: 2,
             opponent_score: 5,
             opponent_id: '1',
-            opponent_username : "opponentusername",
+            opponent_username: "opponentusername",
+            player_username: 'user alias'
             result: 'loss',
         }
 
