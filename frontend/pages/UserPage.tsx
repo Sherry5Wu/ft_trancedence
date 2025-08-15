@@ -213,7 +213,7 @@ const UserPage = () => {
 				</button>
 			</div>
 
-			{stats && (<Stats user={user?.id} />)}
+			{stats && (<Stats userStats={userStats} scoreHistory={scoreHistory} />)}
 			</div>
 
 			<div aria-label='match history' className=''>

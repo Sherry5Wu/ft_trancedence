@@ -23,9 +23,10 @@ import { ScoreHistory } from './Stats';
 const calculateDifference = ({ data }: { data: ScoreHistory[] | null }) => {
 	if (!data)
 		return [];
-
+    console.log("in bar graph");
+    console.log(data);
 	const newData = data.map((score, index, array) => {
-		if (index !== array.length)
+		if (index !== array.length - 1)
 		{
 			const nextScore = array[index + 1];
 			return (
@@ -34,7 +35,7 @@ const calculateDifference = ({ data }: { data: ScoreHistory[] | null }) => {
 				elo_score: nextScore.elo_score - score.elo_score,
 			});
 		}
-	})
+	}).filter(Boolean);
 	return newData;
 }
 

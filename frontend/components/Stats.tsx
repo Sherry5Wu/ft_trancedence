@@ -5,7 +5,8 @@ import { UserStats } from '../pages/UserPage';
 import { ScoreHistory } from '../pages/UserPage';
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
-
+  console.log("in stats");
+  console.log(userStats);
 	return (
       <div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>
 
