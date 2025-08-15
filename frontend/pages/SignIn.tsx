@@ -116,14 +116,15 @@ return (
         aria-labelledby="pageTitle"
         aria-describedby="pageDescription"
       >
-        <AccessiblePageDescription
-          id="pageDescription"
-          text={t('pages.signIn.aria.description')}
-        />
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.signIn.aria.description')}
+      />
 
-        <h1 id="pageTitle" className="font-semibold text-center text-xl">
+      <div className="flex flex-col justify-center p-8 ">
+        <h2 id="pageTitle" className="font-semibold text-center">
           {t('pages.signIn.title')}
-        </h1>
+        </h2>
 
         <GenericInput
           type="text"
@@ -191,6 +192,7 @@ return (
             {t('pages.signIn.links.signUp')}
           </Link>
         </p>
+        </div>
       </main>
     </GoogleOAuthProvider>
   );

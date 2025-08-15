@@ -202,7 +202,7 @@ return (
             className="underline"
             aria-label={t('pages.signUp.aria.signInLink')}
           >
-            {t('common.buttons.signIn')}
+            {t('pages.signUp.signInLink')}
           </Link>
         </p>
       </div>

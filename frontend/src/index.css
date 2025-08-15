@@ -182,7 +182,7 @@
 
 
 .h1 {
-  @apply text-4xl flex justify-center
+  @apply text-4xl flex justify-center font-bold
 }
 
 .h2 {
