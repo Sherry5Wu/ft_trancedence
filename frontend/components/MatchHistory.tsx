@@ -4,11 +4,12 @@ import { useUserContext } from '../context/UserContext';
 
 interface MatchData {
     played_at: string,
-    player_name: string,
-    opponent_name: string, 
+    player_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
+    opponent_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
     opponent_id: string,
     player_score: number,
     opponent_score: number,
+    opponent_username: string,
     result: string,
     duration: number,
 }
@@ -25,11 +26,12 @@ const postMatchData = async (accessToken: string) => {
             player_score: 2,
             opponent_score: 1,
             opponent_id: '1',
+            opponent_username : "opponentusername",
             result: 'win',
         }
 
     try {
-        const response = await fetch(`http://localhost:8443/stats/match_history/`, {
+        const response = await fetch(`https://localhost:8443/stats/match_history/`, {
         method: 'POST',
         headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -52,7 +54,7 @@ const postMatchData = async (accessToken: string) => {
 
 const getMatchData = async (userID: string): Promise<MatchData | null> => {
     try {
-        const response = await fetch(`http://localhost:8443/stats/match_history/${userID}`, {
+        const response = await fetch(`https://localhost:8443/stats/match_history/${userID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -96,17 +98,6 @@ export const MatchHistory = () => {
              -
             </div>
     )};
-    
-
-    // FETCH MATCH HISTORY FROM PLAYER 1
-    // const matchData = fetchMatchData(user?.username);
-
-    // if (matchData.length  === 0)
-    //     return (
-    //         <div aria-label='empty match history' className='bg-[#FFEE8C] rounded-full text-center'>
-    //         -
-    //         </div>
-    // );
 
     return (
         <div aria-label='match history' className=''>

@@ -56,10 +56,10 @@ const HomePage: React.FC = () => {
         >
           <div
             className={`transition-transform duration-300 ${
-              showText ? '-rotate-180' : 'rotate-0'
+              showText ? 'rotate-180' : 'rotate-0'
             }`}
           >
-            <DownArrow className="w-8 h-8" />
+            <DownArrow className="w-12 h-12" />
           </div>
         </button>
       </div>

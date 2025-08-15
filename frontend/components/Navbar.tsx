@@ -82,8 +82,10 @@ export const Navbar = () => {
     ]
 
     const profileMenuItems = [
-        {Icon: <SettingsIcon className='menuIcon'/>, onClick: () => {console.log('Go to Settings'), navigate('/settings')}},
-        {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/')}} /* REMEMBER TO FLUSH OUT USER*/
+        {Icon: <SettingsIcon className='menuIcon'/>, onClick: () => {
+            console.log('Go to Settings'), 
+            user ? navigate('/settings') : navigate('/signin')}},
+        {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/')}}
     ]
 
     return (

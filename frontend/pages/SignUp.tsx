@@ -14,7 +14,7 @@ import { Tooltip } from '../components/Tooltip';
 const createUser = async (player: UserProfile): Promise<UserProfile | null> => {
   console.log('Sending user:', player);
   try {
-    const response = await fetch('http://localhost:8443/as/auth/register', {
+    const response = await fetch('https://localhost:8443/as/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

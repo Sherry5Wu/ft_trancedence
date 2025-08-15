@@ -35,15 +35,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
     const mockUser: User = {
       username: 'Paddington',
-      profilePic: <img src='../assets/profilepics/Bluey.png' className='profilePic border-2' />,
+      profilePic: <img src='../assets/profilepics/image.jpg' className='profilePic border-2' />,
       email: 'mock@user.com',
       score: 128,
       rank: 66,
       firstName: 'Bob',
       lastName: 'Smith',
-      password: 12345,
+      passWord: 12345,
     };
-    setUser(mockUser);
+    //setUser(mockUser);
   }, []);
 
     return (

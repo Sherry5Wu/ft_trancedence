@@ -21,53 +21,53 @@ interface UserProfile {
 }
 
 const signInUser = async (player: UserProfile) => {
-  console.log(player);
-  try {
-    const response = await fetch('http://localhost:8443/as/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(player)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    console.log(player);
+    try {
+      const response = await fetch('https://localhost:8443/as/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(player)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const userID = data.user.id;
+      console.log(userID);
+
+      const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!statResponse.ok) {
+        throw new Error(`HTTP error! Status: ${statResponse.status}`);
+      }
+      
+      const stats = await statResponse.json();
+
+      const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!rivalResponse.ok) {
+        throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
+      }
+      
+      const rivals = await rivalResponse.json();
+
+      return {data, stats, rivals};
     }
-
-    const data = await response.json();
-
-    const userID = data.user.id;
-    console.log(userID);
-
-    const statResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    if (!statResponse.ok) {
-      throw new Error(`HTTP error! Status: ${statResponse.status}`);
-    }
-    
-    const stats = await statResponse.json();
-
-    // const rivalResponse = await fetch (`http://localhost:8443/stats/user_match_data/`, {
-    //   method: 'GET',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-    
-    // if (!rivalResponse.ok) {
-    //   throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
-    // }
-    
-    // const rivals = await rivalResponse.json();
-
-    return {data, stats};
-  }
 
   catch (error) {
     console.error('Error:', error);
@@ -163,7 +163,7 @@ return (
                 profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic w-full h-full border-2' />,
                 score: signInData.stats.score,
                 rank: signInData.stats.score,
-                rivals: [],
+                rivals: signInData.rivals,
                 accessToken: signInData.data.accessToken,
                 refreshToken: signInData.data.refreshToken,
               });

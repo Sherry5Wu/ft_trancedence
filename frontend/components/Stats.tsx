@@ -34,19 +34,20 @@ const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>
     // ];
 
     try {
-        const response = await fetch(`http://localhost:8443/stats/score_history/${userID}`, {
+        const response = await fetch(`https://localhost:8443/stats/score_history/${userID}`, {
         method: 'GET'
     });
     if (!response.ok)
       throw new Error(`HTTP error! Status: ${response.status}`);
   
-    const data: ScoreHistory[] = await response.json();
+    const data = await response.json();
     
     // Mapataan ja muokataan API-vastauksesta oikea muoto
-    const filteredData: ScoreHistory[] = data.map(item => ({
+    const filteredData: ScoreHistory[] = data.map((item: ScoreHistory) => (
+      {
         id: item.id,
         elo_score: item.elo_score,  // Jos API:sta puuttuu tämä kenttä, se voidaan jättää pois
-    }));
+      }));
     console.log('from fetchScoreHistory ');
     console.log(filteredData);
     return filteredData;
@@ -61,7 +62,7 @@ const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>
 const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
 
   try {
-    const response = await fetch(`http://localhost:8443/stats/user_match_data/${userID}`, {
+    const response = await fetch(`https://localhost:8443/stats/user_match_data/${userID}`, {
       method: 'GET'
     });
 
@@ -103,15 +104,11 @@ export const Stats = ({ user }: StatsProps) =>
 
   useEffect(() => {
     if (!user) return;
-    setLoading(true);
-    fetchUserStats(user).then((data) => {
-      setUserStats(data);
-    });
-    fetchScoreHistory(user).then((data) => {
-      setScoreHistory(data);
-      setLoading(false);
-    })
-  }, [user]);
+    Promise.all([
+      fetchUserStats(user).then((data) => setUserStats(data)),
+      fetchScoreHistory(user).then((data) => setScoreHistory(data),)])
+    .finally(() => setLoading(false));
+    }, [user]);
 
   if (loading)
     return <div className='flex justify-center my-5'>Loading...</div>
@@ -126,7 +123,6 @@ export const Stats = ({ user }: StatsProps) =>
   //     <div className='flex justify-center my-5'>
   //       No data available
   //     </div>)
-
   return (
 
       <div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>

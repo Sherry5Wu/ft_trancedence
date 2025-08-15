@@ -21,6 +21,8 @@ async function authenticate(fastify, options) {
 
       // Attach decoded user data to request object for handlers
       request.user = decoded;
+      console.log("Decoded user");
+      console.log(request.user);
 
     } catch (err) {
       // Token invalid or expired
