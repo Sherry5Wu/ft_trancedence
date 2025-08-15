@@ -53,8 +53,6 @@ services:
     build:
       context: ./frontend
     container_name: frontend_container
-    ports: 
-      - "9000:9000"
     networks:
       - trancendence-network
     restart: unless-stopped
