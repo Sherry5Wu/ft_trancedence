@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useClickOutside } from "./Hooks";
 
-
 interface SearchBarInputProps {
     type?: string;
     placeholder: string;

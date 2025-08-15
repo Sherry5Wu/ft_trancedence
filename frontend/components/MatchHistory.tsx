@@ -24,10 +24,10 @@ const postMatchData = async (accessToken: string) => {
             played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
             duration: 300,
             player_score: 2,
-            opponent_score: 1,
+            opponent_score: 5,
             opponent_id: '1',
             opponent_username : "opponentusername",
-            result: 'win',
+            result: 'loss',
         }
 
     try {

@@ -24,7 +24,7 @@ const fetchRivalData = async () => {
  
 	try {
 		const promises = user.rivals.map(async (rivalName) => {
-			const response = await fetch(`https://localhost:8443/as/auth/login/${rivalName}`, { //FIX LATER
+			const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, { //FIX LATER
 				method: 'GET',
 				headers: {
 				'Content-Type': 'application/json',
