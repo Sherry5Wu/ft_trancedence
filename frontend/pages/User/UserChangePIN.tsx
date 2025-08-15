@@ -39,55 +39,6 @@ const ChangePINPage: React.FC = () => {
     !newPinIsSame;
 
   return (
-//     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
-//       <CloseButton className="ml-auto" />
-
-//       <h3 className="font-semibold text-center">Change PIN</h3>
-
-//       <GenericInput
-//         type="password"
-//         placeholder="Current PIN code"
-//         value={currentPinField.value}
-//         onFilled={currentPinField.onFilled}
-//         onBlur={currentPinField.onBlur}
-//         errorMessage={currentPinField.error}
-//       />
-
-//       <GenericInput
-//         type="password"
-//         placeholder="New PIN code"
-//         value={newPinField.value}
-//         onFilled={newPinField.onFilled}
-//         onBlur={newPinField.onBlur}
-//         errorMessage={
-//           newPinField.error ||
-//           (newPinIsSame ? 'New PIN must be different from current PIN code' : '')
-//         }
-//       />
-
-//       <GenericInput
-//         type="password"
-//         placeholder="Confirm new PIN code"
-//         value={confirmNewPin}
-//         onFilled={setConfirmNewPin}
-//         errorMessage={pinMismatch ? 'PIN codes do not match' : ''}
-//       />
-
-//       <GenericButton
-//         className="generic-button"
-//         text="SAVE"
-//         disabled={!formFilled}
-//         onClick={() => {
-//           alert('PIN code updated');
-//           navigate('/settings');
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
-// export default ChangePINPage;
-
     <main
       className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto"
       role="main"

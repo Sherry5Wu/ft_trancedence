@@ -28,7 +28,7 @@ const NewTournamentPage: React.FC = () => {
     resetPlayerListOnly,
   } = usePlayersContext();
 
-  const titleField = useValidationField(tournamentTitle || '', isValidTitle, t('common.errors.invalidTitle');
+  const titleField = useValidationField(tournamentTitle || '', isValidTitle,  t('common.errors.invalidTitle'));
 
   useEffect(() => {
     // Load logged-in user as player[0] if not already set
