@@ -1,0 +1,163 @@
+// pages/User/UserSettings.tsx
+
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../../context/UserContext';
+import { GenericInput } from "../../components/GenericInput";
+import { GenericButton } from '../../components/GenericButton';
+import { ToggleButton } from "../../components/ToggleButton";
+import { UserProfileBadge } from '../../components/UserProfileBadge';
+import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
+
+const SettingsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, setUser } = useUserContext();
+
+  // Local state for editable fields
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Populate local state from user context
+  useEffect(() => {
+    if (user) {
+      setFirstName(user?.firstname ?? '');
+      setLastName(user?.lastname ?? '');
+    }
+  }, [user]);
+
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Image = reader.result as string;
+      const newProfilePic = (
+        <img src={base64Image} className="profilePic" alt="Uploaded profile" />
+      );
+
+      setUser({
+        ...user!,
+        profilePic: newProfilePic,
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+  
+  return (
+    <div className='pageLayout'>
+
+      {/* Profile picture */}
+        <div >
+        <UserProfileBadge
+          size="lg"
+          user={{
+            username: user?.username,
+            photo: (user?.profilePic as React.ReactElement)?.props?.src // extract the image URL from JSX
+            // photo: user?.profilePic ? user.profilePic.props?.src : undefined // if user.profilePic isn't present yet 
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          alwaysShowPlus
+        />
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleImageUpload}
+        />
+      </div>
+
+      <div>
+        <h2 className='h2 mb-3'>{user?.username}</h2>      
+      </div>
+
+      {/* Account Settings */}
+      <div className="flex flex-row w-full max-w-4xl gap-8 mt-6">
+        <div className="flex flex-col p-4">
+          <h3 className="text-lg font-semibold mb-4">Account Settings</h3>
+
+          {/* First Name - Editable */}
+          <GenericInput
+            placeholder="First Name"
+            value={firstName}
+            onFilled={setFirstName}
+            showEditIcon={true}
+          />
+
+          {/* Last Name - Editable */}
+          <GenericInput
+            placeholder="Last Name"
+            value={lastName}
+            onFilled={setLastName}
+            showEditIcon={true}
+          />
+
+          {/* Email - Not editable */}
+          <GenericInput
+            placeholder="Email"
+            value={user?.email || ''}
+            onFilled={() => {}}
+            disabled={true}
+          />
+
+          {/* Username - Not editable */}
+          <GenericInput
+            placeholder="Username"
+            value={user?.username || ''}
+            onFilled={() => {}}
+            disabled={true}
+          />
+
+          {/* Save changes button */}
+          <GenericButton
+            className="generic-button"
+            text="Save changes"
+            onClick={() => {
+              alert('Profile updated!');
+              // send to backend later
+              setUser({
+                ...user!,
+                firstname: firstName,
+                lastname: lastName,
+              });
+            }}
+          />
+        </div>
+
+        {/* Security and 2FA */}
+        <div className="flex flex-col flex-1 p-4">
+          <h3 className="text-lg font-semibold mb-4">Security</h3>
+
+          <GenericButton
+            className="generic-button"
+            text="Change Password"
+            onClick={() => navigate('/change-password')}
+          />
+
+          <GenericButton
+            className="generic-button"
+            text="Change PIN"
+            onClick={() => navigate('/change-pin')}
+          />
+
+          <h3 className="text-lg font-semibold mb-4 mt-6">Two-factor authentication</h3>
+          <p className="text-left text-sm">
+            Two-factor authentication is an enhanced security measure. Once enabled, you’ll be required to give two types of identification when you log into this website. Google Authenticator is supported.
+          </p>
+
+          <ToggleButton
+            label='2FA with Google Authenticator'
+            onClick={() => navigate('/setup2fa')} // Enabled or disabled; fetch from user context?
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SettingsPage;

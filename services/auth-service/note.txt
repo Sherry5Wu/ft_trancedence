@@ -1,22 +1,6 @@
 
- 1. const user = await User.findByPk(userId);
-						 findBy....
-
-2. But backend thinks session is still valid, because refresh token is still good., what is
-session????
-layers these concepts
-
 
 3. in auth-service.js, why not import { User, RefreshToken } from '../db/index.js';
-
-4. what are the differeces short-live token and long-live token? why can't just have
-long-live token?
-
-
-5. in jwt.service.js file:
-	why validateAccessToken don't return value, but validateRefreshToken does????
-	go through jwt.service.js file
-
 
 6. graceFullyShutDown() ????
 
@@ -25,17 +9,17 @@ Using alter: true in prod can be risky; explicit migrations (e.g. with Umzug) ar
 safer for production.
 
 
-8. What is schema for, how to use it? what items should contain in a schema,
-like User.
-
 9. auth.db doesn't be create succefully.
+10. the different between plugins and pure functions
+
 
 
 Build and run docker
 
 1. Dockerize and run
-docker build -t auth-service .
-docker run -p 3000:3000 auth-service
+docker build --target dev -t auth-service .
+(-t === --tag)
+docker run -p 3001:3001 auth-service
 
 Auto-generate API docs
 1.
@@ -52,7 +36,7 @@ curl http://localhost:3001/health
 Can  you curl / Postman
 curl -X POST http://localhost:3001/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"mypassword123"}'
+  -d '{"email":"test@example.com", "username":"usernameA","password":"myPassword*123", "pinCode":"5632"}'
 
 
 Force remove in one step:
@@ -60,3 +44,11 @@ docker rm -f $(docker ps -a -q)
 
 Clean up unused images/volumes/network
 docker system prune --all --volumes
+
+// remove all the docker images
+docker rmi -f $(docker images -q)
+
+Here’s what’s happening:
+  docker images -q → lists only the IDs of all images.
+  $(...) → passes that list to the docker rmi command.
+  -f → forces removal, even if an image is used by stopped containers.

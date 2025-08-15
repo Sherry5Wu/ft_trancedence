@@ -23,24 +23,32 @@ export default fp(async (fastify) => {
     schema: {
       tags: ['Auth'],
       summary: 'Register new user',
-      description: 'Creates a new user account with email and password.',
+      description: 'Creates a new user account with email, username, pinCode and password.',
       body: {
         type: 'object',
-        required: ['email', 'password'],
+        required: ['email', 'username', 'password', 'pinCode'],
         properties: {
           email: { type: 'string', format: 'email' },
-          password: { type: 'string', minLength: 8, maxLength: 32 },
-        }
+          username: { type: 'string', pattern: '^[a-zA-Z][a-zA-Z0-9._-]{5,19}$' },
+          password: {
+            type: 'string',
+            pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,72}$' // here shold be "\\d" instead i=of "\d"
+          },
+          pinCode: {
+            type: 'string',
+            pattern: '^\\d{4}$'
+          },
+        },
       },
       response: {
         201: {
           description: 'User successfully registered',
-          $ref: 'User#'
+          $ref: 'publicUser#'
         }
       }
     }
   }, async (req, reply) => {
-    const user = await registerUser(req.body.email, req.body.password);
+    const user = await registerUser(req.body.email, req.body.username, req.body.password, req.body.pinCode);
     return reply.code(201).send(user);
   });
 
@@ -49,12 +57,12 @@ export default fp(async (fastify) => {
     schema: {
       tags: ['Auth'],
       summary: 'Login user',
-      description: 'Authenticates a user using email and password.',
+      description: 'Authenticates a user using email/username and password.',
       body: {
         type: 'object',
-        required: ['email', 'password'],
+        required: ['indentifier', 'password'],
         properties: {
-          email: { type: 'string', format: 'email' },
+          indentifier: { type: 'string' }, // can be email or username
           password: { type: 'string' }
         }
       },
@@ -65,14 +73,14 @@ export default fp(async (fastify) => {
           properties: {
             accessToken: { type: 'string' },
             refreshToken: { type: 'string' },
-            user: { $ref: 'User#' }
+            user: { $ref: 'publicUser#' }
           }
         }
       }
     }
   }, async (req, reply) => {
     const { accessToken, refreshToken, user } = await authenticateUser(
-      req.body.email,
+      req.body.indentifier,
       req.body.password,
     );
     return { accessToken, refreshToken, user };
@@ -142,7 +150,7 @@ export default fp(async (fastify) => {
       response: {
         200: {
           description: 'User profile details',
-          $ref: 'User#'
+          $ref: 'publicUser#'
         }
       }
     }

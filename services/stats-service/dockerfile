@@ -2,11 +2,10 @@ FROM node:20-bullseye-slim
 
 WORKDIR /app
 
-COPY package*.json ./
-COPY stats.js ./
+COPY . .
 
 RUN npm install
 
 EXPOSE 3001
 
-CMD ["node", "stats.js"]
+CMD ["node", "app.js"]
