@@ -136,7 +136,7 @@ const Setup2faBackupPage: React.FC = () => {
           className="generic-button"
           text={t('common.buttons.cancel')}
           onClick={() =>
-            navigate('/signup')
+            navigate('/settings')
           }
           aria-label={t('common.aria.buttons.cancel')}
         />

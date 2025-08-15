@@ -115,7 +115,7 @@ const Setup2faMainPage: React.FC = () => {
           className="generic-button"
           text={t('common.buttons.cancel')}
           onClick={() =>
-            navigate(-1)
+            navigate('/settings')
           }
           aria-label={t('common.aria.buttons.cancel')}
         />

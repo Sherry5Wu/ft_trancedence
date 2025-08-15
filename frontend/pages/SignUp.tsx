@@ -161,7 +161,7 @@ return (
           errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
         />
 
-        <div className="relative inline-flex items-center">
+        {/* <div className="relative inline-flex items-center">
           <ToggleButton
             label={t('pages.signUp.toggle2FA')}
             aria-label={t('common.aria.toggles.toggle2FA')}
@@ -170,7 +170,7 @@ return (
           <div className="absolute right-[-30px]">
             <Tooltip text={t('common.tooltips.2fa')} />
           </div>
-        </div>
+        </div> */}
 
         <GenericButton
           className="generic-button"

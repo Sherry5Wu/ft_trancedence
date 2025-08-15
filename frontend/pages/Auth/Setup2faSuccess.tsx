@@ -60,6 +60,7 @@ const Setup2faSuccessPage: React.FC = () => {
           text={t('common.buttons.done')}
           onClick={() => navigate('/homeuser')}
           aria-label={t('common.aria.buttons.done')}
+          // send to backend auth as {true}
         />
       </div>
     </main>
