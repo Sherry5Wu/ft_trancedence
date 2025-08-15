@@ -32,13 +32,10 @@ const fetchUsers = async () => {
       }
 
         const userDataArray = await response.json();
-        console.log("fetching usernames in rivals");
-        console.log(userDataArray);
         const filteredUserDataArray = userDataArray.map((username: MatchData) => {
           return username.player_name;
         })
-        console.log(filteredUserDataArray);
-        return filteredUserDataArray.sort(); //sort alphabetically
+        return filteredUserDataArray.sort();
     }
   
   catch (error) {
