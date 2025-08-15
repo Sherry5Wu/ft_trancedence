@@ -30,7 +30,7 @@ export default (sequelize) => {
     },
     passwordHash: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     pinCodeHash: {
       type: DataTypes.STRING,
