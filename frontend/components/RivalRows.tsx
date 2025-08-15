@@ -36,9 +36,6 @@ const fetchRivalData = async (userID: string) => {
 
     return rivalsData;
     
-    }
-
-    
 		// const promises = user.rivals.map(async () => {
 		// 	const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, {
 		// 		method: 'GET',

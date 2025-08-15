@@ -55,7 +55,7 @@ const RivalsPage = () => {
         setRivalData(data);
       };
       fetchRivals();
-    }, [searchField.value])
+    }, [])
   
     return (
       <div className='pageLayout'>

@@ -28,11 +28,54 @@ export interface ScoreHistory {
     elo_score: number,
 }
 
+const addRival = async (userID: string) => {
+	try {
+		const response = await fetch(`https://localhost:8443/stats/rivals/${userID}`, { //FIX PATH
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		return response.json();
+
+	}
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+}
+
+const removeRival = async (userID: string) => {
+	try {
+		const response = await fetch(`https://localhost:8443/stats/rivals/${userID}`, { //FIX PATH
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		return response.json();
+	}
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+	
+}
+
 const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>  => {
 	try {
 		const response = await fetch(`https://localhost:8443/stats/score_history/username/${userID}`, {
-		method: 'GET'
+			method: 'GET'
 		});
+
 		if (!response.ok)
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -180,26 +223,30 @@ const UserPage = () => {
 		</div>
 
 		:
-		//CHECK IF PAGE BELONGS TO A RIVAL
+		
+		user.rivals.includes(param.userName) ?
+
 			<GenericButton
 			className="transparent-round-icon-button"
 			text={undefined}
 			icon={<img src={RivalsIcon} alt="Rivals icon" />}
 			hoverLabel='ADD TO RIVALS'
 			onClick={() => 
-				navigate('/rivals') //add to Rivals instead
+				addRival(user.id);
 			}
 			/>
+		
+			:
 
-			//   <GenericButton
-			//   className="round-icon-button"
-			//   text={undefined}
-			//   icon={<img src={RivalsIcon} alt="Rivals icon" />}
-			//   hoverLabel='REMOVE FROM RIVALS'
-			//   onClick={() => 
-			//     navigate('/rivals') //add to Rivals instead
-			//   }
-			// />
+			  <GenericButton
+			  className="round-icon-button"
+			  text={undefined}
+			  icon={<img src={RivalsIcon} alt="Rivals icon" />}
+			  hoverLabel='REMOVE FROM RIVALS'
+			  onClick={() => 
+			    removeRival(user.id);
+			  }
+			/>
 		}
 
 		{/* Statistics */}
@@ -233,90 +280,4 @@ const UserPage = () => {
 			</div>)
 }
     
-
-
 export default UserPage;
-
-      // <button onClick={showStats}> <DownArrow className='size-20 -mb-15' /> </button>
-      // {/* Statistics */}
-      
-      // {hidden && (
-      // <div aria-label='statistics & match-history' className=''>
-      //   <div aria-label='statistics' className='w-200 scale-90'>
-      //     <h3 className='h3 text-center font-semibold my-5 ml-15'>STATS</h3>
-      //     <div className='grid grid-cols-2 w-full h-200'>
-
-      //       <div>
-      //         <h4 className='h4 text-center my-5 font-semibold'>SCORE HISTORY</h4>
-      //         <LineGraph />
-      //       </div>
-
-      //       <div>
-      //         <h4 className='h4 text-center my-5 font-semibold'>SCORE GAINS/LOSSES</h4>
-      //         <div className=''>
-      //           <BarGraph />
-      //         </div>
-      //       </div>
-
-      //       <div>
-      //         <h4 className='h4 text-center mt-60 mb-5 font-semibold'>WIN RATE</h4>
-      //         <PieGraph/>
-      //       </div> 
-
-      //       <div className='grid grid-cols-2 mt-60 py-10 scale-90'>
-
-      //         <div className='flex flex-col items-center'>
-      //           <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-      //             <div className='text-5xl font-bold text-black'>{playedGames}</div>
-      //           </div>
-      //           <h4 className='h4 my-2 font-semibold'>PLAYED GAMES</h4>
-      //         </div>
-
-      //         <div className='flex flex-col items-center'>
-      //           <button className='group relative flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center}'>
-      //             <div className='absolute text-3xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 
-      //                             group-hover:opacity-100 transition-opacity ease-in-out'>{worstRival}</div>
-      //             {WorstRivalPic}
-      //           </button>
-      //           <h4 className='h4 my-2 font-semibold'>WORST RIVAL</h4>
-      //         </div>
-
-      //         <div className='flex flex-col items-center'>
-      //           <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-      //             <div className='text-5xl font-bold text-black'>{winStreak}</div>
-      //           </div>
-      //           <h4 className='h4 my-2 font-semibold'>WIN STREAK</h4>
-      //         </div>
-
-      //         <div className='flex flex-col items-center'>
-      //           <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>
-      //             <div className='text-5xl font-bold text-black'>{longestWinStreak}</div>
-      //           </div>
-      //           <h4 className='h4 my-2 font-semibold text-center'>LONGEST WIN STREAK</h4>
-      //         </div>
-
-      //       </div>
-      //     </div>
-      //   </div>
-
-      //     <div aria-label='match history'>
-      //       <h3 className='h3 text-center font-semibold mb-5 -mt-10 scale-90'>MATCH HISTORY</h3>
-      //       <MatchHistory player1={user?.username} />
-      //     </div>
-      //     </div>)}
-      //   </div>)}
-
-
-          {/* // <div className='mt-15 ml-15 px-2 flex flex-col'>
-          //   <div className='flex mb-5 justify-between items-end border-b-2 border-dashed'>
-          //     <h4 className='h4 font-semibold'>PLAYED GAMES</h4><h3 className='h3 font-bold'>{playedGames}</h3>
-          //   </div>
-          //   <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
-          //     <h4 className='h4 font-semibold'>WIN STREAK</h4><h3 className='h3 font-bold'>{winStreak}</h3>
-          //   </div>
-          //   <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
-          //     <h4 className='h4 font-semibold'>LONGEST WIN STREAK</h4><h3 className='h3 font-bold'>{longestWinStreak}</h3>
-          //   </div>
-          //   <div className='flex my-5 justify-between items-end border-b-2 border-dashed'>
-          //     <h4 className='h4 font-semibold'>WORST RIVAL</h4><h3 className='h3 font-bold'>{worstRival}</h3>
-          //   </div> */}
