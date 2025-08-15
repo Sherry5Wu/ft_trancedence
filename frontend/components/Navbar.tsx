@@ -65,12 +65,6 @@ export const Navbar = () => {
         {label: 'EN', Icon: <EnglishIcon />, onClick: () => changeLanguage('en')},
         {label: 'FR', Icon: <FrenchIcon />, onClick: () => changeLanguage('fr')},
         {label: 'PT', Icon: <PortugueseIcon />, onClick: () => changeLanguage('pt')},
-        // {label: 'FI', Icon: <FinnishIcon />, onClick: () => changeLanguage('fi')}
-        // {label: 'EN', Icon: <EnglishIcon />, onClick: () => console.log('English')},
-        // {label: 'FR', Icon: <FrenchIcon />, onClick: () => console.log('French')},
-        // {label: 'PT', Icon: <PortugueseIcon />, onClick: () => console.log('Portuguese')},
-        // {label: 'FI', Icon: <FinnishIcon />, onClick: () => console.log('Finnish')}
-         /* ACTUALLY CHANGE THESE LATER */
     ]
 
     const accessibilityMenuItems = [
@@ -92,8 +86,8 @@ export const Navbar = () => {
     <nav className='flex items-center bg-[#FFCC00]'>
         <div className='flex flex-1 justify-start gap-5'>
             <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
-            <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' />
-            <Menu aria-label='dark mode' Icon={darkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => handleDarkMode()}/>
+            {/* <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' /> */}
+            {/* <Menu aria-label='dark mode' Icon={darkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => handleDarkMode()}/> */}
         </div>
         <div className='flex flex-1 justify-center mb-5' >
             <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>

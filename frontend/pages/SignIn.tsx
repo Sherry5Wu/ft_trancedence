@@ -83,7 +83,7 @@ const SignInPage = () => {
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
       
-      <h3 className="font-semibold text-center">Sing In</h3>
+      <h3 className="font-semibold text-center">Sign In</h3>
 
       <GenericInput
         type="username"

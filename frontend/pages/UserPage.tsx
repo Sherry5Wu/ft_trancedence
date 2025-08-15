@@ -30,7 +30,7 @@ export interface ScoreHistory {
 
 const addRival = async (userID: string) => {
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/${userID}`, { //FIX PATH
+		const response = await fetch(`https://localhost:8443/stats/rivals/username/${userID}`, { //FIX PATH
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const addRival = async (userID: string) => {
 
 const removeRival = async (userID: string) => {
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/${userID}`, { //FIX PATH
+		const response = await fetch(`https://localhost:8443/stats/rivals/username/${userID}`, { //FIX PATH
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -67,7 +67,6 @@ const removeRival = async (userID: string) => {
 		console.error('Error: ', error);
 		return null;
 	}
-	
 }
 
 const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>  => {
@@ -231,9 +230,7 @@ const UserPage = () => {
 			text={undefined}
 			icon={<img src={RivalsIcon} alt="Rivals icon" />}
 			hoverLabel='ADD TO RIVALS'
-			onClick={() => 
-				addRival(user.id);
-			}
+			onClick={() => addRival(user.id)}
 			/>
 		
 			:
@@ -243,9 +240,7 @@ const UserPage = () => {
 			  text={undefined}
 			  icon={<img src={RivalsIcon} alt="Rivals icon" />}
 			  hoverLabel='REMOVE FROM RIVALS'
-			  onClick={() => 
-			    removeRival(user.id);
-			  }
+			  onClick={() => removeRival(user.id)}
 			/>
 		}
 
