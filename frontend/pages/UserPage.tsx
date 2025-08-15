@@ -1,47 +1,124 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
 import { Stats } from '../components/Stats';
-import { ResponsiveContainer } from 'recharts';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
 import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
-import { useParams } from 'react-router-dom';
 
-const fetchUserPageData = async () => {
-  
+export interface UserStats {
+    games_played: number;
+    win_streak: number;
+    longest_win_streak: number;
+    worstRival: string;
+    games_draw: number;
+    games_lost: number;
+    games_won: number;
+	elo_score: number;
+	rank: number;
+    // worstRivalPic: string;
+}
+
+export interface ScoreHistory {
+    id: number,
+    elo_score: number,
+}
+
+const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>  => {
+	try {
+		const response = await fetch(`https://localhost:8443/stats/score_history/username/${userID}`, {
+		method: 'GET'
+		});
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		const data = await response.json();
+
+		const filteredData: ScoreHistory[] = data.map((item: ScoreHistory) => ({
+			id: item.id,
+			elo_score: item.elo_score,
+		}));
+		console.log('from fetchScoreHistory ');
+		console.log(filteredData);
+		return filteredData;
+	}
+
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+};
+
+const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
+	try {
+		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${userID}`, {
+		method: 'GET'
+		});
+
+		console.log(userID);
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		const userStats: UserStats = await response.json();
+		console.log(userStats);
+		return userStats;
+	}
+
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
 }
 
 const UserPage = () => {
-	const navigate = useNavigate(); // to access other pages
+	const navigate = useNavigate();
 	const { user, setUser } = useUserContext();
 	const [stats, setStats] = useState(false);
 	const [history, setHistory] = useState(false);
+	const [userStats, setUserStats] = useState<UserStats | null>(null);
+	const [scoreHistory, setScoreHistory] = useState<ScoreHistory[] | null>(null);
+	const [loading, setLoading] = useState(true);
 	const param = useParams();
-
-  //mockdata
-  // const playedGames = 77;
-  // const winStreak = 1;
-  // const longestWinStreak =3;
-  // const worstRival = 'Alice';
-  // const WorstRivalPic = <img src='../assets/profilepics/B2.png' className='profilePic mt-1'/>
+	const pageOwner = param.username;
 
 	const showStats = () => setStats(!stats);
 	const showHistory = () => setHistory(!history);
 
-	// useEffect(() => {
-	// 	if (!user)
-	// 		navigate('/signin');
-	// }, [user])
+	useEffect(() => {
+		const loadStats = async () => {
+			if (!user) navigate('/signin');
+			if (!pageOwner) return ;
 
-	if (!user)
-		navigate('/signin');
-	else
-		return (
+			setLoading(true);
+
+			const statPromise = fetchUserStats(pageOwner);
+			const scorePromise = fetchScoreHistory(pageOwner);
+
+			const stats = await statPromise;
+			const score = await scorePromise;
+
+			setUserStats(stats);
+			setScoreHistory(score);
+			console.log('stats and score: ');
+			console.log(stats);
+			console.log(score);
+
+			setLoading(false);
+		}
+		loadStats();
+		}, [user]);
+
+	if (loading)
+		return <div className='flex justify-center'>Loading page...</div>;
+
+	if (!userStats || !scoreHistory)
+    	return <div className='flex justify-center my-5'>Unable to load player</div>
+
+	return (
 		<div className='pageLayout'>
 		
 		{/* User header */}
@@ -51,14 +128,14 @@ const UserPage = () => {
 		</div>
 
 		<div className='w-56 truncate mb-12'>
-			<h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{param.username} </h2>
+			<h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{pageOwner} </h2>
 			<div className='flex justify-between'>
 				<h4 className='h4 ml-2 scale-dynamic'>Score</h4>
-				<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{user?.score}</h4>
+				<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{userStats.elo_score}</h4>
 			</div>
 			<div className='flex justify-between'>
 				<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
-				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{user?.rank}</h4>
+				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats.rank}</h4>
 			</div>
 		</div>
 

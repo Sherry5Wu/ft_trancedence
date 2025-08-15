@@ -32,19 +32,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
 
     // MOCKUP FOR TESTING, REMOVE LATER
-    useEffect(() => {
-    const mockUser: User = {
-      username: 'Paddington',
-      profilePic: <img src='../assets/profilepics/image.jpg' className='profilePic border-2' />,
-      email: 'mock@user.com',
-      score: 128,
-      rank: 66,
-      firstName: 'Bob',
-      lastName: 'Smith',
-      passWord: 12345,
-    };
+    // useEffect(() => {
+    // const mockUser: User = {
+    //   username: 'Paddington',
+    //   profilePic: <img src='../assets/profilepics/image.jpg' className='profilePic border-2' />,
+    //   email: 'mock@user.com',
+    //   score: 128,
+    //   rank: 66,
+    //   firstName: 'Bob',
+    //   lastName: 'Smith',
+    //   passWord: 12345,
+    // };
     //setUser(mockUser);
-  }, []);
+//   }, []);
 
     return (
         <userContext.Provider value={{ user, setUser }}>
