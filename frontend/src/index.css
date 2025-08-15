@@ -154,6 +154,32 @@
 }
 
 
+/* GenericInput */
+.generic-input {
+  @apply h-10 w-full max-w-[300px] px-[14px] py-[10px] text-sm
+         bg-[#fdfBD4] text-black border-3 border-transparent rounded-full outline-none
+         box-border transition-colors duration-300 ease-in-out
+         my-2;
+}
+
+.generic-input:focus {
+  @apply  border-black;
+}
+
+.generic-input::placeholder {
+  @apply text-gray-500;
+}
+
+.generic-input.filled {
+  @apply text-black;
+}
+
+/* Disabled input */
+.generic-input:disabled {
+  @apply bg-[#FFEE8C]  text-[#999] cursor-not-allowed;
+}
+
+
 
 .h1 {
   @apply text-4xl flex justify-center
@@ -173,240 +199,4 @@
 
 .h5 {
   @apply text-lg
-}
-
-/* Default button */
-/* .generic-button {
-  display: flex;
-  margin: 0 auto; 
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0 16px;
-  height: 40px;
-  width: 100%;
-  max-width: 300px;
-  background-color: #000000;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  user-select: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
-  transition: background-color 0.3s ease;
-}
-.generic-button:hover {
-  background-color: #4e4e4e;
-}
-.generic-button:active {
-  background-color: #d635e8;
-} */
-/* .generic-button:focus {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
-} */
-/* .generic-button .icon-wrapper svg,
-.generic-button .icon-wrapper img {
-  width: 18px;
-  height: 18px;
-  filter: invert(100%); 100% makes black SVG white
-  pointer-events: none;
-} */
-
-/* Unclicked button style */
-/* .generic-button.unclicked-button {
-  background-color: transparent;
-  color: black;
-  border: 2px solid black;
-  box-shadow: none;
-}
-
-.generic-button.unclicked-button:hover {
-  background-color: #f0f0f0;
-}
-
-.generic-button.unclicked-button:active {
-  background-color: #e0e0e0;
-} */
-
-/* Optional: to keep icon colors consistent */
-/* .generic-button.unclicked-button .icon-wrapper svg,
-.generic-button.unclicked-button .icon-wrapper img {
-  filter: invert(0%);
-} */
-
-
-/* Round button style */
-/* .round-icon-button {
-  display: flex;
-  margin: 0 auto; 
-  width: 100px;
-  height: 100px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background-color: #000000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
-  cursor: pointer;
-  color: white;
-}
-.round-icon-button img,
-.round-icon-button svg {
-  width: 80px;
-  height: 80px;
-  filter: invert(100%);
-  pointer-events: none;
-}
-.round-icon-button:hover {
-  background-color: #4e4e4e;
-}
-.round-icon-button:active {
-  background-color: #d635e8;
-} */
-/* .round-icon-button:focus,
-.round-icon-button:focus-visible {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
-} */
-
-
-/* Wrap for button + label */
-/* .button-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-} */
-/* Hidden by default */
-/* .hover-label {
-  margin-top: 0.2rem;
-  font-size: 14px;
-  color: #4e4e4e;
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-  pointer-events: none;
-} */
-/* Shown on hover */
-/* .button-wrapper:hover .hover-label {
-  opacity: 1;
-} */
-
-/* Prop for Generic button */
-/* .disabled-button {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-} */
-
-
-/* GenericInput */
-.generic-input {
-  /* display: flex; */
-  /* margin: 0 auto; */
-  /* margin: 0;  */
-  height: 40px;   
-  width: 100%;
-  max-width: 300px;
-  padding: 10px 14px;
-  font-size: 14px;
-  /* font-family: "Roboto", Arial, sans-serif; */
-  background-color: #fdfBD4;
-  color: black;
-  border:none;
-  border-radius: 20px;
-  outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-  margin: 0.5rem 0;
-}
-.generic-input:focus {
-  border-color: #357ae8;
-}
-.generic-input::placeholder {
-  color: gray;
-}
-.generic-input.filled {
-  color: black;
-}
-
-/* Style for disabled input */
-.generic-input:disabled {
-  background-color: #d6d6d6;  /* Light gray background */
-  color: #999;  /* Gray text */
-  border-color: #dcdcdc;  /* Lighter gray border */
-  cursor: not-allowed;  /* Change cursor to indicate it's disabled */
-}
-
-
-
-/* DropDownButton */
-.DropDown-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  margin: 0.5rem 0;
-}
-.DropDown-button {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 40px;
-  width: 100%;
-  max-width: 300px;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-family: "Roboto", Arial, sans-serif;
-  background-color:  #fdfBD4;
-  border: none;
-  border-radius: 20px;
-  outline: none;
-  box-sizing: border-box;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-  color: gray; /* default gray */
-}
-.DropDown-button.filled {
-  color: black;
-}
-.DropDown-label {
-  flex-grow: 1;
-  text-align: left;
-}
-.DropDown-arrow {
-  margin-left: auto;
-}
-/* Dropdown menu */
-.DropDown-menu {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 300px;
-  background-color: #fdfBD4;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  margin-top: 0.3rem;
-  list-style: none;
-  padding: 0;
-  z-index: 10;
-}
-.DropDown-option {
-  padding: 10px 14px;
-  cursor: pointer;
-  font-size: 14px;
-  font-family: "Roboto", Arial, sans-serif;
-  color: black;
-  border-bottom: 1px solid #eee;
-}
-.DropDown-option:last-child {
-  border-bottom: none;
-}
-.DropDown-option:hover {
-  background-color: #f0f0f0;
-  border-radius: 20px;
 }
