@@ -24,8 +24,8 @@ const ChoosePlayersPage: React.FC = () => {
     setPlayer,
   } = usePlayersContext();
 
-  const player1Field = useValidationField('', isValidAlias);
-  const player2Field = useValidationField('', isValidAlias);
+  const player1Field = useValidationField('', isValidAlias, t('common.errors.invalidAlias'));
+  const player2Field = useValidationField('', isValidAlias, t('common.errors.invalidAlias'));
 
   const [player2Type, setPlayer2Type] = useState<"registered" | "guest" | null>(null);
   const [isPlayer1Loading, setIsPlayer1Loading] = useState(true);

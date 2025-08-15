@@ -38,8 +38,8 @@ const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const usernameField = useValidationField('', isValidUsername);
-  const pinField = useValidationField('', isValidPin);
+  const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+  const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
 
   const [confirmPin, setConfirmPin] = useState('');
 

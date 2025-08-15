@@ -14,8 +14,8 @@ const ChangePasswordPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const passwordField = useValidationField('', isValidPassword);
-  const newPasswordField = useValidationField('', isValidPassword);
+  const passwordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
+  const newPasswordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
 
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 

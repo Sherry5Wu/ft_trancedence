@@ -4,7 +4,8 @@ import { useState } from 'react';
 
 export const useValidationField = (
   initialValue: string,
-  validate: (val: string) => boolean
+  validate: (val: string) => boolean,
+  invalidMsg: string
 ) => {
   const [value, setValue] = useState(initialValue);
   const [touched, setTouched] = useState(false);
@@ -14,7 +15,7 @@ export const useValidationField = (
     const trimmed = val.trim();
     setValue(trimmed);
     if (touched) {
-      setError(validate(trimmed) ? '' : 'Invalid format');
+      setError(validate(trimmed) ? '' : invalidMsg);
     }
   };
   
@@ -25,7 +26,7 @@ export const useValidationField = (
       setError('');
       return;
     }
-    setError(validate(trimmed) ? '' : 'Invalid format');
+    setError(validate(trimmed) ? '' : invalidMsg);
   };
   
   return {

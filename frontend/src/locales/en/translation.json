@@ -73,12 +73,17 @@
       }
     },
     "errors": {
+      "invalidUsername": "6–20 chars, start with a letter, letters/numbers/._- only",
+      "invalidAlias": "6–20 chars, start with a letter, letters/numbers/._- only",
+      "invalidEmail": "Enter a valid email (name@domain.com)",
+      "invalidPassword": "8–32 chars, upper, lower, number & special",
+      "invalidPIN": "Must be exactly 4 digits (0-9)",
+      "invalidTitle": "1–32 chars, letters/numbers only",
       "passwordMismatch": "Passwords do not match. Please try again.",
       "pinMismatch": "PINs do not match. Please re-enter to confirm.",
       "newSameAsOldPassword": "New password must be different from the current password.",
       "newSameAsOldPIN": "New PIN must be different from the current PIN code.",
       "aliasNotUnique": "This alias is already taken. Please choose a different one.",
-      "invalidAlias": "Invalid alias format. Please check and try again.",
       "duplicateAlias": "Player aliases must be different from each other.",
       "invalidLogin": "Invalid login. Please check and try again."
     }

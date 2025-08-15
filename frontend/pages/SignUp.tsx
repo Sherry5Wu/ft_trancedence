@@ -46,10 +46,10 @@ const SignUpPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const usernameField = useValidationField('', isValidUsername);
-  const emailField = useValidationField('', isValidEmail);
-  const passwordField = useValidationField('', isValidPassword);
-  const pinField = useValidationField('', isValidPin);
+  const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+  const emailField = useValidationField('', isValidEmail, t('common.errors.invalidEmail'));
+  const passwordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
+  const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
 
   const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPin, setConfirmPin] = useState('');

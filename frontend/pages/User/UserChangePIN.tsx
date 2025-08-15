@@ -14,8 +14,8 @@ const ChangePINPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const currentPinField = useValidationField('', isValidPin);
-  const newPinField = useValidationField('', isValidPin);
+  const currentPinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
+  const newPinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
 
   const [confirmNewPin, setConfirmNewPin] = useState('');
 

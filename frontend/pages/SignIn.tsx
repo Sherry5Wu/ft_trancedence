@@ -80,8 +80,8 @@ const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUserContext();
 
-  const usernameField = useValidationField('', isValidUsername);
-  const passwordField = useValidationField('', isValidPassword);
+  const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+  const passwordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
 
   const formFilled =
     usernameField.value !== '' &&
