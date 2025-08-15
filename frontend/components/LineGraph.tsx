@@ -1,13 +1,9 @@
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { ScoreHistory } from './Stats';
 
-
-export const LineGraph = ({ data} : { data: ScoreHistory[] | null }) => {
-    // Jos data on null, käytetään tyhjää taulukkoa
-    const safeData = data || [];
-
-    console.log('From line graph');
-    console.log(safeData);
+export const LineGraph = ({ data }: { data: ScoreHistory[] | null }) => {
+    if (!data)
+		return <div className='flex justify-center my-5'>No data yet</div>
 
     return (
         <ResponsiveContainer width="100%" aspect={1.5}>

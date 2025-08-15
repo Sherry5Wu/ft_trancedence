@@ -1,19 +1,20 @@
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
 import { UserStats } from './Stats';
-// const fetchData = (user: string) => {
-//     //FETCH REAL DATA FROM BACKEND
 
-//     //mockdata
-//     const data = [
-//         {key: 'wins', value: 7},
-//         {key: 'draws', value: 1},
-//         {key: 'losses', value: 5}
-//     ];
+const fetchData = (user: string) => {
+    //FETCH REAL DATA FROM BACKEND
 
-//     const newData = [];
+    //mockdata
+    const data = [
+        {key: 'wins', value: 7},
+        {key: 'draws', value: 1},
+        {key: 'losses', value: 5}
+    ];
 
-//     return data;
-// };
+    const newData = [];
+
+    return data;
+};
 
 const colors = ['#2E6F40', '#252525', '#CD1C18'];
 
@@ -27,20 +28,25 @@ const colors = ['#2E6F40', '#252525', '#CD1C18'];
 // }
 
 function userStatsToPieData(stats: UserStats) {
+    
+
+
   return [
-    { key: "games_played", value: stats.games_played },
-    { key: "win_streak", value: stats.win_streak },
-    { key: "longest_win_streak", value: stats.longest_win_streak },
+    { key: "games_won", value: stats.games_won },
     { key: "games_draw", value: stats.games_draw },
     { key: "games_lost", value: stats.games_lost },
-    { key: "games_won", value: stats.games_won },
   ];
 }
 
+export const PieGraph = ({ data }: { data: UserStats }) => {
 
-export const PieGraph = (data: UserStats) => {
+    const stats = userStatsToPieData(data);
+    console.log(stats)
 
-    let stats = userStatsToPieData(data);
+    const mockstats = fetchData('user');
+    console.log('MOCKSTATS: ')
+    console.log(mockstats)
+
     return (
         <ResponsiveContainer width='100%' aspect={1.25}>
             <PieChart width={500} height={300} data={stats}>

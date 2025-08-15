@@ -4,6 +4,17 @@ import SortIcon from '../assets/noun-sort-7000784.svg?react';
 // import { Menu } from './Menu.tsx'
 // import { DropDownButton } from './DropDownButton.tsx';
 import { useUserContext } from '../context/UserContext';
+import TrashIcon from '../assets/noun-trash-3552649.svg?react'
+
+interface RivalData {
+	name: string,
+	score: number,
+	winratio: number,
+	matches: number,
+	wins: number, 
+	losses: number,
+	//picture: '../assets/profilepics/B2.png'
+}
 
 const fetchRivalData = async () => {
 	const { user } = useUserContext();
@@ -13,7 +24,7 @@ const fetchRivalData = async () => {
  
 	try {
 		const promises = user.rivals.map(async (rivalName) => {
-			const response = await fetch(`https://localhost:8443/as/auth/login/${rivalName}`, { //FIX LATER
+			const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, { //FIX LATER
 				method: 'GET',
 				headers: {
 				'Content-Type': 'application/json',
@@ -73,6 +84,7 @@ const fetchRivalData = async () => {
   //     picture: '../assets/profilepics/paddington-poster.jpg'
   //   }
   // ]
+  // return rivalData;
 }
 
 // const rivalsSortingItems = [
@@ -90,30 +102,29 @@ const fetchRivalData = async () => {
 
 export const RivalRows = () => {
 	const { user } = useUserContext();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
-	const [rivalData, setRivalData] = useState('');
+	const [rivalData, setRivalData] = useState([]);
 
 	useEffect(() => {
-		const fetchData = async () => {
-			const fetchedData = await fetchRivalData();
-			if (fetchedData)
-			{
-				setLoading(false);
-				setRivalData(fetchedData);
-			}
+		const loadRivals = async () => {
+			setLoading(true);
+			const data = await fetchRivalData();
+			setRivalData(data);
+			setLoading(false);
 		}
-		fetchData();
+		loadRivals();
 	}, [user])
-
-  	if (!user?.rivals && !loading)
-    	return <div className='flex justify-center'>No rivals yet</div>;
 
 	if (loading)
 		return <div className='flex justify-center'>Loading rivals...</div>;
 
+	if (!rivalData)
+    	return <div className='flex justify-center'>No rivals yet</div>;
+
+
     return (
-        <div aria-label='rivals data' className='z-10'>
+        <div aria-label='rivals data' className=''>
             <div aria-label='rivals data categories' className='grid grid-cols-12 mb-1 text-center font-semibold'>
                 <span className=''></span>
                 <span className='col-span-2'>Name</span>
@@ -126,16 +137,22 @@ export const RivalRows = () => {
             <ul>
             {rivalData.map((rival, index: number) => {
                 return (
-                  <li 
-                      className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'
-                      onClick={() => navigate(`/user/${rival.name}`)}>
-                <img src={rival.picture} className='profilePicSmall'/>
-                <span className='col-span-2'>{rival.name}</span>
-                <span className='col-span-2'>{rival.score}</span>
-                <span className={`col-span-2 ${rival.winratio >= 50 ? rival.winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{rival.winratio}%</span>
-                <span className='col-span-3'>{rival.wins} / {rival.losses}</span>
-                <span className='col-span-2'>{rival.matches}</span>
-                </li>)
+					<div className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
+						<li 
+							className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'
+							onClick={() => navigate(`/user/${rival.name}`)}>
+							<img src={rival.picture} className='profilePicSmall'/>
+							<span className='col-span-2'>{rival.name}</span>
+							<span className='col-span-2'>{rival.score}</span>
+							<span className={`col-span-2 ${rival.winratio >= 50 ? rival.winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{rival.winratio}%</span>
+							<span className='col-span-3'>{rival.wins} / {rival.losses}</span>
+							<span className='col-span-2'>{rival.matches}</span>
+						</li>
+						{/* <div className='size-8 -translate-y-1 translate-x-2'>
+							< TrashIcon />
+						</div> */}
+					</div>
+				)
                 })
             }
             </ul>

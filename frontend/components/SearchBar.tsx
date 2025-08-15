@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useClickOutside } from "./Hooks";
 
-
 interface SearchBarInputProps {
     type?: string;
     placeholder: string;
@@ -10,7 +9,7 @@ interface SearchBarInputProps {
     onFilled: (value: string) => void;
     onSelect: (value: string) => void;
     className?: string;
-    isOpen: boolean;
+    isOpen?: boolean;
 }
 
 export const SearchBar = ({
