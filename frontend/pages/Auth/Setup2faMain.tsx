@@ -14,22 +14,24 @@ const Setup2faMainPage: React.FC = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [setupKey, setSetupKey] = useState<string | null>(null);
+  const [showManualSetup, setShowManualSetup] = useState(false);
   const formFilled = /^\d{6}$/.test(code);
 
-  // Mock fetching the QR code URL (simulating backend)
+  // Simulate fetching QR code URL and setup key together
   useEffect(() => {
-    const fetchQRCode = async () => {
+    const fetch2FAData = async () => {
       try {
-        // Simulate backend API call
         setTimeout(() => {
-          setQrCodeUrl('https://www.example.com/2fa');  // This URL should come from the backend
-        }, 1000); // Simulating a delay
+          setQrCodeUrl('https://www.example.com/2fa');
+          setSetupKey('ABCD EFGH IJKL MNOP');
+        }, 2000); // Simulated delay
       } catch (error) {
-        console.error('Failed to fetch QR code:', error);
+        console.error('Failed to fetch 2FA data:', error);
       }
     };
 
-    fetchQRCode();
+    fetch2FAData();
   }, []);
 
   return (
@@ -61,10 +63,9 @@ const Setup2faMainPage: React.FC = () => {
         <p>
           {t('pages.twoFactorAuth.setup.scanQrInstructions')}
         </p>
-        </section>
+      </section>
 
         <div className='inline-block border-2 border-black rounded-3xl p-6'>
-        {/* QR code fetch from backend */}
         {qrCodeUrl ? (
           <QRCodeGenerator
             value={qrCodeUrl} // Pass the fetched URL to the QRCodeGenerator
@@ -80,9 +81,14 @@ const Setup2faMainPage: React.FC = () => {
         <section className="max-w-md text-center space-y-2">
         <p>
           {t('pages.twoFactorAuth.setup.manualSetupPrompt')}{' '}
-          <Link to="/404" className="underline" aria-label={t('pages.twoFactorAuth.setup.aria.manualSetupLink')}>
+          <button
+            className="underline"
+            onClick={() => setShowManualSetup(true)}
+            aria-label={t('pages.twoFactorAuth.setup.aria.manualSetupLink')}
+          >
             {t('pages.twoFactorAuth.setup.manualSetupLink')}
-          </Link>{' '}{t('pages.twoFactorAuth.setup.manualSetupSuffix')}
+          </button>{' '}
+          {t('pages.twoFactorAuth.setup.manualSetupSuffix')}
         </p>
 
         <p>
@@ -123,6 +129,50 @@ const Setup2faMainPage: React.FC = () => {
           aria-label={t('common.aria.buttons.next')}
         />
       </div>
+      
+      {showManualSetup && (
+        <div
+          className="fixed inset-0 bg-[#FFCC00] bg-opacity-50 flex items-center justify-center z-50"
+          role="dialog"
+          aria-labelledby="manualSetupTitle"
+          aria-describedby="manualSetupInstructions"
+          aria-modal="true"
+        >
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg">
+            <h2
+              id="manualSetupTitle"
+              className="font-semibold text-lg mb-4"
+            >
+              {t('pages.twoFactorAuth.setup.manualSetupTitle')}
+            </h2>
+
+            {setupKey ? (              
+              <>
+                <p id="manualSetupInstructions">
+                  {t('pages.twoFactorAuth.setup.manualSetupInstructions')}
+                </p>
+                <div
+                  className="mt-4 p-3 bg-[#FDFBD4] rounded font-mono break-all"
+                  aria-label={t('pages.twoFactorAuth.setup.aria.setupKeyDisplay')}
+                >
+                  {setupKey}
+                </div>
+              </>
+            ) : (
+              <p>{t('pages.twoFactorAuth.setup.loadingSetupKeys')}</p>
+            )}
+
+            <div className="mt-6 flex justify-end gap-3">
+              <GenericButton
+                className="generic-button"
+                text={t('common.buttons.ok')}
+                aria-label={t('common.aria.buttons.ok')}
+                onClick={() => setShowManualSetup(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

@@ -170,7 +170,7 @@ return (
               navigate(`/user/${usernameField.value}`)
             }
             else
-              alert('Sign in failed. Please try again.'); // what went wrong? 
+              alert('Sign in failed. Please try again.');
         }}
       />
 

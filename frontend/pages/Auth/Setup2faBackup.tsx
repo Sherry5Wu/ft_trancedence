@@ -1,6 +1,6 @@
 // /src/pages/Auth/Setup2faBackup.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +11,61 @@ const Setup2faBackupPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [hasDownloaded, setHasDownloaded] = useState(false);
+  const [backupCodes, setBackupCodes] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Simulate or handle actual backup code download logic here
+  // Simulate fetching backup codes from backend
+  useEffect(() => {
+    const fetchBackupCodes = async () => {
+      try {
+        setTimeout(() => {
+          // This array should come from the backend
+          setBackupCodes([
+            'ABCD-1234',
+            'EFGH-5678',
+            'IJKL-9101',
+            'MNOP-1122',
+            'QRST-3344',
+            'UVWX-5566',
+            'YZAB-7788',
+            'CDEF-9900',
+            'GHIJ-1111',
+            'KLMN-2222',
+          ]);
+          setLoading(false);
+        }, 1000); // Simulated delay
+      } catch (error) {
+        console.error('Failed to fetch backup codes:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchBackupCodes();
+  }, []);
+
+  // Download file directly on the frontend a text file
+  // 1. Convert the array of backup codes into a string, with each code on a new line.
+  // 2. Create a Blob (a file-like object) containing the text, marked as plain text.
+  // 3. Generate a temporary URL pointing to that Blob.
+  // 4. Create an invisible anchor (<a>) element, set its href to the Blob URL,
+  //    and give it a filename for the downloaded file.
+  // 5. Simulate a click on the anchor to start the download.
+  // 6. Revoke the temporary URL to free up memory.
+  // 7. Update the state to indicate that the user has downloaded the file.
   const handleDownload = () => {
-    console.log('Recovery codes downloaded');  // TODO: implement actual download logic
+    const fileContent = backupCodes.join('\n');
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'backup-codes.txt';
+    a.click();
+
+    URL.revokeObjectURL(url);
     setHasDownloaded(true);
   };
+
 
   return (
     <main
@@ -48,15 +97,22 @@ const Setup2faBackupPage: React.FC = () => {
           {t('pages.twoFactorAuth.backup.backupInstructions')}
         </p>
 
-        {/* Recovery codes fetch from backend
-            TODO: black frame with round border with codes in 2 columns */} 
+        {/* Recovery codes fetch from backend */}
         <div className="border-2 border-black rounded-3xl p-4 space-y-2">
-          <div className="grid grid-cols-2 gap-4">
-            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">ABCD-1234</span>
-            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">EFGH-5678</span>
-            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">IJKL-9101</span>
-            <span className="bg-[#fdfBD4] p-2 rounded-xl text-center">MNOP-1122</span>
-          </div>
+          {loading ? (
+            <p>{t('pages.twoFactorAuth.backup.loadingCodes')}</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {backupCodes.map((code, index) => (
+                <span
+                  key={index}
+                  className="bg-[#fdfBD4] p-2 rounded-xl text-center"
+                >
+                  {code}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <GenericButton

@@ -1,5 +1,5 @@
 import React from "react";
-import InfoIcon from "../assets/symbols/noun-alert-rounded-5432721.svg?react"
+import InfoIcon from "../assets/symbols/noun-information-5970249.svg?react"
 
 type TooltipProps = {
   text: string;
