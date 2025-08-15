@@ -39,15 +39,15 @@ export function calculateEloScore(player_id1, player_id2, outcome, player1_name,
   }
 }
 
-function getMatchHistoryForPlayer(player_id)
+function getMatchHistoryForPlayer(identifier)
 {
     try {
         const stmt = db.prepare(`
             SELECT * FROM match_history
-            WHERE player_id = ?
+            WHERE player_id = ? OR opponent_id = ? OR player_username = ? OR opponent_username = ?
             ORDER BY played_at DESC
           `);
-        return stmt.all(player_id);
+        return stmt.all(identifier, identifier, identifier, identifier);
     }
     catch (err)
     {
@@ -55,6 +55,29 @@ function getMatchHistoryForPlayer(player_id)
         return [];
     }
 }
+
+function getMatchHistoryForAgainstRival(player_identifier, rival_identifier) {
+  try {
+    const stmt = db.prepare(`
+      SELECT * FROM match_history
+      WHERE (
+        player_id = ? OR opponent_id = ? OR player_username = ? OR opponent_username = ?
+      ) AND (
+        player_id = ? OR opponent_id = ? OR player_username = ? OR opponent_username = ?
+      )
+      ORDER BY played_at DESC
+    `);
+
+    return stmt.all(
+      player_identifier, player_identifier, player_identifier, player_identifier,
+      rival_identifier, rival_identifier, rival_identifier, rival_identifier
+    );
+  } catch (err) {
+    console.error('Error fetching matches against rival:', err);
+    return [];
+  }
+}
+
 
 export function calculateLongestWinStreak(player_id) {
   console.log("Calculating longest winstreak");
@@ -72,6 +95,18 @@ export function calculateLongestWinStreak(player_id) {
       currentStreak = 0;
   });
   return longestStreak;
+}
+
+export function calculateWinsAgainstRival(player_username, rival_username) {
+  return getMatchHistoryForAgainstRival().filter(row => row.result === 'win').length;
+}
+
+export function calculateLossAgainstRival(player_username, rival_username) {
+  return getMatchHistoryForAgainstRival().filter(row => row.result === 'loss').length;
+}
+
+export function calculateGamesPlayedAgainstRival(player_username, rival_username) {
+  return getMatchHistoryForAgainstRival().length;
 }
 
 export function calculateGamesPlayed(player_id) {

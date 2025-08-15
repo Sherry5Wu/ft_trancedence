@@ -23,7 +23,7 @@ db.prepare(`
       player_username TEXT NOT NULL,
       opponent_username TEXT NOT NULL,
       player_id TEXT NOT NULL,
-      opponent_id TEXT NOT NULL,
+      opponent_id TEXT,
       player_name TEXT NOT NULL,
       opponent_name TEXT NOT NULL,
       player_score INTEGER NOT NULL,
@@ -66,9 +66,13 @@ db.prepare(`
       player_username TEXT NOT NULL,
       rival_username TEXT NOT NULL,
       player_id TEXT NOT NULL,
-      rival_id TEXT NOT NULL,
+      rival_id TEXT,
+      rival_elo_score INTEGER DEFAULT 0,
+      games_played_against_rival INTEGER DEFAULT 0,
+      wins_against_rival INTEGER DEFAULT 0,
+      loss_against_rival INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      UNIQUE(player_id, rival_id, player_username, rival_username)
+      UNIQUE(player_username, rival_username)
     )
   `).run();
 }
