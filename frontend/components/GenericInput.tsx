@@ -37,29 +37,32 @@ export const GenericInput = ({
   const shouldShowIcon = showEditIcon && value.trim() !== "";
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
-      <input
-        id={inputId}
-        type={type}
-        value={value}
-        onChange={handleChange}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
-        aria-invalid={!!errorMessage}
-        aria-describedby={errorMessage ? `${inputId}-error` : undefined}
-        className={`${className ? className : 'generic-input'} ${value ? "filled" : ""}`}
-        onBlur={onBlur}
-      />
-      {shouldShowIcon && (
-        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
-          <img src={ModifyIcon} alt="Edit" className="w-4 h-4" />
-        </div>
-      )}
+    <div className="flex flex-col">
+      <div className="relative">
+        <input
+          id={inputId}
+          type={type}
+          value={value}
+          onChange={handleChange}
+          placeholder={placeholder}
+          required={required}
+          disabled={disabled}
+          aria-invalid={!!errorMessage}
+          aria-describedby={errorMessage ? `${inputId}-error` : undefined}
+          className={`${className ? className : 'generic-input'} ${value ? "filled" : ""} pr-10`}
+          onBlur={onBlur}
+        />
+        {shouldShowIcon && (
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
+            <img src={ModifyIcon} alt="Edit" className="w-4 h-4" />
+          </div>
+        )}
+      </div>
+
       {errorMessage && (
         <p
           id={`${inputId}-error`}
-          className="text-red-500 text-xs mt-1"
+          className="text-black text-xs mt-1 whitespace-pre-line pl-4"
           role="alert"
         >
           {errorMessage}
