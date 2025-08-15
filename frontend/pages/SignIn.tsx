@@ -85,7 +85,9 @@ const SignInPage: React.FC = () => {
 
   const formFilled =
     usernameField.value !== '' &&
-    passwordField.value !== '';
+    passwordField.value !== '' &&
+    !usernameField.error &&
+    !passwordField.error;;
 
   useEffect(() => {
     const handlePopupMessage = (event) => {
