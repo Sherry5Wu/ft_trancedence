@@ -15,7 +15,25 @@ export function updateScoreHistoryTable(player_id, elo_score, played_at, usernam
     console.log('Error updating score history table:', err);
   }
 }
-//asdasdasd
+
+export function updateRivalsDataTable(player_username, rival_username, games_played_against_rival, wins_against_rival, loss_against_rival, rival_elo_score) {
+  try {
+    const updateStmt = db.prepare(`
+      UPDATE rivals
+      SET games_played_against_rival = ?,
+          wins_against_rival = ?,
+          loss_against_rival = ?,
+          rival_elo_score = ?,
+      WHERE player_username = ? AND rival_username = ?
+    `);
+    updateStmt.run(games_played_against_rival, wins_against_rival, loss_against_rival, rival_elo_score, player_username, rival_username);
+    console.log(`✅ Updated rivals for player: ${player_username}`);
+  }
+  catch (err) {
+    console.log('Error updating rivals table:', err);
+  }
+}
+
 export function updateUserMatchDataTable(playerId, newScore, playerName, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, username) {
   try 
   {

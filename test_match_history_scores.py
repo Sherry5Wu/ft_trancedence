@@ -164,20 +164,29 @@ def test_add_rival():
 
     # Tarkistetaan että token on validi ja saadaan käyttäjän ID
     response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
-    print(headers)
-    print(response1)
     assert response1.status_code == 200
+    user_id = response1.json()["id"]
 
     # Lisätään kilpailija
     data = {
         "rival_id": RIVAL,
-        "rival_username" : "rivalname"
+        "rival_username": f"rivalname{TIMESTAMP}"
     }
-    print(f"{STATS_URL}/rivals/")
     response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
     json_response = response.json()
     assert response.status_code == 200
     assert json_response["message"] == 'Rival added successfully'
+
+    # Haetaan lisätty rival ja tarkistetaan kentät
+    get_response = requests.get(f"{STATS_URL}/rivals/{user_id}", headers=headers, verify=False)
+    assert get_response.status_code == 200
+    rivals = get_response.json()
+    assert isinstance(rivals, list)
+    assert any(
+        rival.get("rival_id") == RIVAL and
+        "rival_username" in rival
+        for rival in rivals
+    )
 
 def test_get_rival_by_id():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
@@ -219,9 +228,10 @@ def test_delete_rival_by_id():
     user_id = response1.json()["id"]
 
     # Lisätään kilpailija
+    rival_id = f"rival100{TIMESTAMP}"
     data = {
-        "rival_id": "rival2",
-        "rival_username" : "rivalname"
+        "rival_id": rival_id,
+        "rival_username" : f"rivalname100{TIMESTAMP}"
     }
     print(f"{STATS_URL}/rivals/")
     response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
@@ -229,7 +239,7 @@ def test_delete_rival_by_id():
     json_response = response.json()
     assert json_response["message"] == 'Rival added successfully'
 
-    response = requests.delete(f"{STATS_URL}/rivals/rival2",headers=headers, verify=False)
+    response = requests.delete(f"{STATS_URL}/rivals/{rival_id}",headers=headers, verify=False)
     print(response.json())
     assert response.status_code == 200
     json_response = response.json()
