@@ -227,10 +227,9 @@ async function updateAvatar(userId, newAvatarUrl) {
   if (!user) {
     throw new NotFoundError('User not found');
   }
-  // 2. Validate avatar URL format
-  try {
-    new URL(newAvatarUrl);
-  } catch (err) {
+  // 2. Validate avatar URL format:
+  const isRelative = newAvatarUrl.startsWith('/uploads/');
+  if (!isRelative) {
     throw new ValidationError('Invalid avatar URL');
   }
   // 3. enforce HTTPS only

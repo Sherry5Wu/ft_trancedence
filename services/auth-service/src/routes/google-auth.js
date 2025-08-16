@@ -18,7 +18,7 @@ export default fp(async (fastify) => {
       description: 'Verify the google Id Token and register google user.',
       body: {
         type: 'object',
-        required: [{ idToken }, { username }, { pinCode }],
+        required: [ 'idToken' , 'username', 'pinCode'],
         properties: {
           idToken: { type: 'string' },
           username: { type: 'string' },

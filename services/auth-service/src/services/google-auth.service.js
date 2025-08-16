@@ -2,11 +2,10 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 
-import { User } from '../db/models/user.js';
 import { hashPassword} from '../utils/crypto.js';
 import { jwkToPem } from '../utils/jwkToPem.js';
 import { ConflictError, InvalidCredentialsError, ValidationError } from '../utils/errors.js';
-import { validateUsername, validatePincode } from '../utils/validators';
+import { validateUsername, validatePincode } from '../utils/validators.js';
 
 const GOOGLE_CERTS_URL = process.env.GOOGLE_CERTS_URL || 'https://www.googleapis.com/oauth2/v3/certs';
 

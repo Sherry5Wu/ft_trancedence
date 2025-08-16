@@ -23,7 +23,7 @@ ACCESS_TOKEN_USER2 = None
 def login_user(email, password):
     """Login and get JWT token"""
     data = {
-        "indentifier": email,
+        "identifier": email,
         "password": password,
     }
     
@@ -403,3 +403,5 @@ def test_duration_formats():
         assert response.status_code == 200
     
     print("✅ Duration formats test passed")
+
+

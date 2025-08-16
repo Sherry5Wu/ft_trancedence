@@ -4,12 +4,12 @@
 # Docker will start from "COPY . .", skip re-running "npm install"
 
 # Stage 1: Development (includes devDependencies, nodemon, etc.)
-FROM node:20-alpine AS dev
+FROM node:20-slim AS dev
 
 WORKDIR /app
 
 # Install all dependencies (prod + dev) package-lock.json
-COPY package.json ./
+COPY package.json package-lock.json ./
 
 RUN npm install
 
@@ -20,7 +20,7 @@ COPY . .
 EXPOSE 3001
 
 # Default command: run with nodemon for hot reload
-CMD ["npx", "nodemon", "src/app.js"]
+CMD ["node", "src/app.js"]
 
 
 # Stage 2: Production (only prod dependencies)

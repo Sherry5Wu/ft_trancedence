@@ -28,6 +28,7 @@ services:
       - stats-service
       - tournament-service
       - auth-service
+      - frontend-service
     ports:
       - "8443:8443"
     networks:

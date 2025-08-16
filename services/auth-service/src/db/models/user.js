@@ -66,9 +66,6 @@ export default (sequelize) => {
     avatarUrl: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isUrl: true,
-      }
     },
     isVerified: { // Use for checking if the user finishs the registeration flow
       type: DataTypes.BOOLEAN,

@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@babylonjs/core": "^8.22.2"
+    "@babylonjs/core": "^8.22.2",
+    "frontend": "file:frontend"
   }
 }

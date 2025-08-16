@@ -29,6 +29,7 @@ import healthRoutes from './routes/health.routes.js';
 import authenticate from './utils/authenticate.js';
 import userSchema from './schemas/publicUser.schema.js';
 
+
 async function buildApp() {
   const app = Fastify({
     logger: process.env.NODE_ENV !== 'production' ? { level: 'debug' } : { level: 'warn' }

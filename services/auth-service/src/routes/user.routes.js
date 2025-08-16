@@ -191,7 +191,7 @@ export default fp(async (fastify) => {
    * Accepts multipart/form-data with field name `avatar` (single file)
    */
   fastify.post('/users/me/upload-avatar', {
-    // preHandler: [fastify.authenticate],
+    preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
       summary: 'Upload user avatar',
@@ -209,72 +209,68 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
+    fastify.log.info('upload-avatar: handler start');
     const file = await req.file();
+    fastify.log.info('upload-avatar: file', file);
     if (!file) throw new ValidationError('No file uploaded (field name must be "avatar")');
-    // Read buffer (5MB limit configured above). If you increase limits, consider streaming.
     let buffer;
     try {
       buffer = await file.toBuffer();
+      fastify.log.info('upload-avatar: buffer length', buffer.length);
     } catch (err) {
       fastify.log.warn({ err }, 'Failed to read uploaded file');
       throw new ValidationError('Failed to process uploaded file');
     }
 
-    // Validate using magic bytes
     const ft = await fileTypeFromBuffer(buffer);
+    fastify.log.info('upload-avatar: fileType', ft);
     const allowedMimeTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
     if (!ft || !allowedMimeTypes.has(ft.mime)) {
+      fastify.log.warn('upload-avatar: unsupported image format', ft);
       throw new ValidationError('Unsupported image format');
     }
 
-    // Normalize extension (map common variants)
     const extMap = { jpeg: 'jpg' };
     const ext = '.' + (extMap[ft.ext] || ft.ext);
 
-    // Generate filename and path
     if (!req.user) {
+      fastify.log.warn('upload-avatar: req.user missing');
       throw new NotFoundError('User not found');
     }
-    const userId = req.user.id
+    const userId = req.user.id;
 
     const filename = `${userId}-${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`;
     const filepath = path.join(uploadsRoot, filename);
     const resolved = path.resolve(filepath);
-    // const uploadsRootResolved = path.resolve(uploadsRoot);
+    fastify.log.info('upload-avatar: resolved path', resolved);
 
-    // Ensure we won't write outside uploads root (defense-in-depth)
     if (!resolved.startsWith(uploadsRoot + path.sep) && resolved !== uploadsRoot) {
+      fastify.log.warn('upload-avatar: invalid filename/path', resolved);
       throw new ValidationError('Invalid filename / path resolution');
     }
 
-    // Write file to disk
     try {
       await fsp.writeFile(resolved, buffer);
+      fastify.log.info('upload-avatar: file saved');
     } catch (err) {
       fastify.log.error({ err }, 'Failed to save uploaded avatar');
       throw new ValidationError('Failed to save uploaded file');
     }
 
-    // Build relative public URL (served by fastify-static at /uploads/)
     const avatarUrl = `${uploadsPrefix}/${filename}`;
 
-    // Fetch previous avatar (pre-read) to attempt cleanup later
     let previousAvatar = null;
     try {
       const userRecord = await fastify.models.User.findByPk(userId);
       previousAvatar = userRecord?.avatarUrl || null;
     } catch (err) {
-      // Non-fatal to fetch user, but we log. We still proceed: updateAvatar may still work.
       fastify.log.warn({ err }, 'Failed to read existing user avatar (non-fatal)');
       previousAvatar = null;
     }
 
-    // Update DB via service, and cleanup on DB failure
     try {
-      // Expectation: updateAvatar(userId, avatarUrl) updates DB and throws on failure.
       await updateAvatar(userId, avatarUrl);
     } catch (err) {
-      // Remove the newly uploaded file to avoid orphaning
       try {
         await fsp.unlink(resolved);
       } catch (cleanupErr) {
@@ -283,24 +279,17 @@ export default fp(async (fastify) => {
       throw err;
     }
 
-    // Best-effort: delete previous avatar file if it's inside uploadsRoot and not equal to newly uploaded file
     if (previousAvatar) {
       try {
-        // Extract relative path from previousAvatar
         let prevPathFromPrefix = null;
-
-        // If previousAvatar is an absolute URL, take URL.pathname
         try {
           if (/^https?:\/\//i.test(previousAvatar)) {
             const u = new URL(previousAvatar);
-            prevPathFromPrefix = u.pathname.replace(/^\/+/, ''); // "uploads/avatars/old.jpg"
+            prevPathFromPrefix = u.pathname.replace(/^\/+/, '');
           }
         } catch (e) {
-          // ignore URL parsing errors and fallthrough
           prevPathFromPrefix = null;
         }
-
-        // If not parsed as absolute URL, handle relative possibilities
         if (!prevPathFromPrefix) {
           if (previousAvatar.startsWith(uploadsPrefix)) {
             prevPathFromPrefix = previousAvatar.slice(uploadsPrefix.length).replace(/^\/+/, '');
@@ -308,10 +297,8 @@ export default fp(async (fastify) => {
             prevPathFromPrefix = previousAvatar.replace(/^\/+/, '');
           }
         }
-
+        const uploadsRootResolved = path.resolve(uploadsRoot);
         const prevResolved = path.resolve(uploadsRoot, prevPathFromPrefix);
-
-        // Only unlink if inside uploadsRoot and not the same file we just wrote
         if ((prevResolved.startsWith(uploadsRootResolved + path.sep) || prevResolved === uploadsRootResolved) && prevResolved !== resolved) {
           await fsp.unlink(prevResolved).catch((e) => {
             fastify.log.warn({ e, prevResolved }, 'Failed to delete previous avatar (non-fatal)');
@@ -324,7 +311,48 @@ export default fp(async (fastify) => {
       }
     }
 
+    fastify.log.info('upload-avatar: done');
     return reply.code(200).send({ avatarUrl });
   });
+
+  // Julkinen reitti: hae avatarUrl usernamen perusteella
+  fastify.get('/users/avatar/:username', {
+    schema: {
+      tags: ['User'],
+      summary: 'Get avatar URL by username',
+      params: {
+        type: 'object',
+        properties: {
+          username: { type: 'string' }
+        },
+        required: ['username']
+      },
+      response: {
+        200: {
+          description: 'Avatar URL found',
+          type: 'object',
+          properties: {
+            avatarUrl: { type: 'string' }
+          }
+        },
+        404: {
+          description: 'User not found',
+          type: 'object',
+          properties: {
+            error: { type: 'string' },
+            message: { type: 'string' }
+          }
+        }
+      }
+    }
+  }, async (req, reply) => {
+    const { username } = req.params;
+    const user = await fastify.models.User.findOne({ where: { username } });
+    if (!user) {
+      return reply.code(404).send({ error: 'NotFound', message: 'User not found' });
+    }
+    return { avatarUrl: user.avatarUrl };
+  });
+
 });
 

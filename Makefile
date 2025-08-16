@@ -27,6 +27,7 @@ $(BUILD_MARKER_BACKEND): $(BACKEND_FILES)
 				mkdir -p services/tournament-service/data
 				@echo "🚧 Building backend containers..."
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop $(BACKEND_SERVICES)
+				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop gateway-service
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build --no-cache gateway-service
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build $(BACKEND_SERVICES)
 				@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d gateway-service
