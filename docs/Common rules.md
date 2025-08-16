@@ -3,6 +3,7 @@
 - [Password rule](#password-rule)
 - [Username Rules](#username-rules)
 - [PIN Code Rules](#pin-code-rules)
+- [Avatar Pictures Rules](#avatar-pictures-rules)
 
 ## Email Rules
 ```javascript
@@ -62,6 +63,10 @@ USERNAME_REGEX = /^[a-zA-Z][a-zA-Z0-9._-]{5,19}$/;
 ## PIN Code Rules
 ```javascript
 PINCODE_REGEX = /^\d{4}$/;
+```
 4 integers.<br>
 
 
+## Avatar Pictures Rules
+1. max 5MB;
+2. Only support: `.jpg`, `.jpeg`, `.png`,`.webp` and `.gif`;

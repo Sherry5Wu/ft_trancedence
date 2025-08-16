@@ -31,7 +31,7 @@ class ValidationError extends AuthError {
  * 401 Unauthorized
  */
 class InvalidCredentialsError extends AuthError {
-  constructor(message = 'Invalid email or password') {
+  constructor(message = 'Invalid email, password or pin code') {
     super(message, 401);
   }
 }

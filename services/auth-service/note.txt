@@ -1,16 +1,12 @@
 
+1. graceFullyShutDown() ????
 
-3. in auth-service.js, why not import { User, RefreshToken } from '../db/index.js';
-
-6. graceFullyShutDown() ????
-
-7. DB Bootstrap (src/db/index.js)
+2. DB Bootstrap (src/db/index.js)
 Using alter: true in prod can be risky; explicit migrations (e.g. with Umzug) are
 safer for production.
 
+3. consider the avatar image dimensions limitation function.
 
-9. auth.db doesn't be create succefully.
-10. the different between plugins and pure functions
 
 
 
@@ -51,13 +47,14 @@ docker system prune --all --volumes
 // remove all the docker images
 docker rmi -f $(docker images -q)
 
-Here’s what’s happening:
-  docker images -q → lists only the IDs of all images.
-  $(...) → passes that list to the docker rmi command.
-  -f → forces removal, even if an image is used by stopped containers.
-
 // list all the dockers (running + stopped)
 docker ps -a
 
 // remove all the containers
 docker rm -f $(docker ps -aq)
+
+Testing uploading a avatar
+curl -X POST http://localhost:3000/user/avatar \
+  -F "avatar=@/path/to/your/avatar.jpg"
+
+docker exec -it <docker-name> sh

@@ -30,7 +30,7 @@ export default (sequelize) => {
     },
     passwordHash: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     pinCodeHash: {
       type: DataTypes.STRING,
@@ -62,6 +62,13 @@ export default (sequelize) => {
       type: DataTypes.ENUM('user', 'admin'), // add role with ENUM
       allowNull: false,
       defaultValue: 'user',
+    },
+    avatarUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isUrl: true,
+      }
     },
     isVerified: { // Use for checking if the user finishs the registeration flow
       type: DataTypes.BOOLEAN,
