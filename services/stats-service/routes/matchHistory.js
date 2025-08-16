@@ -1,5 +1,5 @@
-import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon, calculateLongestWinStreak, calculateGamesDraw} from '../utils/calculations.js'
-import { updateUserMatchDataTable, updateScoreHistoryTable } from '../utils/updateFunctions.js';
+import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon, calculateLongestWinStreak, calculateGamesDraw, checkIfRivals, calculateGamesPlayedAgainstRival, calculateWinsAgainstRival, calculateLossAgainstRival} from '../utils/calculations.js'
+import { updateUserMatchDataTable, updateScoreHistoryTable, updateRivalsDataTable } from '../utils/updateFunctions.js';
 import { db } from '../db/init.js';
 import { requireAuth } from '../utils/auth.js';
 
@@ -20,10 +20,10 @@ export default async function matchHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare(`
                 SELECT * FROM match_history
-                WHERE player_id = ?
+                WHERE player_id = ? OR opponent_id = ?
                 ORDER BY played_at DESC
             `);
-            const rows = stmt.all(player_id);
+            const rows = stmt.all(player_id, player_id);
             if (rows)
             {
                 reply.send(rows);
@@ -43,10 +43,10 @@ export default async function matchHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare(`
                 SELECT * FROM match_history
-                WHERE player_username = ?
+                WHERE player_username = ? OR opponent_username = ?
                 ORDER BY played_at DESC
             `);
-            const rows = stmt.all(player_username);
+            const rows = stmt.all(player_username, player_username);
             if (rows)
             {
                 reply.send(rows);
@@ -126,7 +126,17 @@ export default async function matchHistoryRoutes(fastify) {
         const opponentlongestWinStreak = calculateLongestWinStreak(opponent_id);
         const opponentGamesDraw = calculateGamesDraw(opponent_id);
 
-        // Add type checking for the values before updating
+        if (checkIfRivals(player_username, opponent_username)) {
+            const playedagainstRival1 = calculateGamesPlayedAgainstRival(player_username, opponent_username);
+            const gamesWonRival1 = calculateWinsAgainstRival(player_username, opponent_username);
+            const gamesLostRival1 = calculateLossAgainstRival(player_username, opponent_username);
+            updateRivalsDataTable(player_username, opponent_username, playedagainstRival, gamesWonRival, gamesLostRival, eloChanges.player1.new);
+            const playedagainstRival2 = calculateGamesPlayedAgainstRival(opponent_username, player_username);
+            const gamesWonRival2 = calculateWinsAgainstRival(opponent_username, player_username);
+            const gamesLostRival2 = calculateLossAgainstRival(opponent_username, player_username);
+            updateRivalsDataTable(opponent_username, player_username, playedagainstRival, gamesWonRival, gamesLostRival, eloChanges.player2.new);
+        }
+        
         updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username);
         updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username);
         updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at, player_username);
