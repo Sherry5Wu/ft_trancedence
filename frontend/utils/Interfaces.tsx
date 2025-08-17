@@ -1,5 +1,18 @@
 import { ReactElement } from "react";
 
+export interface MatchData {
+    played_at: string,
+    player_name: string,
+    player_username: string,
+    opponent_name: string,
+    opponent_username: string,
+    opponent_id: string,
+    player_score: number,
+    opponent_score: number,
+    result: string,
+    duration: number,
+}
+
 export interface RivalData {
 	rival_username: string,
 	rival_elo_score?: number,

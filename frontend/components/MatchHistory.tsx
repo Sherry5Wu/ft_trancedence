@@ -2,19 +2,7 @@ import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
 import { getMatchData, postMatchData } from '../utils/Fetch';
-
-export interface MatchData {
-    played_at: string,
-    player_name: string,
-    player_username: string,
-    opponent_name: string,
-    opponent_username: string,
-    opponent_id: string,
-    player_score: number,
-    opponent_score: number,
-    result: string,
-    duration: number,
-}
+import { MatchData } from '../utils/Interfaces';
 
 export const MatchHistory = () => {
     const [matchData, setMatchData] = useState<MatchData | null>(null);
