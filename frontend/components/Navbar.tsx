@@ -10,7 +10,6 @@ import { useAccessibilityContext } from '../context/AccessibilityContext';
 import FrenchIcon from '../assets/noun-france-6661055.svg?react';
 import EnglishIcon from '../assets/noun-uk-6661102.svg?react';
 import PortugueseIcon from '../assets/noun-brazil-6661040.svg?react';
-import FinnishIcon from '../assets/noun-finland-6661074.svg?react';
 import LangIcon from '../assets/noun-globe-7929553.svg?react';
 import AccessIcon from '../assets/noun-accessibility-4682113.svg?react';
 import SunIcon from '../assets/noun-sun-7956354.svg?react';
@@ -19,6 +18,11 @@ import ProfileIcon from '../assets/noun-profile-7808629.svg?react';
 import SettingsIcon from '../assets/noun-setting-2060937.svg?react';
 import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 import { useTranslation } from 'react-i18next';
+import SearchIcon from '../assets/noun-search-7526678.svg?react';
+import { SearchBar } from '../components/SearchBar';
+import { useValidationField } from '../hooks/useValidationField';
+import { isValidUsername } from '../utils/Validation';
+import { fetchUsers } from './Fetches';
 
 {/* HANDLE USER AND DARK MODE STATE */}
 export const Navbar = () => {
@@ -26,9 +30,19 @@ export const Navbar = () => {
     const { user, setUser } = useUserContext();
     const { darkMode, setDarkMode } = useDarkModeContext();
     const { largeText, setLargeText} = useAccessibilityContext();
+    const searchField = useValidationField('', isValidUsername);
+    const [rivalData, setRivalData] = useState<string[]>([]);
     const navigate = useNavigate();
-    
     const { t, i18n } = useTranslation();
+    
+    useEffect(() => {
+        const fetchRivals = async () => {
+        const data = await fetchUsers();
+        setRivalData(data);
+        };
+        fetchRivals();
+    }, [])
+
     const changeLanguage = (lang) => {
       i18n.changeLanguage(lang);
       localStorage.setItem('lang', lang);
@@ -82,7 +96,8 @@ export const Navbar = () => {
         {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/')}}
     ]
 
-    return (
+    if (!user)
+        return (
     <nav className='flex items-center bg-[#FFCC00]'>
         <div className='flex flex-1 justify-start gap-5'>
             <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
@@ -92,7 +107,37 @@ export const Navbar = () => {
         <div className='flex flex-1 justify-center mb-5' >
             <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
         </div>
-        <div className='flex flex-1 justify-end scale-110 mr-7'>
+        <div className='flex flex-1 justify-end scale-110 mr-7'></div>
+    </nav>
+    );
+
+    return (
+    <nav className='flex items-center bg-[#FFCC00]'>
+        <div className='flex flex-1 justify-start gap-5'>
+            <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
+            {/* <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' /> */}
+            {/* <Menu aria-label='dark mode' Icon={darkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => handleDarkMode()}/> */}
+        </div>
+        <div className='flex flex-1 justify-center items-center' >
+            <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
+        </div>
+        <div className='flex flex-1 justify-end items-center mr-2'>
+            <div aria-label='rival search bar' className='flex relative z-10 mt-3 justify-start items-center group -translate-x-2'>
+                <SearchIcon className='size-10 translate-x-11 -translate-y-0.5 z-10 transition ease-in-out duration-30
+                                    group-focus-within:opacity-50'/>
+                <div className=''>
+                    <SearchBar
+                    type="username"
+                    placeholder="Search for other users"
+                    value={searchField.value}
+                    options={rivalData}
+                    onFilled={searchField.onFilled}
+                    onSelect={(selection) => navigate(`/user/${selection}`)}
+                    className='h-10 w-55 pl-11 bg-[#FFEE8C] rounded-full mb-3 border-2 border-black outline-none transition-all ease-in-out
+                                hover:ring-1 hover:ring-black focus:ring-2 focus:ring-[#4682B4]'
+                    />
+                </div>
+            </div>
             <Menu aria-label='profile menu' Icon={user ? user.profilePic : <ProfileIcon />} elements={profileMenuItems} className='menuIcon' user={true}/>
         </div>
     </nav>

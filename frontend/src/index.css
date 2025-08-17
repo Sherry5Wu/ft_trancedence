@@ -79,7 +79,7 @@
 }
 
 .profilePic {
-  @apply w-full h-full rounded-full object-cover mb-1 bg-[#FFEE8C] 
+  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C] 
   active:border-[#4682B4] transition ease-in-out duration-200
 }
 

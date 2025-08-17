@@ -28,13 +28,21 @@ export interface ScoreHistory {
     elo_score: number,
 }
 
-const addRival = async (userID: string) => {
+const addRival = async (accessToken: string, rivalName: string) => {
+	const data = {
+		rival_username: rivalName
+	};
+
+	console.log(accessToken);
+
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/username/${userID}`, { //FIX PATH
+		const response = await fetch(`https://localhost:8443/stats/rivals/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				"Authorization": `Bearer ${accessToken}`,
 			},
+			body: JSON.stringify(data),
 		});
 
 		if (!response.ok)
@@ -146,9 +154,9 @@ const UserPage = () => {
 			setUserStats(stats);
 			setScoreHistory(score);
 
-			console.log('stats and score: ');
-			console.log(stats);
-			console.log(score);
+			// console.log('stats and score: ');
+			// console.log(stats);
+			// console.log(score);
 
 			setLoading(false);
 		}
@@ -158,8 +166,8 @@ const UserPage = () => {
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
-	// if (!userStats || !scoreHistory)
-    // 	return <div className='flex justify-center my-5'>Unable to load player</div>
+	console.log("ACCESSTOKEN");
+	console.log(user?.accessToken);
 
 	return (
 		<div className='pageLayout'>
@@ -225,23 +233,21 @@ const UserPage = () => {
 		
 		user.rivals.includes(param.userName) ?
 
-			<GenericButton
-			className="transparent-round-icon-button"
-			text={undefined}
-			icon={<img src={RivalsIcon} alt="Rivals icon" />}
-			hoverLabel='ADD TO RIVALS'
-			onClick={() => addRival(user.id)}
-			/>
-		
-			:
+		<GenericButton
+		className="round-icon-button"
+		text={undefined}
+		icon={<img src={RivalsIcon} alt="Rivals icon" />}
+		hoverLabel='REMOVE FROM RIVALS'
+		onClick={() => removeRival(user.id)} />
+	
+		:
 
-			  <GenericButton
-			  className="round-icon-button"
-			  text={undefined}
-			  icon={<img src={RivalsIcon} alt="Rivals icon" />}
-			  hoverLabel='REMOVE FROM RIVALS'
-			  onClick={() => removeRival(user.id)}
-			/>
+		<GenericButton
+		className="transparent-round-icon-button"
+		text={undefined}
+		icon={<img src={RivalsIcon} alt="Rivals icon" />}
+		hoverLabel='ADD TO RIVALS'
+		onClick={() => addRival(param.userName, user?.accessToken)} />
 		}
 
 		{/* Statistics */}

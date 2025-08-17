@@ -1,6 +1,7 @@
 import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
+import { getMatchData, postMatchData } from './Fetches';
 
 export interface MatchData {
     played_at: string,
@@ -15,71 +16,13 @@ export interface MatchData {
     duration: number,
 }
 
-const postMatchData = async (accessToken: string) => {
-
-    console.log(accessToken);
-    const matchData: MatchData = 
-        {
-            player_name: 'User',
-            player_username: 'user alias',
-            played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
-            duration: 300,
-            player_score: 2,
-            opponent_score: 5,
-            opponent_id: '1',
-            opponent_name: 'Rival1',
-            opponent_username: "opponentusername",
-            result: 'loss',
-        }
-
-    try {
-        const response = await fetch(`https://localhost:8443/stats/match_history/`, {
-        method: 'POST',
-        headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(matchData)
-    });
-
-        if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-
-        return await response.json();
-    }
-
-    catch (error) {
-        console.error('Error: ', error);
-            return null;
-    }
-};
-
-const getMatchData = async (userID: string): Promise<MatchData | null> => {
-    try {
-        const response = await fetch(`https://localhost:8443/stats/match_history/${userID}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-
-        const matchData = await response.json();
-        return matchData;
-    }
-
-    catch (error) {
-        console.error('Error: ', error);
-            return null;
-    }
-};
-
 export const MatchHistory = () => {
     const [matchData, setMatchData] = useState<MatchData | null>(null);
     const [loading, setLoading] = useState(true);
     const { user } = useUserContext();
+
+    if (!user)
+        return ;
 
     useEffect(() => {
         setLoading(true);
