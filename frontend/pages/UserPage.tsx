@@ -4,125 +4,13 @@ import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
 import { Stats } from '../components/Stats';
+import { fetchUserStats, fetchScoreHistory } from '../utils/Fetch';
+import { UserStats, ScoreHistory } from '../utils/Interfaces';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
 import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
-
-export interface UserStats {
-    games_played: number;
-    win_streak: number;
-    longest_win_streak: number;
-    worstRival: string;
-    games_draw: number;
-    games_lost: number;
-    games_won: number;
-	elo_score: number;
-	rank: number;
-    // worstRivalPic: string;
-}
-
-export interface ScoreHistory {
-    id: number,
-    elo_score: number,
-}
-
-const addRival = async (accessToken: string, rivalName: string) => {
-	const data = {
-		rival_username: rivalName
-	};
-
-	console.log(accessToken);
-
-	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				"Authorization": `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(data),
-		});
-
-		if (!response.ok)
-			throw new Error(`HTTP error! Status: ${response.status}`);
-
-		return response.json();
-
-	}
-	catch (error) {
-		console.error('Error: ', error);
-		return null;
-	}
-}
-
-const removeRival = async (userID: string) => {
-	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/username/${userID}`, { //FIX PATH
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
-
-		if (!response.ok)
-			throw new Error(`HTTP error! Status: ${response.status}`);
-
-		return response.json();
-	}
-	catch (error) {
-		console.error('Error: ', error);
-		return null;
-	}
-}
-
-const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>  => {
-	try {
-		const response = await fetch(`https://localhost:8443/stats/score_history/username/${userID}`, {
-			method: 'GET'
-		});
-
-		if (!response.ok)
-			throw new Error(`HTTP error! Status: ${response.status}`);
-
-		const data = await response.json();
-
-		const filteredData: ScoreHistory[] = data.map((item: ScoreHistory) => ({
-			id: item.id,
-			elo_score: item.elo_score,
-		}));
-		console.log('from fetchScoreHistory ');
-		console.log(filteredData);
-		return filteredData;
-	}
-
-	catch (error) {
-		console.error('Error: ', error);
-		return null;
-	}
-};
-
-const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
-	try {
-		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${userID}`, {
-		method: 'GET'
-		});
-
-		console.log(userID);
-		if (!response.ok)
-			throw new Error(`HTTP error! Status: ${response.status}`);
-
-		const userStats: UserStats = await response.json();
-		console.log(userStats);
-		return userStats;
-	}
-
-	catch (error) {
-		console.error('Error: ', error);
-		return null;
-	}
-}
 
 const UserPage = () => {
 	const navigate = useNavigate();
@@ -166,7 +54,7 @@ const UserPage = () => {
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
-	console.log("ACCESSTOKEN");
+	console.log("ACCESS TOKEN");
 	console.log(user?.accessToken);
 
 	return (

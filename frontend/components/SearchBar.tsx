@@ -1,16 +1,6 @@
 import React, { ChangeEvent, useState, useEffect, useRef } from "react";
-import { useClickOutside } from "./Hooks";
-
-interface SearchBarInputProps {
-    type?: string;
-    placeholder: string;
-    value: string;
-    options: string[];
-    onFilled: (value: string) => void;
-    onSelect: (value: string) => void;
-    className?: string;
-    isOpen?: boolean;
-}
+import { useClickOutside } from "../utils/Hooks";
+import { SearchBarInputProps } from "../utils/Interfaces";
 
 export const SearchBar = ({
     type = "text",

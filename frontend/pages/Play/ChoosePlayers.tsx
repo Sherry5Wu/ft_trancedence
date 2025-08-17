@@ -8,7 +8,7 @@ import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
 import { useUserContext } from '../../context/UserContext';
 import { usePlayersContext } from '../../context/PlayersContext';
-import { useValidationField } from '../../hooks/useValidationField';
+import { useValidationField } from '../../utils/Hooks';
 import { isValidAlias } from '../../utils/Validation';
 
 const ChoosePlayersPage: React.FC = () => {

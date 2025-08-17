@@ -8,7 +8,7 @@ import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
 import { DropDownButton } from '../../components/DropDownButton';
 import { UserProfileBadge } from '../../components/UserProfileBadge';
-import { useValidationField } from '../../hooks/useValidationField';
+import { useValidationField } from '../../utils/Hooks';
 import { isValidTitle } from '../../utils/Validation';
 import { useUserContext } from '../../context/UserContext';
 import { usePlayersContext } from '../../context/PlayersContext';

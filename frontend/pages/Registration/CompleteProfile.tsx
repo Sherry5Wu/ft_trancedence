@@ -7,7 +7,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
 import { ToggleButton } from '../../components/ToggleButton';
-import { useValidationField } from '../../hooks/useValidationField';
+import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 
 

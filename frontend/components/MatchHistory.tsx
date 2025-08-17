@@ -1,7 +1,7 @@
 import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
-import { getMatchData, postMatchData } from './Fetches';
+import { getMatchData, postMatchData } from '../utils/Fetch';
 
 export interface MatchData {
     played_at: string,

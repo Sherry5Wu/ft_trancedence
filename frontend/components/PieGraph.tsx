@@ -1,5 +1,5 @@
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
-import { UserStats } from './Stats';
+import { UserStats } from '../utils/Interfaces';
 
 const fetchData = (user: string) => {
     //FETCH REAL DATA FROM BACKEND

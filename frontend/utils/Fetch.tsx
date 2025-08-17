@@ -1,4 +1,103 @@
-import { MatchData } from "./MatchHistory";
+import { MatchData } from "../components/MatchHistory";
+import { ScoreHistory } from "../pages/UserPage";
+import { UserStats } from "../pages/UserPage";
+import { useUserContext } from '../context/UserContext';
+
+export const addRival = async (accessToken: string, rivalName: string) => {
+	const data = {
+		rival_username: rivalName
+	};
+
+	console.log(accessToken);
+
+	try {
+		const response = await fetch(`https://localhost:8443/stats/rivals/`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				"Authorization": `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify(data),
+		});
+
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		return response.json();
+
+	}
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+}
+
+export const removeRival = async (userID: string) => {
+	try {
+		const response = await fetch(`https://localhost:8443/stats/rivals/username/${userID}`, { //FIX PATH
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		return response.json();
+	}
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+}
+
+export const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>  => {
+	try {
+		const response = await fetch(`https://localhost:8443/stats/score_history/username/${userID}`, {
+			method: 'GET'
+		});
+
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		const data = await response.json();
+
+		const filteredData: ScoreHistory[] = data.map((item: ScoreHistory) => ({
+			id: item.id,
+			elo_score: item.elo_score,
+		}));
+		console.log('from fetchScoreHistory ');
+		console.log(filteredData);
+		return filteredData;
+	}
+
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+};
+
+export const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
+	try {
+		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${userID}`, {
+		method: 'GET'
+		});
+
+		console.log(userID);
+		if (!response.ok)
+			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		const userStats: UserStats = await response.json();
+		console.log(userStats);
+		return userStats;
+	}
+
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+}
 
 export const postMatchData = async (accessToken: string) => {
 

@@ -1,19 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SortIcon from '../assets/noun-sort-7000784.svg?react';
-// import { Menu } from './Menu.tsx'
-// import { DropDownButton } from './DropDownButton.tsx';
+import { RivalData } from '../utils/Interfaces';
 import { useUserContext } from '../context/UserContext';
+import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import TrashIcon from '../assets/noun-trash-3552649.svg?react'
 
-interface RivalData {
-	rival_username: string,
-	rival_elo_score?: number,
-	games_played_against_rival?: number,
-	wins_against_rival?: number, 
-	losses_against_rival?: number,
-	//picture: '../assets/profilepics/B2.png'
-}
 
 const fetchRivalData = async (username: string) => {
 	try {

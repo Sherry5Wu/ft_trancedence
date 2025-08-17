@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RivalRows } from '../../components/RivalRows';
 import { SearchBar } from '../../components/SearchBar';
-import { useValidationField } from '../../hooks/useValidationField';
+import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername } from '../../utils/Validation';
 import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import SearchIcon from '../../assets/noun-search-7526678.svg?react';
-import { fetchUsers } from '../../components/Fetches';
+import { fetchUsers } from '../../utils/Fetch';
 
 // export interface RivalData {
 //   username: string;

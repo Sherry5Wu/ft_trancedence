@@ -1,8 +1,7 @@
 import { LineGraph } from '../components/LineGraph';
 import { BarGraph } from '../components/BarGraph';
 import { PieGraph } from '../components/PieGraph';
-import { UserStats } from '../pages/UserPage';
-import { ScoreHistory } from '../pages/UserPage';
+import { UserStats, ScoreHistory } from '../utils/Interfaces'
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
 

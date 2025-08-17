@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
-import { useValidationField } from '../hooks/useValidationField';
+import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
 
 interface UserProfile {

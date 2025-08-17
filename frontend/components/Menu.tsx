@@ -1,6 +1,6 @@
 import { useState, useRef, ReactElement } from 'react';
 import { MenuItem, MenuItemProps } from './MenuItem'
-import { useClickOutside } from './Hooks';
+import { useClickOutside } from '../utils/Hooks';
 
 interface MenuProps {
     'aria-label': string;

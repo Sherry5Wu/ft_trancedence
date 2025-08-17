@@ -20,9 +20,9 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '../assets/noun-search-7526678.svg?react';
 import { SearchBar } from '../components/SearchBar';
-import { useValidationField } from '../hooks/useValidationField';
+import { useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
-import { fetchUsers } from './Fetches';
+import { fetchUsers } from '../utils/Fetch';
 
 {/* HANDLE USER AND DARK MODE STATE */}
 export const Navbar = () => {
