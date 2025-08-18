@@ -145,6 +145,27 @@ async function getUserById(id, includeSecrets = false) {
 }
 
 /**
+ * Find user by username (safe data by default)
+ * @param {string} username - User's username
+ * @param {boolean} includeSecrets - Include sensitive fields if true
+ * @returns {Promise<object|null>}
+ */
+async function getUserByUsername(username, includeSecrets = false) {
+  const user = await User.scope(includeSecrets ? 'withSecrets' : null).findOne({ where: { username } });
+  if (!user){
+    return null;
+  }
+
+  const userData = user.toJSON();
+  if (!includeSecrets){
+    delete userData.passwordHash;
+    delete userData.twoFASecret;
+    delete userData.backupCodes;
+  }
+  return userData;
+}
+
+/**
  * Enable 2FA for user (store TOTP secret and backup codes)
  * @param {string} userId
  * @param {string} secret - TOTP secret
@@ -245,6 +266,7 @@ export {
   registerUser,
   authenticateUser,
   getUserById,
+  getUserByUsername,
   enableTwoFA,
   disableTwoFA,
   validateBackupCode,

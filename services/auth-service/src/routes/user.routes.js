@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import fastifyStatic from '@fastify/static';
 import { fileTypeFromBuffer } from 'file-type';
 
-import { getUserById, updatePassword, updatePinCode, updateAvatar } from '../services/auth.service.js';
+import { getUserById, getUserByUsername, updatePassword, updatePinCode, updateAvatar } from '../services/auth.service.js';
 import { ValidationError } from '../utils/errors.js';
 import { comparePassword } from '../utils/crypto.js';
 import { NotFoundError } from '../utils/errors.js';
@@ -110,20 +110,20 @@ export default fp(async (fastify) => {
   });
 
     /**
-   * @route   GET /users/profile/:id
+   * @route   GET /users/profile/:username
    * @desc    Get other user's profile by ID: userId, username and avatarUrl
    */
-  fastify.get('/users/profile/:id', {
+  fastify.get('/users/profile/:username', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
-      summary: 'Get another user profile by ID',
-      description: 'Returns public information of a user specified by ID.',
+      summary: 'Get another user profile by username',
+      description: 'Returns public information of a user specified by username.',
       params: {
         type: 'object',
-        required: ['id'],
+        required: ['username'],
         properties: {
-          id: { type: 'string', description: 'User ID' }
+          id: { type: 'string', description: 'username' }
         }
       },
       response: {
@@ -142,7 +142,7 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    const user = await getUserById(req.params.id);
+    const user = await getUserByUsername(req.params.username);
     if (!user) {
       return reply.code(404).send({
         error: 'User not found',
