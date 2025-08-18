@@ -1,6 +1,11 @@
 import fp from 'fastify-plugin';
 import { verifyAccessToken } from './jwt.js';
 
+/**
+ * Middleware for verifying JWTs on protected routes.
+ * @param {*} fastify
+ * @param {*} options
+ */
 async function authenticate(fastify, options) {
   fastify.decorate('authenticate', async function (req, reply) {
     try {

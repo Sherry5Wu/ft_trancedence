@@ -404,5 +404,28 @@ export default fp(async (fastify) => {
 
     return reply.code(200).send({ avatarUrl });
   });
+
+  /**
+   * @route   get /users/users-list
+   * @desc    Get all the users from user table, only return username and avatarUrl. Design for searching
+   */
+  // fastify.get('/users/users-list', {
+  //   preHandler: [fastify.authenticate],
+  //   schema: {
+  //     tags: ['User'],
+  //     summary: 'Get all the users names and avatars',
+  //     response: {
+  //       200: {
+  //         description: 'Avatar uploaded successfully',
+  //         type: 'object',
+  //         properties: {
+  //           avatarUrl: { type: 'string' }
+  //         }
+  //       },
+  //       400: { description: 'Bad Request' },
+  //       401: { description: 'Unauthorized' }
+  //     }
+  //   },
+  // }, );
 });
 

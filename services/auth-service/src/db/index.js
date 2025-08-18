@@ -49,7 +49,8 @@ const initDB = async () => {
     // it creates tables if they don't exit.
     // { alter: true }: It tells Sequelize to automatically alter existing tables to
     // match your model definition.
-    await sequelize.sync({ alter: true });
+    // await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log('All models were synchronized successfully.');
   } catch (error) {
     console.error('Unable to connect to the database: ', error);

@@ -47,7 +47,7 @@ async function registerUser(email, username, password, pinCode) {
     });
 
     if (existingUser){
-      if (existingUser.email === email) throw new ConflictError('Email already registered');
+      if (existingUser.email === normalizedEmail) throw new ConflictError('Email already registered');
       if (existingUser.username === username) throw new ConflictError('Username already registered');
     }
 
@@ -66,7 +66,7 @@ async function registerUser(email, username, password, pinCode) {
 
 /**
  * Authenticate user with email/username and password.
- * @param {string} indentifier - User email or username
+ * @param {string} identifier - User email or username
  * @param {string} password - Plaintext password
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
@@ -85,6 +85,7 @@ async function authenticateUser(identifier, password) {
   throw new NotFoundError('User not found.');
   }
 
+  console.log('user.isVerified', user.isVerified); // for testing only
   if (!user.isVerified) {
   throw new InvalidCredentialsError('Please verify your email address before logging in.');
   }
@@ -99,7 +100,6 @@ async function authenticateUser(identifier, password) {
     id: user.id,
     email: user.email,
     username: user.username,
-    role: user.role || 'user', // default role if not set
     is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
   };
   const accessToken = generateAccessToken(payload);
@@ -114,13 +114,20 @@ async function authenticateUser(identifier, password) {
   });
 
   // Return safe user data
-  const userData = user.toJSON();
-  delete userData.passwordHash;
-  delete userData.pinCodeHash;
-  delete userData.twoFASecret;
-  delete userData.backupCodes;
+  // const userData = user.toJSON();
+  // delete userData.passwordHash;
+  // delete userData.pinCodeHash;
+  // delete userData.twoFASecret;
+  // delete userData.backupCodes;
 
-  return { accessToken, refreshToken, user: userData };
+  // return the only asked data
+  const publicUser = {
+    id: user.id,
+    username: user.username,
+    avatarUrl: user.avatarUrl || null, // include only if you support it
+  };
+
+  return { accessToken, refreshToken, user: publicUser };
 }
 
 /**
