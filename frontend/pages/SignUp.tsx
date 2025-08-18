@@ -5,13 +5,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput } from '../components/GenericInput';
 import { ToggleButton } from '../components/ToggleButton';
-import { useValidationField } from '../hooks/useValidationField';
+import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 
 
 const createUser = async (player: UserProfile): Promise<UserProfile | null> => {
+  console.log('Sending user:', player);
   try {
-    const response = await fetch('http://localhost:8443/as/auth/register', {
+    const response = await fetch('https://localhost:8443/as/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,10 +37,10 @@ interface UserProfile {
   username: string;
   email: string;
   password: string;
-  pincode: string;
+  pinCode: string;
 }
 
-const SignUpPage = async () => {
+const SignUpPage = () => {
   
   const navigate = useNavigate();
 
@@ -134,6 +135,7 @@ const SignUpPage = async () => {
       <ToggleButton
         label="2FA with Google Authenticator"
         onClick={() => navigate('/setup2fa')}
+        disabled={!formFilled}
       />
 
       <GenericButton
@@ -145,12 +147,13 @@ const SignUpPage = async () => {
             username: usernameField.value,
             email: emailField.value,
             password: passwordField.value,
-            pincode: pinField.value
+            pinCode: pinField.value
           };
-          const registration = await createUser(newUser);
-          if (registration) {
+          const signUpData = await createUser(newUser);
+          if (signUpData) {
             alert('Registered successfully!');
-            navigate('/homeuser');
+            console.log(signUpData);
+            navigate('/signin');
           }
           else
             alert('Registration failed. Please try again.'); // what went wrong? 

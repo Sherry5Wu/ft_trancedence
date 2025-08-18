@@ -8,7 +8,7 @@ dotenv.config();
 const fastify = Fastify({ logger: true });
 
 // Avataan SQLite-tietokanta (tiedoston polku .env:stä tai oletus)
-const dbPath = process.env.DATABASE_URL || './data/pong.db';
+const dbPath = process.env.DATABASE_URL || './data/tournament.db';
 let db;
 
 try {

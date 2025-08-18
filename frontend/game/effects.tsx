@@ -192,7 +192,7 @@ export function spawnFlash(
 
   const paddleSound = new Sound(
     'paddleHit',
-    'https://cdn.jsdelivr.net/gh/anrisan/assets/audio/ping.mp3',
+    '../assets/game/hit.mp3',
     scene,
     null,
     { autoplay: true, volume: 0.7, spatialSound: true, maxDistance: 10, refDistance: 1 }

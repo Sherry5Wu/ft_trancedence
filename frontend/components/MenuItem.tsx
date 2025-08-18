@@ -37,8 +37,8 @@ export const MenuItem = ({ label, Icon, Button, onClick, user }: MenuItemProps) 
     }
 
     return (
-        <button type='button' onClick={handleClick} className='flex items-center -my-1 ml-7 bg-[#FFCC00] border-l-3 border-b-3 border-b-transparent 
-                                                                hover:border-b-black active:text-[#4682B4] active:border-[#4682B4]'>
+        <button type='button' onClick={handleClick} className='flex items-center -my-1.5 ml-7 border-l-3 border-b-3 border-b-transparent 
+                                                                hover:border-b-black active:text-[#4682B4] hover:cursor-pointer active:border-[#4682B4]'>
             {Icon && <span className='size-12 flex-shrink-0 -mr-1 -mt-1'>{Icon}</span>}
             {Button && <span className='ml-2 mt-1'>{Button(isOn)}</span>}
             {label && <span className='truncate w-full ml-3 active:border-[#4682B4]'>{label}</span>}

@@ -1,4 +1,10 @@
-__pycache/
+__pycache__/
 node_modules
 .vscode
 .DS_Store
+services/auth-service/data/
+services/stats-service/data/
+services/tournament-service/data/
+frontend/.vite/
+.backend_build
+.frontend_build

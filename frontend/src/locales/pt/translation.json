@@ -1,0 +1,9 @@
+{
+  "notFound": {
+    "title": "404 - Página Não Encontrada",
+    "message": "Ops! A página que você está procurando não existe.",
+    "aria": {
+      "errorIcon": "Ilustração do erro 404"
+    }
+  }
+}

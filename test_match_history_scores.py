@@ -11,9 +11,10 @@ import datetime
 TIMESTAMP = int(time.time())
 DATETIME = datetime.datetime.now()
 TEST_USER_EMAIL = f"testuser@example.com"
-TEST_USER_PASSWORD = "password123"
+TEST_USER_PASSWORD = "P*assword123"
 TEST_USER2_EMAIL = f"testuser2@example.com"
-TEST_USER2_PASSWORD = "password123"
+TEST_USER2_PASSWORD = "P*assword123"
+RIVAL = f"rival2{TIMESTAMP}"
 
 # Global variables to store tokens
 ACCESS_TOKEN = None
@@ -22,8 +23,8 @@ ACCESS_TOKEN_USER2 = None
 def login_user(email, password):
     """Login and get JWT token"""
     data = {
-        "email": email,
-        "password": password
+        "indentifier": email,
+        "password": password,
     }
     
     # ✅ KORJATTU: Oikea reitti auth-servicelle
@@ -59,10 +60,13 @@ def setup_test_users():
         # Register first user - ✅ KORJATTU: Vain email ja password
         register_data = {
             "email": TEST_USER_EMAIL,
-            "password": TEST_USER_PASSWORD
+            "password": TEST_USER_PASSWORD,
+            "pinCode" : "1231",
+            "username" : "testuser123"
         }
         print(f"🔧 Registering user: {TEST_USER_EMAIL}")
         register_response = requests.post(f"{AUTH_URL}/auth/register", json=register_data, verify=False)
+        print(register_response.headers)
         print(f"Register response: {register_response.status_code} - {register_response.text}")
         ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     assert ACCESS_TOKEN != None
@@ -71,7 +75,9 @@ def setup_test_users():
         # Register second user - ✅ KORJATTU: Vain email ja password
         register_data = {
             "email": TEST_USER2_EMAIL,
-            "password": TEST_USER2_PASSWORD
+            "password": TEST_USER2_PASSWORD,
+            "pinCode" : "1234",
+            "username" : "testuser2"
         }
         print(f"🔧 Registering user: {TEST_USER2_EMAIL}")
         register_response = requests.post(f"{AUTH_URL}/auth/register", json=register_data, verify=False)
@@ -88,28 +94,161 @@ def test_login_user():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     assert ACCESS_TOKEN != None
 
-def test_add_rival():
+def test_get_user_match_data():
+    """Test GET /user_match_data - public route"""
+    response = requests.get(f"{STATS_URL}/user_match_data", verify=False)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_get_user_match_data_by_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     headers = get_auth_headers(ACCESS_TOKEN)
 
     # Tarkistetaan että token on validi ja saadaan käyttäjän ID
-    response1 = requests.post(f"{BASE_URL}/auth/verify_token", headers=headers, verify=False)
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+    print(f"{STATS_URL}/user_match_data/{user_id}")
+    response = requests.get(f"{STATS_URL}/user_match_data/{user_id}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
+def test_get_user_match_data_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    print(f"{STATS_URL}/user_match_data/{username}")
+    response = requests.get(f"{STATS_URL}/user_match_data/username/{username}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
+def test_get_score_history():
+    """Test GET /score_history - public route"""
+    response = requests.get(f"{STATS_URL}/score_history", verify=False)
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_get_score_history_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+    print(f"{STATS_URL}/user_match_data/{user_id}")
+    response = requests.get(f"{STATS_URL}/score_history/{user_id}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
+def test_get_score_history_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    print(f"{STATS_URL}/user_match_data/{username}")
+    response = requests.get(f"{STATS_URL}/score_history/username/{username}", verify=False)
+    print(response.json())
+    assert response.status_code == 200
+
+def test_add_rival():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+
+    # Lisätään kilpailija
+    data = {
+        "rival_id": RIVAL,
+        "rival_username": f"rivalname{TIMESTAMP}"
+    }
+    response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
+    json_response = response.json()
+    assert response.status_code == 200
+    assert json_response["message"] == 'Rival added successfully'
+
+    # Haetaan lisätty rival ja tarkistetaan kentät
+    get_response = requests.get(f"{STATS_URL}/rivals/{user_id}", headers=headers, verify=False)
+    assert get_response.status_code == 200
+    rivals = get_response.json()
+    assert isinstance(rivals, list)
+    assert any(
+        rival.get("rival_id") == RIVAL and
+        "rival_username" in rival
+        for rival in rivals
+    )
+
+def test_get_rival_by_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+    response = requests.get(f"{STATS_URL}/rivals/{user_id}", verify=False)
+    print(response.json())
+    assert isinstance(response.json(), list)
+
+def test_get_rival_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    response = requests.get(f"{STATS_URL}/rivals/username/{username}", verify=False)
+    print(response.json())
+    assert isinstance(response.json(), list)
+
+def test_delete_rival_by_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
     print(headers)
     print(response1)
     assert response1.status_code == 200
     user_id = response1.json()["id"]
 
     # Lisätään kilpailija
+    rival_id = f"rival100{TIMESTAMP}"
     data = {
-        "rival_id": "valid_rival_id_here"
+        "rival_id": rival_id,
+        "rival_username" : f"rivalname100{TIMESTAMP}"
     }
-    response = requests.post(f"{STATS_URL}/rivals/{user_id}", json=data, headers=headers, verify=False)
+    print(f"{STATS_URL}/rivals/")
+    response = requests.post(f"{STATS_URL}/rivals/", json=data, headers=headers, verify=False)
     assert response.status_code == 200
     json_response = response.json()
     assert json_response["message"] == 'Rival added successfully'
 
+    response = requests.delete(f"{STATS_URL}/rivals/{rival_id}",headers=headers, verify=False)
+    print(response.json())
+    assert response.status_code == 200
+    json_response = response.json()
+    assert json_response["message"] == 'Rival removed successfully'
+
 
 def test_post_match_history():
     """Test POST /match_history with JWT auth - all required fields"""
+    test_setup_users()
     headers = get_auth_headers(ACCESS_TOKEN)
     print(headers)
     
@@ -122,6 +261,7 @@ def test_post_match_history():
         "player_name": "PlayerOne",
         "opponent_name": "PlayerTwo", 
         "result": "win",
+        "opponent_username" : "opponentusername",
         "played_at": f"{DATETIME}"
     }
     
@@ -148,7 +288,21 @@ def test_get_match_history_by_id():
     response = requests.get(f"{STATS_URL}/match_history/test-user-id", verify=False)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
-    print("✅ GET match_history by ID test passed")
+
+def test_get_match_history_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(headers)
+    print(response1)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    response = requests.get(f"{STATS_URL}/match_history/username/{username}", verify=False)
+    print(response.json())
+    assert isinstance(response.json(), list)
+
 
 def test_different_users():
     """Test with different JWT tokens - updated with new fields"""
@@ -164,6 +318,7 @@ def test_different_users():
         "player_name": "Player1",
         "opponent_name": "Enemy1",
         "result": "win",
+        "opponent_username" : "opponentusername",
         "played_at": f"{DATETIME}"
     }
     response1 = requests.post(f"{STATS_URL}/match_history", json=data1, headers=user1_headers, verify=False)
@@ -178,6 +333,7 @@ def test_different_users():
         "player_name": "Player2", 
         "opponent_name": "Enemy2",
         "result": "loss",
+        "opponent_username" : "opponentusername",
         "played_at": f"{DATETIME}"
     }
     response2 = requests.post(f"{STATS_URL}/match_history", json=data2, headers=user2_headers, verify=False)
@@ -239,6 +395,7 @@ def test_duration_formats():
             "player_name": "TestPlayer",
             "opponent_name": "TestOpponent",
             "result": "win",
+            "opponent_username" : "opponentusername",
             "played_at": f"{DATETIME}"
         }
         

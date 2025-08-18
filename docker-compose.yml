@@ -2,7 +2,6 @@ services:
   stats-service:
     build: 
       context: ./services/stats-service
-    container_name: stats_container
     env_file: "./.env"
     volumes:
       - stats_data:/app/data
@@ -14,7 +13,6 @@ services:
   tournament-service:
     build: 
       context: ./services/tournament-service
-    container_name: tournament_container
     env_file: "./.env"
     volumes:
       - tournament_data:/app/data
@@ -25,7 +23,6 @@ services:
   gateway-service:
     build:
       context: ./gateway
-    container_name: gateway_container
     env_file: "./.env"
     depends_on:
       - stats-service
@@ -41,7 +38,6 @@ services:
     build:
       context: ./services/auth-service
       target: dev  # Use development stage for testing
-    container_name: auth_container
     env_file: "./services/auth-service/.env"
     networks:
       - trancendence-network
@@ -52,9 +48,6 @@ services:
   frontend-service:
     build:
       context: ./frontend
-    container_name: frontend_container
-    ports: 
-      - "9000:9000"
     networks:
       - trancendence-network
     restart: unless-stopped

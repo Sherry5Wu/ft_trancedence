@@ -42,7 +42,7 @@
 }
 
 .dropdown-menu {
-  @apply absolute top-full left-50 -translate-x-50 w-full max-w-75 bg-[#FDFBD4] rounded-2xl z-10 mt-1 shadow-xs
+  @apply absolute mt-1 top-full left-50 -translate-x-50 w-full max-w-75 bg-[#FDFBD4] rounded-2xl shadow-sm
 }
 
 .dropdown-option {
@@ -50,12 +50,36 @@
         hover:font-bold hover:scale-110 transition-all ease-in-out duration-200
 }
 
-/* .generic-input {
-  @apply flex h-[40px] w-full max-w-[300px] py-[10px] px-[14px]
-} */
+.round-icon-button {
+  @apply flex items-center justify-center mx-auto w-[100px] h-[100px] border-4 border-transparent rounded-full bg-black text-white shadow-md cursor-pointer transition ease-in-out duration-200
+    hover:border-white active:bg-[#4682B4]
+}
+
+.transparent-round-icon-button {
+  @apply flex items-center justify-center mx-auto w-[100px] h-[100px] border-4 border-black rounded-full text-black shadow-md cursor-pointer transition ease-in-out duration-200
+    hover:border-black hover:bg-[#FDFBD4] active:bg-[#4682B4]
+}
+
+.round-icon-button img,
+.round-icon-button svg {
+  @apply w-[80px] h-[80px] invert pointer-events-none;
+}
+
+.transparent-round-icon-button img,
+.transparent-round-icon-button svg {
+  @apply w-[80px] h-[80px] pointer-events-none;
+}
+
+.hover-label {
+  @apply mt-3 text-black opacity-0 -translate-y-3 transition duration-200 ease-in-out;
+}
+
+.button-wrapper:hover .hover-label {
+  @apply opacity-100 translate-y-0;
+}
 
 .profilePic {
-  @apply w-full h-full rounded-full object-cover mb-1 bg-[#FFEE8C] 
+  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C]
   active:border-[#4682B4] transition ease-in-out duration-200
 }
 
@@ -190,7 +214,7 @@
 
 
 /* Round button style */
-.round-icon-button {
+/* .round-icon-button {
   display: flex;
   margin: 0 auto; 
   width: 100px;
@@ -211,7 +235,7 @@
 .round-icon-button svg {
   width: 80px;
   height: 80px;
-  filter: invert(100%); /* 100% makes black SVG white */
+  filter: invert(100%);
   pointer-events: none;
 }
 .round-icon-button:hover {
@@ -219,7 +243,7 @@
 }
 .round-icon-button:active {
   background-color: #d635e8;
-}
+} */
 /* .round-icon-button:focus,
 .round-icon-button:focus-visible {
   outline: 2px solid #ffffff;
@@ -235,18 +259,18 @@
   position: relative;
 }
 /* Hidden by default */
-.hover-label {
+/* .hover-label {
   margin-top: 0.2rem;
   font-size: 14px;
   color: #4e4e4e;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   pointer-events: none;
-}
+} */
 /* Shown on hover */
-.button-wrapper:hover .hover-label {
+/* .button-wrapper:hover .hover-label {
   opacity: 1;
-}
+} */
 
 /* Prop for Generic button */
 .disabled-button {

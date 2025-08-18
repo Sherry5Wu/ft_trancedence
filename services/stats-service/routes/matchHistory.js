@@ -1,5 +1,5 @@
-import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon} from '../utils/calculations.js'
-import { updateUserMatchDataTable, updateScoreHistoryTable } from '../utils/updateFunctions.js';
+import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon, calculateLongestWinStreak, calculateGamesDraw, checkIfRivals, calculateGamesPlayedAgainstRival, calculateWinsAgainstRival, calculateLossAgainstRival} from '../utils/calculations.js'
+import { updateUserMatchDataTable, updateScoreHistoryTable, updateRivalsDataTable } from '../utils/updateFunctions.js';
 import { db } from '../db/init.js';
 import { requireAuth } from '../utils/auth.js';
 
@@ -7,27 +7,56 @@ export default async function matchHistoryRoutes(fastify) {
     // /match_history
     fastify.get('/', (request, reply) => {
         try {
-        const rows = db.prepare('SELECT * FROM match_history').all();
-        reply.send(rows);
+            const rows = db.prepare('SELECT * FROM match_history').all();
+            reply.send(rows);
         } catch (err) {
-        reply.status(500).send({ error: err.message });
+            reply.status(500).send({ error: err.message });
         }
     });
     
     // /match_history/:player_id
     fastify.get('/:player_id', (request, reply) => {
-        const { player_id } = request.params;
-    
+        const { player_id } = request.params
         try {
-        const stmt = db.prepare(`
-            SELECT * FROM match_history
-            WHERE player_id = ?
-            ORDER BY played_at DESC
-        `);
-        const rows = stmt.all(player_id);
-        reply.send(rows);
+            const stmt = db.prepare(`
+                SELECT * FROM match_history
+                WHERE player_id = ? OR opponent_id = ?
+                ORDER BY played_at DESC
+            `);
+            const rows = stmt.all(player_id, player_id);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player id was not found' });
+            }
         } catch (err) {
-        reply.status(500).send({ error: err.message });
+            reply.status(500).send({ error: err.message });
+        }
+    });
+
+     // /match_history/username/:player_username
+    fastify.get('/username/:player_username', (request, reply) => {
+        const { player_username } = request.params
+        try {
+            const stmt = db.prepare(`
+                SELECT * FROM match_history
+                WHERE player_username = ? OR opponent_username = ?
+                ORDER BY played_at DESC
+            `);
+            const rows = stmt.all(player_username, player_username);
+            if (rows)
+            {
+                reply.send(rows);
+            } 
+            else 
+            {
+                reply.status(404).send({ error: 'Player id was not found' });
+            }
+        } catch (err) {
+            reply.status(500).send({ error: err.message });
         }
     });
 
@@ -36,20 +65,21 @@ export default async function matchHistoryRoutes(fastify) {
     fastify.post('/', { preHandler: requireAuth }, (request, reply) => {
         // TURVALLISUUS: player_id vain tokenista
         const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
-        const {opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at} = request.body;  // Display name voi vaihtua
+        const player_username = request.username;
+        const {opponent_username, opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at} = request.body;  // Display name voi vaihtua
     
 
         /// add type checking for the values before updating
-        if (!played_at || !player_score || !opponent_score || !duration || !player_id || !opponent_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
-        return reply.status(400).send({ error: 'Played_at, Player_id, opponent_id, player_name, opponent_name, result(win, loss, draw) is required' });
+        if (!opponent_username || !played_at || !player_score || !opponent_score || !duration || !player_id || !opponent_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
+        return reply.status(400).send({ error: 'Opponent_username, Played_at, Player_id, opponent_id, player_name, opponent_name, result(win, loss, draw) is required' });
         }
     
         try {
         const stmt = db.prepare(`
-            INSERT INTO match_history (played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO match_history (player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
-        const resultDb = stmt.run(played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
+        const resultDb = stmt.run(player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
 
         let outcome;
         if (result === 'win')
@@ -87,16 +117,30 @@ export default async function matchHistoryRoutes(fastify) {
         const gamesPlayed = calculateGamesPlayed(player_id);
         const gamesLost = calculateGamesLost(player_id);
         const gamesWon = calculateGamesWon(player_id);
+        const longestWinStreak = calculateLongestWinStreak(player_id);
+        const gamesDraw = calculateGamesDraw(player_id);
         const eloChanges = calculateEloScore(player_id, opponent_id, outcome, player_name, opponent_name);
         const opponentGamesPlayed = calculateGamesPlayed(opponent_id);
         const opponentGamesLost = calculateGamesLost(opponent_id);
         const opponentGamesWon = calculateGamesWon(opponent_id);
+        const opponentlongestWinStreak = calculateLongestWinStreak(opponent_id);
+        const opponentGamesDraw = calculateGamesDraw(opponent_id);
 
-        // Add type checking for the values before updating
-        updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon);
-        updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon);
-        updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at);
-        updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at);
+        if (checkIfRivals(player_username, opponent_username)) {
+            const playedagainstRival1 = calculateGamesPlayedAgainstRival(player_username, opponent_username);
+            const gamesWonRival1 = calculateWinsAgainstRival(player_username, opponent_username);
+            const gamesLostRival1 = calculateLossAgainstRival(player_username, opponent_username);
+            updateRivalsDataTable(player_username, opponent_username, playedagainstRival, gamesWonRival, gamesLostRival, eloChanges.player1.new);
+            const playedagainstRival2 = calculateGamesPlayedAgainstRival(opponent_username, player_username);
+            const gamesWonRival2 = calculateWinsAgainstRival(opponent_username, player_username);
+            const gamesLostRival2 = calculateLossAgainstRival(opponent_username, player_username);
+            updateRivalsDataTable(opponent_username, player_username, playedagainstRival, gamesWonRival, gamesLostRival, eloChanges.player2.new);
+        }
+        
+        updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username);
+        updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username);
+        updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at, player_username);
+        updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at, opponent_username);
         reply.send({ 
             id: resultDb.lastInsertRowid, 
             player_id, 

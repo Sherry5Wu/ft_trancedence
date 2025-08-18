@@ -24,6 +24,10 @@ const start = async () => {
     try
     {
         const port = process.env.PORT || 3001;
+
+        await fastify.ready();
+        console.log(fastify.printRoutes());
+
         await fastify.listen({ port, host: '0.0.0.0' });
         console.log("✅ Server is running!");
     }
