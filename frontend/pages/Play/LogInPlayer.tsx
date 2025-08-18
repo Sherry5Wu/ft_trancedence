@@ -88,6 +88,7 @@ const LogInPlayerPage: React.FC = () => {
         onFilled={pinField.onFilled}
         onBlur={pinField.onBlur}
         errorMessage={pinField.error}
+        allowVisibility
       />
 
       <GenericButton

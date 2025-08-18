@@ -95,6 +95,7 @@ return (
           onFilled={passwordField.onFilled}
           onBlur={passwordField.onBlur}
           errorMessage={passwordField.error}
+          allowVisibility
         />
         
         <GenericInput
@@ -106,6 +107,7 @@ return (
           errorMessage={
             passwordMismatch ? t('common.errors.passwordMismatch') : ''
           }
+          allowVisibility
         />
 
         <div className="relative inline-flex items-center">
@@ -117,6 +119,7 @@ return (
             onFilled={pinField.onFilled}
             onBlur={pinField.onBlur}
             errorMessage={pinField.error}
+            allowVisibility
           /> 
           <div className="absolute right-[-30px]">
             <Tooltip text={t('common.tooltips.PINcode')} />
@@ -130,6 +133,7 @@ return (
           value={confirmPin}
           onFilled={setConfirmPin}
           errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
+          allowVisibility
         />
 
         {/* <div className="relative inline-flex items-center">
