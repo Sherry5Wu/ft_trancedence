@@ -5,7 +5,7 @@
 
 import { DataTypes } from 'sequelize';
 
-export default (sequelize) => {
+export default (sequelize) => { // export a default function, not the User model itself
   const User = sequelize.define('User', {
     id: {
       type: DataTypes.UUID, // Universally Unique Identifier, it’s a 128-bit value

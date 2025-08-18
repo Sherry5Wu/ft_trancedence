@@ -2,14 +2,15 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 
-import { User } from '../db/models/user.js';
+import defineUser from '../db/models/user.js';
 import { hashPassword} from '../utils/crypto.js';
 import { jwkToPem } from '../utils/jwkToPem.js';
 import { ConflictError, InvalidCredentialsError, ValidationError } from '../utils/errors.js';
-import { validateUsername, validatePincode } from '../utils/validators';
+import { validateUsername, validatePincode } from '../utils/validators.js';
+import { sequelize } from '../db/index.js';
 
 const GOOGLE_CERTS_URL = process.env.GOOGLE_CERTS_URL || 'https://www.googleapis.com/oauth2/v3/certs';
-
+const User = defineUser(sequelize);
 /**
  * Example from a decoded Google ID token:
  * {
@@ -29,7 +30,6 @@ const GOOGLE_CERTS_URL = process.env.GOOGLE_CERTS_URL || 'https://www.googleapis
  * @param {idToken} google idToken
  * @returns payload
  */
-
 async function verifyGoogleIdToken(idToken) {
   // Fetch Google public keys
   const { data } = await axios.get(GOOGLE_CERTS_URL);

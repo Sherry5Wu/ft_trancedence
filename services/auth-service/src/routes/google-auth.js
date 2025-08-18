@@ -9,7 +9,6 @@ export default fp(async (fastify) => {
    *   name: GoogleAuth
    *   description: Google OAuth 2.0 authentication
    */
-
   // Redirect to Google OAuth2
   fastify.post('/auth/google-register', {
     schema: {
@@ -18,7 +17,7 @@ export default fp(async (fastify) => {
       description: 'Verify the google Id Token and register google user.',
       body: {
         type: 'object',
-        required: [{ idToken }, { username }, { pinCode }],
+        required: ['idToken', 'username', 'pinCode'],
         properties: {
           idToken: { type: 'string' },
           username: { type: 'string' },

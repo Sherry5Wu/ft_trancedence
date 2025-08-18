@@ -46,13 +46,13 @@ export default fp(async (fastify) => {
 
   /**
    * @route   GET /users/me
-   * @desc    Get current user profile
+   * @desc    Get current user profile:id, username, is2FAEnabled, avatarUrl.
    */
   fastify.get('/users/profile/me', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
-      summary: 'Get current user profile (id, username, is2FAEnabled, avatarUrl)',
+      summary: 'Get current user profile',
       description: "Returns the authenticated user's profile information.",
       response: {
         200: {
@@ -111,7 +111,7 @@ export default fp(async (fastify) => {
 
     /**
    * @route   GET /users/profile/:id
-   * @desc    Get other user's profile
+   * @desc    Get other user's profile by ID: userId, username and avatarUrl
    */
   fastify.get('/users/profile/:id', {
     preHandler: [fastify.authenticate],
