@@ -91,6 +91,30 @@
   },
 
   "pages": {
+    "about": {
+      "title": "About this project",
+      "text": "Transcendence is a full-stack web application developed as part of the 42 Network core curriculum.",
+      "aria": {
+        "label": "",
+        "description": ""
+      }
+    },
+    "contact": {
+      "title": "Contact us",
+      "text": "For any questions, feedback, or to get in touch with the team behind this project, feel free to visit our profiles. We look forward to hearing from you!",
+      "aria": {
+        "label": "",
+        "description": ""
+      }
+    },
+    "privacy": {
+      "title": "Privacy",
+      "text": "",
+      "aria": {
+        "label": "",
+        "description": ""
+      }
+    },
     "notFound": {
       "title": "404 - Page Not Found",
       "message": "Oops! The page you're looking for doesn't exist.",

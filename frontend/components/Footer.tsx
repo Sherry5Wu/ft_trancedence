@@ -13,15 +13,15 @@ export const Footer: React.FC = () => {
         <span>© {new Date().getFullYear()} ft_transcendence project. {t('components.footer.rights')}.</span>
         <div className="flex space-x-4">
           <Link to="/about" 
-            className="hover:font-bold hover:scale-110 transition-all ease-in-out duration-200">
+            className="inline-block w-[60px] text-center hover:scale-110 hover:font-bold transition-transform duration-200 ease-in-out">
               {t('components.footer.about')}
             </Link>
           <Link to="/contact"
-            className="hover:font-bold hover:scale-110 transition-all ease-in-out duration-200">
+            className="inline-block w-[60px] text-center hover:scale-110 hover:font-bold transition-transform duration-200 ease-in-out">
               {t('components.footer.contact')}
             </Link>
           <Link to="/privacy"
-            className="hover:font-bold hover:scale-110 transition-all ease-in-out duration-200">
+            className="inline-block w-[60px] text-center hover:scale-110 hover:font-bold transition-transform duration-200 ease-in-out">
               {t('components.footer.privacy')}
             </Link>
         </div>
