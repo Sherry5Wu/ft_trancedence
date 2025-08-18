@@ -47,7 +47,7 @@ async function registerUser(email, username, password, pinCode) {
     });
 
     if (existingUser){
-      if (existingUser.email === email) throw new ConflictError('Email already registered');
+      if (existingUser.email === normalizedEmail) throw new ConflictError('Email already registered');
       if (existingUser.username === username) throw new ConflictError('Username already registered');
     }
 
@@ -85,9 +85,10 @@ async function authenticateUser(identifier, password) {
   throw new NotFoundError('User not found.');
   }
 
-  // if (!user.isVerified) {
-  // throw new InvalidCredentialsError('Please verify your email address before logging in.');
-  // }
+  console.log('user.isVerified', user.isVerified); // for testing only
+  if (!user.isVerified) {
+  throw new InvalidCredentialsError('Please verify your email address before logging in.');
+  }
 
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch){

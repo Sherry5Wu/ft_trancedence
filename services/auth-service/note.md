@@ -33,10 +33,11 @@ curl http://localhost:3001/health
 
 2. Send a regiter request
 Can  you curl / Postman
+```sh
 curl -X POST http://localhost:3001/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com", "username":"usernameA","password":"myPassword*123", "pinCode":"5632"}'
-
+```
 
 Force remove in one step:
 docker rm -f $(docker ps -a -q)
@@ -54,7 +55,26 @@ docker ps -a
 docker rm -f $(docker ps -aq)
 
 Testing uploading a avatar
+```sh
 curl -X POST http://localhost:3000/user/avatar \
   -F "avatar=@/path/to/your/avatar.jpg"
+```
 
+```sh
 docker exec -it <docker-name> sh
+```
+// Install sqlite3
+```sh
+apk add --no-cache sqlite
+```
+// Get into the database
+```sh
+sqlite3  <path/to>/auth.db
+.table
+.schema Users
+SELECT * FROM Users;
+```
+Delete a table
+```sh
+DROP TABLE IF EXISTS Users_backup;
+```
