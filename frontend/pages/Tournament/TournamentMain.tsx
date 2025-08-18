@@ -307,7 +307,7 @@ const TournamentsPage: React.FC = () => {
           text={t('common.buttons.back')}
           aria-label={t('common.aria.buttons.back')}
           onClick={() =>
-            navigate('/homeuser')
+            navigate('/user/:username')
           }
         />
         <GenericButton

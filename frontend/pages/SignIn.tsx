@@ -97,7 +97,7 @@ const SignInPage: React.FC = () => {
   //       if (event.data === 'googleLoginSuccess') {
   //         console.log('User logged in successfully');
   //         // You can navigate the user or update state
-  //         navigate('/homeuser');
+  //         navigate('/user/:username');
   //       } else if (event.data === 'googleLoginFailed') {
   //         console.error('Login failed');
   //       }

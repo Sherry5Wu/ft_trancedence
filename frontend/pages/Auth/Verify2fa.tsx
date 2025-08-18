@@ -55,7 +55,7 @@ const Verify2faPage: React.FC = () => {
             className="generic-button"
             text={t('common.buttons.verify')}
             disabled={!formFilled}
-            onClick={() => navigate('/homeuser')}
+            onClick={() => navigate('/user/:username')}
           />
         </div>
 

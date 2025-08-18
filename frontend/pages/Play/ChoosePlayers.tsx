@@ -200,7 +200,7 @@ const formFilled =
             aria-label={t('common.aria.buttons.cancel')}
             onClick={() => {
               resetPlayers();
-              navigate('/homeuser');
+              navigate('/user/:username');
             }}
           />
           <GenericButton

@@ -114,7 +114,7 @@ const CompleteProfilePage: React.FC = () => {
         disabled={!formFilled}
         onClick={() => {
           alert(t('common.alerts.something')); // Temporary success message
-          navigate('/homeuser');
+          navigate('/user/:username');
         }}
       />
     </main>
