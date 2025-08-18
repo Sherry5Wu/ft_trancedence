@@ -13,6 +13,9 @@ interface PlayersContextType {
   tournamentTitle?: string;
   totalPlayers?: number;
 
+  isTournament: boolean;
+  setIsTournament: (v: boolean) => void;
+
   setTitle: (newTitle: string) => void;
   setTotalPlayers: (n: number) => void;
 
@@ -38,6 +41,8 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
   const [players, setPlayers] = useState<Players[]>([]);
   const [tournamentTitle, setTournamentTitle] = useState('');
   const [totalPlayers, setTotalPlayers] = useState<number | undefined>(undefined);
+
+  const [isTournament, setIsTournament] = useState(false);
 
   const addPlayer = (newPlayer: Players) => {
     setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
@@ -100,6 +105,8 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
       players,
       tournamentTitle,
       totalPlayers,
+      isTournament,
+      setIsTournament,
       setTitle,
       setTotalPlayers,
       setPlayer,
