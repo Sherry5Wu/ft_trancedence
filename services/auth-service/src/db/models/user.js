@@ -68,6 +68,7 @@ export default (sequelize) => {
       allowNull: true,
       validate: {
         isUrl: true,
+        len: [0, 2048], // max 2048 characters
       }
     },
     isVerified: { // Use for checking if the user finishs the registeration flow

@@ -48,16 +48,22 @@ export default fp(async (fastify) => {
    * @route   GET /users/me
    * @desc    Get current user profile
    */
-  fastify.get('/users/me', {
+  fastify.get('/users/profile/me', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
-      summary: 'Get current user profile',
+      summary: 'Get current user profile (id, username, is2FAEnabled, avatarUrl)',
       description: "Returns the authenticated user's profile information.",
       response: {
         200: {
           description: 'User profile retrieved successfully',
-          $ref: 'publicUser#'
+          allOf: [ // capital 'O'
+            { $ref: 'publicUser#' },
+            {
+              type: 'object',
+              properties: { is2FAEnabled: { type: 'boolean' } }
+            }
+          ],
         },
         401: {
           description: 'Unauthorized - invalid or missing token',
@@ -66,12 +72,84 @@ export default fp(async (fastify) => {
             error: { type: 'string' },
             message: { type: 'string' }
           }
-        }
+        },
+        404: {
+          description: 'User not found',
+          type: 'object',
+          properties: {
+            error: { type: 'string' },
+            message: { type: 'string' }
+          }
+        },
+        500: {
+          description: 'Internal server error',
+          type: 'object',
+          properties: {
+            error: { type: 'string' },
+            message: { type: 'string' }
+          }
+        },
       }
     }
   }, async (req, reply) => {
-    const user = await getUserById(req.user.id);
-    return user;
+    try {
+      const user = await getUserById(req.user.id);
+      if (!user) {
+        return reply.status(404).send({
+          error: 'User not found',
+          message: 'User with id $(req.user.id) does not exist',
+        });
+      }
+      return user; // return user id, username, avatarUrl and is2FAEnabled
+    } catch (err) {
+      return reply.status(500). send({
+        error: 'Internal Server Error',
+        message: err.message
+      });
+    }
+  });
+
+    /**
+   * @route   GET /users/profile/:id
+   * @desc    Get other user's profile
+   */
+  fastify.get('/users/profile/:id', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['User'],
+      summary: 'Get another user profile by ID',
+      description: 'Returns public information of a user specified by ID.',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string', description: 'User ID' }
+        }
+      },
+      response: {
+        200: {
+          description: 'user profile retrieved successfully',
+          $ref: 'publicUser#',
+        },
+        404: {
+          description: 'User not found',
+          type: 'object',
+          properties: {
+            error: { type: 'string' },
+            message: { type: 'string' },
+          },
+        },
+      }
+    }
+  }, async (req, reply) => {
+    const user = await getUserById(req.params.id);
+    if (!user) {
+      return reply.code(404).send({
+        error: 'User not found',
+        message: 'User with id ${req.params.id} does not exist'
+      });
+    }
+    return user; // only return id, username, avatarUrl
   });
 
   /**

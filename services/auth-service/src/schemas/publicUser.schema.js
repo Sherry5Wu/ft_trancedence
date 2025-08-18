@@ -1,18 +1,16 @@
 /**
- * Public User schema (used in API responses) — excludes sensitive fields.
+ * Public User schema (used in API responses, like /users/profile/me, users/profile/:id)
+ *  — excludes sensitive fields, only responses 'id', 'username' and 'avatarUrl'
  */
 const publicUserSchema = {
   $id: 'publicUser',
   type: 'object',
   properties: {
     id: { type: 'string', format: 'uuid' },
-    email: { type: 'string', format: 'email' },
     username: { type: 'string', pattern: '^[a-zA-Z][a-zA-Z0-9._-]{5,19}$' },
-    role: { type: 'string', enum: ['user', 'admin'] },
-    is2FAEnabled: { type: 'boolean' },
-    isVerified: { type: 'boolean' },
+    avatarUrl: { type: 'string', format: 'url'},
   },
-  required: ['id', 'email', 'username', 'role', 'isVerified']
+  required: ['id', 'username', 'avatarUrl']
 };
 
 export default publicUserSchema;
