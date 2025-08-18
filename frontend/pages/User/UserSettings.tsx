@@ -151,7 +151,7 @@ const SettingsPage: React.FC = () => {
             setUser({
               ...user!,
             });
-            navigate('/user/:username');
+            navigate(`/user/${user?.username}`);
           }}
         />
       </div>

@@ -9,6 +9,7 @@ import DownArrow from '../../assets/noun-down-arrow-down-1144832.svg?react';
 // import ToBeDoneBracket from '../../components/ToBeDoneBracket';
 // import BracketViewer from '../../components/BracketViewer';
 import ModularBracketViewer from '../../components/ModularBracketViewer';
+import { useUserContext } from '../../context/UserContext';
 
 interface TournamentHistoryRow {
   tournament_id: string; // TEXT NOT NULL
@@ -167,6 +168,7 @@ const mockData: TournamentHistoryRow[] = [
 const TournamentsPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [visibleTournamentsCount, setVisibleTournamentsCount] = useState(5);
@@ -307,7 +309,7 @@ const TournamentsPage: React.FC = () => {
           text={t('common.buttons.back')}
           aria-label={t('common.aria.buttons.back')}
           onClick={() =>
-            navigate('/user/:username')
+            navigate(`/user/${user?.username}`)
           }
         />
         <GenericButton

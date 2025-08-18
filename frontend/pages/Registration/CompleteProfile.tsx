@@ -9,7 +9,7 @@ import { GenericInput } from '../../components/GenericInput';
 import { ToggleButton } from '../../components/ToggleButton';
 import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
-
+import { useUserContext } from '../../context/UserContext';
 
 // async function createUser(player: Omit<Player, 'player_id'>): Promise<Player | null> {
 //   try {
@@ -37,6 +37,7 @@ import { isValidUsername, isValidPin } from '../../utils/Validation';
 const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
@@ -114,7 +115,7 @@ const CompleteProfilePage: React.FC = () => {
         disabled={!formFilled}
         onClick={() => {
           alert(t('common.alerts.something')); // Temporary success message
-          navigate('/user/:username');
+          navigate(`/user/${user?.username}`);
         }}
       />
     </main>

@@ -169,7 +169,7 @@ const LeaderboardPage: React.FC = () => {
               return (
               <li
                 key={player.username}
-                onClick={() => navigate(`/profile/${player.username}`)}
+                onClick={() => navigate(`/user/${player.username}`)}
                 className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 ${
                   isCurrentUser ? 'bg-[#FDFBD4] border-2' : 'bg-[#FFEE8C]'
                 } hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
@@ -208,7 +208,7 @@ const LeaderboardPage: React.FC = () => {
                   . . .
                 </div>
                 <li
-                  onClick={() => navigate(`/profile/${currentUser.username}`)}
+                  onClick={() => navigate(`/user/${currentUser.username}`)}
                   className="grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 bg-[#FDFBD4] border-2 hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300"
                   aria-label={`Current user ${currentUser.username} at position ${currentUserIndex + 1}`}
                 >

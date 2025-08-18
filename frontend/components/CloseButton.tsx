@@ -1,12 +1,11 @@
 import React from 'react';
 import CloseIcon from '../assets/symbols/noun-cross-rounded-5432729.svg';
 
-// Define the props interface
 interface CloseButtonProps {
   iconSize?: number;
   className?: string;
-  onClick: () => void; // Ensure onClick is always a function
-  ariaLabel?: string; // Optional aria label
+  onClick: () => void;
+  ariaLabel?: string;
 }
 
 export const CloseButton: React.FC<CloseButtonProps> = ({
@@ -18,7 +17,7 @@ export const CloseButton: React.FC<CloseButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`p-1 bg-transparent border-0 cursor-pointer ${className}`}
+      className={`p-1 bg-transparent rounded-full border-2 border-transparent cursor-pointer ${className} hover:bg-white hover:border-[#4682B4]`}
       aria-label={ariaLabel}
     >
       <img
