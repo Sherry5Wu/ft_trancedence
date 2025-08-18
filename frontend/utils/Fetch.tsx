@@ -1,4 +1,18 @@
-import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData } from "../utils/Interfaces";
+import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData } from "../utils/Interfaces";
+
+
+export const updateProfilePic = async () {
+	try {
+		const response = await fetch('https://localhost:8443/users/me/upload-avatar', {
+			method: 'POST',
+			
+		})
+	}
+	catch (error) {
+		console.error('Error: ', error);
+		return null;
+	}
+}
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
   console.log('Sending user:', player);
@@ -78,6 +92,51 @@ export const signInUser = async (player: LoginData) => {
 	  return null;
 	}
 } 
+
+const fetchRivalData = async (username: string) => {
+	try {
+	const rivals = await fetch(`https://localhost:8443/stats/rivals/username/${username}`, {
+		method: 'GET',
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+		});
+
+	if (!rivals.ok) {
+		throw new Error(`HTTP error! Status: ${rivals.status}`);
+	}
+
+	const rawData: string[] = await rivals.json();
+	const rivalsData: RivalData[] = rawData.map(entry => ({ rival_username: entry }));
+	console.log('RIVALSDATA: ')
+	console.log(rivalsData);
+
+	return rivalsData;
+	
+		// const promises = user.rivals.map(async () => {
+		// 	const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, {
+		// 		method: 'GET',
+		// 		headers: {
+		// 		'Content-Type': 'application/json',
+		// 		},
+		// 	});
+			
+		// 	if (!response.ok) {
+		// 		throw new Error(`HTTP error! Status: ${response.status}`);
+		// 	}
+
+		// 	return response.json();
+		// })
+
+		// const rivalDataArray = await Promise.all(promises);
+		// return rivalDataArray.sort(); //sort alphabetically
+	}
+
+	catch (error) {
+		console.error('Error:', error);
+		return [];
+  }
+}
 
 export const addRival = async (rivalName: string, accessToken: string) => {
 	const data = {

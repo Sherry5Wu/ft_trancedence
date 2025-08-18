@@ -10,12 +10,6 @@ import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import SearchIcon from '../../assets/noun-search-7526678.svg?react';
 import { fetchUsers } from '../../utils/Fetch';
 
-// export interface RivalData {
-//   username: string;
-//   profilePic?: string;
-// }
-
-
 const RivalsPage = () => {
     const navigate = useNavigate();
     const searchField = useValidationField('', isValidUsername);
