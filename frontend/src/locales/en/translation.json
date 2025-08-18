@@ -32,7 +32,8 @@
       "confirmPin": "Confirm your player PIN",
       "player1": "Player 1",
       "player2": "Player 2",
-      "playerAlias": "Player alias"
+      "playerAlias": "Player alias",
+      "searchUsers": "Search for other users"
     },
     "tooltips": {
       "PINcode": "You need your PIN code to confirm your presence when playing locally against other players",
@@ -400,8 +401,59 @@
       "rights": "All rights reserved",
       "about": "About",
       "contact": "Contact",
-      "privacy": "Privary"
-    }
+      "privacy": "Privary",
+      "aria": {
+        "label": "",
+        "description": "", 
+        "about": "",
+        "contact": "",
+        "privacy": ""
+      }
+    },
+    "navBar": {
+      
+      "aria": {
 
+      }
+    },
+    "PieGraph": {
+      "wins": "WINS",
+      "draws": "DRAWS",
+      "losses": "LOSSES",
+      "aria": {
+
+      },
+      "RivalRows": {
+        "loadingRivals": "Loading rivals...",
+        "noRivals": "No rivals yet",
+        "name": "Name",
+        "score": "Score",
+        "winRatio": "Win ratio",
+        "userRivalWinsLosses": "Your wins/losses",
+        "matchesPlayed": "Matches played",
+        "aria": {
+
+        }
+      },
+      "searchBar": {
+        "noUser": "No users found",
+        "aria": {
+
+        }
+      },
+      "stats": {
+        "noData": "No data found",
+        "scoreHistory": "SCORE HISTORY",
+        "scoreGainsVsLosses": "SCORE GAINS/LOSSES",
+        "winRate": "WIN RATE",
+        "playedGames": "PLAYED GAMES",
+        "worstRival": "WORST RIVAL",
+        "winStreak": "WIN STREAK",
+        "longestWinStreak": "LONGEST WIN STREAK",
+        "aria": {
+
+        }
+      }
+    }
   }
 }
