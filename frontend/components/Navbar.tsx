@@ -24,16 +24,17 @@ import { useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
 import { fetchUsers } from '../utils/Fetch';
 
+
 {/* HANDLE USER AND DARK MODE STATE */}
 export const Navbar = () => {
     // const [isOn, setIsOn] = useState(false);
     const { user, setUser } = useUserContext();
     const { darkMode, setDarkMode } = useDarkModeContext();
     const { largeText, setLargeText} = useAccessibilityContext();
-    const searchField = useValidationField('', isValidUsername);
+    const { t, i18n } = useTranslation();
+    const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
     const [rivalData, setRivalData] = useState<string[]>([]);
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation();
     
     useEffect(() => {
         const fetchRivals = async () => {
