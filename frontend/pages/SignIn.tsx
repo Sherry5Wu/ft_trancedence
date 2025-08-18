@@ -8,6 +8,7 @@ import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
+<<<<<<< HEAD
 
 interface UserProfile {
   identifier: string,
@@ -68,6 +69,10 @@ const signInUser = async (player: UserProfile) => {
       return null;
     }
 }
+=======
+import { LoginData } from '../utils/Interfaces';
+import { signInUser } from '../utils/Fetch';
+>>>>>>> 38b82bfe01507b2eca8e796e455dac3d0f511450
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -107,7 +112,11 @@ const SignInPage = () => {
         text="LOG IN"
         disabled={!formFilled}
         onClick={async () => {
+<<<<<<< HEAD
           const newUser: UserProfile = {
+=======
+          const newUser: LoginData = {
+>>>>>>> 38b82bfe01507b2eca8e796e455dac3d0f511450
             identifier: usernameField.value,
             password: passwordField.value,
           };
@@ -118,7 +127,7 @@ const SignInPage = () => {
               username: signInData.data.user.username,
               id: signInData.data.user.id,
               email: signInData.data.user.email,
-              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic border-2' />,
+              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic' />,
               score: signInData.stats.score,
               rank: signInData.stats.score,
               rivals: signInData.rivals,

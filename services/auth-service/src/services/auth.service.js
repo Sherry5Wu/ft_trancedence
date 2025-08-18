@@ -66,7 +66,7 @@ async function registerUser(email, username, password, pinCode) {
 
 /**
  * Authenticate user with email/username and password.
- * @param {string} indentifier - User email or username
+ * @param {string} identifier - User email or username
  * @param {string} password - Plaintext password
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
