@@ -15,6 +15,9 @@ export type ObjectsResult = {
   namePlate1?: Mesh;
   namePlate2?: Mesh;
   limits: { upperLimitZ: number; lowerLimitZ: number };
+  extraBounceables?: AbstractMesh[];
+  shield1?: Mesh;
+  shield2?: Mesh;
 };
 
 type CreateObjectsOpts = {
@@ -69,9 +72,9 @@ function createNamePlate(
   const centerZ = lowerLimitZ + spanZ / 2;
   const base = 1.2 * scale;
 
-  // Natural sizes in world units
-  const naturalU_alongZ = base * (texW / 64); // LONG axis (text width) intended to map to Z
-  const naturalV_alongX = base * (texH / 64); // SHORT axis (glyph height) maps to X
+  // Text sizes, Z = length, X = height
+  const naturalU_alongZ = base * (texW / 80);
+  const naturalV_alongX = base * (texH / 80);
 
   // Clamp ONLY the U length (along Z). Keep V (glyph height) constant.
   const widthAlongZ  = Math.min(naturalU_alongZ, maxLenZ); // shrink for long names
@@ -90,8 +93,6 @@ function createNamePlate(
 
   // Lay flat on floor
   plane.rotation.x = Math.PI / 2;
-  // Rotate so plane.width (U) runs along world Z instead of X
-  // +90° around Y maps local X → Z. Use inward/outward to flip facing.
   plane.rotation.y = faceInward ? Math.PI / 2 : -Math.PI / 2;
 
   plane.position.set(x, floorY, centerZ);
@@ -127,6 +128,22 @@ export function createObjects(
   paddle1.position.x = paddleDistance;
   paddle2.position.x = -paddleDistance;
 
+  // Shields
+  const shieldMat = new StandardMaterial('shieldMat', scene);
+  shieldMat.diffuseColor = new Color3(1, 1, 1);
+  shieldMat.alpha = 0.4;
+
+  const shield1 = MeshBuilder.CreateBox('shield1', {
+    width: 0.2,
+    height: 0.6,
+    depth: 1.5,
+  }, scene);
+  shield1.material = shieldMat;
+  shield1.isVisible = false;
+
+  const shield2 = shield1.clone('shield2') as Mesh;
+  shield2.isVisible = false;
+
   // Walls
   const wallTop = MeshBuilder.CreateBox(
     'wallTop',
@@ -136,7 +153,7 @@ export function createObjects(
   wallTop.material = materials.wallMaterial;
   const wallBottom = wallTop.clone('wallBottom') as Mesh;
 
-  const wallDistance = 5.3;
+  const wallDistance = 6.2;
   wallTop.position.z = wallDistance;
   wallBottom.position.z = -wallDistance;
 
@@ -194,5 +211,7 @@ export function createObjects(
     namePlate1,
     namePlate2,
     limits: { upperLimitZ, lowerLimitZ },
+    shield1,
+    shield2,
   };
 }

@@ -15,7 +15,7 @@ import { Op } from 'sequelize';
 import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
-import { ConflictError, InvalidCredentialsError, NotFoundError } from '../utils/errors.js';
+import { ConflictError, InvalidCredentialsError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { normalizeAndValidateEmail, normalizeEmail, validatePassword, validateUsername, validatePincode } from '../utils/validators.js';
 
 const { User, RefreshToken } = models;
@@ -47,7 +47,7 @@ async function registerUser(email, username, password, pinCode) {
     });
 
     if (existingUser){
-      if (existingUser.email === email) throw new ConflictError('Email already registered');
+      if (existingUser.email === normalizedEmail) throw new ConflictError('Email already registered');
       if (existingUser.username === username) throw new ConflictError('Username already registered');
     }
 
@@ -66,7 +66,7 @@ async function registerUser(email, username, password, pinCode) {
 
 /**
  * Authenticate user with email/username and password.
- * @param {string} indentifier - User email or username
+ * @param {string} identifier - User email or username
  * @param {string} password - Plaintext password
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
@@ -82,12 +82,13 @@ async function authenticateUser(identifier, password) {
   });
 
   if (!user) {
-  throw new InvalidCredentialsError('User not found.');
+  throw new NotFoundError('User not found.');
   }
-  
-  if (!user.isVerified) {
-  throw new InvalidCredentialsError('Please verify your email address before logging in.');
-  }
+
+  console.log('user.isVerified', user.isVerified); // for testing only
+  // if (!user.isVerified) {
+  // throw new InvalidCredentialsError('Please verify your email address before logging in.');
+  // }
 
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch){
@@ -99,7 +100,6 @@ async function authenticateUser(identifier, password) {
     id: user.id,
     email: user.email,
     username: user.username,
-    role: user.role || 'user', // default role if not set
     is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
   };
   const accessToken = generateAccessToken(payload);
@@ -113,14 +113,14 @@ async function authenticateUser(identifier, password) {
 
   });
 
-  // Return safe user data
-  const userData = user.toJSON();
-  delete userData.passwordHash;
-  delete userData.pinCodeHash;
-  delete userData.twoFASecret;
-  delete userData.backupCodes;
+  // return the only asked data
+  const publicUser = {
+    id: user.id,
+    username: user.username,
+    avatarUrl: user.avatarUrl || null, // include only if you support it
+  };
 
-  return { accessToken, refreshToken, user: userData };
+  return { accessToken, refreshToken, user: publicUser };
 }
 
 /**
@@ -131,6 +131,27 @@ async function authenticateUser(identifier, password) {
  */
 async function getUserById(id, includeSecrets = false) {
   const user = await User.scope(includeSecrets ? 'withSecrets' : null).findByPk(id);
+  if (!user){
+    return null;
+  }
+
+  const userData = user.toJSON();
+  if (!includeSecrets){
+    delete userData.passwordHash;
+    delete userData.twoFASecret;
+    delete userData.backupCodes;
+  }
+  return userData;
+}
+
+/**
+ * Find user by username (safe data by default)
+ * @param {string} username - User's username
+ * @param {boolean} includeSecrets - Include sensitive fields if true
+ * @returns {Promise<object|null>}
+ */
+async function getUserByUsername(username, includeSecrets = false) {
+  const user = await User.scope(includeSecrets ? 'withSecrets' : null).findOne({ where: { username } });
   if (!user){
     return null;
   }
@@ -221,13 +242,35 @@ async function updatePinCode(userId, newPinCode) {
   await user.update({ pinCodeHash: newHash });
 }
 
+async function updateAvatar(userId, newAvatarUrl) {
+  // 1. Check if user exists
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+  // 2. Validate avatar URL format
+  try {
+    new URL(newAvatarUrl);
+  } catch (err) {
+    throw new ValidationError('Invalid avatar URL');
+  }
+  // 3. enforce HTTPS only
+//  if (!newAvatarUrl.startsWith('https://')) {
+//    throw new ValidationError('Avatar URL must use HTTPS');
+//  }
+  // 4. Save to DB
+  await user.update({ avatarUrl: newAvatarUrl });
+}
+
 export {
   registerUser,
   authenticateUser,
   getUserById,
+  getUserByUsername,
   enableTwoFA,
   disableTwoFA,
   validateBackupCode,
   updatePassword,
   updatePinCode,
+  updateAvatar,
 };

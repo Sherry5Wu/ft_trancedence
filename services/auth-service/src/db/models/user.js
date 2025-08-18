@@ -2,10 +2,9 @@
  * Defines a Sequelize model called User and then returns it , so it can be used
  * elsewhere in your app
  */
-
 import { DataTypes } from 'sequelize';
 
-export default (sequelize) => {
+export default (sequelize) => { // export a default function, not the User model itself
   const User = sequelize.define('User', {
     id: {
       type: DataTypes.UUID, // Universally Unique Identifier, it’s a 128-bit value
@@ -30,7 +29,7 @@ export default (sequelize) => {
     },
     passwordHash: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     pinCodeHash: {
       type: DataTypes.STRING,
@@ -56,12 +55,20 @@ export default (sequelize) => {
     isVerified: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: true
+    defaultValue: false,
     },
     role: {
       type: DataTypes.ENUM('user', 'admin'), // add role with ENUM
       allowNull: false,
       defaultValue: 'user',
+    },
+    avatarUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isUrl: true,
+        len: [0, 2048], // max 2048 characters
+      }
     },
     isVerified: { // Use for checking if the user finishs the registeration flow
       type: DataTypes.BOOLEAN,

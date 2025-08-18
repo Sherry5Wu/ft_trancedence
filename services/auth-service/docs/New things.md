@@ -11,6 +11,7 @@
 - [Run container with Dockerfile](#run-container-with-dockerfile)
 - [Jest](#jest)
 - [dotenv](#dotenv)
+- [REST APIs](#rest-apis)
 
 # CORS
 ## What is CORS?
@@ -576,3 +577,31 @@ dotenv.config();
 
 console.log(process.env.PORT); // 3000
 ```
+## REST APIs
+A REST API (Representational State Transfer Application Programming Interface) is a way for different software systems to communicate over the web using simple, standard rules.<br>
+
+Think of it like a **menu in a restaurant:**
+- The menu tells you what dishes (operations) you can order.<br>
+- The waiter (the API) takes your order to the kitchen (the server) and brings back your food (the data).<br>
+
+### Key ideas behind REST APIs:
+**1. Uses HTTP methods:**
+  - GET → Retrieve data (like reading a resource)<br>
+  - POST → Create something new<br>
+  - PUT / PATCH → Update existing data<br>
+  - DELETE → Remove data<br>
+
+**2. Resource-based:**
+Everything is treated as a "resource" (like `users`, `products`, or `orders`) and is identified by a **URL**.<br>
+Example:<br>
+  - GET /users/1 → Get user with ID 1<br>
+  - POST /users → Create a new user<br>
+
+**3. Stateless:**
+Each request is independent — the server doesn’t remember previous requests. All the information needed must be included in each request.<br>
+
+**4. Data formats:**
+Responses are usually in JSON, sometimes XML. JSON is preferred because it’s lightweight and easy to parse.<br>
+
+**5. Widely used:**
+REST APIs power most web apps and mobile apps today (e.g., when your weather app fetches forecasts, it calls a REST API).<br>

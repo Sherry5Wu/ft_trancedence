@@ -5,53 +5,6 @@ import { useUserContext } from '../context/UserContext';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import TrashIcon from '../assets/noun-trash-3552649.svg?react'
 
-
-const fetchRivalData = async (username: string) => {
-	try {
-    const rivals = await fetch(`https://localhost:8443/stats/rivals/username/${username}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        });
-
-    if (!rivals.ok) {
-        throw new Error(`HTTP error! Status: ${rivals.status}`);
-    }
-
-    const rawData: string[] = await rivals.json();
-    const rivalsData: RivalData[] = rawData.map(entry => ({ rival_username: entry }));
-    console.log('RIVALSDATA: ')
-    console.log(rivalsData);
-
-    return rivalsData;
-    
-    
-		// const promises = user.rivals.map(async () => {
-		// 	const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, {
-		// 		method: 'GET',
-		// 		headers: {
-		// 		'Content-Type': 'application/json',
-		// 		},
-		// 	});
-			
-		// 	if (!response.ok) {
-		// 		throw new Error(`HTTP error! Status: ${response.status}`);
-		// 	}
-
-		// 	return response.json();
-		// })
-
-		// const rivalDataArray = await Promise.all(promises);
-		// return rivalDataArray.sort(); //sort alphabetically
-	}
-
-	catch (error) {
-		console.error('Error:', error);
-		return [];
-  }
-}
-
 export const RivalRows = () => {
 	const { user } = useUserContext();
   const navigate = useNavigate();

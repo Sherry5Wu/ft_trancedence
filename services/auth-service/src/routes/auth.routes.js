@@ -48,8 +48,12 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    const user = await registerUser(req.body.email, req.body.username, req.body.password, req.body.pinCode);
-    return reply.code(201).send(user);
+    try {
+      const user = await registerUser(req.body.email, req.body.username, req.body.password, req.body.pinCode);
+      return reply.code(201).send(user);
+    } catch (err) {
+      reply.code(err.statusCode || 500).send({ error: err.message });
+    }
   });
 
   // Login
@@ -60,9 +64,9 @@ export default fp(async (fastify) => {
       description: 'Authenticates a user using email/username and password.',
       body: {
         type: 'object',
-        required: ['indentifier', 'password'],
+        required: ['identifier', 'password'],
         properties: {
-          indentifier: { type: 'string' }, // can be email or username
+          identifier: { type: 'string' }, // can be email or username
           password: { type: 'string' }
         }
       },
@@ -79,11 +83,17 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    const { accessToken, refreshToken, user } = await authenticateUser(
-      req.body.indentifier,
-      req.body.password,
-    );
-    return { accessToken, refreshToken, user };
+    console.log('Request body:', req.body); // for testing  only
+    try {
+      const { accessToken, refreshToken, user } = await authenticateUser(
+        req.body.identifier,
+        req.body.password,
+      );
+      return { accessToken, refreshToken, user };
+    } catch (err) {
+      console.error('Login error:', err); // for testing only
+      reply.code(err.statusCode || 500).send({ error: err.message });
+    }
   });
 
   // Refresh token
@@ -138,26 +148,6 @@ export default fp(async (fastify) => {
   }, async (req, reply) => {
     await revokeRefreshToken(req.body.refreshToken);
     return reply.code(204).send();
-  });
-
-  // Profile
-  fastify.get('/auth/profile', {
-    preHandler: [fastify.authenticate],
-    schema: {
-      tags: ['Auth'],
-      summary: 'Get user profile',
-      description: 'Returns the authenticated user\'s profile.',
-      response: {
-        200: {
-          description: 'User profile details',
-          $ref: 'publicUser#'
-        }
-      }
-    }
-  }, async (req, reply) => {
-    const user = await getUserById(req.user.id);
-    if (!user) throw new NotFoundError('User not found');
-    return user;
   });
 
   // Token Verification for Microservices
