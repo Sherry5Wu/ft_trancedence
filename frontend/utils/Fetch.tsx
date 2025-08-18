@@ -1,18 +1,18 @@
 import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData } from "../utils/Interfaces";
 
 
-export const updateProfilePic = async () {
-	try {
-		const response = await fetch('https://localhost:8443/users/me/upload-avatar', {
-			method: 'POST',
+// export const updateProfilePic = async () {
+// 	try {
+// 		const response = await fetch('https://localhost:8443/users/me/upload-avatar', {
+// 			method: 'POST',
 			
-		})
-	}
-	catch (error) {
-		console.error('Error: ', error);
-		return null;
-	}
-}
+// 		})
+// 	}
+// 	catch (error) {
+// 		console.error('Error: ', error);
+// 		return null;
+// 	}
+// }
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
   console.log('Sending user:', player);

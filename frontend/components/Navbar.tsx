@@ -37,8 +37,8 @@ export const Navbar = () => {
     
     useEffect(() => {
         const fetchRivals = async () => {
-        const data = await fetchUsers();
-        setRivalData(data);
+            const data = await fetchUsers();
+            setRivalData(data);
         };
         fetchRivals();
     }, [])
@@ -68,11 +68,11 @@ export const Navbar = () => {
         setLargeText(!largeText);
     }
 
-    useEffect(() => {
-        const value = largeText ? '1.3' : '1.0';
-        console.log('Setting --scale-modifier to:', value);
-        document.documentElement.style.setProperty('--scale-modifier', value);
-    }), [handleTextSize];
+    // useEffect(() => {
+    //     const value = largeText ? '1.3' : '1.0';
+    //     console.log('Setting --scale-modifier to:', value);
+    //     document.documentElement.style.setProperty('--scale-modifier', value);
+    // }), [handleTextSize];
 
 
     const languageMenuItems = [
