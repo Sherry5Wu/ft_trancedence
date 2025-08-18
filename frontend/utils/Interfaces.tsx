@@ -1,5 +1,24 @@
 import { ReactElement } from "react";
 
+export interface MenuItemProps {
+    Icon?: ReactElement;
+    label?: string;
+    Button?: (isOn: boolean) => ReactElement;
+    onClick?: () => void;
+    className?: string;
+    variant?: string;
+}
+
+export interface MenuProps {
+    'aria-label': string;
+    Icon: ReactElement;
+    label?: string;
+    elements?: MenuItemProps[];
+    className: string;
+    onClick?: () => void;
+    variant?: string;
+}
+
 export interface UserProfileData {
   username: string;
   email: string;

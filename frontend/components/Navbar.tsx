@@ -133,12 +133,12 @@ export const Navbar = () => {
                     options={rivalData}
                     onFilled={searchField.onFilled}
                     onSelect={(selection) => navigate(`/user/${selection}`)}
-                    className='h-10 w-55 pl-11 bg-[#FFEE8C] rounded-full mb-3 border-2 border-black outline-none transition-all ease-in-out
-                                hover:ring-1 hover:ring-black focus:ring-2 focus:ring-[#4682B4]'
+                    className='h-10 w-55 pl-11 bg-[#FFEE8C] rounded-full mb-3 ring-2 ring-black outline-none transition-all ease-in-out
+                                hover:ring-3 focus:ring-[#4682B4]'
                     />
                 </div>
             </div>
-            <Menu aria-label='profile menu' Icon={user ? user.profilePic : <ProfileIcon />} elements={profileMenuItems} className='menuIcon' user={true}/>
+            <Menu aria-label='profile menu' Icon={user?.profilePic || <ProfileIcon />} elements={profileMenuItems} className='menuIcon' variant='userMenu'/>
         </div>
     </nav>
     );

@@ -1,18 +1,9 @@
-import { useState, useRef, ReactElement } from 'react';
-import { MenuItem, MenuItemProps } from './MenuItem'
+import { useState, useRef } from 'react';
+import { MenuItem } from './MenuItem'
+import { MenuProps } from '../utils/Interfaces';
 import { useClickOutside } from '../utils/Hooks';
 
-interface MenuProps {
-    'aria-label': string;
-    Icon: ReactElement;
-    label?: string;
-    elements?: MenuItemProps[];
-    className: string;
-    onClick?: () => void;
-    user?: boolean;
-};
-
-export const Menu = ({ 'aria-label': ariaLabel, Icon, label, elements, className, onClick, user}: MenuProps ) => {
+export const Menu = ({ 'aria-label': ariaLabel, Icon, elements, className, onClick, variant}: MenuProps ) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -30,9 +21,9 @@ export const Menu = ({ 'aria-label': ariaLabel, Icon, label, elements, className
         <nav className='relative inline-block' ref={menuRef}>
             <button aria-label={ariaLabel} onClick={handleClick} className={className}>{Icon}</button>
             {isOpen && (
-                <ul aria-label='menu items' className='absolute top-full left-0 space-y-1'>
+                <ul aria-label='menu items' className='absolute top-full left-0'>
                     {elements && elements.map((item, index: number) => (
-                        <li key={index} className=''> <MenuItem {...item} user={user} /></li>))}
+                        <li key={index} className=''> <MenuItem {...item} variant={variant} /></li>))}
                 </ul>
             )}
         </nav>
