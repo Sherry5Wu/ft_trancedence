@@ -12,68 +12,10 @@ import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
+import { LoginData } from '../utils/Interfaces';
+import { signInUser } from '../utils/Fetch';
 
 const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
-
-interface UserProfile {
-  indentifier: string,
-  password: string
-}
-
-const signInUser = async (player: UserProfile) => {
-    console.log(player);
-    try {
-      const response = await fetch('https://localhost:8443/as/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(player)
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      const userID = data.user.id;
-      console.log(userID);
-
-      const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!statResponse.ok) {
-        throw new Error(`HTTP error! Status: ${statResponse.status}`);
-      }
-      
-      const stats = await statResponse.json();
-
-      const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!rivalResponse.ok) {
-        throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
-      }
-      
-      const rivals = await rivalResponse.json();
-
-      return {data, stats, rivals};
-    }
-
-  catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-} 
 
 const SignInPage: React.FC = () => {
   const { t } = useTranslation(); 
@@ -153,8 +95,8 @@ return (
           aria-label={t('common.aria.buttons.logIn')}
           disabled={!formFilled}
           onClick={async () => {
-            const newUser: UserProfile = {
-              indentifier: usernameField.value,
+            const newUser: LoginData = {
+              identifier: usernameField.value,
               password: passwordField.value,
             };
             const signInData = await signInUser(newUser);

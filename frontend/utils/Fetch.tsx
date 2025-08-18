@@ -1,17 +1,91 @@
-import { MatchData } from "../components/MatchHistory";
-import { ScoreHistory } from "../pages/UserPage";
-import { UserStats } from "../pages/UserPage";
-import { useUserContext } from '../context/UserContext';
+import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData } from "../utils/Interfaces";
 
-export const addRival = async (accessToken: string, rivalName: string) => {
+export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
+  console.log('Sending user:', player);
+  try {
+    const response = await fetch('https://localhost:8443/as/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(player)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } 
+  
+  catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+}
+
+export const signInUser = async (player: LoginData) => {
+	console.log(player);
+	try {
+	  const response = await fetch('https://localhost:8443/as/auth/login', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(player)
+	  });
+	  
+	  if (!response.ok) {
+		throw new Error(`HTTP error! Status: ${response.status}`);
+	  }
+
+	  const data = await response.json();
+
+	  const userID = data.user.id;
+	  console.log(userID);
+
+	  const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
+		method: 'GET',
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+	  });
+	  
+	  if (!statResponse.ok) {
+		throw new Error(`HTTP error! Status: ${statResponse.status}`);
+	  }
+	  
+	  const stats = await statResponse.json();
+
+	  const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
+		method: 'GET',
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+	  });
+	  
+	  if (!rivalResponse.ok) {
+		throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
+	  }
+	  
+	  const rivals = await rivalResponse.json();
+
+	  return {data, stats, rivals};
+	}
+
+	catch (error) {
+	  console.error('Error:', error);
+	  return null;
+	}
+} 
+
+export const addRival = async (rivalName: string, accessToken: string) => {
 	const data = {
 		rival_username: rivalName
 	};
 
-	console.log(accessToken);
-
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/`, {
+		const response = await fetch(`https://localhost:8443/stats/rivals`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -32,12 +106,13 @@ export const addRival = async (accessToken: string, rivalName: string) => {
 	}
 }
 
-export const removeRival = async (userID: string) => {
+export const removeRival = async (rivalName: string, accessToken: string) => {
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/username/${userID}`, { //FIX PATH
+		const response = await fetch(`https://localhost:8443/stats/rivals/${rivalName}`, { //FIX PATH
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
+				"Authorization": `Bearer ${accessToken}`,
 			},
 		});
 
@@ -161,8 +236,8 @@ export const getMatchData = async (userID: string): Promise<MatchData | null> =>
 };
 
 export const fetchUsers = async () => {
-      const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
-      return rivalData.sort();
+    //   const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
+    //   return rivalData.sort();
      
       try {
           const response = await fetch(`https://localhost:8443/stats/user_match_data`, {
@@ -180,6 +255,8 @@ export const fetchUsers = async () => {
             const filteredUserDataArray = userDataArray.map((username: MatchData) => {
               return username.player_name;
             })
+			console.log('PRINT FROM FETCH USERS');
+			console.log(filteredUserDataArray);
             return filteredUserDataArray.sort();
         }
       

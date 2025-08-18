@@ -1,6 +1,6 @@
 // /src/pages/SignUp.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
@@ -10,37 +10,8 @@ import { ToggleButton } from '../components/ToggleButton';
 import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 import { Tooltip } from '../components/Tooltip';
-
-const createUser = async (player: UserProfile): Promise<UserProfile | null> => {
-  console.log('Sending user:', player);
-  try {
-    const response = await fetch('https://localhost:8443/as/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(player)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
-    return await response.json();
-  } 
-  
-  catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
-}
-
-interface UserProfile {
-  username: string;
-  email: string;
-  password: string;
-  pinCode: string;
-}
+import { createUser } from '../utils/Fetch';
+import { UserProfileData } from '../utils/Interfaces';
 
 const SignUpPage = () => {
   const { t } = useTranslation();
@@ -178,7 +149,7 @@ return (
           aria-label={t('common.aria.buttons.signUp')}
           disabled={!formFilled}
           onClick={async () => {
-            const newUser: UserProfile = {
+            const newUser: UserProfileData = {
               username: usernameField.value,
               email: emailField.value,
               password: passwordField.value,
