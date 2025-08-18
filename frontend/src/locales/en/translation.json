@@ -395,7 +395,13 @@
   },
 
 
-  "components": {}
+  "components": {
+    "footer": {
+      "rights": "All rights reserved",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privary"
+    }
 
-
+  }
 }
