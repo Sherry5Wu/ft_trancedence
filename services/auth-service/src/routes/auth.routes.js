@@ -148,26 +148,6 @@ export default fp(async (fastify) => {
     return reply.code(204).send();
   });
 
-  // Profile
-  fastify.get('/auth/profile', {
-    preHandler: [fastify.authenticate],
-    schema: {
-      tags: ['Auth'],
-      summary: 'Get user profile',
-      description: 'Returns the authenticated user\'s profile.',
-      response: {
-        200: {
-          description: 'User profile details',
-          $ref: 'publicUser#'
-        }
-      }
-    }
-  }, async (req, reply) => {
-    const user = await getUserById(req.user.id);
-    if (!user) throw new NotFoundError('User not found');
-    return user;
-  });
-
   // Token Verification for Microservices
   fastify.post('/auth/verify-token', {
     schema: {
