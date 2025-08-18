@@ -22,6 +22,7 @@ const ChoosePlayersPage: React.FC = () => {
     removePlayer,
     resetPlayers,
     setPlayer,
+    setIsTournament,
   } = usePlayersContext();
 
   const player1Field = useValidationField('', isValidAlias, t('common.errors.invalidAlias'));

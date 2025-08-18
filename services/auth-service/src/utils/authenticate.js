@@ -2,9 +2,9 @@ import fp from 'fastify-plugin';
 import { verifyAccessToken } from './jwt.js';
 
 async function authenticate(fastify, options) {
-  fastify.decorate('authenticate', async function (request, reply) {
+  fastify.decorate('authenticate', async function (req, reply) {
     try {
-      const authHeader = request.headers.authorization;
+      const authHeader = req.headers.authorization;
       if (!authHeader) {
         return reply.status(401).send({ error: 'Missing Authorization header' });
       }
@@ -20,9 +20,7 @@ async function authenticate(fastify, options) {
       const decoded = verifyAccessToken(token);
 
       // Attach decoded user data to request object for handlers
-      request.user = decoded;
-      console.log("Decoded user");
-      console.log(request.user);
+      req.user = decoded;
 
     } catch (err) {
       // Token invalid or expired

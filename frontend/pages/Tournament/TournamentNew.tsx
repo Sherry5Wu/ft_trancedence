@@ -26,6 +26,7 @@ const NewTournamentPage: React.FC = () => {
     tournamentTitle,
     resetPlayers,
     resetPlayerListOnly,
+    setIsTournament,
   } = usePlayersContext();
 
   const titleField = useValidationField(tournamentTitle || '', isValidTitle,  t('common.errors.invalidTitle'));
@@ -162,6 +163,7 @@ const NewTournamentPage: React.FC = () => {
           text={t('common.buttons.cancel')}
           aria-label={t('common.aria.buttons.cancel')}
           onClick={() => {
+            setIsTournament(false);
             resetPlayers();
             navigate('/tournaments');
           }}
@@ -172,6 +174,7 @@ const NewTournamentPage: React.FC = () => {
           aria-label={t('common.aria.buttons.next')}
           disabled={!formFilled}
           onClick={() => {
+            setIsTournament(true);
             navigate('/tournaments/new/players');
           }}
         />
