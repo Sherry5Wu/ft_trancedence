@@ -86,9 +86,9 @@ async function authenticateUser(identifier, password) {
   }
 
   console.log('user.isVerified', user.isVerified); // for testing only
-  if (!user.isVerified) {
-  throw new InvalidCredentialsError('Please verify your email address before logging in.');
-  }
+  // if (!user.isVerified) {
+  // throw new InvalidCredentialsError('Please verify your email address before logging in.');
+  // }
 
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch){
@@ -112,13 +112,6 @@ async function authenticateUser(identifier, password) {
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
 
   });
-
-  // Return safe user data
-  // const userData = user.toJSON();
-  // delete userData.passwordHash;
-  // delete userData.pinCodeHash;
-  // delete userData.twoFASecret;
-  // delete userData.backupCodes;
 
   // return the only asked data
   const publicUser = {
