@@ -4,7 +4,7 @@ import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
 import { Stats } from '../components/Stats';
-import { fetchUserStats, fetchScoreHistory } from '../utils/Fetch';
+import { fetchUserStats, fetchScoreHistory, addRival, removeRival } from '../utils/Fetch';
 import { UserStats, ScoreHistory } from '../utils/Interfaces';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
@@ -56,6 +56,8 @@ const UserPage = () => {
 
 	console.log("ACCESS TOKEN");
 	console.log(user?.accessToken);
+	console.log("RIVALS in user page");
+	console.log(user?.rivals);
 
 	return (
 		<div className='pageLayout'>
@@ -126,7 +128,7 @@ const UserPage = () => {
 		text={undefined}
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='REMOVE FROM RIVALS'
-		onClick={() => removeRival(user.id)} />
+		onClick={() => removeRival(param.username, user?.accessToken)} />
 	
 		:
 
@@ -135,7 +137,7 @@ const UserPage = () => {
 		text={undefined}
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='ADD TO RIVALS'
-		onClick={() => addRival(param.userName, user?.accessToken)} />
+		onClick={() => addRival(param.username, user?.accessToken)} />
 		}
 
 		{/* Statistics */}

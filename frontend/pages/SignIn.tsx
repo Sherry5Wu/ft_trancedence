@@ -8,66 +8,8 @@ import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
-
-interface UserProfile {
-  indentifier: string,
-  password: string
-}
-
-const signInUser = async (player: UserProfile) => {
-    console.log(player);
-    try {
-      const response = await fetch('https://localhost:8443/as/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(player)
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      const userID = data.user.id;
-      console.log(userID);
-
-      const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!statResponse.ok) {
-        throw new Error(`HTTP error! Status: ${statResponse.status}`);
-      }
-      
-      const stats = await statResponse.json();
-
-      const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!rivalResponse.ok) {
-        throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
-      }
-      
-      const rivals = await rivalResponse.json();
-
-      return {data, stats, rivals};
-    }
-
-    catch (error) {
-      console.error('Error:', error);
-      return null;
-    }
-} 
+import { LoginData } from '../utils/Interfaces';
+import { signInUser } from '../utils/Fetch';
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -107,7 +49,7 @@ const SignInPage = () => {
         text="LOG IN"
         disabled={!formFilled}
         onClick={async () => {
-          const newUser: UserProfile = {
+          const newUser: LoginData = {
             indentifier: usernameField.value,
             password: passwordField.value,
           };

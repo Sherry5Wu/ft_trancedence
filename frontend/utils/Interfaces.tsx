@@ -1,5 +1,17 @@
 import { ReactElement } from "react";
 
+export interface UserProfile {
+  username: string;
+  email: string;
+  password: string;
+  pinCode: string;
+}
+
+export interface LoginData {
+  indentifier: string,
+  password: string
+}
+
 export interface MatchData {
     played_at: string,
     player_name: string,
