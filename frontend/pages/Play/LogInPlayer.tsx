@@ -6,7 +6,7 @@ import { AccessiblePageDescription } from '../../components/AccessiblePageDescri
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
-import { useValidationField } from '../../hooks/useValidationField';
+import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 import { usePlayersContext } from '../../context/PlayersContext';
 

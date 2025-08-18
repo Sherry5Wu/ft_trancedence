@@ -1,37 +1,34 @@
-// pages/Rivals/RivalsMain.tsx
+// pages/Rivals/Rivals.tsx
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RivalRows } from '../../components/RivalRows';
 import { SearchBar } from '../../components/SearchBar';
-import { useValidationField } from '../../hooks/useValidationField';
+import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername } from '../../utils/Validation';
 import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import SearchIcon from '../../assets/noun-search-7526678.svg?react';
+import { fetchUsers } from '../../utils/Fetch';
 
 // export interface RivalData {
 //   username: string;
 //   profilePic?: string;
 // }
 
-const fetchRivalData = async () => {
-  const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
-  return rivalData.sort();
-}
 
 const RivalsPage = () => {
     const navigate = useNavigate();
     const searchField = useValidationField('', isValidUsername);
     const [rivalData, setRivalData] = useState<string[]>([]);
+    // const { user } = useUserContext();
 
     useEffect(() => {
       const fetchRivals = async () => {
-        console.log('fetching rival data');
-        const data = await fetchRivalData();
+        const data = await fetchUsers();
         setRivalData(data);
       };
       fetchRivals();
-    }, [searchField.value])
+    }, [])
   
     return (
       <div className='pageLayout'>
@@ -42,7 +39,7 @@ const RivalsPage = () => {
           <RivalIcon className='size-20' />
         </div>
 
-        <div className='min-w-150 relative'>
+        {/* <div className='min-w-150 relative'>
           <div aria-label='rival search bar' className='flex relative z-10 mb-3 justify-start items-center group -translate-x-10'>
             <SearchIcon className='size-10 translate-x-11 -translate-y-0.5 z-10 transition ease-in-out duration-30
                                   group-focus-within:opacity-50'/>
@@ -58,15 +55,13 @@ const RivalsPage = () => {
                                 hover:border-black focus:border-[#4682B4]'
                 />
             </div>
-          </div>
+          </div> */}
 
           <div className={`relative z-0 transition ease-in-out duration-100 ${searchField.value ? 'opacity-50' : 'opacity-100'}`}>
             <RivalRows />
           </div>
 
         </div>
-
-      </div>
     );
   };
   

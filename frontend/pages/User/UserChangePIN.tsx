@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
 import { CloseButton } from '../../components/CloseButton';
-import { useValidationField } from '../../hooks/useValidationField';
+import { useValidationField } from '../../utils/Hooks';
 import { isValidPin } from '../../utils/Validation';
 
 const ChangePINPage: React.FC = () => {

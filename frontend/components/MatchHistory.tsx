@@ -1,83 +1,16 @@
 import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
-
-interface MatchData {
-    played_at: string,
-    player_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
-    opponent_name: string, //IS ALIAS ADDED HERE, OR SEPARATE ENTRY?
-    opponent_id: string,
-    player_score: number,
-    opponent_score: number,
-    opponent_username: string,
-    result: string,
-    duration: number,
-}
-
-const postMatchData = async (accessToken: string) => {
-
-    console.log(accessToken);
-    const matchData: MatchData = 
-        {
-            player_name: 'User',
-            opponent_name: 'Rival1',
-            played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
-            duration: 300,
-            player_score: 2,
-            opponent_score: 5,
-            opponent_id: '1',
-            opponent_username : "opponentusername",
-            result: 'loss',
-        }
-
-    try {
-        const response = await fetch(`https://localhost:8443/stats/match_history/`, {
-        method: 'POST',
-        headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(matchData)
-    });
-
-        if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-
-        return await response.json();
-    }
-
-    catch (error) {
-        console.error('Error: ', error);
-            return null;
-    }
-};
-
-const getMatchData = async (userID: string): Promise<MatchData | null> => {
-    try {
-        const response = await fetch(`https://localhost:8443/stats/match_history/${userID}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-
-        const matchData = await response.json();
-        return matchData;
-    }
-
-    catch (error) {
-        console.error('Error: ', error);
-            return null;
-    }
-};
+import { getMatchData, postMatchData } from '../utils/Fetch';
+import { MatchData } from '../utils/Interfaces';
 
 export const MatchHistory = () => {
     const [matchData, setMatchData] = useState<MatchData | null>(null);
     const [loading, setLoading] = useState(true);
     const { user } = useUserContext();
+
+    if (!user)
+        return ;
 
     useEffect(() => {
         setLoading(true);
@@ -113,11 +46,11 @@ export const MatchHistory = () => {
                     return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'>
                         <span className='ml-3'>{match.played_at}</span>
                         <span className='col-span-2 truncate flex items-center justify-center gap-2'>
-                            <span className=''>{match.player_name} </span> 
+                            <span className=''>{match.player_username ? match.player_username : match.player_name} </span> 
                             <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
                             <span>vs</span>
                             <img src={match.player2pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
-                            <span className=''>{match.opponent_name}</span>
+                            <span className=''>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
                         </span> 
                         <span className=''>{match.player_score} - {match.opponent_score}</span>
                         <span className=''>{match.duration}</span>

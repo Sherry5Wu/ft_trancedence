@@ -1,23 +1,5 @@
 import { useState, createContext, useContext, ReactElement, ReactNode, useEffect } from 'react';
-
-interface User {
-    username: string;
-    id: string;
-    profilePic: ReactElement;
-    email: string;
-    score: number;
-    rank: number;
-    // firstName: string;
-    // lastName: string;
-    rivals: string[];
-    accessToken: string;
-    refreshToken: string;
-};
-
-interface UserType {
-    user: User | null;
-    setUser: (user: User | null) => void;
-};
+import { UserType, User } from '../utils/Interfaces';
 
 export const userContext = createContext<UserType | undefined>(undefined);
 

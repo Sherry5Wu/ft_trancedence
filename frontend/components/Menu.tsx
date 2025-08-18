@@ -1,6 +1,6 @@
 import { useState, useRef, ReactElement } from 'react';
 import { MenuItem, MenuItemProps } from './MenuItem'
-import { useClickOutside } from './Hooks';
+import { useClickOutside } from '../utils/Hooks';
 
 interface MenuProps {
     'aria-label': string;
@@ -26,30 +26,13 @@ export const Menu = ({ 'aria-label': ariaLabel, Icon, label, elements, className
             setIsOpen(!isOpen);
     }
 
-    // if (label && Icon)
-    // {
-    //     return (
-    //         <nav className='relative' ref={menuRef}>
-    //             <button aria-label={ariaLabel} onClick={handleClick} className={className}>
-    //                 <span className='size-5'>{Icon}</span><span className=''>{label}</span>
-    //             </button>
-    //             {isOpen && (
-    //                 <ul aria-label='menu items' className='absolute top-8'>
-    //                     {elements && elements.map((item, index: number) => (<li key={index}> <MenuItem {...item} sort={sort} /></li>))}
-    //                 </ul>
-    //             )}
-    //         </nav>
-    //     );
-    // }
-
     return (
         <nav className='relative inline-block' ref={menuRef}>
             <button aria-label={ariaLabel} onClick={handleClick} className={className}>{Icon}</button>
             {isOpen && (
-                <ul aria-label='menu items' className='absolute top-full left-0'>
-                    {/* absolute inset-0 mt-3 w-50 */}
-                    {/* absolute top-full left-5 w-50 */}
-                    {elements && elements.map((item, index: number) => (<li key={index}> <MenuItem {...item} user={user} /></li>))}
+                <ul aria-label='menu items' className='absolute top-full left-0 space-y-1'>
+                    {elements && elements.map((item, index: number) => (
+                        <li key={index} className=''> <MenuItem {...item} user={user} /></li>))}
                 </ul>
             )}
         </nav>

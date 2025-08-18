@@ -7,7 +7,7 @@ import { AccessiblePageDescription } from '../components/AccessiblePageDescripti
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput } from '../components/GenericInput';
 import { ToggleButton } from '../components/ToggleButton';
-import { useValidationField } from '../hooks/useValidationField';
+import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 import { Tooltip } from '../components/Tooltip';
 

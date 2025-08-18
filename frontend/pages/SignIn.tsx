@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
-import { useValidationField } from '../hooks/useValidationField';
+import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
 
 const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
@@ -89,24 +89,25 @@ const SignInPage: React.FC = () => {
     !usernameField.error &&
     !passwordField.error;;
 
-  useEffect(() => {
-    const handlePopupMessage = (event) => {
-      // Ensure the message is coming from the correct origin
-      if (event.origin === 'https://accounts.google.com') {
-        if (event.data === 'googleLoginSuccess') {
-          console.log('User logged in successfully');
-          // You can navigate the user or update state
-          navigate('/homeuser');
-        } else if (event.data === 'googleLoginFailed') {
-          console.error('Login failed');
-        }
-      }
-    };
-    window.addEventListener('message', handlePopupMessage);
-    return () => {
-      window.removeEventListener('message', handlePopupMessage);
-    };
-  }, [navigate]);
+  // Obs possible not needed, check after integration with backend 
+  // useEffect(() => {
+  //   const handlePopupMessage = (event) => {
+  //     // Ensure the message is coming from the correct origin
+  //     if (event.origin === 'https://accounts.google.com') {
+  //       if (event.data === 'googleLoginSuccess') {
+  //         console.log('User logged in successfully');
+  //         // You can navigate the user or update state
+  //         navigate('/homeuser');
+  //       } else if (event.data === 'googleLoginFailed') {
+  //         console.error('Login failed');
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener('message', handlePopupMessage);
+  //   return () => {
+  //     window.removeEventListener('message', handlePopupMessage);
+  //   };
+  // }, [navigate]);
 
 return (
     <GoogleOAuthProvider clientId={clientId}>

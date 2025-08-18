@@ -1,5 +1,5 @@
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { ScoreHistory } from './Stats';
+import { ScoreHistory } from '../utils/Interfaces';
 
 export const LineGraph = ({ data }: { data: ScoreHistory[] | null }) => {
     if (!data)

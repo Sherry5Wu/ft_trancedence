@@ -1,5 +1,5 @@
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, Cell, ResponsiveContainer } from 'recharts';
-import { ScoreHistory } from './Stats';
+import { ScoreHistory } from '../utils/Interfaces';
 
 // const fetchData = (user: string) => {
 //     //FETCH REAL DATA FROM BACKEND
