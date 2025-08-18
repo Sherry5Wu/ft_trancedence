@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useClickOutside } from "../utils/Hooks";
 import { SearchBarInputProps } from "../utils/Interfaces";
+import { useTranslation } from 'react-i18next';
 
 export const SearchBar = ({
     type = "text",
@@ -14,7 +15,8 @@ export const SearchBar = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFilled(e.target.value);
   };
-  
+
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
@@ -54,7 +56,7 @@ export const SearchBar = ({
                         </li>
                     ))
                     :
-                    <li className='flex justify-center text-[#CD1C18] font-semibold'>No users found</li>
+                    <li className='flex justify-center text-[#CD1C18] font-semibold'>{t('components.searchBar.noUser')}</li>
                 }</ul>
             )}
         </div>

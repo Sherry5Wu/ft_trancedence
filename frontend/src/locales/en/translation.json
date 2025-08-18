@@ -364,7 +364,7 @@
     },
 
     "rival": {
-      "title": "",
+      "title": "RIVALS",
       "aria": {
         "label": "",
         "description": "",
@@ -395,7 +395,6 @@
     }
   },
 
-
   "components": {
     "footer": {
       "rights": "All rights reserved",
@@ -416,14 +415,14 @@
 
       }
     },
-    "PieGraph": {
+    "pieGraph": {
       "wins": "WINS",
       "draws": "DRAWS",
       "losses": "LOSSES",
       "aria": {
 
       },
-      "RivalRows": {
+      "rivalRows": {
         "loadingRivals": "Loading rivals...",
         "noRivals": "No rivals yet",
         "name": "Name",

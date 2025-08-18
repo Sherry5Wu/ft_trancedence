@@ -9,6 +9,7 @@ import { isValidUsername } from '../../utils/Validation';
 import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import SearchIcon from '../../assets/noun-search-7526678.svg?react';
 import { fetchUsers } from '../../utils/Fetch';
+import { useTranslation } from 'react-i18next';
 
 // export interface RivalData {
 //   username: string;
@@ -17,8 +18,9 @@ import { fetchUsers } from '../../utils/Fetch';
 
 
 const RivalsPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
-    const searchField = useValidationField('', isValidUsername);
+    const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
     const [rivalData, setRivalData] = useState<string[]>([]);
     // const { user } = useUserContext();
 
@@ -35,7 +37,7 @@ const RivalsPage = () => {
 
         <div className='flex justify-center items-center gap-3 mb-5'>
           <RivalIcon className='size-20' />
-          <h2 className='h1 font-semibold text-center'>RIVALS</h2>
+          <h2 className='h1 font-semibold text-center'>{t('pages.rival.title')}</h2>
           <RivalIcon className='size-20' />
         </div>
 

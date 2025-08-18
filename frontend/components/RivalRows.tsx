@@ -4,7 +4,7 @@ import { RivalData } from '../utils/Interfaces';
 import { useUserContext } from '../context/UserContext';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import TrashIcon from '../assets/noun-trash-3552649.svg?react'
-
+import { useTranslation } from 'react-i18next';
 
 const fetchRivalData = async (username: string) => {
 	try {
@@ -53,10 +53,11 @@ const fetchRivalData = async (username: string) => {
 }
 
 export const RivalRows = () => {
-	const { user } = useUserContext();
+  const { t } = useTranslation();
+  const { user } = useUserContext();
   const navigate = useNavigate();
-	const [loading, setLoading] = useState(true);
-	const [rivalData, setRivalData] = useState<RivalData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [rivalData, setRivalData] = useState<RivalData[]>([]);
 
   if (!user)
     return ;
@@ -72,20 +73,20 @@ export const RivalRows = () => {
 	}, [user])
 
 	if (loading)
-		return <div className='flex justify-center'>Loading rivals...</div>;
+		return <div className='flex justify-center'>{t('components.rivalRows.loadingRivals')}</div>;
 
 	if (rivalData.length == 0)
-    	return <div className='flex justify-center'>No rivals yet</div>;
+    	return <div className='flex justify-center'>{t('components.rivalRows.noRivals')}</div>;
 
     return (
         <div aria-label='rivals data' className=''>
             <div aria-label='rivals data categories' className='grid grid-cols-12 mb-1 text-center font-semibold'>
                 <span className=''></span>
-                <span className='col-span-2'>Name</span>
-                <span className='col-span-2'>Score</span>
-                <span className='col-span-2'>Win ratio</span>
-                <span className='col-span-3'>Your wins/losses</span>
-                <span className='col-span-2'>Matches played</span>
+                <span className='col-span-2'>{t('components.rivalRows.name')}</span>
+                <span className='col-span-2'>{t('components.rivalRows.score')}</span>
+                <span className='col-span-2'>{t('components.rivalRows.winRatio')}</span>
+                <span className='col-span-3'>{t('components.rivalRows.userRivalWinsLosses')}</span>
+                <span className='col-span-2'>{t('components.rivalRows.matchesPlayed')}</span>
             </div>
 
             <ul>
