@@ -452,6 +452,12 @@
         "aria": {
 
         }
+      },
+      "genericInput": {
+        "aria": {
+          "showPass": "Show password or PIN code",
+          "hidePass": "Hide password or PIN code"
+        }
       }
     }
   }

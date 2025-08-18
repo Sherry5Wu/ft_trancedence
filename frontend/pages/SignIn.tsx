@@ -87,6 +87,7 @@ return (
           onFilled={passwordField.onFilled}
           onBlur={passwordField.onBlur}
           errorMessage={passwordField.error}
+          allowVisibility
         />
 
         <GenericButton
