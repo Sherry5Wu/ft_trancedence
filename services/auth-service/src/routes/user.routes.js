@@ -10,6 +10,8 @@ import { getUserById, getUserByUsername, updatePassword, updatePinCode, updateAv
 import { ValidationError } from '../utils/errors.js';
 import { comparePassword } from '../utils/crypto.js';
 import { NotFoundError } from '../utils/errors.js';
+import defineUser from '../db/models/user.js';
+import { sequelize } from '../db/index.js';
 
 export default fp(async (fastify) => {
   // --- Configure upload directory and static service ---
@@ -109,7 +111,7 @@ export default fp(async (fastify) => {
     }
   });
 
-    /**
+  /**
    * @route   GET /users/profile/:username
    * @desc    Get other user's profile by ID: userId, username and avatarUrl
    */
@@ -406,26 +408,77 @@ export default fp(async (fastify) => {
   });
 
   /**
-   * @route   get /users/users-list
+   * @route   get /users/all
    * @desc    Get all the users from user table, only return username and avatarUrl. Design for searching
    */
-  // fastify.get('/users/users-list', {
-  //   preHandler: [fastify.authenticate],
-  //   schema: {
-  //     tags: ['User'],
-  //     summary: 'Get all the users names and avatars',
-  //     response: {
-  //       200: {
-  //         description: 'Avatar uploaded successfully',
-  //         type: 'object',
-  //         properties: {
-  //           avatarUrl: { type: 'string' }
-  //         }
-  //       },
-  //       400: { description: 'Bad Request' },
-  //       401: { description: 'Unauthorized' }
-  //     }
-  //   },
-  // }, );
+  fastify.get('/users/all', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['User'],
+      summary: 'Get all users (username and avatarUrl)',
+      response: {
+        200: {
+          description: 'All users retrieved successfully',
+          type: 'object',
+          required: ['username'],
+          properties: {
+            total: { type: 'integer', description: 'Number of users returned' },
+            users: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  username: { type: 'string' },
+                  avatarUrl: { type: ['string', 'null'], format: 'url', description: 'Url to avatar or null' },
+                }
+              },
+            },
+          }
+        },
+        401: {
+        description: 'Unauthorized',
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
+          message: { type: 'string' }
+        }
+      },
+      500: {
+        description: 'Internal server error',
+        type: 'object',
+        properties: {
+          error: { type: 'string' },
+          message: { type: 'string' }
+        }
+      }
+    }
+  },
+  }, async (req, reply) => {
+    let User;
+    try {
+      User = defineUser(sequelize);
+      // Only select the fields the frontend needs
+      const users = await User.findAll({
+        attributes: ['username', 'avatarUrl'],
+        order: [['username', 'ASC']],
+      });
+
+      // set header of convenience and return minimal payload
+      reply.header('X-Total-Count', users.length);
+      return reply.code(200).send({
+        total: users.length,
+        users: users.map(u => ({
+          username: u.username,
+          avatarUrl: u.avatarUrl ?? null
+        }))
+      });
+    } catch (err) {
+      req.log?.error?.(err);
+      return reply.code(500).send({
+        error: 'Failed to fetch users',
+        message: err.message || 'Internal server error'
+      });
+    }
+  });
 });
 
