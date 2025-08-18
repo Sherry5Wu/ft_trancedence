@@ -10,7 +10,7 @@ const publicUserSchema = {
     username: { type: 'string', pattern: '^[a-zA-Z][a-zA-Z0-9._-]{5,19}$' },
     avatarUrl: { type: 'string', format: 'url'},
   },
-  required: ['id', 'username', 'avatarUrl']
+  required: ['id', 'username']
 };
 
 export default publicUserSchema;
