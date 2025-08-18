@@ -1,6 +1,6 @@
-import { MatchData, ScoreHistory, UserStats, LoginData, UserProfile } from "../utils/Interfaces";
+import { MatchData, ScoreHistory, UserStats, UserProfileData, UserProfile } from "../utils/Interfaces";
 
-export const createUser = async (player: UserProfile): Promise<UserProfile | null> => {
+export const createUser = async (player: UserProfileData): Promise<UserProfile | null> => {
   console.log('Sending user:', player);
   try {
     const response = await fetch('https://localhost:8443/as/auth/register', {
@@ -24,7 +24,7 @@ export const createUser = async (player: UserProfile): Promise<UserProfile | nul
   }
 }
 
-export const signInUser = async (player: LoginData) => {
+export const signInUser = async (player: UserProfile) => {
 	console.log(player);
 	try {
 	  const response = await fetch('https://localhost:8443/as/auth/login', {

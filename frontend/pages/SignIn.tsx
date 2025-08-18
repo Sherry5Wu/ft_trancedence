@@ -50,7 +50,7 @@ const SignInPage = () => {
         disabled={!formFilled}
         onClick={async () => {
           const newUser: LoginData = {
-            indentifier: usernameField.value,
+            identifier: usernameField.value,
             password: passwordField.value,
           };
           const signInData = await signInUser(newUser);
@@ -60,7 +60,7 @@ const SignInPage = () => {
               username: signInData.data.user.username,
               id: signInData.data.user.id,
               email: signInData.data.user.email,
-              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic border-2' />,
+              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic' />,
               score: signInData.stats.score,
               rank: signInData.stats.score,
               rivals: signInData.rivals,

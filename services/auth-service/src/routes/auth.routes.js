@@ -85,7 +85,7 @@ export default fp(async (fastify) => {
   }, async (req, reply) => {
     try {
       const { accessToken, refreshToken, user } = await authenticateUser(
-        req.body.indentifier,
+        req.body.identifier,
         req.body.password,
       );
       return { accessToken, refreshToken, user };

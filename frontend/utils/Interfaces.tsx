@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-export interface UserProfile {
+export interface UserProfileData {
   username: string;
   email: string;
   password: string;
@@ -8,7 +8,7 @@ export interface UserProfile {
 }
 
 export interface LoginData {
-  indentifier: string,
+  identifier: string,
   password: string
 }
 

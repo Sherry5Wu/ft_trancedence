@@ -41,11 +41,6 @@ const UserPage = () => {
 
 			setUserStats(stats);
 			setScoreHistory(score);
-
-			// console.log('stats and score: ');
-			// console.log(stats);
-			// console.log(score);
-
 			setLoading(false);
 		}
 		loadStats();
@@ -54,10 +49,10 @@ const UserPage = () => {
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
-	console.log("ACCESS TOKEN");
-	console.log(user?.accessToken);
-	console.log("RIVALS in user page");
-	console.log(user?.rivals);
+	// console.log("ACCESS TOKEN");
+	// console.log(user?.accessToken);
+	// console.log("RIVALS in user page");
+	// console.log(user?.rivals);
 
 	return (
 		<div className='pageLayout'>

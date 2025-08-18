@@ -8,7 +8,7 @@ import { ToggleButton } from '../components/ToggleButton';
 import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword, isValidPin } from '../utils/Validation';
 import { createUser } from '../utils/Fetch';
-import { UserProfile } from '../utils/Interfaces';
+import { UserProfileData } from '../utils/Interfaces';
 
 const SignUpPage = () => {
   
@@ -113,7 +113,7 @@ const SignUpPage = () => {
         text="SIGN UP"
         disabled={!formFilled}
         onClick={async () => {
-          const newUser: UserProfile = {
+          const newUser: UserProfileData = {
             username: usernameField.value,
             email: emailField.value,
             password: passwordField.value,
