@@ -7,7 +7,7 @@ safer for production.
 
 3. consider the avatar image dimensions limitation function.
 
-
+4. New API: getch user list : username and avatar
 
 
 Build and run docker

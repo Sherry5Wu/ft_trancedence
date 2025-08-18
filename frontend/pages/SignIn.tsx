@@ -10,7 +10,7 @@ import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
 
 interface UserProfile {
-  indentifier: string,
+  identifier: string,
   password: string
 }
 
@@ -24,7 +24,7 @@ const signInUser = async (player: UserProfile) => {
         },
         body: JSON.stringify(player)
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -40,11 +40,11 @@ const signInUser = async (player: UserProfile) => {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!statResponse.ok) {
         throw new Error(`HTTP error! Status: ${statResponse.status}`);
       }
-      
+
       const stats = await statResponse.json();
 
       const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
@@ -53,11 +53,11 @@ const signInUser = async (player: UserProfile) => {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!rivalResponse.ok) {
         throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
       }
-      
+
       const rivals = await rivalResponse.json();
 
       return {data, stats, rivals};
@@ -67,7 +67,7 @@ const signInUser = async (player: UserProfile) => {
       console.error('Error:', error);
       return null;
     }
-} 
+}
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -82,7 +82,7 @@ const SignInPage = () => {
 
   return (
     <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
-      
+
       <h3 className="font-semibold text-center">Sign In</h3>
 
       <GenericInput
@@ -108,7 +108,7 @@ const SignInPage = () => {
         disabled={!formFilled}
         onClick={async () => {
           const newUser: UserProfile = {
-            indentifier: usernameField.value,
+            identifier: usernameField.value,
             password: passwordField.value,
           };
           const signInData = await signInUser(newUser);
@@ -128,7 +128,7 @@ const SignInPage = () => {
             navigate(`/user/${usernameField.value}`)
           }
           else
-            alert('Sign in failed. Please try again.'); // what went wrong? 
+            alert('Sign in failed. Please try again.'); // what went wrong?
         }}
       />
 
