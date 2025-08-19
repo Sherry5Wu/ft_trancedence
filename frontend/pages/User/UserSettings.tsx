@@ -8,8 +8,9 @@ import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
 import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
+import { updateProfilePic } from '../../utils/Fetch';
 
-const SettingsPage: React.FC = () => {
+const SettingsPage = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUserContext();
 
@@ -27,25 +28,27 @@ const SettingsPage: React.FC = () => {
     }
   }, [user]);
 
+  if (!user) navigate('/signin');
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64Image = reader.result as string;
-      const newProfilePic = (
-        <img src={base64Image} className="profilePic" alt="Uploaded profile" />
-      );
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Image = reader.result as string;
+        const newProfilePic = (
+          <img src={base64Image} className="profilePic" alt="Uploaded profile" />
+        );
 
-      setUser({
-        ...user!,
-        profilePic: newProfilePic,
-      });
-    };
-    reader.readAsDataURL(file);
-  }
-};
+        setUser({
+          ...user!,
+          profilePic: newProfilePic,
+        });
+      };
+      reader.readAsDataURL(file);
+      updateProfilePic(file, user?.accessToken);
+    }
+  };
 
   
   return (

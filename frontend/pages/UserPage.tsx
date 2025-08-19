@@ -58,15 +58,15 @@ const UserPage = () => {
 		console.log('PROFILE PIC URL:');
 		console.log(profilePicURL);
 		loadProfilePicURL();
-	}, [param.username])
+	}, [param.username, user?.profilePic])
 
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
 	// console.log("ACCESS TOKEN");
 	// console.log(user?.accessToken);
-	console.log("RIVALS in user page");
-	console.log(user?.rivals);
+	// console.log("RIVALS in user page");
+	// console.log(user?.rivals);
 
 	return (
 		<div className='pageLayout'>
