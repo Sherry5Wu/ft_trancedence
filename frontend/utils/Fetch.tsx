@@ -85,10 +85,11 @@ export const updateProfilePic = async (file: File, accessToken: string) => {
 
 		const response = await fetch('https://localhost:8443/as/users/me/upload-avatar', {
 			method: 'POST',
-			body: formData,
 			headers: {
-				"Authorization": `Bearer ${accessToken}`,
+				'Authorization': `Bearer ${accessToken}`,
+				// 'Content-Type': 'multipart/form-data',
 			}, 
+			body: formData,
 		})
 
 		if (!response.ok)
@@ -118,7 +119,7 @@ const fetchRivalData = async (username: string) => {
 
 	const rawData: string[] = await rivals.json();
 	const rivalsData: RivalData[] = rawData.map(entry => ({ rival_username: entry }));
-	console.log('RIVALS DATA: ')
+	console.log('RIVALSDATA: ')
 	console.log(rivalsData);
 
 	return rivalsData;
