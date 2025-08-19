@@ -22,7 +22,7 @@ export const createUser = async (player: UserProfileData): Promise<UserProfileDa
     console.error('Error:', error);
     return null;
   }
-}
+};
 
 export const signInUser = async (player: LoginData) => {
 	try {
@@ -76,7 +76,7 @@ export const signInUser = async (player: LoginData) => {
 	  console.error('Error:', error);
 	  return null;
 	}
-} 
+};
 
 export const updateProfilePic = async () => {
 	try {
@@ -89,7 +89,7 @@ export const updateProfilePic = async () => {
 		console.error('Error: ', error);
 		return null;
 	}
-}
+};
 
 const fetchRivalData = async (username: string) => {
 	try {
@@ -134,12 +134,15 @@ const fetchRivalData = async (username: string) => {
 		console.error('Error:', error);
 		return [];
   }
-}
+};
 
 export const addRival = async (rivalName: string, accessToken: string) => {
 	const data = {
 		rival_username: rivalName
 	};
+
+	console.log("IN ADDRIVAL:");
+	console.log(data);
 
 	try {
 		const response = await fetch(`https://localhost:8443/stats/rivals`, {
@@ -161,11 +164,11 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 		console.error('Error: ', error);
 		return null;
 	}
-}
+};
 
 export const removeRival = async (rivalName: string, accessToken: string) => {
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/${rivalName}`, { //FIX PATH
+		const response = await fetch(`https://localhost:8443/stats/rivals/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -182,11 +185,11 @@ export const removeRival = async (rivalName: string, accessToken: string) => {
 		console.error('Error: ', error);
 		return null;
 	}
-}
+};
 
-export const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] | null>  => {
+export const fetchScoreHistory = async (username: string): Promise<ScoreHistory[] | null>  => {
 	try {
-		const response = await fetch(`https://localhost:8443/stats/score_history/username/${userID}`, {
+		const response = await fetch(`https://localhost:8443/stats/score_history/username/${username}`, {
 			method: 'GET'
 		});
 
@@ -210,9 +213,10 @@ export const fetchScoreHistory = async (userID: string): Promise<ScoreHistory[] 
 	}
 };
 
-export const fetchUserStats = async (userID: string): Promise<UserStats | null> => {
+export const fetchUserStats = async (username: string): Promise<UserStats | null> => {
+
 	try {
-		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${userID}`, {
+		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${username}`, {
 		method: 'GET'
 		});
 
@@ -220,7 +224,8 @@ export const fetchUserStats = async (userID: string): Promise<UserStats | null> 
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
 		const userStats: UserStats = await response.json();
-		console.log(userStats);
+		console.log('FETCH USER STATS: '); //REMOVE LATER
+		console.log(userStats); //REMOVE LATER
 		return userStats;
 	}
 
@@ -228,20 +233,20 @@ export const fetchUserStats = async (userID: string): Promise<UserStats | null> 
 		console.error('Error: ', error);
 		return null;
 	}
-}
+};
 
 export const postMatchData = async (accessToken: string, matchData: MatchData) => {
-    // console.log(accessToken);
+// export const postMatchData = async (accessToken: string) => {
     // const matchData: MatchData = 
     //     {
-    //         player_name: 'User',
-    //         player_username: 'user alias',
+    //         player_name: 'user',
+    //         player_username: 'username',
     //         played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
     //         duration: 300,
     //         player_score: 2,
     //         opponent_score: 5,
     //         opponent_id: '1',
-    //         opponent_name: 'Rival1',
+    //         opponent_name: 'opponentname',
     //         opponent_username: "opponentusername",
     //         result: 'loss',
     //     }
@@ -268,9 +273,9 @@ export const postMatchData = async (accessToken: string, matchData: MatchData) =
     }
 };
 
-export const getMatchData = async (userID: string): Promise<MatchData | null> => {
+export const getMatchData = async (username: string): Promise<MatchData | null> => {
     try {
-        const response = await fetch(`https://localhost:8443/stats/match_history/${userID}`, {
+        const response = await fetch(`https://localhost:8443/stats/match_history/username/${username}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -325,4 +330,4 @@ export const fetchUsers = async (accessToken: string) => {
 		console.error('Error:', error);
 		return null;
 	}
-    }
+};

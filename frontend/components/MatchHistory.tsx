@@ -4,7 +4,7 @@ import { useUserContext } from '../context/UserContext';
 import { getMatchData, postMatchData } from '../utils/Fetch';
 import { MatchData } from '../utils/Interfaces';
 
-export const MatchHistory = () => {
+export const MatchHistory = (player: string) => {
     const [matchData, setMatchData] = useState<MatchData | null>(null);
     const [loading, setLoading] = useState(true);
     const { user } = useUserContext();
@@ -14,12 +14,12 @@ export const MatchHistory = () => {
 
     useEffect(() => {
         setLoading(true);
-        //postMatchData(user.accessToken); //FOR TESTING REMOVE LATER
-        getMatchData(user.id).then((data) => {
+        postMatchData(user.accessToken); //FOR TESTING REMOVE LATER
+        getMatchData(player).then((data) => {
             setMatchData(data);
             setLoading(false);
     });
-    }, [user.accessToken, user.id]);
+    }, [user.accessToken, player]);
 
     if (loading)
         return <div className='flex justify-center my-5'>Loading...</div>
@@ -42,7 +42,7 @@ export const MatchHistory = () => {
              </div>
 
             <ul aria-label='match history rows' className=''>
-                {matchData.map((match, index: number) => {
+                {matchData.map((match: any, index: number) => {
                     const localTime = new Date(match.played_at).toLocaleString('fi-FI', {
                       dateStyle: 'medium',
                       timeStyle: 'short',
