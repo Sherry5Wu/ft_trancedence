@@ -19,41 +19,73 @@ const CustomGoogleLoginButton = () => {
   //   }
   // });
 
+
   // Configure Google Login to return the ID Token
-  const login = useGoogleLogin({
-    flow: "implicit", // ensures token comes directly
-    scope: "openid profile email", // required for id_token
-    onSuccess: (tokenResponse) => {
-      /**
-       * tokenResponse contains:
-       *   access_token
-       *   authuser
-       *   expires_in
-       *   prompt
-       *   scope
-       *   token_type
-       *   id_token   ✅
-       */
-      console.log("Google Login Success:", tokenResponse);
+  // const login = useGoogleLogin({
+  //   flow: "implicit", // ensures token comes directly
+  //   scope: "openid profile email", // required for id_token
+  //   onSuccess: (tokenResponse) => {
+  //     /**
+  //      * tokenResponse contains:
+  //      *   access_token
+  //      *   authuser
+  //      *   expires_in
+  //      *   prompt
+  //      *   scope
+  //      *   token_type
+  //      *   id_token   ✅
+  //      */
+  //     console.log("Google Login Success:", tokenResponse);
 
-      if (tokenResponse.id_token) {
-        // Save idToken in context
-        setUser((prev) => ({
-          ...prev,
-          googleIdToken: tokenResponse.id_token,
-        }));
+  //     if (tokenResponse.id_token) {
+  //       // Save idToken in context
+  //       setUser((prev) => ({
+  //         ...prev,
+  //         googleIdToken: tokenResponse.id_token,
+  //       }));
 
-        // Redirect to complete-registration page
+  //       // Redirect to complete-registration page
+  //       navigate("/signup/complete-registration");
+  //     } else {
+  //       console.error("No id_token returned from Google");
+  //     }
+  //   },
+  //   onError: () => {
+  //     console.error("Google Login Failed");
+  //   },
+  // });
+
+const login = useGoogleLogin({
+  flow: "auth-code",             // auth-code flow is safer
+  scope: "openid profile email",
+  onSuccess: async (codeResponse) => {
+    console.log("Google Auth Code:", codeResponse.code);
+
+    try {
+      // Send the auth code to your backend for exchange
+      const response = await fetch('https://localhost:8443/auth/google-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeResponse.code })
+      });
+
+      const data = await response.json();
+
+      if (data.id_token) {
+        // Save id_token in UserContext
+        setUser(prev => ({ ...prev, googleIdToken: data.id_token }));
+
+        // Navigate to complete-registration page
         navigate("/signup/complete-registration");
       } else {
-        console.error("No id_token returned from Google");
+        console.error("No id_token returned from backend");
       }
-    },
-    onError: () => {
-      console.error("Google Login Failed");
-    },
-  });
-
+    } catch (err) {
+      console.error("Error exchanging Google code:", err);
+    }
+  },
+  onError: () => console.error("Google Login Failed"),
+});
   
   return (
     <button
