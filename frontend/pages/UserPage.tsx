@@ -4,8 +4,8 @@ import { GenericButton } from '../components/GenericButton';
 import { MatchHistory } from '../components/MatchHistory';
 import { useUserContext } from '../context/UserContext';
 import { Stats } from '../components/Stats';
-import { fetchUserStats, fetchScoreHistory, addRival, removeRival } from '../utils/Fetch';
-import { UserStats, ScoreHistory } from '../utils/Interfaces';
+import { fetchUserStats, fetchScoreHistory, addRival, removeRival, fetchUsers } from '../utils/Fetch';
+import { UserStats, ScoreHistory, FetchedUserData } from '../utils/Interfaces';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
@@ -13,15 +13,15 @@ import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
 
 const UserPage = () => {
-	const navigate = useNavigate();
 	const { user, setUser } = useUserContext();
 	const [stats, setStats] = useState(false);
 	const [history, setHistory] = useState(false);
 	const [userStats, setUserStats] = useState<UserStats | null>(null);
 	const [scoreHistory, setScoreHistory] = useState<ScoreHistory[] | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [profilePicURL, setProfilePicURL] = useState('');
 	const param = useParams();
-
+	const navigate = useNavigate();
 	const showStats = () => setStats(!stats);
 	const showHistory = () => setHistory(!history);
 
@@ -45,7 +45,20 @@ const UserPage = () => {
 			setHistory(false);
 		}
 		loadStats();
-		}, [user, param.username]);
+	}, [user, param.username]);
+
+	useEffect(() => {
+		const loadProfilePicURL = async () => {
+			const allUsers = await fetchUsers(user?.accessToken);
+			if (!allUsers)
+				return ;
+			const pageOwner = allUsers.filter((u: FetchedUserData) => u.username === param.username);
+			setProfilePicURL(pageOwner.avatarUrl);
+		}
+		console.log('PROFILE PIC URL:');
+		console.log(profilePicURL);
+		loadProfilePicURL();
+	}, [param.username])
 
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
@@ -61,7 +74,8 @@ const UserPage = () => {
 		{/* User header */}
 
 		<div className='profilePicBig'>
-			{user?.profilePic}
+			{profilePicURL ? 
+				<img src={profilePicURL} className='w-full h-full object-cover'/> : <img src='../assets/noun-profile-7808629.svg' className='w-full h-full object-cover'/>}
 		</div>
 
 		<div className='w-56 truncate mb-12'>

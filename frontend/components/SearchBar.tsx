@@ -1,7 +1,7 @@
 import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useClickOutside } from "../utils/Hooks";
 import { SearchBarInputProps } from "../utils/Interfaces";
-import { fetchedUserData } from "../utils/Interfaces";
+import { FetchedUserData } from "../utils/Interfaces";
 import { fetchUsers } from '../utils/Fetch';
 import { useUserContext } from "../context/UserContext";
 

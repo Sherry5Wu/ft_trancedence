@@ -53,7 +53,7 @@ export interface RivalData {
 	//picture: '../assets/profilepics/B2.png'
 }
 
-export interface fetchedUserData {
+export interface FetchedUserData {
     username: string;
     avatar: string | null;
 }
@@ -62,7 +62,7 @@ export interface SearchBarInputProps {
     type?: string;
     placeholder: string;
     value: string;
-    options: fetchedUserData[];
+    options: FetchedUserData[];
     onFilled: (value: string) => void;
     onSelect: (value: string) => void;
     className?: string;
