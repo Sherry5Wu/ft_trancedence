@@ -14,7 +14,7 @@ export const MatchHistory = () => {
 
     useEffect(() => {
         setLoading(true);
-        postMatchData(user.accessToken); //FOR TESTING REMOVE LATER
+        //postMatchData(user.accessToken); //FOR TESTING REMOVE LATER
         getMatchData(user.id).then((data) => {
             setMatchData(data);
             setLoading(false);
@@ -43,8 +43,13 @@ export const MatchHistory = () => {
 
             <ul aria-label='match history rows' className=''>
                 {matchData.map((match, index: number) => {
+                    const localTime = new Date(match.played_at).toLocaleString('fi-FI', {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                      timeZone: 'Europe/Helsinki',
+                    });
                     return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'>
-                        <span className='ml-3'>{match.played_at}</span>
+                        <span className='ml-3'>{localTime}</span>
                         <span className='col-span-2 truncate flex items-center justify-center gap-2'>
                             <span className=''>{match.player_username ? match.player_username : match.player_name} </span> 
                             <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />

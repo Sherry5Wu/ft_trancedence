@@ -1,7 +1,7 @@
 // components/ToBeDoneBracket.tsx
 
 import React from 'react';
-import type { TournamentHistoryRow } from '../pages/Tournament/TournamentsPage'; // adjust path if needed
+import type { toryRow } from '../pages/Tournament/TournamentsPage'; // adjust path if needed
 
 interface ToBeDoneBracketProps {
   tournament: {
@@ -9,7 +9,7 @@ interface ToBeDoneBracketProps {
     date: string;
     winner: string;
     totalPlayers: number;
-    matches: TournamentHistoryRow[];
+    matches: toryRow[];
   };
 }
 
