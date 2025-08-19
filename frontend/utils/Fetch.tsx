@@ -94,7 +94,8 @@ export const updateProfilePic = async (file: File, accessToken: string) => {
 		if (!response.ok)
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
-		return await response.json();
+		const data = await response.json();
+		return data.avatarUrl;
 	}
 	catch (error) {
 		console.error('Error: ', error);

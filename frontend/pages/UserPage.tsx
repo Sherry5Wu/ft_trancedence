@@ -26,6 +26,7 @@ const UserPage = () => {
 	const showHistory = () => setHistory(!history);
 
 	useEffect(() => {
+		if (!user) return ;
 		const loadStats = async () => {
 			if (!user) navigate('/signin');
 			if (!param.username) return ;
@@ -48,6 +49,7 @@ const UserPage = () => {
 	}, [user, param.username]);
 
 	useEffect(() => {
+		if (!user) return ;
 		const loadProfilePicURL = async () => {
 			const allUsers = await fetchUsers(user?.accessToken);
 			if (!allUsers)
@@ -58,7 +60,7 @@ const UserPage = () => {
 		console.log('PROFILE PIC URL:');
 		console.log(profilePicURL);
 		loadProfilePicURL();
-	}, [param.username, user?.profilePic])
+	}, [param.username, user?.profilePic, user])
 
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;

@@ -22,15 +22,15 @@ const SettingsPage = () => {
 
   // Populate local state from user context
   useEffect(() => {
+    if (!user) navigate('/signin');
     if (user) {
       setFirstName(user?.firstname ?? '');
       setLastName(user?.lastname ?? '');
     }
   }, [user]);
 
-  if (!user) navigate('/signin');
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -44,10 +44,16 @@ const SettingsPage = () => {
           ...user!,
           profilePic: newProfilePic,
         });
-
       };
       reader.readAsDataURL(file);
-      updateProfilePic(file, user?.accessToken);
+
+      try {
+        const avatarUrl = await updateProfilePic(file, user?.accessToken);
+        console.log('avatarurl = ' + avatarUrl);
+      }
+      catch(error) {
+        console.error('Avatar upload failed', error);
+      }
     }
   };
 

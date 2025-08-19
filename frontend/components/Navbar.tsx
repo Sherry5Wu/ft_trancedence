@@ -36,6 +36,7 @@ export const Navbar = () => {
     
     // fetch users from search bar
     useEffect(() => {
+        if (!user) return ;
         const fetchOtherUsers = async (accessToken) => {
             const data = await fetchUsers(accessToken);
             setRivalData(data);
