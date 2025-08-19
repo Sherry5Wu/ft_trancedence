@@ -12,6 +12,7 @@
 - [Jest](#jest)
 - [dotenv](#dotenv)
 - [REST APIs](#rest-apis)
+- [API Responses](#api-responses)
 
 # CORS
 ## What is CORS?
@@ -605,3 +606,37 @@ Responses are usually in JSON, sometimes XML. JSON is preferred because it’s l
 
 **5. Widely used:**
 REST APIs power most web apps and mobile apps today (e.g., when your weather app fetches forecasts, it calls a REST API).<br>
+
+## API Responses
+Some common used responsed: <br>
+**1. Successful responses(2xx)**
+These indicate the request was handled correctly. Different codes exist depending on the context:<br>
+| Code               | Name             | When it’s used                                                                     | Typical message/body                            |
+| ------------------ | ---------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------- |
+| **200 OK**         | Standard success | For GET, PUT, POST, or DELETE when the response includes data or a confirmation    | `{ "message": "Success", "data": {...} }`       |
+| **201 Created**    | Resource created | When a new resource is created (usually via POST)                                  | `{ "message": "Resource created", "id": 123 }`  |
+| **202 Accepted**   | Request accepted | When the request is accepted but processing is asynchronous                        | `{ "message": "Request accepted, processing" }` |
+| **204 No Content** | No content       | When the request succeeded but there is nothing to return (commonly DELETE or PUT) | Empty body                                      |
+
+**Examples:**
+- GET /users/123 → 200 OK + user data<br>
+- POST /users → 201 Created + new user info<br>
+- DELETE /users/123 → 204 No Content<br>
+
+**2. Client errors (4xx)**
+These indicate the client sent a bad request or isn’t authorized. Usually include a message explaining the error.<br>
+| Code                 | Name                            | Meaning                                  | Example message                                  |
+| -------------------- | ------------------------------- | ---------------------------------------- | ------------------------------------------------ |
+| **400 Bad Request**  | Request syntax/validation error | Invalid parameters or malformed JSON     | `{ "error": "Missing required field 'email'" }`  |
+| **401 Unauthorized** | Authentication required         | No or invalid credentials                | `{ "error": "Invalid token" }`                   |
+| **403 Forbidden**    | Auth OK but not allowed         | User isn’t allowed to perform the action | `{ "error": "You cannot delete this resource" }` |
+| **404 Not Found**    | Resource not found              | Requested URL or item doesn’t exist      | `{ "error": "User not found" }`                  |
+| **409 Conflict**     | Conflict with current state     | Duplicate resource or version conflict   | `{ "error": "Email already exists" }`            |
+
+**3. Server errors (5xx)**
+These mean something went wrong on the server side. Client cannot fix them; server must handle them.
+| Code                                          | Name                 | Meaning                            | Example message                                  |
+| --------------------------------------------- | -------------------- | ---------------------------------- | ------------------------------------------------ |
+| **500 Internal Server Error**                 | Generic server error | Something unexpected failed        | `{ "error": "Something went wrong" }`            |
+| **502 Bad Gateway / 503 Service Unavailable** | Server unavailable   | Backend service down or overloaded | `{ "error": "Service temporarily unavailable" }` |
+

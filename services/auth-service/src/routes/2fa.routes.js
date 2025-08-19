@@ -16,7 +16,6 @@ export default fp(async (fastify) => {
    *   name: TwoFactorAuth
    *   description: Endpoints for Two-Factor Authentication (2FA) setup and management
    */
-
   // Setup 2FA
   fastify.post('/2fa/setup', {
     preHandler: [fastify.authenticate],
@@ -28,6 +27,7 @@ export default fp(async (fastify) => {
         200: {
           description: '2FA setup details including QR code and backup codes',
           type: 'object',
+          required: ['secret', 'otpauthUrl', 'qrCode', 'backupCodes'],
           properties: {
             secret: { type: 'string' },
             otpauthUrl: { type: 'string' },
@@ -36,8 +36,7 @@ export default fp(async (fastify) => {
               type: 'array',
               items: { type: 'string' }
             }
-          },
-          required: ['secret', 'otpauthUrl', 'qrCode', 'backupCodes']
+          }
         }
       }
     }

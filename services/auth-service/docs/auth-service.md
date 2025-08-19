@@ -37,7 +37,7 @@ auth-service/
 │   │   ├── health.routes.js   # Service health check (useful in microservices)
 │   │   ├── user.routes.js   # For profile management (view/update user info)
 │   │   └── 2fa.routes.js   # Two-Factor Authentication endpoints
-│   ├── schemas/ 
+│   ├── schemas/
 │   │   ├── publicUser.schema.js
 │   ├── services/         # Business logic
 │   │   ├── auth.service.js # Core auth logic
@@ -124,7 +124,6 @@ Payload for JWTs
   "id": "UUID",          // Always required for identifying user
   "email": "user@email", // Useful for quick lookups
   "usename": "userA",    // Use for showing the username for frontend
-  "role": "user",        // Default role now, can expand later (admin, mod, etc.)
   "is2FAEnabled": true   // Optional, useful for enforcing flows
 }
 ```
