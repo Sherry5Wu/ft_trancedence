@@ -271,7 +271,7 @@ export default fp(async (fastify) => {
    * Accepts multipart/form-data with field name `avatar` (single file)
    */
   fastify.post('/users/me/upload-avatar', {
-    // preHandler: [fastify.authenticate],
+    preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
       summary: 'Upload user avatar',

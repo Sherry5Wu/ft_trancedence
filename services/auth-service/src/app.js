@@ -28,6 +28,7 @@ import healthRoutes from './routes/health.routes.js';
 // Import authenticate plugin and schemas
 import authenticate from './utils/authenticate.js';
 import userSchema from './schemas/publicUser.schema.js';
+import errorResponseSchema from './schemas/errorResponse.schema.js';
 
 async function buildApp() {
   const app = Fastify({
@@ -36,6 +37,7 @@ async function buildApp() {
 
   // Add JSON schemas for validation and serialization
   app.addSchema(userSchema);
+  app.addSchema(errorResponseSchema);
 
   // Initialize database with error handling
   try {

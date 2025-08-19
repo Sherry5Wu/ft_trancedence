@@ -7,7 +7,7 @@ import {
   disableTwoFA as disableTwoFAService,
   getTwoFAStatus
 } from '../services/2fa.service.js';
-import { ValidationError } from '../utils/errors.js';
+import { ValidationError, NotFoundError } from '../utils/errors.js';
 
 export default fp(async (fastify) => {
   /**
@@ -16,6 +16,17 @@ export default fp(async (fastify) => {
    *   name: TwoFactorAuth
    *   description: Endpoints for Two-Factor Authentication (2FA) setup and management
    */
+
+  // -- Helpers for uniform error responses
+  function sendError(reply, statusCode, shortName, message, details = []) {
+    reply.status(statusCode).send({
+      status: statusCode,
+      error: shortName,
+      message,
+      details
+    });
+  }
+
   // Setup 2FA
   fastify.post('/2fa/setup', {
     preHandler: [fastify.authenticate],
@@ -37,13 +48,50 @@ export default fp(async (fastify) => {
               items: { type: 'string' }
             }
           }
-        }
+        },
+        400: { description: 'Bad Request', $ref: 'errorResponse#' },
+        401: { description: 'Unauthorized', $ref: 'errorResponse#' },
+        403: { description: 'Forbidden', $ref: 'errorResponse#' },
+        409: { description: 'Conflict (2FA already enabled)', $ref: 'errorResponse#' },
+        500: { description: 'Internal Server Error', $ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
-    const { secret, otpauthUrl, backupCodes } = await generateTwoFASetup(req.user.id);
-    const qrCode = await generateTwoFAQrCode(otpauthUrl);
-    return { secret, otpauthUrl, qrCode, backupCodes };
+    try {
+      // if req.user exists(not null or undefined), then take its '.id'
+      // '?' optional chainning
+      const userId = req.user?.id;
+      if (!userId) {
+        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
+      }
+
+      // If user already has 2FA enabled, return 409 Conflict
+      const already = await getTwoFAStatus(userId);
+      if (already) {
+        return sendError(reply, 409, 'Conflict', '2FA is already enabled for this user');
+      }
+
+      // generateTwoFASetup will persist the secret and hashed backup codes and return plain backup codes
+      const { secret, otpauthUrl, backupCodes } = await generateTwoFASetup(userId);
+
+      // generate qr code (data URL)
+      const qrCode = await generateTwoFAQrCode(otpauthUrl);
+
+      // Return setup info (frontend must display QR + backup codes and prompt user to confirm)
+      return { secret, otpauthUrl, qrCode, backupCodes };
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return sendError(reply, 404, 'Not Found', err.message);
+      }
+      if (err instanceof ValidationError) {
+        // validation error from service (e.g. "2FA already enabled") -> map to 400 or 409 depending on message
+        // We already check for existing 2FA above; treat as Bad Request by default
+        return sendError(reply, 400, 'Bad Request', err.message);
+      }
+      // unexpected
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
+    }
   });
 
   // Verify TOTP code
@@ -64,15 +112,44 @@ export default fp(async (fastify) => {
         200: {
           description: 'Verification result',
           type: 'object',
+          required: ['verified'],
           properties: { verified: { type: 'boolean' } },
-          required: ['verified']
-        }
+        },
+        400: { description: 'Bad Request', $ref: 'errorResponse#' },
+        401: { description: 'Unauthorized', $ref: 'errorResponse#' },
+        404: { description: 'Not Found', $ref: 'errorResponse#' },
+        500: { description: 'Internal Server Error', $ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
-    const ok = await verifyTwoFAToken(req.user.id, req.body.token);
-    if (!ok) throw new ValidationError('Invalid 2FA token');
-    return { verified: true };
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
+      }
+
+      const ok = await verifyTwoFAToken(userId, req.body.token);
+      if (!ok) {
+        throw new ValidationError('Invalid 2FA token');
+      }
+
+      // Set is2FAConfirmed Flag to true
+      await User.update(
+        { is2FAConfirmed: true },
+        { where: { id: userId } },
+      );
+      
+      return { verified: true };
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return sendError(reply, 404, 'Not Found', err.message);
+      }
+      if (err instanceof ValidationError) {
+        return sendError(reply, 400, 'Bad Request', err.message);
+      }
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
+    }
   });
 
   // Consume backup code
@@ -95,13 +172,37 @@ export default fp(async (fastify) => {
           type: 'object',
           properties: { used: { type: 'boolean' } },
           required: ['used']
-        }
+        },
+        400: { $ref: 'errorResponse#' },
+        401: { $ref: 'errorResponse#' },
+        404: { $ref: 'errorResponse#' },
+        500: { $ref: 'errorResponse#' }
       }
     }
   }, async (req, reply) => {
-    const ok = await consumeBackupCode(req.user.id, req.body.code);
-    if (!ok) throw new ValidationError('Invalid backup code');
-    return { used: true };
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
+      }
+
+      const ok = await consumeBackupCode(userId, req.body.code);
+      if (!ok) {
+        // user provided wrong code
+        throw new ValidationError('Invalid backup code');
+      }
+
+      return { used: true };
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return sendError(reply, 404, 'Not Found', err.message);
+      }
+      if (err instanceof ValidationError) {
+        return sendError(reply, 400, 'Bad Request', err.message);
+      }
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
+    }
   });
 
   // Disable 2FA
@@ -112,12 +213,28 @@ export default fp(async (fastify) => {
       summary: 'Disable 2FA',
       description: 'Disables 2FA for the user.',
       response: {
-        204: { description: '2FA successfully disabled', type: 'null' }
+        204: { description: '2FA successfully disabled', type: 'null' },
+        400: { $ref: 'errorResponse#' },
+        401: { $ref: 'errorResponse#' },
+        404: { $ref: 'errorResponse#' },
+        500: { $ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
-    await disableTwoFAService(req.user.id);
-    return reply.code(204).send();
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
+      }
+      await disableTwoFAService(userId);
+      return reply.code(204).send();
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return sendError(reply, 404, 'Not Found', err.message);
+      }
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
+    }
   });
 
   // 2FA Status
@@ -133,11 +250,22 @@ export default fp(async (fastify) => {
           type: 'object',
           properties: { enabled: { type: 'boolean' } },
           required: ['enabled']
-        }
+        },
+        401: { $ref: 'errorResponse#' },
+        500: { $ref: 'errorResponse#' }
       }
     }
   }, async (req, reply) => {
-    const enabled = await getTwoFAStatus(req.user.id);
-    return { enabled };
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
+      }
+      const enabled = await getTwoFAStatus(userId);
+      return { enabled };
+    } catch (err) {
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
+    }
   });
 });

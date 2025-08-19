@@ -169,3 +169,31 @@ This token is not sent with every request. Instead, it’s used only when the Ac
 - If the Access Token expired → client uses Refresh Token to get a new Access Token.
 - If Refresh Token is valid → user is considered logged in, and a new Access Token is given.
 - If Refresh Token expired or invalid → user needs to log in again.
+
+## Workflow of 2FA setup function
+
+Here’s a typical flow when a user clicks “Enable 2FA”:
+
+**1. Authenticate the user**
+- You get the user from the token (JWT or session) in the preHandler (fastify.authenticate).
+- This ensures only logged-in users can generate 2FA.
+
+**2. Generate 2FA secret and related info**
+- Generate a random secret (used for TOTP).
+- Create otpauthUrl for authenticator apps (Google Authenticator, Authy, etc.).
+- Generate qrCode for easy scanning.
+- Optionally generate backup codes (one-time use, in case user loses access).
+
+**3. Store secret or partial info in the database**
+- Store the secret (or its hashed/encrypted version) in the database associated with the user.
+- You don’t store the QR code or otpauthUrl directly; they can be regenerated from the secret.
+- Backup codes should be stored hashed or encrypted.
+
+**4. Return setup info to frontend**
+- Return the secret, otpauthUrl, qrCode, and backup codes in the response.
+- The frontend shows a QR code and backup codes to the user.
+
+**5. User confirms 2FA**
+- Typically, the frontend asks the user to input a TOTP code to confirm 2FA is working.
+- Once verified, you mark 2FA as enabled in the database.
+

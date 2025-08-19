@@ -3,6 +3,7 @@ import {
   registerUser,
   authenticateUser,
   getUserById,
+  getUserByIdentifier,
 } from '../services/auth.service.js';
 import {
   rotateTokens,
@@ -77,21 +78,22 @@ export default fp(async (fastify) => {
           properties: {
             accessToken: { type: 'string' },
             refreshToken: { type: 'string' },
-            user: { $ref: 'publicUser#' }
+            user: { $ref: 'publicUser#' },
+            TwoFAStatus: { type: 'boolean' },
           }
         }
       }
     }
   }, async (req, reply) => {
-    console.log('Request body:', req.body); // for testing  only
     try {
       const { accessToken, refreshToken, user } = await authenticateUser(
         req.body.identifier,
         req.body.password,
       );
-      return { accessToken, refreshToken, user };
+      // Check if 2FA is enabled
+      const TwoFAStatus = user.is2FAEnabled && user.is2FAConfirmed;
+      return { accessToken, refreshToken, user, TwoFAStatus };
     } catch (err) {
-      console.error('Login error:', err); // for testing only
       reply.code(err.statusCode || 500).send({ error: err.message });
     }
   });
