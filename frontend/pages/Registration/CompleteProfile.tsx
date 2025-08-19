@@ -37,7 +37,7 @@ import { useUserContext } from '../../context/UserContext';
 const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useUserContext();
+  const { user, setUser } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
@@ -102,20 +102,48 @@ const CompleteProfilePage: React.FC = () => {
         errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
       />
 
-      <ToggleButton
+      {/* <ToggleButton
         label={t('pages.completeProfile.toggle2FA')}
         aria-label={t('pages.completeProfile.aria.toggle2FA')}
         onClick={() => navigate('/setup2fa')}
-      />
+      /> */}
 
       <GenericButton
         className="generic-button"
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        onClick={() => {
-          alert(t('common.alerts.something')); // Temporary success message
-          navigate(`/user/${user?.username}`);
+        // onClick={() => {
+        //   alert(t('common.alerts.something')); // Temporary success message
+        //   navigate(`/user/${user?.username}`);
+        // }}
+        onClick={async () => {
+          try {
+            const response = await fetch("http://localhost:8443/as/auth/google-register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                idToken: user?.googleIdToken, // pulled from context
+                username: usernameField.value,
+                pinCode: pinField.value,
+              }),
+            });
+
+            if (!response.ok) throw new Error("Failed to register");
+
+            const newUser = await response.json();
+
+            setUser({
+              ...newUser,
+              accessToken: newUser.accessToken,
+              refreshToken: newUser.refreshToken,
+            });
+
+            navigate(`/user/${newUser.username}`);
+          } catch (err) {
+            console.error("Error saving profile:", err);
+            alert("Something went wrong, please try again.");
+          }
         }}
       />
     </main>

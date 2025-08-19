@@ -1,8 +1,13 @@
 import { useGoogleLogin } from '@react-oauth/google';
+// import { GoogleLogin } from "@react-oauth/google";
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../context/UserContext';
 
 const CustomGoogleLoginButton = () => {
-  const { t } = useTranslation();  // Destructure `t` from useTranslation hook
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { setUser } = useUserContext();
 
   // const login = useGoogleLogin({
   //   onSuccess: tokenResponse => {
@@ -14,25 +19,41 @@ const CustomGoogleLoginButton = () => {
   //   }
   // });
 
+  // Configure Google Login to return the ID Token
   const login = useGoogleLogin({
+    flow: "implicit", // ensures token comes directly
+    scope: "openid profile email", // required for id_token
     onSuccess: (tokenResponse) => {
-      console.log("Login Success:", tokenResponse);
-      
-      // Instead of directly using window.opener, we postMessage the data back to the parent
-      if (window.opener) {
-        // Post message to the opener when login is successful
-        window.opener.postMessage('googleLoginSuccess', '*');
+      /**
+       * tokenResponse contains:
+       *   access_token
+       *   authuser
+       *   expires_in
+       *   prompt
+       *   scope
+       *   token_type
+       *   id_token   ✅
+       */
+      console.log("Google Login Success:", tokenResponse);
+
+      if (tokenResponse.id_token) {
+        // Save idToken in context
+        setUser((prev) => ({
+          ...prev,
+          googleIdToken: tokenResponse.id_token,
+        }));
+
+        // Redirect to complete-registration page
+        navigate("/signup/complete-registration");
+      } else {
+        console.error("No id_token returned from Google");
       }
     },
     onError: () => {
-      console.error("Login Failed");
-
-      // Post message to the opener if login fails
-      if (window.opener) {
-        window.opener.postMessage('googleLoginFailed', '*');
-      }
-    }
+      console.error("Google Login Failed");
+    },
   });
+
   
   return (
     <button

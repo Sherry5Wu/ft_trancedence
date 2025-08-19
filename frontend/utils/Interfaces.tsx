@@ -99,6 +99,7 @@ export interface User {
     rivals: string[];
     accessToken: string;
     refreshToken: string;
+    googleIdToken?: string;
 }
 
 export interface UserType {
