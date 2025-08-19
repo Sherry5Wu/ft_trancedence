@@ -11,12 +11,6 @@ import SearchIcon from '../../assets/noun-search-7526678.svg?react';
 import { fetchUsers } from '../../utils/Fetch';
 import { useTranslation } from 'react-i18next';
 
-// export interface RivalData {
-//   username: string;
-//   profilePic?: string;
-// }
-
-
 const RivalsPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();

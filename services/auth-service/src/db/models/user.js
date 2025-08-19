@@ -2,7 +2,6 @@
  * Defines a Sequelize model called User and then returns it , so it can be used
  * elsewhere in your app
  */
-
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => { // export a default function, not the User model itself
@@ -56,7 +55,7 @@ export default (sequelize) => { // export a default function, not the User model
     isVerified: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: true
+    defaultValue: false,
     },
     role: {
       type: DataTypes.ENUM('user', 'admin'), // add role with ENUM

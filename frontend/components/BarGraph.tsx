@@ -23,8 +23,6 @@ import { ScoreHistory } from '../utils/Interfaces';
 const calculateDifference = ({ data }: { data: ScoreHistory[] | null }) => {
 	if (!data)
 		return [];
-    console.log("in bar graph");
-    console.log(data);
 	const newData = data.map((score, index, array) => {
 		if (index < (array.length - 1))
 		{

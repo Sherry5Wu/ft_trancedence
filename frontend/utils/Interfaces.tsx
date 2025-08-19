@@ -1,5 +1,24 @@
 import { ReactElement } from "react";
 
+export interface MenuItemProps {
+    Icon?: ReactElement;
+    label?: string;
+    Button?: (isOn: boolean) => ReactElement;
+    onClick?: () => void;
+    className?: string;
+    variant?: string;
+}
+
+export interface MenuProps {
+    'aria-label': string;
+    Icon: ReactElement;
+    label?: string;
+    elements?: MenuItemProps[];
+    className: string;
+    onClick?: () => void;
+    variant?: string;
+}
+
 export interface UserProfileData {
   username: string;
   email: string;
@@ -34,11 +53,16 @@ export interface RivalData {
 	//picture: '../assets/profilepics/B2.png'
 }
 
+export interface FetchedUserData {
+    username: string;
+    avatar: string | null;
+}
+
 export interface SearchBarInputProps {
     type?: string;
     placeholder: string;
     value: string;
-    options: string[];
+    options: FetchedUserData[];
     onFilled: (value: string) => void;
     onSelect: (value: string) => void;
     className?: string;
@@ -75,9 +99,9 @@ export interface User {
     rivals: string[];
     accessToken: string;
     refreshToken: string;
-};
+}
 
 export interface UserType {
     user: User | null;
     setUser: (user: User | null) => void;
-};
+}

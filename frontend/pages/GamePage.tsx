@@ -1,5 +1,7 @@
 import React, { useRef, useState, Suspense, useMemo, useEffect } from 'react';
 import { usePlayersContext } from '../context/PlayersContext'
+import { useUserContext } from '../context/UserContext';
+import { postMatchHistory, postTournamentHistory, formatHMS } from './postresulttest';
 
 const GameCanvas = React.lazy(() => import('../game/main'));
 
@@ -100,7 +102,7 @@ function pairSequential(ps: Player[]): { pairs: Pair[]; carry: Player[] } {
 // Flow of the page Options -> Game -> Post-match screen -> ...
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { players: rawPlayers, totalPlayers, isTournament } = usePlayersContext();
+  const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle } = usePlayersContext();
   const [mapKey, setMapKey] = useState<MapKey>('default');
 
   // Options
@@ -108,6 +110,12 @@ export default function GamePage() {
   const baseSpeed = useMemo(() => SPEED_MAP[speedPreset], [speedPreset]);
   const [winMode, setWinMode] = useState<WinMode>('bo5');
   const target = useMemo(() => winTarget(winMode), [winMode]);
+
+  const { user } = useUserContext();
+  const [startAt, setStartAt] = useState<Date | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   type Phase =
     | 'options'
@@ -170,52 +178,179 @@ export default function GamePage() {
     ? currentPair?.[1]?.username ?? '—'
     : (rawPlayers?.[1]?.username ?? 'Player 2');
 
-  const handleStart = () => setPhase('playing');
+  const handleStart = () => {
+    setStartAt(new Date());
+    setSubmitError(null);
+    setSubmitting(false);
+    setSubmitted(false);
+    setPhase('playing');
+  };
+
+  // Logged-in user is always players[0]
+  function currentUserName(): string {
+    return user?.username ?? (rawPlayers?.[0]?.username ?? 'Player 1');
+  }
+
+  function opponentNameNonTournament(): string {
+    return rawPlayers?.[1]?.username ?? 'Guest';
+  }
+
+  // Sending guest as 'guest' literally
+  function opponentIdNonTournament(): string {
+    const id = (rawPlayers?.[1] as any)?.id;
+    return id ? String(id) : 'guest';
+  }
+
+  function computeResult(pScore: number, oScore: number): 'win' | 'loss' | 'draw' {
+    if (pScore > oScore) return 'win';
+    if (pScore < oScore) return 'loss';
+    return 'draw';
+  }
 
   // Called by the main when a match finishes
-  const handleMatchEnd = (winnerName: string, s1: number, s2: number) => {
-    if (!isTournament) {
-      setPostResult({ winner: winnerName, s1, s2 });
-      setPhase('post');
+  const handleMatchEnd = async (winnerName: string, s1: number, s2: number) => {
+    const started = startAt ?? new Date(); // fallback if somehow missing
+    const ended = new Date();
+    const durationMs = ended.getTime() - started.getTime();
+    const durationStr = formatHMS(durationMs); // HH:MM:SS
+    const played_at_iso = started.toISOString();
+
+    const player_name = currentUserName();
+    const opponent_name = isTournament
+      ? (currentPair?.[0]?.username === player_name ? currentPair?.[1]?.username : currentPair?.[0]?.username) ?? '—'
+      : opponentNameNonTournament();
+
+    const player_score = s1;
+    const opponent_score = s2;
+
+    const result = computeResult(player_score, opponent_score);
+
+    // We still save guest matches from the registered user’s perspective
+    const opponent_id = isTournament
+      ? (currentPair?.[0]?.username === player_name ? currentPair?.[1]?.id : currentPair?.[0]?.id) ?? 'guest'
+      : opponentIdNonTournament();
+
+    const statsPayload = {
+      player_score,
+      opponent_score,
+      duration: durationStr,
+      opponent_id,
+      player_name,
+      opponent_name,
+      result,
+      opponent_username: opponent_name,
+      played_at: played_at_iso,
+    } as const;
+
+    // Guard against double post
+    if (submitted) {
+      if (!isTournament) {
+        setPostResult({ winner: winnerName, s1, s2 });
+        setPhase('post');
+      } else {
+        const winner =
+          currentPair[0].username === winnerName ? currentPair[0] :
+          currentPair[1].username === winnerName ? currentPair[1] :
+          currentPair[0];
+
+        const newWinners = [...winnersThisRound, winner];
+        if (matchIdx + 1 < pairs.length) {
+          setWinnersThisRound(newWinners);
+          setMatchIdx(matchIdx + 1);
+          setPhase('prematch');
+          return;
+        }
+        const allAdvancing = [...carryToNextRound, ...newWinners];
+        if (allAdvancing.length === 1) {
+          setCarryToNextRound(allAdvancing);
+          setWinnersThisRound([]);
+          setPairs([]);
+          setMatchIdx(0);
+          setPhase('champion');
+          return;
+        }
+        const { pairs: nextPairs, carry: nextCarry } = pairSequential(allAdvancing);
+        setPairs(nextPairs);
+        setCarryToNextRound(nextCarry);
+        setWinnersThisRound([]);
+        setMatchIdx(0);
+        setRoundNum(r => r + 1);
+        setPhase('prematch');
+      }
       return;
     }
 
-    // tournament progression
-    const winner =
-      currentPair[0].username === winnerName ? currentPair[0] :
-      currentPair[1].username === winnerName ? currentPair[1] :
-      currentPair[0]; // fallback
+    setSubmitting(true);
+    setSubmitError(null);
 
-    const newWinners = [...winnersThisRound, winner];
+    try {
+      await postMatchHistory(statsPayload, user?.accessToken);
 
-    // If more matches left in this round, move to next prematch
-    if (matchIdx + 1 < pairs.length) {
-      setWinnersThisRound(newWinners);
-      setMatchIdx(matchIdx + 1);
-      setPhase('prematch');
-      return;
+      if (isTournament) {
+        const tournament_id = (tournamentTitle ?? '').trim();
+        const stage_number = roundNum;
+        const match_number = matchIdx + 1;
+        if (tournament_id) {
+          await postTournamentHistory(
+            {
+              tournament_id,
+              stage_number,
+              match_number,
+              player_name,
+              opponent_name,
+              result,
+            },
+            user?.accessToken
+          );
+        }
+      }
+
+      setSubmitted(true);
+      setSubmitting(false);
+
+      if (!isTournament) {
+        setPostResult({ winner: winnerName, s1, s2 });
+        setPhase('post');
+      } else {
+        const winner =
+          currentPair[0].username === winnerName ? currentPair[0] :
+          currentPair[1].username === winnerName ? currentPair[1] :
+          currentPair[0];
+
+        const newWinners = [...winnersThisRound, winner];
+        if (matchIdx + 1 < pairs.length) {
+          setWinnersThisRound(newWinners);
+          setMatchIdx(matchIdx + 1);
+          setPhase('prematch');
+          return;
+        }
+        const allAdvancing = [...carryToNextRound, ...newWinners];
+        if (allAdvancing.length === 1) {
+          setCarryToNextRound(allAdvancing);
+          setWinnersThisRound([]);
+          setPairs([]);
+          setMatchIdx(0);
+          setPhase('champion');
+          return;
+        }
+        const { pairs: nextPairs, carry: nextCarry } = pairSequential(allAdvancing);
+        setPairs(nextPairs);
+        setCarryToNextRound(nextCarry);
+        setWinnersThisRound([]);
+        setMatchIdx(0);
+        setRoundNum(r => r + 1);
+        setPhase('prematch');
+      }
+    } catch (err: any) {
+      setSubmitting(false);
+      setSubmitError(err?.message || 'Failed to submit match result');
+      if (!isTournament) {
+        setPostResult({ winner: winnerName, s1, s2 });
+        setPhase('post');
+      } else {
+        // Stay on current screen
+      }
     }
-
-    // Choose next round from the winners
-    const allAdvancing = [...carryToNextRound, ...newWinners];
-
-    // Check if tournament ended
-    if (allAdvancing.length === 1) {
-      setCarryToNextRound(allAdvancing);
-      setWinnersThisRound([]);
-      setPairs([]);
-      setMatchIdx(0);
-      setPhase('champion');
-      return;
-    }
-
-    const { pairs: nextPairs, carry: nextCarry } = pairSequential(allAdvancing);
-    setPairs(nextPairs);
-    setCarryToNextRound(nextCarry);
-    setWinnersThisRound([]);
-    setMatchIdx(0);
-    setRoundNum(r => r + 1);
-    setPhase('prematch');
   };
 
   // Key bingings

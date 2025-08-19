@@ -23,7 +23,7 @@
 }
 
 .menuIcon {
-    @apply size-13 overflow-hidden border-b-3 border-transparent my-1 mx-2 
+    @apply size-13 items-center overflow-hidden border-b-3 border-transparent my-1 mx-2
         hover:border-black hover:cursor-pointer transition ease-in-out duration-200
         focus:border-black
         active:fill-[#4682B4] active:border-[#4682B4]
@@ -90,16 +90,16 @@
 }
 
 .profilePic {
-  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C] border-2
+  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C] border-2 items-center
   active:border-[#4682B4] transition ease-in-out duration-200
 }
 
 .profilePicBig { 
-  @apply size-32 rounded-full bg-[#FFEE8C] border-2
+  @apply size-32 rounded-full bg-[#FFEE8C] border-2 object-fit
 }
 
 .profilePicSmall {
-  @apply h-11 w-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C]
+  @apply h-11 w-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C] items-center
 }
 
 

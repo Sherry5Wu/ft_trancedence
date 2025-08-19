@@ -83,6 +83,7 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
+    console.log('Request body:', req.body); // for testing  only
     try {
       const { accessToken, refreshToken, user } = await authenticateUser(
         req.body.identifier,
@@ -90,6 +91,7 @@ export default fp(async (fastify) => {
       );
       return { accessToken, refreshToken, user };
     } catch (err) {
+      console.error('Login error:', err); // for testing only
       reply.code(err.statusCode || 500).send({ error: err.message });
     }
   });

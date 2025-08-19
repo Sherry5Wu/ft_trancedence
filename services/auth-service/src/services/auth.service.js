@@ -47,7 +47,7 @@ async function registerUser(email, username, password, pinCode) {
     });
 
     if (existingUser){
-      if (existingUser.email === email) throw new ConflictError('Email already registered');
+      if (existingUser.email === normalizedEmail) throw new ConflictError('Email already registered');
       if (existingUser.username === username) throw new ConflictError('Username already registered');
     }
 
@@ -85,9 +85,10 @@ async function authenticateUser(identifier, password) {
   throw new NotFoundError('User not found.');
   }
 
-  if (!user.isVerified) {
-  throw new InvalidCredentialsError('Please verify your email address before logging in.');
-  }
+  console.log('user.isVerified', user.isVerified); // for testing only
+  // if (!user.isVerified) {
+  // throw new InvalidCredentialsError('Please verify your email address before logging in.');
+  // }
 
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch){
@@ -99,7 +100,6 @@ async function authenticateUser(identifier, password) {
     id: user.id,
     email: user.email,
     username: user.username,
-    role: user.role || 'user', // default role if not set
     is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
   };
   const accessToken = generateAccessToken(payload);
@@ -113,14 +113,14 @@ async function authenticateUser(identifier, password) {
 
   });
 
-  // Return safe user data
-  const userData = user.toJSON();
-  delete userData.passwordHash;
-  delete userData.pinCodeHash;
-  delete userData.twoFASecret;
-  delete userData.backupCodes;
+  // return the only asked data
+  const publicUser = {
+    id: user.id,
+    username: user.username,
+    avatarUrl: user.avatarUrl || null, // include only if you support it
+  };
 
-  return { accessToken, refreshToken, user: userData };
+  return { accessToken, refreshToken, user: publicUser };
 }
 
 /**
