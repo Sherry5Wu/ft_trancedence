@@ -44,6 +44,7 @@ const SettingsPage = () => {
           ...user!,
           profilePic: newProfilePic,
         });
+
       };
       reader.readAsDataURL(file);
       updateProfilePic(file, user?.accessToken);
