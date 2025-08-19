@@ -412,7 +412,7 @@ export default fp(async (fastify) => {
    * @desc    Get all the users from user table, only return username and avatarUrl. Design for searching
    */
   fastify.get('/users/all', {
-    preHandler: [fastify.authenticate],
+    // preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
       summary: 'Get all users (username and avatarUrl)',
@@ -420,7 +420,7 @@ export default fp(async (fastify) => {
         200: {
           description: 'All users retrieved successfully',
           type: 'object',
-          required: ['username'],
+          required: ['total', 'users'],
           properties: {
             total: { type: 'integer', description: 'Number of users returned' },
             users: {
