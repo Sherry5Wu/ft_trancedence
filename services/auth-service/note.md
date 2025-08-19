@@ -78,3 +78,10 @@ Delete a table
 ```sh
 DROP TABLE IF EXISTS Users_backup;
 ```
+
+// Directly call a API if there is no authentication
+```sh
+curl -i http://localhost:3000/users/all
+```
+-i → Includes the HTTP response headers in the output, not just the body.
+
