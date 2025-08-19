@@ -25,7 +25,6 @@ export const createUser = async (player: UserProfileData): Promise<UserProfileDa
 }
 
 export const signInUser = async (player: LoginData) => {
-	console.log(player);
 	try {
 	  const response = await fetch('https://localhost:8443/as/auth/login', {
 		method: 'POST',
@@ -41,8 +40,8 @@ export const signInUser = async (player: LoginData) => {
 
 	  const data = await response.json();
 
-	  const userID = data.user.id;
-	  console.log(userID);
+	//   const userID = data.user.id;
+	//   console.log(userID);
 
 	  const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
 		method: 'GET',
@@ -217,7 +216,6 @@ export const fetchUserStats = async (userID: string): Promise<UserStats | null> 
 		method: 'GET'
 		});
 
-		console.log(userID);
 		if (!response.ok)
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -232,22 +230,21 @@ export const fetchUserStats = async (userID: string): Promise<UserStats | null> 
 	}
 }
 
-export const postMatchData = async (accessToken: string) => {
-
-    console.log(accessToken);
-    const matchData: MatchData = 
-        {
-            player_name: 'User',
-            player_username: 'user alias',
-            played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
-            duration: 300,
-            player_score: 2,
-            opponent_score: 5,
-            opponent_id: '1',
-            opponent_name: 'Rival1',
-            opponent_username: "opponentusername",
-            result: 'loss',
-        }
+export const postMatchData = async (accessToken: string, matchData: MatchData) => {
+    // console.log(accessToken);
+    // const matchData: MatchData = 
+    //     {
+    //         player_name: 'User',
+    //         player_username: 'user alias',
+    //         played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
+    //         duration: 300,
+    //         player_score: 2,
+    //         opponent_score: 5,
+    //         opponent_id: '1',
+    //         opponent_name: 'Rival1',
+    //         opponent_username: "opponentusername",
+    //         result: 'loss',
+    //     }
 
     try {
         const response = await fetch(`https://localhost:8443/stats/match_history/`, {
@@ -293,33 +290,39 @@ export const getMatchData = async (userID: string): Promise<MatchData | null> =>
     }
 };
 
-export const fetchUsers = async () => {
+export const fetchUsers = async (accessToken: string) => {
     //   const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
     //   return rivalData.sort();
+
+	console.log("ACCESS TOKEN IN FETCH USERS: ");
+	console.log(accessToken);
      
-      try {
-          const response = await fetch(`https://localhost:8443/stats/user_match_data`, {
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-          });
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-    
-            const userDataArray = await response.json();
-            const filteredUserDataArray = userDataArray.map((username: MatchData) => {
-              return username.player_name;
-            })
-			console.log('PRINT FROM FETCH USERS');
-			console.log(filteredUserDataArray);
-            return filteredUserDataArray.sort();
-        }
-      
-      catch (error) {
-        console.error('Error:', error);
-        return null;
-        }
+	try {
+		const response = await fetch(`https://localhost:8443/as/users/all`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				"Authorization": `Bearer ${accessToken}`,
+			},
+		});
+		
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const userDataArray = await response.json();
+		// const filteredUserDataArray = userDataArray.users.map((username: string) => {
+		// 	return username;
+		// })
+		// console.log('PRINT FROM FETCH USERS');
+		// console.log(filteredUserDataArray);
+		return userDataArray.users.sort((a: any, b: any) => {
+			a.username.localeCompare(b.username);
+		}) ;
+	}
+
+	catch (error) {
+		console.error('Error:', error);
+		return null;
+	}
     }

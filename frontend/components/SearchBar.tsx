@@ -1,6 +1,9 @@
-import React, { ChangeEvent, useState, useEffect, useRef } from "react";
+import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useClickOutside } from "../utils/Hooks";
 import { SearchBarInputProps } from "../utils/Interfaces";
+import { fetchedUserData } from "../utils/Interfaces";
+import { fetchUsers } from '../utils/Fetch';
+import { useUserContext } from "../context/UserContext";
 
 export const SearchBar = ({
     type = "text",
@@ -10,13 +13,23 @@ export const SearchBar = ({
     onFilled,
     onSelect,
     className = '',
-}: SearchBarInputProps) => {
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onFilled(e.target.value);
-  };
-  
+    }: SearchBarInputProps) => {
+        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        onFilled(e.target.value);
+    };
+
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
+    // const [rivalData, setRivalData] = useState<string[]>([]);
+    // const accessToken = useUserContext().user?.accessToken;
+
+    // useEffect(() => {
+    //     const fetchOtherUsers = async (accessToken) => {
+    //         const data = await fetchUsers(accessToken);
+    //         setRivalData(data);
+    //     };
+    //     fetchOtherUsers(accessToken);
+    // }, [])
 
     const handleOptionClick = (value: string) => {
         onSelect(value);
@@ -42,20 +55,25 @@ export const SearchBar = ({
             />
             {isOpen && (
                 <ul className="dropdown-menu !bg-[#FFEE8C] border-2 -translate-y-2">
-                {options.filter((option) => option.toLowerCase().includes(value.toLowerCase())).length > 0 ?
-                    options.filter((option) => option.toLowerCase().includes(value.toLowerCase()))
-                    .map((option, index) => (
-                        <li
-                            key={index}
-                            className={'dropdown-option'}
-                            onClick={() => handleOptionClick(option)}
-                        >
-                        {option}
-                        </li>
-                    ))
-                    :
-                    <li className='flex justify-center text-[#CD1C18] font-semibold'>No users found</li>
-                }</ul>
+                    {options
+                        .filter((option) => option.username && option.username.toLowerCase().includes(value.toLowerCase())).length > 0 ?
+                        
+                        options
+                        .filter((option) => option != null)
+                        .filter((option) => option.username.toLowerCase().includes(value.toLowerCase()))
+                        .map((option, index) => (
+                            <li
+                                key={index}
+                                className={'dropdown-option'}
+                                onClick={() => handleOptionClick(option.username)}
+                            >
+                            {/* {option.avatar && <img src={option.avatar} className="profilePicSmall" />} */}
+                            {option.username}
+                            </li>
+                        ))
+                        :
+                        <li className='flex justify-center text-[#CD1C18] font-semibold'>No users found</li>}
+                </ul>
             )}
         </div>
     );
