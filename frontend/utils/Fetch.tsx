@@ -85,10 +85,10 @@ export const updateProfilePic = async (file: File, accessToken: string) => {
 
 		const response = await fetch('https://localhost:8443/as/users/me/upload-avatar', {
 			method: 'POST',
+			body: formData,
 			headers: {
 				"Authorization": `Bearer ${accessToken}`,
 			}, 
-			body: formData,
 		})
 
 		if (!response.ok)
@@ -118,7 +118,7 @@ const fetchRivalData = async (username: string) => {
 
 	const rawData: string[] = await rivals.json();
 	const rivalsData: RivalData[] = rawData.map(entry => ({ rival_username: entry }));
-	console.log('RIVALSDATA: ')
+	console.log('RIVALS DATA: ')
 	console.log(rivalsData);
 
 	return rivalsData;
@@ -153,8 +153,9 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 		rival_username: rivalName
 	};
 
-	console.log("IN ADDRIVAL:");
+	console.log("IN ADD_RIVAL:");
 	console.log(data);
+	console.log(accessToken);
 
 	try {
 		const response = await fetch(`https://localhost:8443/stats/rivals`, {
@@ -169,7 +170,7 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 		if (!response.ok)
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
-		return response.json();
+		return await response.json();
 
 	}
 	catch (error) {
