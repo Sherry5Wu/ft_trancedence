@@ -21,9 +21,34 @@ export type SceneSetupResult = {
   glow: GlowLayer;
 };
 
+function canCreateWebGL(canvas: HTMLCanvasElement): boolean {
+  // Try WebGL2 first, then WebGL1
+  const gl2 = canvas.getContext('webgl2');
+  if (gl2) return true;
+  const gl1 = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  return !!gl1;
+}
+
 export function createScene(canvas: HTMLCanvasElement): SceneSetupResult {
+  // if WebGL is disabled/blocked, bail with a clear error
+  if (!canCreateWebGL(canvas)) {
+    throw new Error(
+      'WebGL is disabled or unavailable in this browser. Enable WebGL in browser settings or try another browser.'
+    );
+  }
+
   // Engine & Scene
-  const engine = new Engine(canvas, true);
+  let engine: Engine;
+  try {
+    engine = new Engine(canvas, true, {
+      preserveDrawingBuffer: true,
+      stencil: true,
+    });
+  } catch (e) {
+    // Babylon can throw "WebGL not supported" here in some Firefox configs
+    throw new Error('Failed to initialize the 3D engine (WebGL). Details: ' + (e as Error).message);
+  }
+
   const scene = new Scene(engine);
 
   // Enable physics with Cannon.js
@@ -34,25 +59,24 @@ export function createScene(canvas: HTMLCanvasElement): SceneSetupResult {
   const camera = new UniversalCamera('camera', new Vector3(0, 15, 0), scene);
   camera.setTarget(Vector3.Zero());
   camera.attachControl(canvas, false);
-  camera.inputs.clear(); // remove default inputs
+  camera.inputs.clear();
 
-  // Hemispheric Light
+  // Lights
   const hemi = new HemisphericLight('hemiLight', new Vector3(0, 1, 0), scene);
   hemi.diffuse = Color3.White();
   hemi.groundColor = Color3.FromHexString('#888888');
   hemi.intensity = 0.8;
 
-  // Directional “sun”
   const sun = new DirectionalLight('sun', new Vector3(0, -1, 0), scene);
   sun.position = new Vector3(0, 40, 0);
   sun.intensity = 0.2;
 
-  // Glow layer
+  // Glow
   const glow = new GlowLayer('glow', scene, { blurKernelSize: 32 });
   glow.intensity = 0.5;
 
   // Background
-  scene.clearColor = new Color4(0,0,0,1);
+  scene.clearColor = new Color4(0, 0, 0, 1);
 
   return { engine, scene, camera, sun, glow };
 }
