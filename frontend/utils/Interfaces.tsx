@@ -53,11 +53,16 @@ export interface RivalData {
 	//picture: '../assets/profilepics/B2.png'
 }
 
+export interface FetchedUserData {
+    username: string;
+    avatar: string | null;
+}
+
 export interface SearchBarInputProps {
     type?: string;
     placeholder: string;
     value: string;
-    options: string[];
+    options: FetchedUserData[];
     onFilled: (value: string) => void;
     onSelect: (value: string) => void;
     className?: string;
@@ -94,9 +99,9 @@ export interface User {
     rivals: string[];
     accessToken: string;
     refreshToken: string;
-};
+}
 
 export interface UserType {
     user: User | null;
     setUser: (user: User | null) => void;
-};
+}

@@ -66,6 +66,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     let awaitingStart = true;
     let acceptingInput = true;
     let boostLevel = 0;
+    let ended = false;
+    let matchEndFired = false;
     const boostPressed = new Set<'paddle1' | 'paddle2'>();
     const shieldPressed = new Set<'paddle1' | 'paddle2'>();
     const keysPressed = new Set<string>();
@@ -123,6 +125,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       // prevent page scroll for arrows/space
       if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
 
+      if (ended) return;
       if (!acceptingInput) return;
 
       keysPressed.add(e.code);
@@ -168,6 +171,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
     //Button release
     const onKeyUp = (e: KeyboardEvent) => {
+      if (ended) return;
       keysPressed.delete(e.code);
       if (e.code === keyBindings.p1.boost) boostPressed.delete('paddle1');
       if (e.code === keyBindings.p2.boost) boostPressed.delete('paddle2');
@@ -210,7 +214,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
     // Main game loop
     scene.onBeforeRenderObservable.add(() => {
-      if (paused) return;
+      if (paused || ended) return;
     
       const deltaFactor = engine.getDeltaTime() / (1000 / 60);
       const stepX = vx * deltaFactor;
@@ -330,6 +334,12 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
         // Match end logic
         if (score1 === winTarget || score2 === winTarget) {
           const winner = score1 === winTarget ? p1Name : p2Name;
+
+          // extra guard
+          ended = true;
+          acceptingInput = false;
+          paused = true;
+          awaitingStart = false; 
 
           startPrompt.textContent = `${winner} wins!`;
           updateStartPrompt(startPrompt, true);
