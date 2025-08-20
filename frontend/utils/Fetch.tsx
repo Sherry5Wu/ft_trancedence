@@ -114,31 +114,13 @@ export const fetchRivalData = async (username: string) => {
 
 		if (!rivals.ok) {
 			throw new Error(`HTTP error! Status: ${rivals.status}`);
-	}
+		}
 
-	const data: RivalData[] = await rivals.json();
-	console.log('RIVALSDATA: ')
-	console.log(data);
+		const data: RivalData[] = await rivals.json();
+		console.log('RIVALSDATA: ')
+		console.log(data);
 
-	return data;
-	
-		// const promises = user.rivals.map(async () => {
-		// 	const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, {
-		// 		method: 'GET',
-		// 		headers: {
-		// 		'Content-Type': 'application/json',
-		// 		},
-		// 	});
-			
-		// 	if (!response.ok) {
-		// 		throw new Error(`HTTP error! Status: ${response.status}`);
-		// 	}
-
-		// 	return response.json();
-		// })
-
-		// const rivalDataArray = await Promise.all(promises);
-		// return rivalDataArray.sort(); //sort alphabetically
+		return data;
 	}
 
 	catch (error) {

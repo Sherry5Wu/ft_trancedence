@@ -64,10 +64,10 @@ export const SearchBar = ({
                         .map((option, index) => (
                             <li
                                 key={index}
-                                className={'dropdown-option'}
+                                className={'dropdown-option !py-1'}
                                 onClick={() => handleOptionClick(option.username)}
                             >
-                            {/* {option.avatar && <img src={option.avatar} className="profilePicSmall" />} */}
+                            {option.avatarUrl ? <img src={option.avatarUrl} className="profilePicMini" /> : <img src='../assets/noun-profile-7808629.svg' className="profilePicMini" />}
                             {option.username}
                             </li>
                         ))

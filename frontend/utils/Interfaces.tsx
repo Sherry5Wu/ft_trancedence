@@ -55,7 +55,7 @@ export interface RivalData {
 
 export interface FetchedUserData {
     username: string;
-    avatar: string | null;
+    avatarUrl: string | null;
 }
 
 export interface SearchBarInputProps {
