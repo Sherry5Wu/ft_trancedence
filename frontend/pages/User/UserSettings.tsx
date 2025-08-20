@@ -9,26 +9,34 @@ import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
+import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
+import { updateProfilePic } from '../../utils/Fetch';
 
-const SettingsPage: React.FC = () => {
+const SettingsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, setUser } = useUserContext();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Populate local state from user context
+  useEffect(() => {
+    if (!user) navigate('/signin');
+    if (user) {
+      setFirstName(user?.firstname ?? '');
+      setLastName(user?.lastname ?? '');
+    }
+  }, [user]);
+
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64Image = reader.result as string;
         const newProfilePic = (
-          <img
-            src={base64Image}
-            className="profilePic"
-            alt={t('pages.userSettings.aria.uploadedProfileAlt', 'Uploaded profile')}
-          />
+          <img src={base64Image} className="profilePic" alt={t('pages.userSettings.aria.uploadedProfileAlt', 'Uploaded profile')} />
         );
 
         setUser({
@@ -37,6 +45,14 @@ const SettingsPage: React.FC = () => {
         });
       };
       reader.readAsDataURL(file);
+
+      try {
+        const avatarUrl = await updateProfilePic(file, user?.accessToken);
+        console.log('avatarurl = ' + avatarUrl);
+      }
+      catch(error) {
+        console.error('Avatar upload failed', error);
+      }
     }
   };
 

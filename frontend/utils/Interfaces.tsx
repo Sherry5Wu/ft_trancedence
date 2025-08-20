@@ -49,7 +49,7 @@ export interface RivalData {
 	rival_elo_score?: number,
 	games_played_against_rival?: number,
 	wins_against_rival?: number, 
-	losses_against_rival?: number,
+	loss_against_rival?: number,
 	//picture: '../assets/profilepics/B2.png'
 }
 

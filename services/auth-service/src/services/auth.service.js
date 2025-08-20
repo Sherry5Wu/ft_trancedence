@@ -85,7 +85,6 @@ async function authenticateUser(identifier, password) {
   throw new NotFoundError('User not found.');
   }
 
-  console.log('user.isVerified', user.isVerified); // for testing only
   // if (!user.isVerified) {
   // throw new InvalidCredentialsError('Please verify your email address before logging in.');
   // }
@@ -118,6 +117,8 @@ async function authenticateUser(identifier, password) {
     id: user.id,
     username: user.username,
     avatarUrl: user.avatarUrl || null, // include only if you support it
+    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
+    is2FAConfirmed: user.is2FAConfirmed,
   };
 
   return { accessToken, refreshToken, user: publicUser };
@@ -131,17 +132,7 @@ async function authenticateUser(identifier, password) {
  */
 async function getUserById(id, includeSecrets = false) {
   const user = await User.scope(includeSecrets ? 'withSecrets' : null).findByPk(id);
-  if (!user){
-    return null;
-  }
-
-  const userData = user.toJSON();
-  if (!includeSecrets){
-    delete userData.passwordHash;
-    delete userData.twoFASecret;
-    delete userData.backupCodes;
-  }
-  return userData;
+  return user ? user.toJSON() : null;
 }
 
 /**
@@ -152,17 +143,19 @@ async function getUserById(id, includeSecrets = false) {
  */
 async function getUserByUsername(username, includeSecrets = false) {
   const user = await User.scope(includeSecrets ? 'withSecrets' : null).findOne({ where: { username } });
-  if (!user){
-    return null;
-  }
+  return user ? user.toJSON() : null;
+}
 
-  const userData = user.toJSON();
-  if (!includeSecrets){
-    delete userData.passwordHash;
-    delete userData.twoFASecret;
-    delete userData.backupCodes;
-  }
-  return userData;
+async function getUserByIdentifier(identifier, includeSecrets = false) {
+  const user = await User.scope(includeSecrets ? 'withSecrets' : null).findOne({
+    where: {
+      [Op.or]: [
+        { email: normalizeEmail(identifier) },
+        { username: identifier },
+      ]
+    }
+  });
+  return user ? user.toJSON() : null;
 }
 
 /**
@@ -255,9 +248,11 @@ async function updateAvatar(userId, newAvatarUrl) {
     throw new ValidationError('Invalid avatar URL');
   }
   // 3. enforce HTTPS only
-//  if (!newAvatarUrl.startsWith('https://')) {
-//    throw new ValidationError('Avatar URL must use HTTPS');
-//  }
+ if (!newAvatarUrl.startsWith('https://')) {
+   throw new ValidationError('Avatar URL must use HTTPS');
+ }
+
+ console.log(newAvatarUrl); // for testing only
   // 4. Save to DB
   await user.update({ avatarUrl: newAvatarUrl });
 }
@@ -267,6 +262,7 @@ export {
   authenticateUser,
   getUserById,
   getUserByUsername,
+  getUserByIdentifier,
   enableTwoFA,
   disableTwoFA,
   validateBackupCode,

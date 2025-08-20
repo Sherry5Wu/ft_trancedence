@@ -36,6 +36,7 @@ export const Navbar = () => {
     
     // fetch users from search bar
     useEffect(() => {
+        if (!user) return ;
         const fetchOtherUsers = async (accessToken) => {
             const data = await fetchUsers(accessToken);
             setRivalData(data);
@@ -95,7 +96,7 @@ export const Navbar = () => {
         {Icon: <SettingsIcon className='menuIcon'/>, onClick: () => {
             console.log('Go to Settings'), 
             user ? navigate('/settings') : navigate('/signin')}},
-        {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/')}}
+        {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/signin')}}
     ]
 
     if (!user)

@@ -37,7 +37,7 @@ auth-service/
 │   │   ├── health.routes.js   # Service health check (useful in microservices)
 │   │   ├── user.routes.js   # For profile management (view/update user info)
 │   │   └── 2fa.routes.js   # Two-Factor Authentication endpoints
-│   ├── schemas/ 
+│   ├── schemas/
 │   │   ├── publicUser.schema.js
 │   ├── services/         # Business logic
 │   │   ├── auth.service.js # Core auth logic
@@ -124,7 +124,6 @@ Payload for JWTs
   "id": "UUID",          // Always required for identifying user
   "email": "user@email", // Useful for quick lookups
   "usename": "userA",    // Use for showing the username for frontend
-  "role": "user",        // Default role now, can expand later (admin, mod, etc.)
   "is2FAEnabled": true   // Optional, useful for enforcing flows
 }
 ```
@@ -170,3 +169,31 @@ This token is not sent with every request. Instead, it’s used only when the Ac
 - If the Access Token expired → client uses Refresh Token to get a new Access Token.
 - If Refresh Token is valid → user is considered logged in, and a new Access Token is given.
 - If Refresh Token expired or invalid → user needs to log in again.
+
+## Workflow of 2FA setup function
+
+Here’s a typical flow when a user clicks “Enable 2FA”:
+
+**1. Authenticate the user**
+- You get the user from the token (JWT or session) in the preHandler (fastify.authenticate).
+- This ensures only logged-in users can generate 2FA.
+
+**2. Generate 2FA secret and related info**
+- Generate a random secret (used for TOTP).
+- Create otpauthUrl for authenticator apps (Google Authenticator, Authy, etc.).
+- Generate qrCode for easy scanning.
+- Optionally generate backup codes (one-time use, in case user loses access).
+
+**3. Store secret or partial info in the database**
+- Store the secret (or its hashed/encrypted version) in the database associated with the user.
+- You don’t store the QR code or otpauthUrl directly; they can be regenerated from the secret.
+- Backup codes should be stored hashed or encrypted.
+
+**4. Return setup info to frontend**
+- Return the secret, otpauthUrl, qrCode, and backup codes in the response.
+- The frontend shows a QR code and backup codes to the user.
+
+**5. User confirms 2FA**
+- Typically, the frontend asks the user to input a TOTP code to confirm 2FA is working.
+- Once verified, you mark 2FA as enabled in the database.
+
