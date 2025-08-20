@@ -1,5 +1,6 @@
 import { db } from '../db/init.js';
 
+
 function getEloScore(player_id) {
     try {
       const stmt = db.prepare(`SELECT elo_score FROM user_match_data WHERE player_id = ?`);
@@ -11,7 +12,18 @@ function getEloScore(player_id) {
       console.error('Error getting elo score:', err);
       return 1000;
     }
+}
+
+export function getRankByPlayerId(player_id) {
+  try {
+    const stmt = db.prepare(`SELECT rank FROM user_match_data WHERE player_id = ?`);
+    const row = stmt.get(player_id);
+    return row ? row.rank : 0;
+  } catch (err) {
+    console.error('Error getting rank:', err);
+    return 0;
   }
+}
 
 export function getEloScoreByUsername(player_username) {
   try {
@@ -24,7 +36,18 @@ export function getEloScoreByUsername(player_username) {
       console.error('Error getting elo score:', err);
       return 1000;
     }
+}
+
+export function getRankByUsername(player_username) {
+  try {
+    const stmt = db.prepare(`SELECT rank FROM user_match_data WHERE player_username = ?`);
+    const row = stmt.get(player_username);
+    return row ? row.rank : 0;
+  } catch (err) {
+    console.error('Error getting rank:', err);
+    return 0;
   }
+}
 
 function eloProbability(rating1, rating2)
 {
