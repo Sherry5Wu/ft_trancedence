@@ -63,10 +63,10 @@ export default (sequelize) => { // export a default function, not the User model
     avatarUrl: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isUrl: true,
-        len: [0, 2048], // max 2048 characters
-      }
+      // validate: {  // remove for doing the testing , isUrl doesn't think https://localhost is a valid url
+      //   isUrl: true,
+      //   len: [0, 2048], // max 2048 characters
+      // }
     },
     role: {
       type: DataTypes.ENUM('user', 'admin'), // add role with ENUM

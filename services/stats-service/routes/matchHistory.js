@@ -70,8 +70,25 @@ export default async function matchHistoryRoutes(fastify) {
     
 
         /// add type checking for the values before updating
-        if (!opponent_username || !played_at || !player_score || !opponent_score || !duration || !player_id || !opponent_id || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
-        return reply.status(400).send({ error: 'Opponent_username, Played_at, Player_id, opponent_id, player_name, opponent_name, result(win, loss, draw) is required' });
+        /// There was an issue where 0 score for one player was treated as an invalid (0 - 3)
+        const missing =
+          opponent_username == null ||
+          played_at == null ||
+          duration == null ||
+          player_id == null ||
+          opponent_id == null ||
+          player_name == null ||
+          opponent_name == null ||
+          result == null ||
+          !['win', 'loss', 'draw'].includes(result) ||
+          typeof player_score !== 'number' ||
+          typeof opponent_score !== 'number';
+
+        if (missing) {
+          return reply.status(400).send({
+            error:
+              'player/opponent names, ids, duration, played_at, result, and numeric scores are required',
+          });
         }
     
         try {

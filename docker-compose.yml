@@ -1,6 +1,6 @@
 services:
   stats-service:
-    build: 
+    build:
       context: ./services/stats-service
     env_file: "./.env"
     volumes:
@@ -11,7 +11,7 @@ services:
 
   # Tournament Service
   tournament-service:
-    build: 
+    build:
       context: ./services/tournament-service
     env_file: "./.env"
     volumes:
@@ -19,7 +19,7 @@ services:
     networks:
       - trancendence-network
     restart: unless-stopped
-  
+
   gateway-service:
     build:
       context: ./gateway
@@ -44,6 +44,7 @@ services:
     restart: unless-stopped
     volumes:
       - auth_data:/app/data
+      - ./service/auth-service/uploads:/app/uploads
 
   frontend-service:
     build:
@@ -73,7 +74,7 @@ volumes:
       type: none
       o: bind
       device: ${PWD}/services/auth-service/data
-  
+
 networks:
   trancendence-network:
     name: trancendence-network

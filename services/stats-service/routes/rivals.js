@@ -52,7 +52,7 @@ export default async function rivalsRoutes(fastify) {
         const { rival_username } = request.body;
         const { rival_id } = request.body;
         
-        if (!rival_id || !rival_username) {
+        if (!rival_id && !rival_username) {
             return reply.status(400).send({ error: 'Rival id and rival username is required' });
         }
         if (player_id === rival_id) {

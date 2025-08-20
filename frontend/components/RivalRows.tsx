@@ -4,15 +4,24 @@ import { RivalData } from '../utils/Interfaces';
 import { useUserContext } from '../context/UserContext';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import TrashIcon from '../assets/noun-trash-3552649.svg?react'
+import { fetchRivalData } from '../utils/Fetch';
+
+const calculateWinRatio = (wins: number | undefined, losses: number | undefined, games_played_against_rival: number | undefined) => {
+	if (wins === undefined || losses === undefined || games_played_against_rival === undefined)
+		return 0;
+	if (games_played_against_rival === 0)
+		return 0;
+	return (wins / wins + losses)
+}
 
 export const RivalRows = () => {
 	const { user } = useUserContext();
-  const navigate = useNavigate();
+  	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
 	const [rivalData, setRivalData] = useState<RivalData[]>([]);
 
-  if (!user)
-    return ;
+	if (!user)
+		return ;
 
 	useEffect(() => {
 		const loadRivals = async () => {
@@ -43,17 +52,17 @@ export const RivalRows = () => {
 
             <ul>
             {rivalData.map((rival, index: number) => {
+				const winratio = calculateWinRatio(rival.wins_against_rival, rival.loss_against_rival, rival.games_played_against_rival);
                 return (
 					<div className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
-						<li 
-							className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'
-							onClick={() => navigate(`/user/${rival.name}`)}>
-							<img src={rival.picture} className='profilePicSmall'/>
-							<span className='col-span-2'>{rival.name}</span>
-							<span className='col-span-2'>{rival.score}</span>
-							<span className={`col-span-2 ${rival.winratio >= 50 ? rival.winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{rival.winratio}%</span>
-							<span className='col-span-3'>{rival.wins} / {rival.losses}</span>
-							<span className='col-span-2'>{rival.matches}</span>
+						<li className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'
+								onClick={() => navigate(`/user/${rival.rival_username}`)}>
+							<span></span>{/* <img src={rival.picture} className='profilePicSmall'/> */}
+							<span className='col-span-2'>{rival.rival_username}</span>
+							<span className='col-span-2'>{rival.rival_elo_score}</span>
+							<span className={`col-span-2 ${winratio >= 50 ? winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{winratio}%</span>
+							<span className='col-span-3'>{rival.wins_against_rival} / {rival.loss_against_rival}</span>
+							<span className='col-span-2'>{rival.games_played_against_rival}</span>
 						</li>
 						{/* <div className='size-8 -translate-y-1 translate-x-2'>
 							< TrashIcon />

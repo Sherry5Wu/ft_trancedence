@@ -248,9 +248,11 @@ async function updateAvatar(userId, newAvatarUrl) {
     throw new ValidationError('Invalid avatar URL');
   }
   // 3. enforce HTTPS only
-//  if (!newAvatarUrl.startsWith('https://')) {
-//    throw new ValidationError('Avatar URL must use HTTPS');
-//  }
+ if (!newAvatarUrl.startsWith('https://')) {
+   throw new ValidationError('Avatar URL must use HTTPS');
+ }
+
+ console.log(newAvatarUrl); // for testing only
   // 4. Save to DB
   await user.update({ avatarUrl: newAvatarUrl });
 }
