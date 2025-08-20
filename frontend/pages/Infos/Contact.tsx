@@ -42,7 +42,7 @@ const ContactPage: React.FC = () => {
             name="Anssi Rissanen"
             role="Game Developer"
             profile42="https://profile.intra.42.fr/users/arissane"
-            github="https://github.com/arissane"
+            github="https://github.com/Sharunodal"
           />
 
 

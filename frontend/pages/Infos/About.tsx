@@ -27,7 +27,11 @@ const AboutPage: React.FC = () => {
         <h1 id="pageTitle" className="text-xl font-bold mb-4">
           {t('pages.about.title')}
         </h1>
+
+        <div className="mt-8 mx-auto max-w-2xl">
         <p className="mt-2">{t('pages.about.text')}</p>
+        </div>
+
       </div>
     </main>
   );        
