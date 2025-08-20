@@ -27,8 +27,8 @@ const RivalsPage = () => {
     //   fetchRivals();
     // }, [user])
 
-    if (!user)
-      navigate('/signin');
+    // if (!user) no need anymore, routes are protected on App.tsx
+    //   navigate('/signin');
   
     return (
       <div className='pageLayout'>

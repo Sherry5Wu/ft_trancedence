@@ -29,6 +29,10 @@ const NewTournamentPage: React.FC = () => {
     setIsTournament,
   } = usePlayersContext();
 
+  
+  if (!user)
+    navigate('/signin');
+
   const titleField = useValidationField(tournamentTitle || '', isValidTitle,  t('common.errors.invalidTitle'));
 
   useEffect(() => {

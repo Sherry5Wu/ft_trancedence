@@ -59,7 +59,7 @@ export const Navbar = () => {
         if (user)
             navigate(`/user/${user?.username}`);
         else
-            navigate('/signin')
+            navigate('/')
     } 
 
     const handleLogOut = () => {
