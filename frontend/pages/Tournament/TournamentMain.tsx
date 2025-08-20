@@ -1,6 +1,6 @@
 // /src/pages/Tornament/TournamentMain.tsx
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
@@ -10,186 +10,107 @@ import DownArrow from '../../assets/noun-down-arrow-down-1144832.svg?react';
 // import BracketViewer from '../../components/BracketViewer';
 import ModularBracketViewer from '../../components/ModularBracketViewer';
 
+type Result = 'win' | 'loss' | 'draw';
+
 interface TournamentHistoryRow {
-  tournament_id: string; // TEXT NOT NULL
-  total_players: number;
-  stage_number: number;  // finals = 1, semis = 2, winner = 0 (if exists)
+  tournament_id: string;
+  stage_number: number;
   match_number: number;
   player_name: string;
   opponent_name: string;
-  result: 'win' | 'loss' | 'draw'; // TEXT CHECK(result IN ('win', 'loss', 'draw')) NOT NUL
-  played_at: string; //  DATETIME DEFAULT CURRENT_TIMESTAMP
+  result: Result;
+  played_at: string;
 }
 
-// knockout-style tournament data
-const mockData: TournamentHistoryRow[] = [
-  // abc tournament
-  {
-    tournament_id: 'abc',
-    total_players: 4,
-    stage_number: 2,
-    match_number: 1,
-    player_name: 'Lily',
-    opponent_name: 'Anna',
-    result: 'win',
-    played_at: '2025-01-01T10:00:00',
-  },
-  {
-    tournament_id: 'abc',
-    total_players: 4,
-    stage_number: 2,
-    match_number: 2,
-    player_name: 'Zoe',
-    opponent_name: 'Maya',
-    result: 'loss',
-    played_at: '2025-01-01T10:30:00',
-  },
-  {
-    tournament_id: 'abc',
-    total_players: 4,
-    stage_number: 1,
-    match_number: 1,
-    player_name: 'Lily',
-    opponent_name: 'Maya',
-    result: 'win',
-    played_at: '2025-01-01T11:00:00',
-  },
-  // another tournament
-  {
-    tournament_id: 'another',
-    total_players: 4,
-    stage_number: 2,
-    match_number: 1,
-    player_name: 'Bob',
-    opponent_name: 'Charlie',
-    result: 'win',
-    played_at: '2025-01-01T10:00:00',
-  },
-  {
-    tournament_id: 'another',
-    total_players: 4,
-    stage_number: 2,
-    match_number: 2,
-    player_name: 'Bob2',
-    opponent_name: 'Charlie2',
-    result: 'win',
-    played_at: '2025-01-01T10:00:00',
-  },
-  {
-    tournament_id: 'another',
-    total_players: 4,
-    stage_number: 1,
-    match_number: 2,
-    player_name: 'Bob',
-    opponent_name: 'Bob2',
-    result: 'win',
-    played_at: '2025-01-01T10:00:00',
-  },
+type UITournament = {
+  id: string;
+  date: string;
+  totalPlayers: number;
+  winner?: string | null;
+  matches: TournamentHistoryRow[];
+};
 
-  // Round 1 (Quarterfinals) - Stage 3
-  {
-    tournament_id: 'big',
-    total_players: 8,
-    stage_number: 3,
-    match_number: 1,
-    player_name: 'Lily',
-    opponent_name: 'Anna',
-    result: 'win',
-    played_at: '2025-01-01T10:00:00',
-  },
-  {
-    tournament_id: 'big',
-    total_players: 8,
-    stage_number: 3,
-    match_number: 2,
-    player_name: 'Zoe',
-    opponent_name: 'Maya',
-    result: 'win',
-    played_at: '2025-01-01T10:30:00',
-  },
-  {
-    tournament_id: 'big',
-    total_players: 8,
-    stage_number: 3,
-    match_number: 3,
-    player_name: 'Jake',
-    opponent_name: 'Eva',
-    result: 'win',
-    played_at: '2025-01-01T11:00:00',
-  },
-  {
-    tournament_id: 'big',
-    total_players: 8,
-    stage_number: 3,
-    match_number: 4,
-    player_name: 'Milo',
-    opponent_name: 'Nina',
-    result: 'loss',
-    played_at: '2025-01-01T11:30:00',
-  },
+const API_BASE = 'https://localhost:8443';
 
-  // Round 2 (Semifinals) - Stage 2
-  {
-    tournament_id: 'big',
-    total_players: 8,
-    stage_number: 2,
-    match_number: 1,
-    player_name: 'Lily',
-    opponent_name: 'Zoe',
-    result: 'win',
-    played_at: '2025-01-01T12:00:00',
-  },
-  {
-    tournament_id: 'big',
-    total_players: 8,
-    stage_number: 2,
-    match_number: 2,
-    player_name: 'Jake',
-    opponent_name: 'Nina',
-    result: 'win',
-    played_at: '2025-01-01T12:30:00',
-  },
+async function fetchAllTournamentHistory(): Promise<TournamentHistoryRow[]> {
+  const res = await fetch(`${API_BASE}/tournament_history`, { credentials: 'include' });
+  if (!res.ok) throw new Error(`GET /tournament_history ${res.status}`);
+  return res.json();
+}
 
-  // Round 3 (Finals) - Stage 1
-  {
-    tournament_id: 'big',
-    total_players: 8,
-    stage_number: 1,
-    match_number: 1,
-    player_name: 'Lily',
-    opponent_name: 'Jake',
-    result: 'win',
-    played_at: '2025-01-01T13:00:00',
-  },  
-];
-
-
-const TournamentsPage: React.FC = () => {
+export default function TournamentsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const [rows, setRows] = useState<TournamentHistoryRow[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [visibleTournamentsCount, setVisibleTournamentsCount] = useState(5);
 
-  const grouped = Object.groupBy
-    ? Object.groupBy(mockData, row => row.tournament_id)
-    : mockData.reduce((acc, row) => {
-        (acc[row.tournament_id] ||= []).push(row);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await fetchAllTournamentHistory();
+        if (!cancelled) setRows(data);
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message ?? 'Failed to load tournament history');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (error) {
+    return (
+      <main className="pageLayout">
+        <p className="text-red-600">{error}</p>
+      </main>
+    );
+  }
+  if (rows === null) {
+    return (
+      <main className="pageLayout">
+        <p>{t('common.loading') || 'Loading…'}</p>
+      </main>
+    );
+  }
+
+  const grouped: Record<string, TournamentHistoryRow[]> = (Object as any).groupBy
+    ? (Object as any).groupBy(rows, (r: TournamentHistoryRow) => r.tournament_id)
+    : rows.reduce((acc, r) => {
+        (acc[r.tournament_id] ||= []).push(r);
         return acc;
       }, {} as Record<string, TournamentHistoryRow[]>);
 
-  const tournaments = Object.entries(grouped)
-    .map(([id, rows]) => {
-      const date = new Date(rows[0].played_at).toLocaleDateString('en-US');
-      return {
-        id,
-        date,
-        winner: rows[0].tournament_winner,
-        totalPlayers: rows[0].total_players,
-        matches: rows,
-      };
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const tournaments: UITournament[] = Object.entries(grouped).map(([id, matches]) => {
+    const sorted = [...matches].sort((a, b) => {
+      if (a.stage_number !== b.stage_number) return a.stage_number - b.stage_number; // 1..N
+      if (a.match_number !== b.match_number) return a.match_number - b.match_number; // 1..M
+      return new Date(a.played_at).getTime() - new Date(b.played_at).getTime();
+    });
+
+    const lastPlayed = sorted[sorted.length - 1]?.played_at ?? sorted[0]?.played_at;
+    const date = lastPlayed ? new Date(lastPlayed).toLocaleDateString(undefined) : '-';
+
+    const maxStage = sorted.reduce((m, r) => Math.max(m, r.stage_number ?? 1), 1);
+    const totalPlayers = Math.pow(2, maxStage);
+
+    // Compute winner from the final
+    const finalRow = sorted.find(r => r.stage_number === 1 && r.match_number === 1);
+    let winner: string | null = null;
+    if (finalRow) {
+      if (finalRow.result === 'win') winner = finalRow.player_name;
+      else if (finalRow.result === 'loss') winner = finalRow.opponent_name;
+      else winner = null;
+    }
+
+    return { id, date, totalPlayers, winner, matches: sorted };
+  })
+  .sort((a, b) => {
+    const ta = Date.parse(a.date) || 0;
+    const tb = Date.parse(b.date) || 0;
+    return tb - ta;
+  });
 
   return (
     <main
@@ -207,15 +128,8 @@ const TournamentsPage: React.FC = () => {
         {t('pages.tournament.list.title')}
       </h1>
 
-      <div
-        role="table"
-        aria-label={t('pages.tournament.list.aria.table')}
-        className="w-full p-4"
-      >
-        <div
-          role="row"
-          className="grid grid-cols-5 mb-1 text-center font-semibold"
-        >
+      <div role="table" aria-label={t('pages.tournament.list.aria.table')} className="w-full p-4">
+        <div role="row" className="grid grid-cols-5 mb-1 text-center font-semibold">
           <span role="columnheader" aria-label={t('pages.tournament.list.aria.columnTitle')}>
             {t('pages.tournament.list.columnHeaders.title')}
           </span>
@@ -249,16 +163,10 @@ const TournamentsPage: React.FC = () => {
                   <span role="cell">{tournament.winner ?? '-'}</span>
                   <span role="cell">
                     <button
-                      onClick={() =>
-                        setExpandedId(isExpanded ? null : tournament.id)
-                      }
+                      onClick={() => setExpandedId(isExpanded ? null : tournament.id)}
                       aria-label={t('pages.tournament.list.aria.expandButton', { id: tournament.id })}
                     >
-                      <div
-                        className={`size-12 transition-transform duration-300 ${
-                          isExpanded ? '-rotate-180 opacity-25' : ''
-                        }`}
-                      >
+                      <div className={`size-12 transition-transform duration-300 ${isExpanded ? '-rotate-180 opacity-25' : ''}`}>
                         <DownArrow />
                       </div>
                     </button>
@@ -306,21 +214,15 @@ const TournamentsPage: React.FC = () => {
           className="generic-button"
           text={t('common.buttons.back')}
           aria-label={t('common.aria.buttons.back')}
-          onClick={() =>
-            navigate('/homeuser')
-          }
+          onClick={() => navigate('/homeuser')}
         />
         <GenericButton
           className="generic-button"
           text={t('common.buttons.new')}
           aria-label={t('common.aria.buttons.new')}
-          onClick={() =>
-            navigate('/tournaments/new')
-          }
+          onClick={() => navigate('/tournaments/new')}
         />
       </div>
     </main>
   );
-};
-
-export default TournamentsPage;
+}
