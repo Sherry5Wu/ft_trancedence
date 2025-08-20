@@ -95,7 +95,7 @@
 }
 
 .profilePicBig { 
-  @apply size-32 rounded-full bg-[#FFEE8C] border-2
+  @apply size-32 -translate-y-0.5 rounded-full bg-[#FFEE8C] border-2 object-cover
 }
 
 .profilePicSmall {

@@ -19,7 +19,6 @@ const SettingsPage = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Populate local state from user context
   useEffect(() => {
     if (!user) navigate('/signin');
     // if (user) {
@@ -32,23 +31,28 @@ const SettingsPage = () => {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Image = reader.result as string;
-        const newProfilePic = (
-          <img src={base64Image} className="profilePic" alt={t('pages.userSettings.aria.uploadedProfileAlt', 'Uploaded profile')} />
-        );
-
-        setUser({
-          ...user!,
-          profilePic: newProfilePic,
-        });
-      };
-      reader.readAsDataURL(file);
+      // const reader = new FileReader();
+      // reader.onloadend = () => {
+      //   const base64Image = reader.result as string;
+      //   const newProfilePic = (
+      //     <img src={base64Image} className="profilePic" alt="Uploaded profile" />
+      //   );
+      // };
+      // reader.readAsDataURL(file);
 
       try {
         const avatarUrl = await updateProfilePic(file, user?.accessToken);
         console.log('avatarurl = ' + avatarUrl);
+        if (!user)
+          return ;
+        if (avatarUrl)
+        {
+          setUser({
+            ...user, 
+            profilePic: avatarUrl});
+        }
+        else
+          alert('Updating avatar failed, please try another picture.');
       }
       catch(error) {
         console.error('Avatar upload failed', error);
@@ -76,7 +80,10 @@ const SettingsPage = () => {
           size="lg"
           user={{
             username: user?.username,
-            photo: (user?.profilePic as React.ReactElement)?.props?.src,
+            // photo: (user?.profilePic as React.ReactElement)?.props?.src,
+            photo: user?.profilePic
+            // (user?.profilePic as React.ReactElement)?.props?.src // extract the image URL from JSX
+            // photo: user?.profilePic ? user.profilePic.props?.src : undefined // if user.profilePic isn't present yet 
           }}
           onClick={() => fileInputRef.current?.click()}
           alwaysShowPlus
