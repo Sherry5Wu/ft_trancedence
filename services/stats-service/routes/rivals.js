@@ -117,7 +117,7 @@ export default async function rivalsRoutes(fastify) {
     // DELETE rival
     // /rivals/:rival_id
     fastify.delete('/:rival_id', { preHandler: requireAuth }, (request, reply) => {
-        const player_id = request.id;
+        const player_id = request.idx;
         const { rival_id } = request.params;
         try {
             const stmt = db.prepare(`

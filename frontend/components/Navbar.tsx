@@ -23,6 +23,7 @@ import { SearchBar } from '../components/SearchBar';
 import { useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
 import { fetchUsers } from '../utils/Fetch';
+import { FetchedUserData } from '../utils/Interfaces';
 
 export const Navbar = () => {  
     const { user, setUser } = useUserContext();
@@ -30,7 +31,7 @@ export const Navbar = () => {
     const { largeText, setLargeText} = useAccessibilityContext();
     const { t, i18n } = useTranslation();
     const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
-    const [rivalData, setRivalData] = useState<string[]>([]);
+    const [rivalData, setRivalData] = useState<FetchedUserData[]>([]);
     const navigate = useNavigate();
     const accessToken = useUserContext().user?.accessToken;
     
@@ -40,6 +41,8 @@ export const Navbar = () => {
         const fetchOtherUsers = async (accessToken) => {
             const data = await fetchUsers(accessToken);
             setRivalData(data);
+            // console.log("DATA FROM SEARCH");
+            // console.log(data);
         };
         fetchOtherUsers(accessToken);
     }, [user])

@@ -26,9 +26,11 @@ const UserPage = () => {
 	const showHistory = () => setHistory(!history);
 
 	useEffect(() => {
-		if (!user) navigate('/signin');
+		if (!user)
+			navigate('/signin');
 		const loadStats = async () => {
-			if (!param.username) return ;
+			if (!param.username)
+				return ;
 
 			setLoading(true);
 
@@ -48,7 +50,8 @@ const UserPage = () => {
 	}, [user, param.username]);
 
 	useEffect(() => {
-		if (!user) return ;
+		if (!user)
+			return ;
 		const loadProfilePicURL = async () => {
 			const allUsers = await fetchUsers(user?.accessToken);
 			if (!allUsers)
@@ -62,14 +65,12 @@ const UserPage = () => {
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
-	const isRival = user?.rivals.some(r => r.rival_username === param.userName);
+	const isRival = user?.rivals.some(r => r.rival_username === param.username);
 
 	// console.log("ACCESS TOKEN");
 	// console.log(user?.accessToken);
-	// console.log("RIVALS in user page");
-	// console.log(user?.rivals);
-	console.log('usercontext pic');
-	console.log(user?.profilePic);
+	console.log("RIVALS in user page");
+	console.log(user?.rivals);
 	console.log('isRival = ' + isRival);
 
 	return (
