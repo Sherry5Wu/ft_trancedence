@@ -8,7 +8,10 @@ import userMatchDataRoutes from './routes/userMatchData.js';
 
 dotenv.config();
 
-const fastify = Fastify({logger: true});
+const fastify = Fastify({
+  logger: true,
+  ignoreTrailingSlash: true,
+});
 
 // Init the database
 initDB(fastify);

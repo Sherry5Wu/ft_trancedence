@@ -47,15 +47,14 @@ fastify.get('/tournament_history', (request, reply) => {
 // Hakee tietyn turnauksen kaikki matsit
 fastify.get('/tournament_history/:tournament_id', (request, reply) => {
   const { tournament_id } = request.params;
-
   try {
-    const stmt = db.prepare(`SELECT * FROM tournament_history WHERE tournament_id = ?`);
+    const stmt = db.prepare(`
+      SELECT * FROM tournament_history
+      WHERE tournament_id = ?
+      ORDER BY stage_number ASC, match_number ASC, played_at ASC
+    `);
     const rows = stmt.all(tournament_id);
-    if (rows) {
-      reply.send(rows);
-    } else {
-      reply.status(404).send({ error: 'Tournament not found' });
-    }
+    rows.length ? reply.send(rows) : reply.status(404).send({ error: 'Tournament not found' });
   } catch (err) {
     reply.status(500).send({ error: err.message });
   }
@@ -66,10 +65,19 @@ fastify.get('/tournament_history/:tournament_id', (request, reply) => {
 // ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!
 fastify.post('/tournament_history', (request, reply) => {
   // TURVALLISUUS: player_id vain tokenista
-  const { tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body;
+  const { tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body ?? {};
 
-  if (!tournament_id || !stage_number || !match_number || !player_name || !opponent_name || !['win', 'loss', 'draw'].includes(result)) {
-    return reply.status(400).send({ error: 'Tournament_id, stage_number, match_number, player_name, opponent_name ja result (win/loss/draw) vaaditaan' });
+  const validResult = result && ['win', 'loss', 'draw'].includes(result);
+  const hasId = typeof tournament_id === 'string' && tournament_id.trim().length > 0;
+  const hasStage = Number.isInteger(stage_number);
+  const hasMatch = Number.isInteger(match_number);
+  const hasPName = typeof player_name === 'string' && player_name.trim().length > 0;
+  const hasOName = typeof opponent_name === 'string' && opponent_name.trim().length > 0;
+
+  if (!hasId || !hasStage || !hasMatch || !hasPName || !hasOName || !validResult) {
+    return reply.status(400).send({
+      error: 'tournament_id, stage_number (int), match_number (int), player_name, opponent_name and result (win/loss/draw) are required'
+    });
   }
 
   try {
@@ -78,14 +86,10 @@ fastify.post('/tournament_history', (request, reply) => {
       VALUES (?, ?, ?, ?, ?, ?)
     `);
     const resultDb = stmt.run(tournament_id, stage_number, match_number, player_name, opponent_name, result);
-    reply.send({ 
-      id: resultDb.lastInsertRowid, 
-      tournament_id, 
-      stage_number, 
-      match_number, 
-      player_name, 
-      opponent_name, 
-      result 
+
+    reply.send({
+      id: resultDb.lastInsertRowid,
+      tournament_id, stage_number, match_number, player_name, opponent_name, result
     });
   } catch (err) {
     reply.status(500).send({ error: err.message });
