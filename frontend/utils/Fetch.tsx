@@ -87,7 +87,6 @@ export const updateProfilePic = async (file: File, accessToken: string) => {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${accessToken}`,
-				// 'Content-Type': 'multipart/form-data',
 			}, 
 			body: formData,
 		})
