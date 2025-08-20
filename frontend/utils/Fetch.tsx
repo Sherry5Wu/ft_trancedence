@@ -228,7 +228,6 @@ export const fetchScoreHistory = async (username: string): Promise<ScoreHistory[
 };
 
 export const fetchUserStats = async (username: string): Promise<UserStats | null> => {
-
 	try {
 		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${username}`, {
 		method: 'GET'
