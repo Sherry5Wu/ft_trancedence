@@ -22,10 +22,10 @@ const SettingsPage = () => {
   // Populate local state from user context
   useEffect(() => {
     if (!user) navigate('/signin');
-    if (user) {
-      setFirstName(user?.firstname ?? '');
-      setLastName(user?.lastname ?? '');
-    }
+    // if (user) {
+    //   setFirstName(user?.firstname ?? '');
+    //   setLastName(user?.lastname ?? '');
+    // }
   }, [user]);
 
 

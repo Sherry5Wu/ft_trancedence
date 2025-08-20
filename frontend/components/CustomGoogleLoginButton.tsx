@@ -1,5 +1,6 @@
-import { useGoogleLogin } from '@react-oauth/google';
+// import { useGoogleLogin } from '@react-oauth/google';
 // import { GoogleLogin } from "@react-oauth/google";
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
@@ -8,17 +9,6 @@ const CustomGoogleLoginButton = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setUser } = useUserContext();
-
-  // const login = useGoogleLogin({
-  //   onSuccess: tokenResponse => {
-  //     console.log("Login Success:", tokenResponse);
-  //     // You can call Google APIs or decode token if needed
-  //   },
-  //   onError: () => {
-  //     console.error("Login Failed");
-  //   }
-  // });
-
 
   // Configure Google Login to return the ID Token
   // const login = useGoogleLogin({
@@ -56,47 +46,78 @@ const CustomGoogleLoginButton = () => {
   // });
 
 
-
-const login = useGoogleLogin({
-  flow: "auth-code",  
-  scope: "openid profile email",
-  onSuccess: async (codeResponse) => {
-    try {
-      // Step 1: exchange code for idToken in backend
-      const response = await fetch("https://localhost:8443/as/auth/google-register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: codeResponse.code }),
-      });
+// const login = useGoogleLogin({
+//   flow: "auth-code",  
+//   scope: "openid profile email",
+//   onSuccess: async (codeResponse) => {
+//     try {
+//       // Step 1: exchange code for idToken in backend
+//       const response = await fetch("https://localhost:8443/as/auth/google-register", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ code: codeResponse.code }),
+//       });
       
-console.log("Response status:", response.status); // debug
-console.log("Response text:", await response.text()); // debug
+// console.log("Response status:", response.status); // debug
+// console.log("Response text:", await response.text()); // debug
 
-      if (!response.ok) throw new Error("Failed to exchange code");
+//       if (!response.ok) throw new Error("Failed to exchange code");
 
-      const data = await response.json();
+//       const data = await response.json();
 
-      if (data.id_token) {
-        // Save id_token in context for later use
-        setUser(prev => ({ ...prev, googleIdToken: data.id_token }));
+//       if (data.id_token) {
+//         // Save id_token in context for later use
+//         setUser(prev => ({ ...prev, googleIdToken: data.id_token }));
 
-        // Go to complete registration page
-        navigate("/signup/complete-registration");
-      } else {
-        console.error("Backend did not return id_token");
-      }
-    } catch (err) {
-      console.error("Google exchange error:", err);
+//         // Go to complete registration page
+//         navigate("/signup/complete-registration");
+//       } else {
+//         console.error("Backend did not return id_token");
+//       }
+//     } catch (err) {
+//       console.error("Google exchange error:", err);
+//     }
+//   },
+//   onError: () => console.error("Google Login Failed"),
+// });
+
+  useEffect(() => {
+
+    if (!window.google) return;
+
+    window.google.accounts.id.initialize({
+      // client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+      client_id: "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com",
+      callback: handleCredentialResponse,
+    });
+  }, []);
+
+  const handleCredentialResponse = (response: any) => {
+    const idToken = response.credential; // ✅ ID Token (JWT)
+    console.log("Google ID Token:", idToken);
+
+    if (idToken) {
+      setUser((prev) => ({ ...prev, googleIdToken: idToken }));
+      navigate('/signup/complete-profile');
+    } else {
+      console.error("No ID token returned from Google");
     }
-  },
-  onError: () => console.error("Google Login Failed"),
-});
+  };
+
+const handleClick = () => {
+  if (window.google && window.google.accounts) {
+    window.google.accounts.id.prompt();
+  } else {
+    console.error("Google script not loaded yet");
+  }
+};
+
 
   return (
     <button
     type="button"
     className="google-signin-button"
-    onClick={() => login()}
+    onClick={handleClick}
   >
     <svg
       viewBox="0 0 533.5 544.3"

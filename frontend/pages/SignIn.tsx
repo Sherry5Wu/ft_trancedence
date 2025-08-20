@@ -1,7 +1,7 @@
 // /src/pages/SignIn.tsx
 
 import React, { useEffect } from 'react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+// import { GoogleOAuthProvider } from '@react-oauth/google';
 import CustomGoogleLoginButton from "../components/CustomGoogleLoginButton";
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ import { LoginData } from '../utils/Interfaces';
 import { signInUser } from '../utils/Fetch';
 
 // const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
-const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
+// const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
 
 const SignInPage: React.FC = () => {
   const { t } = useTranslation(); 
@@ -53,7 +53,7 @@ const SignInPage: React.FC = () => {
   // }, [navigate]);
 
 return (
-    <GoogleOAuthProvider clientId={clientId}>
+    // <GoogleOAuthProvider clientId={clientId}>
       <main
         className="pageLayout"
         role="main"
@@ -139,7 +139,7 @@ return (
         </p>
         </div>
       </main>
-    </GoogleOAuthProvider>
+    // {/* </GoogleOAuthProvider> */}
   );
 };
 

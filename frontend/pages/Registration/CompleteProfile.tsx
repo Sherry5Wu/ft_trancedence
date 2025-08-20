@@ -118,11 +118,16 @@ const CompleteProfilePage: React.FC = () => {
         disabled={!formFilled}
         onClick={async () => {
           try {
-            const response = await fetch("http://localhost:8443/as/auth/google-register", {
+            if (!user?.googleIdToken) {
+              alert("Google sign-in is required before completing profile.");
+              return;
+            }
+
+            const response = await fetch("https://localhost:8443/as/auth/google-register", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                idToken: user?.googleIdToken, // already saved from Google
+                idToken: user.googleIdToken,  // ✅ ID token from Google
                 username: usernameField.value,
                 pinCode: pinField.value,
               }),
