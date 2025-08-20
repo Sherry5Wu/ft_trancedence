@@ -57,7 +57,7 @@ docker rm -f $(docker ps -aq)
 
 Testing uploading a avatar
 ```sh
-curl -X POST http://localhost:3000/user/avatar \
+curl -X POST http://localhost:3001/user/upload-avatar \
   -F "avatar=@/path/to/your/avatar.jpg"
 ```
 
