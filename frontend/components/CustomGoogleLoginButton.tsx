@@ -55,38 +55,43 @@ const CustomGoogleLoginButton = () => {
   //   },
   // });
 
+
+
 const login = useGoogleLogin({
-  flow: "auth-code",             // auth-code flow is safer
+  flow: "auth-code",  
   scope: "openid profile email",
   onSuccess: async (codeResponse) => {
-    console.log("Google Auth Code:", codeResponse.code);
-
     try {
-      // Send the auth code to your backend for exchange
-      const response = await fetch('https://localhost:8443/auth/google-register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: codeResponse.code })
+      // Step 1: exchange code for idToken in backend
+      const response = await fetch("https://localhost:8443/as/auth/google-exchange", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: codeResponse.code }),
       });
+      
+console.log("Response status:", response.status); // debug
+console.log("Response text:", await response.text()); // debug
+
+      if (!response.ok) throw new Error("Failed to exchange code");
 
       const data = await response.json();
 
       if (data.id_token) {
-        // Save id_token in UserContext
+        // Save id_token in context for later use
         setUser(prev => ({ ...prev, googleIdToken: data.id_token }));
 
-        // Navigate to complete-registration page
+        // Go to complete registration page
         navigate("/signup/complete-registration");
       } else {
-        console.error("No id_token returned from backend");
+        console.error("Backend did not return id_token");
       }
     } catch (err) {
-      console.error("Error exchanging Google code:", err);
+      console.error("Google exchange error:", err);
     }
   },
   onError: () => console.error("Google Login Failed"),
 });
-  
+
   return (
     <button
     type="button"

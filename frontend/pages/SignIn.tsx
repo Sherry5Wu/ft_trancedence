@@ -15,8 +15,8 @@ import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validat
 import { LoginData } from '../utils/Interfaces';
 import { signInUser } from '../utils/Fetch';
 
-const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
-// const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
+// const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
+const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
 
 const SignInPage: React.FC = () => {
   const { t } = useTranslation(); 

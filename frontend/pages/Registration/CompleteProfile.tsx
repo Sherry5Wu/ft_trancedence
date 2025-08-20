@@ -113,17 +113,13 @@ const CompleteProfilePage: React.FC = () => {
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        // onClick={() => {
-        //   alert(t('common.alerts.something')); // Temporary success message
-        //   navigate(`/user/${user?.username}`);
-        // }}
         onClick={async () => {
           try {
             const response = await fetch("http://localhost:8443/as/auth/google-register", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                idToken: user?.googleIdToken, // pulled from context
+                idToken: user?.googleIdToken, // already saved from Google
                 username: usernameField.value,
                 pinCode: pinField.value,
               }),
