@@ -40,11 +40,16 @@ const SettingsPage = () => {
       try {
         const avatarUrl = await updateProfilePic(file, user?.accessToken);
         console.log('avatarurl = ' + avatarUrl);
-        if (!user) return ;
-        setUser({
-          ...user, 
-          profilePic: avatarUrl});
-        console.log(user.profilePic);
+        if (!user)
+          return ;
+        if (avatarUrl)
+        {
+          setUser({
+            ...user, 
+            profilePic: avatarUrl});
+        }
+        else
+          alert('Updating avatar failed, please try another picture.');
       }
       catch(error) {
         console.error('Avatar upload failed', error);
