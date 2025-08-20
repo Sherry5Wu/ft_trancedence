@@ -5,21 +5,20 @@ import svgr from 'vite-plugin-svgr';
 import autoprefixer from 'autoprefixer';
 
 
-export default defineConfig ({
-    plugins: [
-        react(), tailwindcss(), svgr(),
-    ],
-    // css: {
-    //     postcss: {
-    //         plugins: [
-    //             autoprefixer
-    //     ]},
-    // },
-    server: {
-        port: 9000,
-        host: true,
+export default defineConfig({
+  plugins: [react(), tailwindcss(), svgr()],
+  server: {
+    host: true,
+    port: 9000,
+    // Make HMR connect back through the HTTPS reverse proxy
+    hmr: {
+      protocol: 'wss',
+      host: 'localhost',
+      clientPort: 8443,
     },
-    optimizeDeps: {
-        force: true,
-    }
-});
+    origin: 'https://localhost:8443',
+  },
+  optimizeDeps: {
+    force: true,
+  },
+})

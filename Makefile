@@ -10,7 +10,12 @@ STATS_FILES = $(shell find services/stats-service -type f)
 
 GATEWAY_FILES= gateway/dockerfile gateway/nginx.conf
 
-FRONTEND_FILES= $(shell find frontend/ -type f)
+FRONTEND_FILES := \
+  frontend/package.json \
+  frontend/package-lock.json \
+  frontend/vite.config.ts \
+  $(shell find frontend/src -type f) \
+  $(shell find frontend/public -type f)
 
 AUTH_FILES = services/auth-service/Dockerfile services/auth-service/package.json $(shell find services/auth-service/src -type f)
 BACKEND_FILES = $(DOCKER_COMPOSE_FILE) $(TOURNAMENT_FILES) $(STATS_FILES) $(GATEWAY_FILES) $(AUTH_FILES) $(ENV_FILE)
