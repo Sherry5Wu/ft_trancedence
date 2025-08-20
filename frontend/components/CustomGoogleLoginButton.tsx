@@ -63,7 +63,7 @@ const login = useGoogleLogin({
   onSuccess: async (codeResponse) => {
     try {
       // Step 1: exchange code for idToken in backend
-      const response = await fetch("https://localhost:8443/as/auth/google-exchange", {
+      const response = await fetch("https://localhost:8443/as/auth/google-register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: codeResponse.code }),

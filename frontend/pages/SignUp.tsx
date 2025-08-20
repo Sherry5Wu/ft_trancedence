@@ -62,7 +62,7 @@ return (
       text={t('pages.signUp.aria.description')}
     />
 
-      <div className="flex flex-col justify-center p-8 ">
+      <div className="flex flex-col justify-center p-8">
         <h2 id="pageTitle" className="font-semibold text-center">
           {t('pages.signUp.title')}
         </h2>

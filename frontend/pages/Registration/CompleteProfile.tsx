@@ -68,10 +68,11 @@ const CompleteProfilePage: React.FC = () => {
         id="pageDescription"
         text={t('pages.completeProfile.aria.description')}
       />
-
-      <h1 id="pageTitle" className="font-semibold text-center text-xl">
-        {t('pages.completeProfile.title')}
-      </h1>
+      <div className="flex items-center justify-center p-12">
+        <div className="flex flex-col justify-center">
+        <h1 id="pageTitle" className="font-semibold text-center">
+          {t('pages.completeProfile.title')}
+        </h1>
 
       <GenericInput
         type="text"
@@ -91,6 +92,7 @@ const CompleteProfilePage: React.FC = () => {
         onFilled={pinField.onFilled}
         onBlur={pinField.onBlur}
         errorMessage={pinField.error}
+        allowVisibility
       />
 
       <GenericInput
@@ -100,6 +102,7 @@ const CompleteProfilePage: React.FC = () => {
         value={confirmPin}
         onFilled={setConfirmPin}
         errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
+        allowVisibility
       />
 
       {/* <ToggleButton
@@ -142,6 +145,8 @@ const CompleteProfilePage: React.FC = () => {
           }
         }}
       />
+      </div>
+      </div>
     </main>
   );
 };
