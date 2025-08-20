@@ -141,7 +141,7 @@ export const Navbar = () => {
                         />
                     </div>
                 </div>
-                <Menu aria-label='profile menu' Icon={user?.profilePic ? <img src={user.profilePic} className='profilePicSmall' /> : <ProfileIcon />} elements={profileMenuItems} className='menuIcon' variant='userMenu'/>
+                <Menu aria-label='profile menu' Icon={<img src={user.profilePic} className='profilePicSmall' />} elements={profileMenuItems} className='menuIcon' variant='userMenu'/>
             </div>
         </nav>
     );

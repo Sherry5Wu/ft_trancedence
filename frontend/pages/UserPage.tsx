@@ -53,14 +53,8 @@ const UserPage = () => {
 			const allUsers = await fetchUsers(user?.accessToken);
 			if (!allUsers)
 				return ;
-			console.log('ALL USERS:');
-			console.log(allUsers);
 			const pageOwner = allUsers.filter((u: FetchedUserData) => u.username === param.username);
-			console.log('PAGEOWNER:');
-			console.log(pageOwner);
-			setProfilePicURL(pageOwner.avatarUrl);
-			console.log('PROFILE PIC URL:');
-			console.log(profilePicURL);
+			setProfilePicURL(pageOwner[0].avatarUrl);
 		}
 		loadProfilePicURL();
 	}, [param.username, user?.profilePic, user])
@@ -74,6 +68,8 @@ const UserPage = () => {
 	// console.log(user?.accessToken);
 	// console.log("RIVALS in user page");
 	// console.log(user?.rivals);
+	console.log('usercontext pic');
+	console.log(user?.profilePic);
 	console.log('isRival = ' + isRival);
 
 	return (
@@ -83,7 +79,7 @@ const UserPage = () => {
 
 		<div className='profilePicBig'>
 			{profilePicURL ? 
-				<img src={profilePicURL} className='w-full h-full object-cover'/> : <img src='../assets/noun-profile-7808629.svg' className='w-full h-full object-cover'/>}
+				<img src={profilePicURL} className='profilePicBig'/> : <img src='../assets/noun-profile-7808629.svg' className='w-full h-full object-cover'/>}
 		</div>
 
 		<div className='w-56 truncate mb-12'>

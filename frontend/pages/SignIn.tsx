@@ -60,7 +60,7 @@ const SignInPage = () => {
               username: signInData.data.user.username,
               id: signInData.data.user.id,
               email: signInData.data.user.email,
-              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic' />,
+              profilePic: signInData.data.user.profilepic || '../assets/noun-profile-7808629.svg',
               score: signInData.stats.score,
               rank: signInData.stats.score,
               rivals: signInData.rivals,

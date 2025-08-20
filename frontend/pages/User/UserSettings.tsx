@@ -23,10 +23,10 @@ const SettingsPage = () => {
   // Populate local state from user context
   useEffect(() => {
     if (!user) navigate('/signin');
-    if (user) {
-      setFirstName(user?.firstname ?? '');
-      setLastName(user?.lastname ?? '');
-    }
+    // if (user) {
+    //   setFirstName(user?.firstname ?? '');
+    //   setLastName(user?.lastname ?? '');
+    // }
   }, [user]);
 
 
@@ -39,11 +39,6 @@ const SettingsPage = () => {
         const newProfilePic = (
           <img src={base64Image} className="profilePic" alt="Uploaded profile" />
         );
-
-        setUser({
-          ...user!,
-          profilePic: newProfilePic,
-        });
       };
       reader.readAsDataURL(file);
 
