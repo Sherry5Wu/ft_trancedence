@@ -149,7 +149,10 @@ const UserPage = () => {
 		text={undefined}
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='ADD TO RIVALS'
-		onClick={() => addRival(param.username, user?.accessToken)} />
+		onClick={() => {
+			addRival(param.username, user?.accessToken);
+			setUser(...prev, )
+		}} />
 		}
 
 		{/* Statistics */}

@@ -104,25 +104,24 @@ export const updateProfilePic = async (file: File, accessToken: string) => {
 	}
 };
 
-const fetchRivalData = async (username: string) => {
+export const fetchRivalData = async (username: string) => {
 	try {
-	const rivals = await fetch(`https://localhost:8443/stats/rivals/username/${username}`, {
-		method: 'GET',
-		headers: {
-		  'Content-Type': 'application/json',
-		},
-		});
+		const rivals = await fetch(`https://localhost:8443/stats/rivals/username/${username}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			});
 
-	if (!rivals.ok) {
-		throw new Error(`HTTP error! Status: ${rivals.status}`);
+		if (!rivals.ok) {
+			throw new Error(`HTTP error! Status: ${rivals.status}`);
 	}
 
-	const rawData: string[] = await rivals.json();
-	const rivalsData: RivalData[] = rawData.map(entry => ({ rival_username: entry }));
+	const data: RivalData[] = await rivals.json();
 	console.log('RIVALSDATA: ')
-	console.log(rivalsData);
+	console.log(data);
 
-	return rivalsData;
+	return data;
 	
 		// const promises = user.rivals.map(async () => {
 		// 	const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, {
@@ -171,7 +170,9 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 		if (!response.ok)
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
-		return await response.json();
+		const responseData = await response.json();
+		console.log(responseData);
+		return responseData;
 
 	}
 	catch (error) {
