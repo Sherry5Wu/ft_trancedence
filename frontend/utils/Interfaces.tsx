@@ -90,13 +90,14 @@ export interface ScoreHistory {
 export interface User {
     username: string;
     id: string;
-    profilePic: ReactElement;
+    profilePic: string;
     email: string;
     score: number;
     rank: number;
     // firstName: string;
     // lastName: string;
-    rivals: string[];
+    rivals: RivalData[];
+    // playedGames: boolean;
     accessToken: string;
     refreshToken: string;
 }

@@ -11,7 +11,7 @@ const calculateWinRatio = (wins: number | undefined, losses: number | undefined,
 		return 0;
 	if (games_played_against_rival === 0)
 		return 0;
-	return (wins / wins + losses)
+	return (wins / wins + losses) * 100;
 }
 
 export const RivalRows = () => {

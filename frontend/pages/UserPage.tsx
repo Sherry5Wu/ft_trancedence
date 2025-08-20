@@ -26,9 +26,8 @@ const UserPage = () => {
 	const showHistory = () => setHistory(!history);
 
 	useEffect(() => {
-		if (!user) return ;
+		if (!user) navigate('/signin');
 		const loadStats = async () => {
-			if (!user) navigate('/signin');
 			if (!param.username) return ;
 
 			setLoading(true);
@@ -54,21 +53,28 @@ const UserPage = () => {
 			const allUsers = await fetchUsers(user?.accessToken);
 			if (!allUsers)
 				return ;
+			console.log('ALL USERS:');
+			console.log(allUsers);
 			const pageOwner = allUsers.filter((u: FetchedUserData) => u.username === param.username);
+			console.log('PAGEOWNER:');
+			console.log(pageOwner);
 			setProfilePicURL(pageOwner.avatarUrl);
+			console.log('PROFILE PIC URL:');
+			console.log(profilePicURL);
 		}
-		console.log('PROFILE PIC URL:');
-		console.log(profilePicURL);
 		loadProfilePicURL();
 	}, [param.username, user?.profilePic, user])
 
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
+	const isRival = user?.rivals.some(r => r.rival_username === param.userName);
+
 	// console.log("ACCESS TOKEN");
 	// console.log(user?.accessToken);
-	console.log("RIVALS in user page");
-	console.log(user?.rivals);
+	// console.log("RIVALS in user page");
+	// console.log(user?.rivals);
+	console.log('isRival = ' + isRival);
 
 	return (
 		<div className='pageLayout'>
@@ -133,7 +139,7 @@ const UserPage = () => {
 
 		:
 		
-		user.rivals.includes(param.userName) ?
+		isRival ?
 
 		<GenericButton
 		className="round-icon-button"
@@ -151,7 +157,6 @@ const UserPage = () => {
 		hoverLabel='ADD TO RIVALS'
 		onClick={() => {
 			addRival(param.username, user?.accessToken);
-			setUser(...prev, )
 		}} />
 		}
 
