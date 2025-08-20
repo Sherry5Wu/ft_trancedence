@@ -20,13 +20,8 @@ const SettingsPage = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Populate local state from user context
   useEffect(() => {
     if (!user) navigate('/signin');
-    // if (user) {
-    //   setFirstName(user?.firstname ?? '');
-    //   setLastName(user?.lastname ?? '');
-    // }
   }, [user]);
 
 
@@ -49,6 +44,7 @@ const SettingsPage = () => {
         setUser({
           ...user, 
           profilePic: avatarUrl});
+        console.log(user.profilePic);
       }
       catch(error) {
         console.error('Avatar upload failed', error);

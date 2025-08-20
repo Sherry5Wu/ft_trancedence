@@ -56,11 +56,13 @@ const SignInPage = () => {
           const signInData = await signInUser(newUser);
           if (signInData) {
             alert('Signed in successfully!');
+            console.log("SIGN IN DATA");
+            console.log(signInData);
             setUser({
               username: signInData.data.user.username,
               id: signInData.data.user.id,
               email: signInData.data.user.email,
-              profilePic: signInData.data.user.profilepic || '../assets/noun-profile-7808629.svg',
+              profilePic: signInData.data.user.avatarUrl || '../assets/noun-profile-7808629.svg',
               score: signInData.stats.score,
               rank: signInData.stats.score,
               rivals: signInData.rivals,
