@@ -7,7 +7,8 @@ safer for production.
 
 3. consider the avatar image dimensions limitation function.
 
-4. New API: getch user list : username and avatar
+4. debugging for upload avatar
+5. run the test case auth.routes.test.js
 
 
 Build and run docker
