@@ -1,6 +1,6 @@
 // pages/Leaderboard.tsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { useUserContext } from '../context/UserContext';
@@ -11,6 +11,7 @@ const LeaderboardPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user } = useUserContext();
+  const [loading, setLoading] = useState(true);
 
   // Mocked leaderboard data
   interface PlayerStats {
@@ -49,7 +50,7 @@ const LeaderboardPage: React.FC = () => {
       totalScore: 18,
       isRival: 'y',
     },
-    {
+    { 
       username: 'Rival4',
       profilePic: '../assets/profilepics/image.jpg',
       totalGames: 8,
@@ -117,6 +118,12 @@ const LeaderboardPage: React.FC = () => {
     .sort((a, b) => b.totalScore - a.totalScore) // sort by score descending
     .slice(0, 10); // limit to top 10
 
+	if (leaderboardData.length == 0)
+    	return <div className='flex justify-center'>{t('pages.leaderboard.empty')}</div>;
+
+	// if (loading)
+	// 	return <div className='flex justify-center'>{t('pages.leaderboard.loadingLeaderboard')}</div>;
+
   return (
     <main
       className="pageLayout"
@@ -132,7 +139,7 @@ const LeaderboardPage: React.FC = () => {
       <h1 id="pageTitle" className="h1 font-semibold text-center">
         {t('pages.leaderboard.title')}
       </h1>
- 
+
       {leaderboardData.length > 0 && (
         <div
           aria-label={t('pages.leaderboard.aria.table')}

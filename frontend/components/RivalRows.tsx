@@ -25,12 +25,12 @@ export const RivalRows = () => {
 		}
 		loadRivals();
 	}, [user])
+    
+	if (rivalData.length == 0)
+    	return <div className='flex justify-center'>{t('components.rivalRows.noRivals')}</div>;
 
 	if (loading)
 		return <div className='flex justify-center'>{t('components.rivalRows.loadingRivals')}</div>;
-
-	if (rivalData.length == 0)
-    	return <div className='flex justify-center'>{t('components.rivalRows.noRivals')}</div>;
 
     return (
         <div aria-label='rivals data' className=''>

@@ -400,6 +400,7 @@
     "leaderboard": {
       "title": "Leaderboard",
       "empty": "No players to show.",
+      "loadingLeaderboard": "Loading leaderboard players...",
       "columns": {
         "username": "Username",
         "rival": "Rival",
