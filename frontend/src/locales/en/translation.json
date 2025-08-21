@@ -490,5 +490,57 @@
           "hidePass": "Hide password or PIN code"
         }
       }
+  },
+  
+  "game": {
+    "player1": "Player 1",
+    "player2": "Player 2",
+    "startMatch": "Start Match",
+    "pauseMatch": "Game paused",
+    "finishMatch": "Match is over!",
+    "winner": "Winner",
+    "finalScore": "Final Score",
+    "playAgain": "Play again",
+    "options": {
+      "title": "match options",
+      "ballSpeed": {
+        "subtitle": "Base ball speed",
+        "slow": "Slow",
+        "medium": "Medium",
+        "fast": "Fast"
+      },
+      "winCondition": {
+        "bestOf5": "Best of 5",
+        "bestOf9": "Best of 9",
+        "bestOf19": "Best of 19"
+      },
+      "map": {
+        "default": "Default",
+        "large": "Large",
+        "obstacles": "Obstacles"
+      }
+    },
+    "controls": {
+      "move": "Move",
+      "up": "Up",
+      "down": "Down",
+      "boost": "Boost",
+      "shield": "Shield",
+      "reset": "Reset to default controls",
+      "resetAll": "Reset all player to default controls",
+      "swap": "Swap players controls keys"
+    },
+    "instruction": {
+      "start": "Press space to start",
+      "pause": "Press space to continue"
+    },
+    "tournament": {
+      "round": "Round",
+      "match": "Match",
+      "nextMatch": "Next Match",
+      "upNextMatch": "Up next match",
+      "status": "Tournament completed!",
+      "champion": "Tournament champion"
+    }
   }
 }
