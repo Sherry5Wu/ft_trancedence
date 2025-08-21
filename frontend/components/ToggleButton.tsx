@@ -27,15 +27,16 @@ interface ToggleButtonProps {
         setIsOn(checked);
     }, [checked]);
 
-    const handleClick = () => {
-        if (onClick)
-            onClick();
-        setIsOn(!isOn);
-    }
+    // const handleClick = () => {
+    //     if (onClick)
+    //         onClick();
+    //     setIsOn(!isOn);
+    // }
 
     return (
         <div className={`${className} flex items-center ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
-            <button onClick={handleClick} 
+            {/* <button onClick={handleClick}  */}
+            <button onClick={onClick}
             className={`relative inline-block w-13 h-7 rounded-full transition-all ease-in-out 
             ${isOn ? 'bg-slate-800' : 'bg-slate-100'}`}
             disabled={disabled}>

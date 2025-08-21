@@ -322,3 +322,27 @@ export const fetchUsers = async (accessToken: string) => {
 		return null;
 	}
 };
+
+
+export const disable2FA = async (accessToken?: string): Promise<boolean> => {
+  if (!accessToken) return false;
+
+  try {
+    const response = await fetch('/api/user/disable-2fa', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to disable 2FA: ${response.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error disabling 2FA:', error);
+    return false;
+  }
+};
