@@ -56,7 +56,7 @@ export const RivalRows = () => {
             {rivalData.map((rival, index: number) => {
 				const winratio = calculateWinRatio(rival.wins_against_rival, rival.loss_against_rival, rival.games_played_against_rival);
                 return (
-					<div className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
+					<div key={index} className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
 						<li className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'
 								onClick={() => navigate(`/user/${rival.rival_username}`)}>
 							<span></span>{/* <img src={rival.picture} className='profilePicSmall'/> */}
