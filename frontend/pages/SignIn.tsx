@@ -1,7 +1,7 @@
 // /src/pages/SignIn.tsx
 
 import React, { useEffect } from 'react';
-// import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import CustomGoogleLoginButton from "../components/CustomGoogleLoginButton";
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ import { LoginData } from '../utils/Interfaces';
 import { signInUser } from '../utils/Fetch';
 
 // const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
-// const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
+const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
 
 const SignInPage: React.FC = () => {
   const { t } = useTranslation(); 
@@ -30,30 +30,10 @@ const SignInPage: React.FC = () => {
     usernameField.value !== '' &&
     passwordField.value !== '' &&
     !usernameField.error &&
-    !passwordField.error;;
-
-  // Obs possible not needed, check after integration with backend 
-  // useEffect(() => {
-  //   const handlePopupMessage = (event) => {
-  //     // Ensure the message is coming from the correct origin
-  //     if (event.origin === 'https://accounts.google.com') {
-  //       if (event.data === 'googleLoginSuccess') {
-  //         console.log('User logged in successfully');
-  //         // You can navigate the user or update state
-  //         navigate('/user/:username');
-  //       } else if (event.data === 'googleLoginFailed') {
-  //         console.error('Login failed');
-  //       }
-  //     }
-  //   };
-  //   window.addEventListener('message', handlePopupMessage);
-  //   return () => {
-  //     window.removeEventListener('message', handlePopupMessage);
-  //   };
-  // }, [navigate]);
+    !passwordField.error;
 
 return (
-    // <GoogleOAuthProvider clientId={clientId}>
+    <GoogleOAuthProvider clientId={clientId}>
       <main
         className="pageLayout"
         role="main"
@@ -141,7 +121,7 @@ return (
         </p>
         </div>
       </main>
-    // {/* </GoogleOAuthProvider> */}
+    </GoogleOAuthProvider>
   );
 };
 
