@@ -167,7 +167,7 @@ export const removeRival = async (rivalName: string, accessToken: string) => {
 		const response = await fetch(`https://localhost:8443/stats/rivals/username/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json',
+				// 'Content-Type': 'application/json',
 				'Authorization': `Bearer ${accessToken}`,
 			},
 		});

@@ -57,7 +57,8 @@ const UserPage = () => {
 			if (!allUsers)
 				return ;
 			const pageOwner = allUsers.filter((u: FetchedUserData) => u.username === param.username);
-			setProfilePicURL(pageOwner[0].avatarUrl);
+			if (pageOwner)
+				setProfilePicURL(pageOwner[0].avatarUrl);
 		}
 		loadProfilePicURL();
 	}, [param.username, user?.profilePic, user])
@@ -146,8 +147,13 @@ const UserPage = () => {
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='REMOVE FROM RIVALS'
 		onClick={() => {
-			removeRival(param.username, user?.accessToken)}
-		 	} />
+			if (user && param.username)
+			{
+				removeRival(param.username, user?.accessToken)
+				setUser({
+					...user, 
+					rivals: user?.rivals.filter(r => r.rival_username !== param.username)})
+			}}} />
 	
 		:
 
