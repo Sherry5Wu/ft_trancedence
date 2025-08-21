@@ -3,9 +3,12 @@ import { BarGraph } from '../components/BarGraph';
 import { PieGraph } from '../components/PieGraph';
 import { UserStats, ScoreHistory } from '../utils/Interfaces'
 import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from 'react';
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
   const { t } = useTranslation();
+  const [worstRivalPic, setWorstRivalPic] = useState('');
+  const [worstRivalName, setWorstRivalName] = useState('');
 
   // console.log('Userstats: ');
   // console.log(userStats);
@@ -14,6 +17,13 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
 
   if (!userStats || !scoreHistory)
     return <div className='flex justify-center my-5'>{t('components.stats.noData')}</div>
+
+  // useEffect(() => {
+  //   const findWorstRival = async () => {
+
+  //   }
+  //   findWorstRival();
+  // }, []);
 
 	return (
       <div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>
@@ -45,8 +55,8 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
           <div className='flex flex-col items-center'>
             <button className='group relative flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center}'>
               <div className='absolute text-3xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 
-                              group-hover:opacity-100 transition-opacity ease-in-out'>{userStats.worstRival}</div>
-              <img src={userStats.worstRivalPic} className='profilePic mt-1' />
+                              group-hover:opacity-100 transition-opacity ease-in-out'>{worstRivalName}</div>
+              <img src={''} className='profilePic mt-1' />
             </button>
             <h4 className='h4 my-2 font-semibold'>{t('components.stats.worstRival')}</h4>
           </div>

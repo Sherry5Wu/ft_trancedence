@@ -56,9 +56,9 @@ const UserPage = () => {
 			const allUsers = await fetchUsers(user?.accessToken);
 			if (!allUsers)
 				return ;
-			const pageOwner = allUsers.filter((u: FetchedUserData) => u.username === param.username);
+			const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
 			if (pageOwner)
-				setProfilePicURL(pageOwner[0].avatarUrl);
+				setProfilePicURL(pageOwner.avatarUrl);
 		}
 		loadProfilePicURL();
 	}, [param.username, user?.profilePic, user])
