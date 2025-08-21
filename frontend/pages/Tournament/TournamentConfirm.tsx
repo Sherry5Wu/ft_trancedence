@@ -101,52 +101,6 @@ const TournamentConfirm: React.FC = () => {
     aliasFields.every((f) => f.value.trim() !== '') &&
     aliasFields.every((f) => f.error === '');
 
-//   return (
-
-    
-//     <div className="flex flex-col items-center p-8 space-y-6">
-//       <h3 className="font-semibold text-center text-xl">Choose player aliases</h3>
-
-//       <div className="flex flex-col gap-4 mt-6 w-full max-w-xl">
-//         {aliasFields.map((field, idx) => {
-//           const player = players[idx] ?? null;
-
-//           return (
-//             <div key={idx} className="flex items-center gap-4">
-//               <UserProfileBadge size="sm" user={player} disabled />
-//               <GenericInput
-//                 type="text"
-//                 placeholder={`Player ${idx + 1}`}
-//                 value={field.value}
-//                 onFilled={(val: string) => handleAliasChange(idx, val)}
-//                 onBlur={() => handleBlur(idx)}
-//                 showEditIcon
-//                 errorMessage={field.error}
-//               />
-//             </div>
-//           );
-//         })}
-//       </div>
-
-//       <div className="flex flex-wrap justify-center gap-4 mt-8">
-//         <GenericButton
-//           className="generic-button"
-//           text="BACK"
-//           onClick={() => navigate('/tournaments/new')}
-//         />
-//         <GenericButton
-//           className="generic-button"
-//           text="START"
-//           disabled={!formFilled}
-//           onClick={() => navigate('/game')}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TournamentConfirm;
-
   return (
     <main
       className="pageLayout"

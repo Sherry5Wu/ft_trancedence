@@ -26,10 +26,11 @@ const UserPage = () => {
 	const showHistory = () => setHistory(!history);
 
 	useEffect(() => {
-		if (!user) return ;
+		if (!user)
+			navigate('/signin');
 		const loadStats = async () => {
-			if (!user) navigate('/signin');
-			if (!param.username) return ;
+			if (!param.username)
+				return ;
 
 			setLoading(true);
 
@@ -49,26 +50,32 @@ const UserPage = () => {
 	}, [user, param.username]);
 
 	useEffect(() => {
-		if (!user) return ;
+		if (!user)
+			return ;
 		const loadProfilePicURL = async () => {
 			const allUsers = await fetchUsers(user?.accessToken);
 			if (!allUsers)
 				return ;
 			const pageOwner = allUsers.filter((u: FetchedUserData) => u.username === param.username);
-			setProfilePicURL(pageOwner.avatarUrl);
+			if (pageOwner)
+				setProfilePicURL(pageOwner[0].avatarUrl);
 		}
-		console.log('PROFILE PIC URL:');
-		console.log(profilePicURL);
 		loadProfilePicURL();
 	}, [param.username, user?.profilePic, user])
 
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
+	const isRival = user?.rivals.some(r => r.rival_username === param.username);
+
 	// console.log("ACCESS TOKEN");
 	// console.log(user?.accessToken);
-	console.log("RIVALS in user page");
-	console.log(user?.rivals);
+	// console.log("RIVALS in user page");
+	// console.log(user?.rivals);
+	// console.log('isRival = ' + isRival);
+	// console.log("RANK");
+	// console.log(userStats.rank);
+	console.log()
 
 	return (
 		<div className='pageLayout'>
@@ -77,7 +84,7 @@ const UserPage = () => {
 
 		<div className='profilePicBig'>
 			{profilePicURL ? 
-				<img src={profilePicURL} className='w-full h-full object-cover'/> : <img src='../assets/noun-profile-7808629.svg' className='w-full h-full object-cover'/>}
+				<img src={profilePicURL} className='profilePicBig'/> : <img src='../assets/noun-profile-7808629.svg' className='w-full h-full object-cover'/>}
 		</div>
 
 		<div className='w-56 truncate mb-12'>
@@ -88,7 +95,7 @@ const UserPage = () => {
 			</div>
 			<div className='flex justify-between'>
 				<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
-				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '?'}</h4>
+				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
 			</div>
 		</div>
 
@@ -133,14 +140,21 @@ const UserPage = () => {
 
 		:
 		
-		user.rivals.includes(param.userName) ?
+		isRival ?
 
 		<GenericButton
 		className="round-icon-button"
 		text={undefined}
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='REMOVE FROM RIVALS'
-		onClick={() => removeRival(param.username, user?.accessToken)} />
+		onClick={() => {
+			if (user && param.username)
+			{
+				removeRival(param.username, user?.accessToken)
+				setUser({
+					...user, 
+					rivals: user?.rivals.filter(r => r.rival_username !== param.username)})
+			}}} />
 	
 		:
 
@@ -150,8 +164,14 @@ const UserPage = () => {
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='ADD TO RIVALS'
 		onClick={() => {
-			addRival(param.username, user?.accessToken);
-			setUser(...prev, )
+			if (user && param.username)
+			{
+				addRival(param.username, user?.accessToken);
+				setUser({
+					...user, 
+					rivals: [...user.rivals, 
+						{rival_username: param.username}]})
+			};
 		}} />
 		}
 

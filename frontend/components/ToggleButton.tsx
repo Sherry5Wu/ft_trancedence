@@ -1,16 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAccessibilityContext } from '../context/AccessibilityContext';
 
 
 interface ToggleButtonProps {
-    label?: string;
+    labelOn?: string;
+    labelOff?: string;
+    checked?: boolean;
+    // label?: string;
     className?: string;
     disabled?: boolean
     onClick?: () => void;
 }
 
-export const ToggleButton = ( { label, onClick, className, disabled = false}: ToggleButtonProps) => {
-    const [isOn, setIsOn] = useState(false);
+// export const ToggleButton = ( { label, onClick, className, disabled = false}: ToggleButtonProps) => {
+    export const ToggleButton = ({
+    labelOn = 'On',
+    labelOff = 'Off',
+    onClick,
+    className,
+    disabled = false,
+    checked = false,
+    }: ToggleButtonProps) => {
+    const [isOn, setIsOn] = useState(checked);
+
+    useEffect(() => {
+        setIsOn(checked);
+    }, [checked]);
 
     const handleClick = () => {
         if (onClick)
@@ -29,7 +44,8 @@ export const ToggleButton = ( { label, onClick, className, disabled = false}: To
                     {/* {isOn ? 'ON' : 'OFF'} */}
                 </div>
             </button>
-            <span className='ml-3'>{label}</span>
+            {/* <span className='ml-3'>{label}</span> */}
+            <span className="ml-3">{isOn ? labelOn : labelOff}</span>            
         </div>
     );
 } 

@@ -23,15 +23,16 @@ import { SearchBar } from '../components/SearchBar';
 import { useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
 import { fetchUsers } from '../utils/Fetch';
+import { FetchedUserData } from '../utils/Interfaces';
 
 export const Navbar = () => {  
     const { user, setUser } = useUserContext();
     const { darkMode, setDarkMode } = useDarkModeContext();
     const { largeText, setLargeText} = useAccessibilityContext();
-    const searchField = useValidationField('', isValidUsername);
-    const [rivalData, setRivalData] = useState<string[]>([]);
-    const navigate = useNavigate();
     const { t, i18n } = useTranslation();
+    const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+    const [rivalData, setRivalData] = useState<FetchedUserData[]>([]);
+    const navigate = useNavigate();
     const accessToken = useUserContext().user?.accessToken;
     
     // fetch users from search bar
@@ -40,6 +41,8 @@ export const Navbar = () => {
         const fetchOtherUsers = async (accessToken) => {
             const data = await fetchUsers(accessToken);
             setRivalData(data);
+            // console.log("DATA FROM SEARCH");
+            // console.log(data);
         };
         fetchOtherUsers(accessToken);
     }, [user])
@@ -56,7 +59,7 @@ export const Navbar = () => {
         if (user)
             navigate(`/user/${user?.username}`);
         else
-            navigate('/signin')
+            navigate('/')
     } 
 
     const handleLogOut = () => {
@@ -141,7 +144,7 @@ export const Navbar = () => {
                         />
                     </div>
                 </div>
-                <Menu aria-label='profile menu' Icon={user?.profilePic || <ProfileIcon />} elements={profileMenuItems} className='menuIcon' variant='userMenu'/>
+                <Menu aria-label='profile menu' Icon={<img src={user.profilePic} className='profilePicSmall' />} elements={profileMenuItems} className='menuIcon' variant='userMenu'/>
             </div>
         </nav>
     );

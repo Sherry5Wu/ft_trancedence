@@ -154,6 +154,7 @@ export default async function matchHistoryRoutes(fastify) {
             updateRivalsDataTable(opponent_username, player_username, playedagainstRival, gamesWonRival, gamesLostRival, eloChanges.player2.new);
         }
         
+        // Rank lasketaan automaattisesti updateUserMatchDataTable-funktiossa
         updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username);
         updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username);
         updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at, player_username);

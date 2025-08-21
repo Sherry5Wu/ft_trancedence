@@ -67,7 +67,7 @@ const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({ onComplet
           onChange={(e) => handleChange(e.target.value, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}
           aria-label={`Digit ${index + 1}`}
-          className="w-12 h-12 text-center bg-[#FFEE8C] rounded-full text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-12 h-12 text-center bg-[#FFEE8C] rounded-full text-xl focus:outline-none focus:ring-3 focus:ring-black"
         />
       ))}
     </div>

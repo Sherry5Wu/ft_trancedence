@@ -5,6 +5,7 @@ export default async function userMatchDataRoutes(fastify) {
 fastify.get('/', (request, reply) => {
     try {
       const rows = db.prepare('SELECT * FROM user_match_data').all();
+      // Optionally, you could sort by rank or elo_score here
       reply.send(rows);
     } catch (err) {
       reply.status(500).send({ error: err.message });

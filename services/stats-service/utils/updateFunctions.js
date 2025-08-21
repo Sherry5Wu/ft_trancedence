@@ -1,3 +1,18 @@
+// Päivitä kaikkien käyttäjien rank elo_score:n mukaan
+export function updateAllUserRanks() {
+  try {
+    // Hae kaikki käyttäjät järjestyksessä elo_score DESC
+    const rows = db.prepare('SELECT player_id FROM user_match_data ORDER BY elo_score DESC').all();
+    let rank = 1;
+    for (const row of rows) {
+      db.prepare('UPDATE user_match_data SET rank = ? WHERE player_id = ?').run(rank, row.player_id);
+      rank++;
+    }
+    console.log('✅ Kaikkien käyttäjien rankit päivitetty.');
+  } catch (err) {
+    console.error('Error updating user ranks:', err);
+  }
+}
 import { db } from '../db/init.js';
 export function updateScoreHistoryTable(player_id, elo_score, played_at, username)
 {
@@ -38,8 +53,8 @@ export function updateUserMatchDataTable(playerId, newScore, playerName, gamesPl
   try 
   {
     const insertStmt = db.prepare(`
-        INSERT INTO user_match_data (player_username, player_id, player_name, elo_score, games_played, games_lost, games_won, longest_win_streak, games_draw)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO user_match_data (player_username, player_id, player_name, elo_score, games_played, games_lost, games_won, longest_win_streak, games_draw, rank)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
         ON CONFLICT(player_id) DO UPDATE SET
         player_name = excluded.player_name,
         elo_score = excluded.elo_score,
@@ -51,7 +66,9 @@ export function updateUserMatchDataTable(playerId, newScore, playerName, gamesPl
         player_username = excluded.player_username
       `);
       insertStmt.run(username, playerId, playerName, Math.round(newScore), gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw);
-      console.log(`✅ Updated or created player: ${playerId} (${playerName})`);
+      // Päivitä kaikkien käyttäjien rankit aina kun joku muuttuu
+      updateAllUserRanks();
+      console.log(`\u2705 Updated or created player: ${playerId} (${playerName})`);
   } 
   catch(err) {
     console.log('Error updating user match data table:', err);

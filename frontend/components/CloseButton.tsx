@@ -1,19 +1,28 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import CloseIcon from '../assets/symbols/noun-cross-rounded-5432729.svg';
 
-export const CloseButton = ({ iconSize = 24, className = '' }) => {
-  const navigate = useNavigate();
+interface CloseButtonProps {
+  iconSize?: number;
+  className?: string;
+  onClick: () => void;
+  ariaLabel?: string;
+}
 
+export const CloseButton: React.FC<CloseButtonProps> = ({
+  iconSize = 24,
+  className = '',
+  onClick,
+  ariaLabel = 'Go back',
+}) => {
   return (
     <button
-      onClick={() => navigate(-1)}
-      className={`p-1 bg-transparent border-0 cursor-pointer ${className}`}
-      aria-label="Go back"
+      onClick={onClick}
+      className={`p-1 bg-transparent rounded-full border-2 border-transparent cursor-pointer ${className} hover:bg-white hover:border-[#4682B4]`}
+      aria-label={ariaLabel}
     >
       <img
         src={CloseIcon}
-        alt="Go back"
+        alt={ariaLabel}
         width={iconSize}
         height={iconSize}
         className="block"

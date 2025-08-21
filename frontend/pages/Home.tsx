@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
     />
 
       <div className="text-center mt-6">
-        <h1 id="pageTitle" className="font-bold text-3xl mb-4">
+        <h1 id="pageTitle" className="h1">
           P | N G - P · N G
         </h1>
 

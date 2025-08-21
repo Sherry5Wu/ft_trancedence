@@ -26,55 +26,55 @@ export const createUser = async (player: UserProfileData): Promise<UserProfileDa
 
 export const signInUser = async (player: LoginData) => {
 	try {
-	  const response = await fetch('https://localhost:8443/as/auth/login', {
-		method: 'POST',
-		headers: {
-		  'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(player)
-	  });
-	  
-	  if (!response.ok) {
-		throw new Error(`HTTP error! Status: ${response.status}`);
-	  }
+		// fetch for user data
+		const response = await fetch('https://localhost:8443/as/auth/login', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(player)
+		});
+		
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
 
-	  const data = await response.json();
+		const data = await response.json();
 
-	//   const userID = data.user.id;
-	//   console.log(userID);
-
-	  const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
-		method: 'GET',
-		headers: {
-		  'Content-Type': 'application/json',
-		},
-	  });
-	  
-	  if (!statResponse.ok) {
+		// fetch for user stats
+		const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		
+		if (!statResponse.ok) {
 		throw new Error(`HTTP error! Status: ${statResponse.status}`);
-	  }
-	  
-	  const stats = await statResponse.json();
+		}
+		
+		const stats = await statResponse.json();
 
-	  const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
-		method: 'GET',
-		headers: {
-		  'Content-Type': 'application/json',
-		},
-	  });
-	  
-	  if (!rivalResponse.ok) {
-		throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
-	  }
-	  
-	  const rivals = await rivalResponse.json();
+		// fetch for user rivals
+		const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
+			method: 'GET',
+			headers: {
+			'Content-Type': 'application/json',
+			},
+		});
+		
+		if (!rivalResponse.ok) {
+			throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
+		}
+		
+		const rivals = await rivalResponse.json();
 
-	  return {data, stats, rivals};
-	}
+		return {data, stats, rivals};
+		}
 
 	catch (error) {
-	  console.error('Error:', error);
-	  return null;
+		console.error('Error:', error);
+		return null;
 	}
 };
 
@@ -87,7 +87,6 @@ export const updateProfilePic = async (file: File, accessToken: string) => {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${accessToken}`,
-				// 'Content-Type': 'multipart/form-data',
 			}, 
 			body: formData,
 		})
@@ -115,31 +114,13 @@ export const fetchRivalData = async (username: string) => {
 
 		if (!rivals.ok) {
 			throw new Error(`HTTP error! Status: ${rivals.status}`);
-	}
+		}
 
-	const data: RivalData[] = await rivals.json();
-	console.log('RIVALSDATA: ')
-	console.log(data);
+		const data: RivalData[] = await rivals.json();
+		console.log('RIVALSDATA: ')
+		console.log(data);
 
-	return data;
-	
-		// const promises = user.rivals.map(async () => {
-		// 	const response = await fetch(`https://localhost:8443/stats/rivals/${user.id}`, {
-		// 		method: 'GET',
-		// 		headers: {
-		// 		'Content-Type': 'application/json',
-		// 		},
-		// 	});
-			
-		// 	if (!response.ok) {
-		// 		throw new Error(`HTTP error! Status: ${response.status}`);
-		// 	}
-
-		// 	return response.json();
-		// })
-
-		// const rivalDataArray = await Promise.all(promises);
-		// return rivalDataArray.sort(); //sort alphabetically
+		return data;
 	}
 
 	catch (error) {
@@ -183,10 +164,10 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 
 export const removeRival = async (rivalName: string, accessToken: string) => {
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/${rivalName}`, {
+		const response = await fetch(`https://localhost:8443/stats/rivals/username/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
-				'Content-Type': 'application/json',
+				// 'Content-Type': 'application/json',
 				'Authorization': `Bearer ${accessToken}`,
 			},
 		});

@@ -1,21 +1,23 @@
 const API_BASE = 'https://localhost:8443';
 
 type StatsPayload = {
+  player_id: string;
+  player_username: string;
+  player_name: string;
+  opponent_id?: string | null;
+  opponent_username: string;
+  opponent_name: string;
   player_score: number;
   opponent_score: number;
-  duration: string;              // "HH:MM:SS"
-  opponent_id: string;           // "guest" or user id
-  player_name: string;           // logged-in user’s username
-  opponent_name: string;         // opponent display name
+  duration: string;
   result: 'win' | 'loss' | 'draw';
-  opponent_username: string;     // keep both name+username
-  played_at: string;             // ISO start timestamp
+  played_at?: string;
 };
 
 type TournamentPayload = {
-  tournament_id: string;         // PlayersContext.tournamentTitle
-  stage_number: number;          // roundNum
-  match_number: number;          // matchIdx + 1
+  tournament_id: string;
+  stage_number: number;
+  match_number: number;
   player_name: string;
   opponent_name: string;
   result: 'win' | 'loss' | 'draw';
@@ -42,15 +44,15 @@ export async function postMatchHistory(payload: StatsPayload, token?: string) {
   return res.json();
 }
 
-export async function postTournamentHistory(payload: TournamentPayload, token?: string) {
-  const res = await fetch(`${API_BASE}/tournament/tournament_history`, {
+export async function postTournamentHistory(payload: TournamentPayload) {
+  const res = await fetch(`${API_BASE}/tournament_history`, {
     method: 'POST',
-    headers: authHeaders(token),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`POST /tournament/tournament_history ${res.status}: ${text || res.statusText}`);
+    throw new Error(`POST /tournament_history ${res.status}: ${text || res.statusText}`);
   }
   return res.json();
 }

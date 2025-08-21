@@ -4,6 +4,7 @@ import { RivalData } from '../utils/Interfaces';
 import { useUserContext } from '../context/UserContext';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import TrashIcon from '../assets/noun-trash-3552649.svg?react'
+import { useTranslation } from 'react-i18next';
 import { fetchRivalData } from '../utils/Fetch';
 
 const calculateWinRatio = (wins: number | undefined, losses: number | undefined, games_played_against_rival: number | undefined) => {
@@ -11,10 +12,11 @@ const calculateWinRatio = (wins: number | undefined, losses: number | undefined,
 		return 0;
 	if (games_played_against_rival === 0)
 		return 0;
-	return (wins / wins + losses)
+	return (wins / wins + losses) * 100;
 }
 
 export const RivalRows = () => {
+	const { t } = useTranslation();
 	const { user } = useUserContext();
   	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
@@ -32,29 +34,29 @@ export const RivalRows = () => {
 		}
 		loadRivals();
 	}, [user])
+    
+	if (rivalData.length == 0)
+    	return <div className='flex justify-center'>{t('components.rivalRows.noRivals')}</div>;
 
 	if (loading)
-		return <div className='flex justify-center'>Loading rivals...</div>;
-
-	if (rivalData.length == 0)
-    	return <div className='flex justify-center'>No rivals yet</div>;
+		return <div className='flex justify-center'>{t('components.rivalRows.loadingRivals')}</div>;
 
     return (
         <div aria-label='rivals data' className=''>
             <div aria-label='rivals data categories' className='grid grid-cols-12 mb-1 text-center font-semibold'>
                 <span className=''></span>
-                <span className='col-span-2'>Name</span>
-                <span className='col-span-2'>Score</span>
-                <span className='col-span-2'>Win ratio</span>
-                <span className='col-span-3'>Your wins/losses</span>
-                <span className='col-span-2'>Matches played</span>
+                <span className='col-span-2'>{t('components.rivalRows.name')}</span>
+                <span className='col-span-2'>{t('components.rivalRows.score')}</span>
+                <span className='col-span-2'>{t('components.rivalRows.winRatio')}</span>
+                <span className='col-span-3'>{t('components.rivalRows.userRivalWinsLosses')}</span>
+                <span className='col-span-2'>{t('components.rivalRows.matchesPlayed')}</span>
             </div>
 
             <ul>
             {rivalData.map((rival, index: number) => {
 				const winratio = calculateWinRatio(rival.wins_against_rival, rival.loss_against_rival, rival.games_played_against_rival);
                 return (
-					<div className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
+					<div key={index} className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
 						<li className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'
 								onClick={() => navigate(`/user/${rival.rival_username}`)}>
 							<span></span>{/* <img src={rival.picture} className='profilePicSmall'/> */}

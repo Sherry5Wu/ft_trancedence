@@ -1,6 +1,7 @@
 import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useClickOutside } from "../utils/Hooks";
 import { SearchBarInputProps } from "../utils/Interfaces";
+import { useTranslation } from 'react-i18next';
 import { FetchedUserData } from "../utils/Interfaces";
 import { fetchUsers } from '../utils/Fetch';
 import { useUserContext } from "../context/UserContext";
@@ -13,11 +14,12 @@ export const SearchBar = ({
     onFilled,
     onSelect,
     className = '',
-    }: SearchBarInputProps) => {
-        const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        onFilled(e.target.value);
-    };
+}: SearchBarInputProps) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onFilled(e.target.value);
+  };
 
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     // const [rivalData, setRivalData] = useState<string[]>([]);
@@ -64,15 +66,15 @@ export const SearchBar = ({
                         .map((option, index) => (
                             <li
                                 key={index}
-                                className={'dropdown-option'}
+                                className={'dropdown-option !py-1'}
                                 onClick={() => handleOptionClick(option.username)}
                             >
-                            {/* {option.avatar && <img src={option.avatar} className="profilePicSmall" />} */}
+                            {option.avatarUrl ? <img src={option.avatarUrl} className="profilePicMini" /> : <img src='../assets/noun-profile-7808629.svg' className="profilePicMini" />}
                             {option.username}
                             </li>
                         ))
                         :
-                        <li className='flex justify-center text-[#CD1C18] font-semibold'>No users found</li>}
+                        <li className='flex justify-center text-[#CD1C18] font-semibold'>{t('components.searchBar.noUser')}</li>}
                 </ul>
             )}
         </div>

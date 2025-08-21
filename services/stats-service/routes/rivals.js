@@ -135,6 +135,28 @@ export default async function rivalsRoutes(fastify) {
         }
         catch (err) {
             reply.status(500).send({ error: err.message });
-        }
+        }    
     });
+
+    fastify.delete('/username/:rival_username', { preHandler: requireAuth }, (request, reply) => {
+        const player_id = request.id;
+        const { rival_username } = request.params;
+        try {
+            const stmt = db.prepare(`
+                DELETE FROM rivals 
+                WHERE player_id = ? AND rival_username = ?
+            `);
+            const result = stmt.run(player_id, rival_username);
+            if (result.changes === 0) {
+                reply.status(404).send({ error: 'Rival not found' });
+            } else {
+                reply.send({
+                    message: 'Rival removed successfully by username'
+                });
+            }
+        }
+        catch (err) {
+            reply.status(500).send({ error: err.message });
+        }
+     });
 }

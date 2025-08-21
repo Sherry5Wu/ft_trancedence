@@ -1,6 +1,10 @@
-// pages/SignIn.tsx
+// /src/pages/SignIn.tsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
+// import { GoogleOAuthProvider } from '@react-oauth/google';
+import CustomGoogleLoginButton from "../components/CustomGoogleLoginButton";
+import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
@@ -11,79 +15,132 @@ import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validat
 import { LoginData } from '../utils/Interfaces';
 import { signInUser } from '../utils/Fetch';
 
-const SignInPage = () => {
+// const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
+// const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
+
+const SignInPage: React.FC = () => {
+  const { t } = useTranslation(); 
   const navigate = useNavigate();
   const { user, setUser } = useUserContext();
 
-  const usernameField = useValidationField('', isValidUsername);
-  const passwordField = useValidationField('', isValidPassword);
+  const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+  const passwordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
 
   const formFilled =
     usernameField.value !== '' &&
-    passwordField.value !== '';
+    passwordField.value !== '' &&
+    !usernameField.error &&
+    !passwordField.error;;
 
-  return (
-    <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
+  // Obs possible not needed, check after integration with backend 
+  // useEffect(() => {
+  //   const handlePopupMessage = (event) => {
+  //     // Ensure the message is coming from the correct origin
+  //     if (event.origin === 'https://accounts.google.com') {
+  //       if (event.data === 'googleLoginSuccess') {
+  //         console.log('User logged in successfully');
+  //         // You can navigate the user or update state
+  //         navigate('/user/:username');
+  //       } else if (event.data === 'googleLoginFailed') {
+  //         console.error('Login failed');
+  //       }
+  //     }
+  //   };
+  //   window.addEventListener('message', handlePopupMessage);
+  //   return () => {
+  //     window.removeEventListener('message', handlePopupMessage);
+  //   };
+  // }, [navigate]);
 
-      <h3 className="font-semibold text-center">Sign In</h3>
-
-      <GenericInput
-        type="username"
-        placeholder="Username"
-        value={usernameField.value}
-        onFilled={usernameField.onFilled}
-        onBlur={usernameField.onBlur}
-        errorMessage={usernameField.error}
+return (
+    // <GoogleOAuthProvider clientId={clientId}>
+      <main
+        className="pageLayout"
+        role="main"
+        aria-labelledby="pageTitle"
+        aria-describedby="pageDescription"
+      >
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.signIn.aria.description')}
       />
-      <GenericInput
-        type="password"
-        placeholder="Password"
-        value={passwordField.value}
-        onFilled={passwordField.onFilled}
-        onBlur={passwordField.onBlur}
-        errorMessage={passwordField.error}
-      />
 
-      <GenericButton
-        className="generic-button"
-        text="LOG IN"
-        disabled={!formFilled}
-        onClick={async () => {
-          const newUser: LoginData = {
-            identifier: usernameField.value,
-            password: passwordField.value,
-          };
-          const signInData = await signInUser(newUser);
-          if (signInData) {
-            alert('Signed in successfully!');
-            setUser({
-              username: signInData.data.user.username,
-              id: signInData.data.user.id,
-              email: signInData.data.user.email,
-              profilePic: signInData.data.user.profilepic || <img src='../assets/noun-profile-7808629.svg' className='profilePic' />,
-              score: signInData.stats.score,
-              rank: signInData.stats.score,
-              rivals: signInData.rivals,
-              accessToken: signInData.data.accessToken,
-              refreshToken: signInData.data.refreshToken,
-            });
-            navigate(`/user/${usernameField.value}`)
-          }
-          else
-            alert('Sign in failed. Please try again.'); // what went wrong?
+      <div className="flex flex-col justify-center p-8 ">
+        <h2 id="pageTitle" className="font-semibold text-center">
+          {t('pages.signIn.title')}
+        </h2>
+
+        <GenericInput
+          type="text"
+          placeholder={t('common.placeholders.username')}
+          aria-label={t('common.aria.inputs.username')}
+          value={usernameField.value}
+          onFilled={usernameField.onFilled}
+          onBlur={usernameField.onBlur}
+          errorMessage={usernameField.error}
+        />
+
+        <GenericInput
+          type="password"
+          placeholder={t('common.placeholders.password')}
+          aria-label={t('common.aria.inputs.password')}
+          value={passwordField.value}
+          onFilled={passwordField.onFilled}
+          onBlur={passwordField.onBlur}
+          errorMessage={passwordField.error}
+          allowVisibility
+        />
+
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.logIn')}
+          aria-label={t('common.aria.buttons.logIn')}
+          disabled={!formFilled}
+          onClick={async () => {
+            const newUser: LoginData = {
+              identifier: usernameField.value,
+              password: passwordField.value,
+            };
+            const signInData = await signInUser(newUser);
+            if (signInData) {
+              alert('Signed in successfully!');
+              setUser({
+                username: signInData.data.user.username,
+                id: signInData.data.user.id,
+                email: signInData.data.user.email,
+                profilePic: signInData.data.user.avatarUrl || '../assets/noun-profile-7808629.svg',
+                score: signInData.stats.score,
+                rank: signInData.stats.score,
+                rivals: signInData.rivals,
+                accessToken: signInData.data.accessToken,
+                refreshToken: signInData.data.refreshToken,
+              });
+              console.log('SIGNIN DATA PROFILE PIC = ' + signInData.data.user.avatarUrl);
+              navigate(`/user/${usernameField.value}`)
+            }
+            else
+              alert('Sign in failed. Please try again.');
         }}
       />
 
-      {/* GoogleLogin Button */}
+        {/* Google Sign-In */}
+        <CustomGoogleLoginButton
+          aria-label={t('pages.signInWithGoogle.aria.signInWithGoogle')}
+        />
 
-      {/* Sign up link */}
-      <p className="text-center text-sm">
-        Not registered?{' '}
-        <Link to="/signup" className="text: underline">
-          Sign up
-        </Link>
-      </p>
-    </div>
+        <p className="text-center text-sm">
+          {t('pages.signIn.links.notRegistered')}{' '}
+          <Link
+            to="/signup"
+            className="underline"
+            aria-label={t('pages.signIn.aria.signUpLink')}
+          >
+            {t('pages.signIn.links.signUp')}
+          </Link>
+        </p>
+        </div>
+      </main>
+    // {/* </GoogleOAuthProvider> */}
   );
 };
 
