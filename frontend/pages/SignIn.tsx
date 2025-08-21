@@ -108,13 +108,14 @@ return (
                 username: signInData.data.user.username,
                 id: signInData.data.user.id,
                 email: signInData.data.user.email,
-                profilePic: signInData.data.user.profilepic || '../assets/noun-profile-7808629.svg',
+                profilePic: signInData.data.user.avatarUrl || '../assets/noun-profile-7808629.svg',
                 score: signInData.stats.score,
                 rank: signInData.stats.score,
                 rivals: signInData.rivals,
                 accessToken: signInData.data.accessToken,
                 refreshToken: signInData.data.refreshToken,
               });
+              console.log('SIGNIN DATA PROFILE PIC = ' + signInData.data.user.avatarUrl);
               navigate(`/user/${usernameField.value}`)
             }
             else

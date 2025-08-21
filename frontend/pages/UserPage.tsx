@@ -70,11 +70,12 @@ const UserPage = () => {
 
 	// console.log("ACCESS TOKEN");
 	// console.log(user?.accessToken);
-	console.log("RIVALS in user page");
-	console.log(user?.rivals);
-	console.log('isRival = ' + isRival);
+	// console.log("RIVALS in user page");
+	// console.log(user?.rivals);
+	// console.log('isRival = ' + isRival);
 	// console.log("RANK");
 	// console.log(userStats.rank);
+	console.log()
 
 	return (
 		<div className='pageLayout'>
