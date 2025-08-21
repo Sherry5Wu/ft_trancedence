@@ -6,10 +6,14 @@
 
 import jwt from 'jsonwebtoken';
 
+import { models } from '../db/index.js';
+import { InvalidCredentialsError } from './errors.js'
+
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 const ACCESS_EXPIRATION = process.env.JWT_ACCESS_EXPIRATION || '15m';
 const REFRESH_EXPIRATION = process.env.JWT_REFRESH_EXPIRATION || '7d';
+const { RefreshToken } = models;
 
 /**
  * Generate Access JWT token(short-lived).
@@ -67,10 +71,43 @@ function decodeToken(token) {
   return jwt.decode(token, { complete: false });
 }
 
+/**
+ * Store a refresh token (hashed) in DB.
+ * @param {string} token - raw refresh token (JWT)
+ * @param {string} userId
+ * @param {string|null} ip
+ * @param {string|null} userAgent
+ * @returns {Promise<Object>} created RefreshToken row
+ */
+async function storeRefreshToken(token, userId, ip = null, userAgent = null) {
+  if (!token || !userId) {
+    throw new InvalidCredentialsError('Token and userId are required');
+  }
+  let expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // fallback expiry: 7 days expiration
+  try {
+    const decoded = decodeToken(token);
+    if (decoded && decoded.exp) {
+      expiresAt = new Date(decoded.exp * 1000);
+    }
+  } catch (err) {
+    // ignore decode errors and use fallback expiry.
+  }
+
+  const created = await RefreshToken.create({
+    token,
+    userId,
+    expiresAt,
+    ipAddress: ip,
+    userAgent
+  });
+  return created;
+}
+
 export {
   generateAccessToken,
   generateRefreshToken,
   verifyAccessToken,
   verifyRefreshToken,
   decodeToken,
+  storeRefreshToken,
 };

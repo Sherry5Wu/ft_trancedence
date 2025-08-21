@@ -11,6 +11,7 @@ import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
 import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
 import { updateProfilePic } from '../../utils/Fetch';
+import { disable2FA } from '../../utils/Fetch';
 
 const SettingsPage = () => {
   const { t } = useTranslation();
@@ -156,11 +157,24 @@ const SettingsPage = () => {
             {t('pages.userSettings.twoFactor.description')}
 
           <ToggleButton
-            label={t('pages.userSettings.twoFactor.title')}
+            // label={t('pages.userSettings.twoFactor.title')}
+            labelOn={t('pages.userSettings.twoFactor.labelOn')}
+            labelOff={t('pages.userSettings.twoFactor.labelOff')}
             aria-label={t('pages.userSettings.aria.2faToggle')}
-            onClick={() => 
-              navigate('/setup2fa')
-            }
+            checked={!!user?.twoFA} 
+            onClick={async () => {
+              if (user?.twoFA) {
+                  const success = await disable2FA(user.accessToken);
+                  if (success) {
+                    setUser({ ...user, twoFA: false });
+                    alert(t('pages.userSettings.twoFactor.disabled'));
+                  } else {
+                    alert(t('pages.userSettings.twoFactor.disableFailed'));
+                  }
+              } else {
+                navigate('/setup2fa');
+              }
+            }}
           />
           </div>
         </div>

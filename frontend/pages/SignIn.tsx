@@ -114,6 +114,7 @@ return (
                 rivals: signInData.rivals,
                 accessToken: signInData.data.accessToken,
                 refreshToken: signInData.data.refreshToken,
+                twoFA: signInData.data.twoFA,
               });
               navigate(`/user/${usernameField.value}`)
             }
