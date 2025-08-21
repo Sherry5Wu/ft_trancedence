@@ -110,7 +110,7 @@ async function persistRefreshToken(token, userId, ip = null, userAgent = null) {
  * Verify Google ID token and return payload.
  * Throws InvalidCredentialsError on any verification failure.
  */
-export async function verifyGoogleIdToken(idToken) {
+async function verifyGoogleIdToken(idToken) {
   if (!idToken) throw new InvalidCredentialsError('Missing idToken');
 
   const keys = await fetchGoogleCerts();
@@ -188,7 +188,7 @@ async function googleUserLogin(user) {
  * - frontend resends idToken + supplies username + pinCode
  * - backend verifies idToken again, validates username/pin, creates user, persists refresh token, and returns tokens
  */
-export async function googleCompleteRegistration(idToken, username, pinCode, ip = null, userAgent = null) {
+async function googleCompleteRegistration(idToken, username, pinCode, ip = null, userAgent = null) {
   let payload;
   try {
     payload = await verifyGoogleIdToken(idToken);

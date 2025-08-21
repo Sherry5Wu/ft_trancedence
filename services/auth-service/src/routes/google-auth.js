@@ -1,6 +1,6 @@
 import fp from 'fastify-plugin';
 
-import { googleRegister, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
+import { googleUserLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
 import { generateAccessToken, storeRefreshToken } from '../utils/jwt.js';
 
 export default fp(async (fastify) => {
