@@ -123,17 +123,17 @@ const CompleteProfilePage: React.FC = () => {
               return;
             }
 
-            const response = await fetch("https://localhost:8443/as/auth/google-register", {
+            const response = await fetch("https://localhost:8443/as/auth/google-complete", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                idToken: user.googleIdToken,  // ✅ ID token from Google
+                idToken: user.googleIdToken,
                 username: usernameField.value,
                 pinCode: pinField.value,
               }),
             });
 
-            if (!response.ok) throw new Error("Failed to register");
+            if (!response.ok) throw new Error("Failed to complete profile");
 
             const newUser = await response.json();
 
