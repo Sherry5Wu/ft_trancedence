@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next';
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
   const { t } = useTranslation();
 
-  console.log('Userstats: ');
-  console.log(userStats);
-  console.log('Score history: ')
-  console.log(scoreHistory);
+  // console.log('Userstats: ');
+  // console.log(userStats);
+  // console.log('Score history: ')
+  // console.log(scoreHistory);
 
   if (!userStats || !scoreHistory)
     return <div className='flex justify-center my-5'>{t('components.stats.noData')}</div>
