@@ -152,64 +152,35 @@ export async function verifyGoogleIdToken(idToken) {
 }
 
 /**
- * googleRegister(idToken, ip, userAgent)
+ * googleUserLogin(idToken)
  * - If googleId already registered -> login (issue tokens and persist refresh token)
  * - If not registered -> ensure email not taken -> return { profile_complete: false, ... }
  *
  * Note: this function does NOT create a DB row when profile incomplete (Q2 = B).
  */
-export async function googleRegister(idToken, ip = null, userAgent = null) {
-  let payload;
-  try {
-    payload = await verifyGoogleIdToken(idToken);
-  } catch (err) {
-    if (err instanceof InvalidCredentialsError) throw err;
-    throw new InvalidCredentialsError(`Error verifying Google idToken: ${err.message}`);
-  }
-
-  if (!payload.email_verified) {
-    throw new ValidationError('Google email is not verified');
-  }
-
-  const googleId = payload.sub;
-  const email = (payload.email || '').toLowerCase().trim();
-
-  // 1) If googleId already registered -> login
-  const existingByGoogle = await User.findOne({ where: { googleId } });
-  if (existingByGoogle) {
-    const accessToken = generateAccessToken({ id: existingByGoogle.id });
-    const refreshToken = generateRefreshToken({ id: existingByGoogle.id });
-
-    // persist refresh token
-    try {
-      await persistRefreshToken(refreshToken, existingByGoogle.id, ip, userAgent);
-    } catch (err) {
-      // don't block login on persistence error, but log
-      /* eslint-disable no-console */
-      console.warn('Failed to persist refresh token:', err.message);
-      /* eslint-enable no-console */
-    }
-
-    return {
-      userId: existingByGoogle.id,
-      accessToken,
-      refreshToken
-    };
-  }
-
-  // 2) Not registered by google -> ensure email doesn't belong to existing non-google user
-  const existingByEmail = await User.findOne({ where: { email } });
-  if (existingByEmail) {
-    throw new ConflictError('Email is already registered. Please sign in with your existing credentials or link accounts.');
-  }
-
-  // 3) Otherwise return profile incomplete response (no DB row created)
-  return {
-    profile_complete: false,
-    email,
-    name: payload.name || null,
-    picture: payload.picture || null
+async function googleUserLogin(user) {
+  // minimal payloads
+  const accessPayload = {
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
   };
+  const refreshPayload = { id: user.id };
+
+  const accessToken = generateAccessToken(accessPayload);
+  const refreshToken = generateRefreshToken(refreshPayload);
+
+  // Build public user object (do not include sensitive fields)
+  const publicUser = {
+    id: user.id,
+    username: user.username,
+    avatarUrl: user.avatarUrl || null, // include only if you support it
+    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
+    is2FAConfirmed: user.is2FAConfirmed,
+  };
+
+  return { accessToken, refreshToken, user: publicUser };
 }
 
 /**
@@ -306,4 +277,10 @@ export async function googleCompleteRegistration(idToken, username, pinCode, ip 
     }
     throw err;
   }
+}
+
+export {
+  verifyGoogleIdToken,
+  googleUserLogin,
+  googleCompleteRegistration,
 }

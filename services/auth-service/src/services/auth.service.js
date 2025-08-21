@@ -14,7 +14,7 @@ import { Op } from 'sequelize';
 
 import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
-import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
+import { generateAccessToken, generateRefreshToken , storeRefreshToken } from '../utils/jwt.js';
 import { ConflictError, InvalidCredentialsError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { normalizeAndValidateEmail, normalizeEmail, validatePassword, validateUsername, validatePincode } from '../utils/validators.js';
 
@@ -70,7 +70,9 @@ async function registerUser(email, username, password, pinCode) {
  * @param {string} password - Plaintext password
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
-async function authenticateUser(identifier, password) {
+async function authenticateUser(identifier, password, opts= {}) {
+  const { ip = null, userAgent = null } = opts;
+
   // Find user by email or username, including secrets
   const user = await User.scope('withSecrets').findOne({
     where: {
@@ -95,22 +97,26 @@ async function authenticateUser(identifier, password) {
   }
 
   // Generate JWT tokens
-  const payload = {
+  const accessTokenPayload = {
     id: user.id,
     email: user.email,
     username: user.username,
     is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
   };
-  const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken(payload);
+  // keep the refreshTokenPayload be minimal
+  const refreshTokenPayload = { id: user.id };
+
+  const accessToken = generateAccessToken(accessTokenPayload);
+  const refreshToken = generateRefreshToken(refreshTokenPayload);
 
   // Save refresh token in DB with assocation
-  await RefreshToken.create({
-    token: refreshToken,
-    userId: user.id,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
+  // await RefreshToken.create({
+  //   token: refreshToken,
+  //   userId: user.id,
+  //   expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
+  // });
 
-  });
+  await storeRefreshToken(refreshToken, user.id, ip, userAgent);
 
   // return the only asked data
   const publicUser = {
