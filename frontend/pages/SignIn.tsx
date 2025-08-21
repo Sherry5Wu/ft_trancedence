@@ -114,6 +114,7 @@ return (
                 rivals: signInData.rivals,
                 accessToken: signInData.data.accessToken,
                 refreshToken: signInData.data.refreshToken,
+                twoFA: signInData.data.twoFA,
               });
               console.log('SIGNIN DATA PROFILE PIC = ' + signInData.data.user.avatarUrl);
               navigate(`/user/${usernameField.value}`)
