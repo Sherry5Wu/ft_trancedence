@@ -75,6 +75,31 @@ function pairSequential(ps: Player[]): { pairs: Pair[]; carry: Player[] } {
   return { pairs, carry };
 }
 
+function buildP1Payload(
+  p1: { id?: string; username?: string },
+  p2: { id?: string; username?: string },
+  s1: number,
+  s2: number,
+  durationStr: string,
+  played_at_iso: string
+) {
+  const player_username = p1?.username ?? 'Player 1';
+  const opponent_username = p2?.username ?? 'Player 2';
+  return {
+    player_id: p1?.id ? String(p1.id) : 'guest',
+    player_username,
+    player_name: player_username,
+    opponent_id: p2?.id ? String(p2.id) : null,
+    opponent_username,
+    opponent_name: opponent_username,
+    player_score: s1,
+    opponent_score: s2,
+    duration: durationStr,
+    result: s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw',
+    played_at: played_at_iso,
+  } as const;
+}
+
 // Flow of the page Options -> Game -> Post-match screen -> ...
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -221,41 +246,12 @@ export default function GamePage() {
           const p1 = currentPair[0];
           const p2 = currentPair[1];
 
-          // Match history post P1, P2 after
-          const payloadP1 = {
-            player_id: String(p1.id),
-            player_username: p1.username,
-            player_name: p1.username,
-            opponent_id: String(p2.id),
-            opponent_username: p2.username,
-            opponent_name: p2.username,
-            player_score: s1,
-            opponent_score: s2,
-            duration: durationStr,
-            result: s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw',
-            played_at: played_at_iso,
-          } as const;
+          await postMatchHistory(
+            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
+            user?.accessToken
+          );
 
-          const payloadP2 = {
-            player_id: String(p2.id),
-            player_username: p2.username,
-            player_name: p2.username,
-            opponent_id: String(p1.id),
-            opponent_username: p1.username,
-            opponent_name: p1.username,
-            player_score: s2,
-            opponent_score: s1,
-            duration: durationStr,
-            result: s2 > s1 ? 'win' : s2 < s1 ? 'loss' : 'draw',
-            played_at: played_at_iso,
-          } as const;
-
-          await Promise.all([
-            postMatchHistory(payloadP1, user?.accessToken),
-            postMatchHistory(payloadP2, user?.accessToken),
-          ]);
-
-          // Tournament history, one post P1 perspective
+          // Tournament history
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
             const stage_number = stageForPosting(roundNum, bracketSize || entrants.length || 2);
@@ -265,7 +261,7 @@ export default function GamePage() {
             await postTournamentHistory({
               tournament_id,
               stage_number,
-              match_number: matchIdx + 1, // 1-based within the round
+              match_number: matchIdx + 1,
               player_name: p1.username,
               opponent_name: p2.username,
               result: resultForP1,
@@ -273,65 +269,13 @@ export default function GamePage() {
           }
         } else {
           // Regular match
-          const p1 = rawPlayers?.[0] as any;
-          const p2 = rawPlayers?.[1] as any;
-
-          if (p1?.id && p1?.username && p2?.id && p2?.username) {
-            // both sides registered, post twice
-            const payloadP1 = {
-              player_id: String(p1.id),
-              player_username: p1.username,
-              player_name: p1.username,
-              opponent_id: String(p2.id),
-              opponent_username: p2.username,
-              opponent_name: p2.username,
-              player_score: s1,
-              opponent_score: s2,
-              duration: durationStr,
-              result: s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw',
-              played_at: played_at_iso,
-            } as const;
-
-            const payloadP2 = {
-              player_id: String(p2.id),
-              player_username: p2.username,
-              player_name: p2.username,
-              opponent_id: String(p1.id),
-              opponent_username: p1.username,
-              opponent_name: p1.username,
-              player_score: s2,
-              opponent_score: s1,
-              duration: durationStr,
-              result: s2 > s1 ? 'win' : s2 < s1 ? 'loss' : 'draw',
-              played_at: played_at_iso,
-            } as const;
-
-            await Promise.all([
-              postMatchHistory(payloadP1, user?.accessToken),
-              postMatchHistory(payloadP2, user?.accessToken),
-            ]);
-          } else {
-            // Against guest, only post registered user stats
-            const player_id = user?.id ?? (rawPlayers?.[0] as any)?.id ?? 'guest';
-            const player_username = user?.username ?? (rawPlayers?.[0]?.username ?? 'Player 1');
-            const opp = (rawPlayers?.[1] as any) ?? {};
-            const oppId = opp?.id ? String(opp.id) : null;
-            const oppUsername = opp?.username ?? 'guest';
-
-            await postMatchHistory({
-              player_id,
-              player_username,
-              player_name: player_username,
-              opponent_id: oppId,
-              opponent_username: oppUsername,
-              opponent_name: oppUsername,
-              player_score: s1,
-              opponent_score: s2,
-              duration: durationStr,
-              result: s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw',
-              played_at: played_at_iso,
-            }, user?.accessToken);
-          }
+          const p1 = (rawPlayers?.[0] as any) ?? {};
+          const p2 = (rawPlayers?.[1] as any) ?? {};
+                  
+          await postMatchHistory(
+            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
+            user?.accessToken
+          );
         }
 
         setSubmitted(true);
