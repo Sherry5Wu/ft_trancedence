@@ -30,7 +30,7 @@ const Setup2faProgressBar: React.FC<Setup2faProgressBarProps> = ({
         <React.Fragment key={index}>
           <div
             className={clsx(
-              'w-12 h-12 flex items-center justify-center rounded-full border-2',
+              'w-12 h-12 flex items-center justify-center rounded-full border-3',
               {
                 'bg-black text-white': step.active || step.completed,
                 'text-black': !step.active && !step.completed,

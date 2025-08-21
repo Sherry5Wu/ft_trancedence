@@ -7,10 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
 import SecurityIcon from '../../assets/noun-security-6758282.svg?react';
+import { useUserContext } from '../../context/UserContext';
 
 const Setup2faSuccessPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   return (
     <main
@@ -58,8 +60,9 @@ const Setup2faSuccessPage: React.FC = () => {
         <GenericButton
           className="generic-button"
           text={t('common.buttons.done')}
-          onClick={() => navigate('/homeuser')}
+          onClick={() => navigate(`/user/${user?.username}`)}
           aria-label={t('common.aria.buttons.done')}
+          // send to backend auth as {true}
         />
       </div>
     </main>

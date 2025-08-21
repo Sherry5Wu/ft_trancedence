@@ -40,3 +40,4 @@ CMD ["sh", "/app/entrypoint.sh"]
 #                                   npm install react-router-dom 
 #                                   npm install --save-dev @types/react-router-dom
 #                                   npm install react-i18next i18next
+#                                   npm install qrcode

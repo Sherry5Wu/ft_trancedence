@@ -9,7 +9,7 @@ import { GenericInput } from '../../components/GenericInput';
 import { ToggleButton } from '../../components/ToggleButton';
 import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
-
+import { useUserContext } from '../../context/UserContext';
 
 // async function createUser(player: Omit<Player, 'player_id'>): Promise<Player | null> {
 //   try {
@@ -37,9 +37,10 @@ import { isValidUsername, isValidPin } from '../../utils/Validation';
 const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user, setUser } = useUserContext();
 
-  const usernameField = useValidationField('', isValidUsername);
-  const pinField = useValidationField('', isValidPin);
+  const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+  const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
 
   const [confirmPin, setConfirmPin] = useState('');
 
@@ -67,10 +68,11 @@ const CompleteProfilePage: React.FC = () => {
         id="pageDescription"
         text={t('pages.completeProfile.aria.description')}
       />
-
-      <h1 id="pageTitle" className="font-semibold text-center text-xl">
-        {t('pages.completeProfile.title')}
-      </h1>
+      <div className="flex items-center justify-center p-12">
+        <div className="flex flex-col justify-center">
+        <h1 id="pageTitle" className="font-semibold text-center">
+          {t('pages.completeProfile.title')}
+        </h1>
 
       <GenericInput
         type="text"
@@ -90,6 +92,7 @@ const CompleteProfilePage: React.FC = () => {
         onFilled={pinField.onFilled}
         onBlur={pinField.onBlur}
         errorMessage={pinField.error}
+        allowVisibility
       />
 
       <GenericInput
@@ -99,24 +102,56 @@ const CompleteProfilePage: React.FC = () => {
         value={confirmPin}
         onFilled={setConfirmPin}
         errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
+        allowVisibility
       />
 
-      <ToggleButton
+      {/* <ToggleButton
         label={t('pages.completeProfile.toggle2FA')}
         aria-label={t('pages.completeProfile.aria.toggle2FA')}
         onClick={() => navigate('/setup2fa')}
-      />
+      /> */}
 
       <GenericButton
         className="generic-button"
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        onClick={() => {
-          alert(t('common.alerts.something')); // Temporary success message
-          navigate('/homeuser');
+        onClick={async () => {
+          try {
+            if (!user?.googleIdToken) {
+              alert("Google sign-in is required before completing profile.");
+              return;
+            }
+
+            const response = await fetch("https://localhost:8443/as/auth/google-register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                idToken: user.googleIdToken,  // ✅ ID token from Google
+                username: usernameField.value,
+                pinCode: pinField.value,
+              }),
+            });
+
+            if (!response.ok) throw new Error("Failed to register");
+
+            const newUser = await response.json();
+
+            setUser({
+              ...newUser,
+              accessToken: newUser.accessToken,
+              refreshToken: newUser.refreshToken,
+            });
+
+            navigate(`/user/${newUser.username}`);
+          } catch (err) {
+            console.error("Error saving profile:", err);
+            alert("Something went wrong, please try again.");
+          }
         }}
       />
+      </div>
+      </div>
     </main>
   );
 };

@@ -10,10 +10,12 @@ import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import SearchIcon from '../../assets/noun-search-7526678.svg?react';
 import { fetchRivalData } from '../../utils/Fetch';
 import { useUserContext } from '../../context/UserContext';
+import { useTranslation } from 'react-i18next';
 
 const RivalsPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
-    const searchField = useValidationField('', isValidUsername);
+    const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
     // const [rivalData, setRivalData] = useState<string[]>([]);
     const { user } = useUserContext();
 
@@ -25,15 +27,15 @@ const RivalsPage = () => {
     //   fetchRivals();
     // }, [user])
 
-    if (!user)
-      navigate('/signin');
+    // if (!user) no need anymore, routes are protected on App.tsx
+    //   navigate('/signin');
   
     return (
       <div className='pageLayout'>
 
         <div className='flex justify-center items-center gap-3 mb-5'>
           <RivalIcon className='size-20' />
-          <h2 className='h1 font-semibold text-center'>RIVALS</h2>
+          <h2 className='h1 font-semibold text-center'>{t('pages.rival.title')}</h2>
           <RivalIcon className='size-20' />
         </div>
         <div className=''>

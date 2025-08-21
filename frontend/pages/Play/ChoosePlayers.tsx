@@ -10,6 +10,7 @@ import { useUserContext } from '../../context/UserContext';
 import { usePlayersContext } from '../../context/PlayersContext';
 import { useValidationField } from '../../utils/Hooks';
 import { isValidAlias } from '../../utils/Validation';
+import { Tooltip } from '../../components/Tooltip';
 
 const ChoosePlayersPage: React.FC = () => {
   const { t } = useTranslation();
@@ -24,12 +25,8 @@ const ChoosePlayersPage: React.FC = () => {
     setIsTournament,
   } = usePlayersContext();
 
-  useEffect(() => {
-    setIsTournament(false);
-  }, [setIsTournament]);
-
-  const player1Field = useValidationField('', isValidAlias);
-  const player2Field = useValidationField('', isValidAlias);
+  const player1Field = useValidationField('', isValidAlias, t('common.errors.invalidAlias'));
+  const player2Field = useValidationField('', isValidAlias, t('common.errors.invalidAlias'));
 
   const [player2Type, setPlayer2Type] = useState<"registered" | "guest" | null>(null);
   const [isPlayer1Loading, setIsPlayer1Loading] = useState(true);
@@ -126,91 +123,97 @@ const formFilled =
         id="pageDescription"
         text={t('pages.choosePlayers.aria.description')}
       />
+      <div className="flex flex-col justify-center p-8 ">
+        <h1 id="pageTitle" className="font-semibold text-center text-xl">
+          {t('pages.choosePlayers.title')}
+        </h1>
 
-      <h1 id="pageTitle" className="font-semibold text-center text-xl">
-        {t('pages.choosePlayers.title')}
-      </h1>
+        <GenericInput
+          type="text"
+          placeholder={t('common.placeholders.player1')}
+          aria-label={t('common.aria.inputs.playerAlias')}
+          value={player1Field.value}
+          onFilled={player1Field.onFilled}
+          onBlur={player1Field.onBlur}
+          errorMessage={
+            player1Field.error ||
+            (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
+          }
+          disabled={isPlayer1Loading}
+          showEditIcon={true}
+        />
 
-      <GenericInput
-        type="text"
-        placeholder={t('common.placeholders.player1')}
-        aria-label={t('common.aria.inputs.playerAlias')}
-        value={player1Field.value}
-        onFilled={player1Field.onFilled}
-        onBlur={player1Field.onBlur}
-        errorMessage={
-          player1Field.error ||
-          (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
-        }
-        disabled={isPlayer1Loading}
-        showEditIcon={true}
-      />
+        <div className="flex flex-wrap justify-center gap-6 mt-4">
+          <GenericButton
+            className={`generic-button ${player2Type === "registered" ? "" : "unclicked-button"}`}
+            text={t('pages.choosePlayers.player2TypeRegistered')}
+            aria-label={t('pages.choosePlayers.aria.player2TypeRegisteredButton')}
+            onClick={() => {
+              navigate("/login-player", {
+                state: {
+                  context: "generic",
+                  playerIndex: 1,
+                  returnTo: "/choose-players"
+                }
+              });
+            }}
+          />
+          <div className="relative inline-flex items-center">
+            <GenericButton
+              className={`generic-button ${player2Type === "guest" ? "" : "unclicked-button"}`}
+              text={t('pages.choosePlayers.player2TypeGuest')}
+              aria-label={t('pages.choosePlayers.aria.player2TypeGuestButton')}
+              onClick={() => {
+                setPlayer2Type("guest");
+                player2Field.setValue('');
+                removePlayer(players[1]?.id);
+                alert(t('pages.choosePlayers.player2GuestAlert'));
+              }}
+            />
+            <div className="absolute right-[-30px]">
+              <Tooltip text={t('common.tooltips.guestPlayer')} />
+            </div>
+          </div>
+        </div>
 
-      <div className="flex flex-wrap justify-center gap-6 mt-4">
-        <GenericButton
-          className={`generic-button ${player2Type === "registered" ? "" : "unclicked-button"}`}
-          text={t('pages.choosePlayers.player2TypeRegistered')}
-          aria-label={t('pages.choosePlayers.aria.player2TypeRegisteredButton')}
-          onClick={() => {
-            navigate("/login-player", {
-              state: {
-                context: "generic",
-                playerIndex: 1,
-                returnTo: "/choose-players"
+        {player2Type && (
+          <div className="mt-4">
+            <GenericInput
+              type="text"
+              placeholder={t('common.placeholders.player2')}
+              aria-label={t('common.aria.inputs.playerAlias')}
+              value={player2Field.value}
+              onFilled={player2Field.onFilled}
+              onBlur={player2Field.onBlur}
+              errorMessage={
+                player2Field.error ||
+                (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
               }
-            });
-          }}
-        />
-        <GenericButton
-          className={`generic-button ${player2Type === "guest" ? "" : "unclicked-button"}`}
-          text={t('pages.choosePlayers.player2TypeGuest')}
-          aria-label={t('pages.choosePlayers.aria.player2TypeGuestButton')}
-          onClick={() => {
-            setPlayer2Type("guest");
-            player2Field.setValue('');
-            removePlayer(players[1]?.id);
-            alert(t('pages.choosePlayers.player2GuestAlert'));
-          }}
-        />
-      </div>
+              showEditIcon={true}
+            />
+          </div>
+        )}
 
-      {player2Type && (
-        <div className="mt-4">
-          <GenericInput
-            type="text"
-            placeholder={t('common.placeholders.player2')}
-            aria-label={t('common.aria.inputs.playerAlias')}
-            value={player2Field.value}
-            onFilled={player2Field.onFilled}
-            onBlur={player2Field.onBlur}
-            errorMessage={
-              player2Field.error ||
-              (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
-            }
-            showEditIcon={true}
+        <div className="flex flex-wrap justify-center gap-6 mt-6">
+          <GenericButton
+            className="generic-button"
+            text={t('common.buttons.cancel')}
+            aria-label={t('common.aria.buttons.cancel')}
+            onClick={() => {
+              resetPlayers();
+              navigate(`/user/${user?.username}`);
+            }}
+          />
+          <GenericButton
+            className="generic-button"
+            text={t('common.buttons.play')}
+            aria-label={t('common.aria.buttons.play')}
+            disabled={!formFilled}
+            onClick={() => {
+              navigate('/game');
+            }}
           />
         </div>
-      )}
-
-      <div className="flex flex-wrap justify-center gap-6 mt-6">
-        <GenericButton
-          className="generic-button"
-          text={t('common.buttons.cancel')}
-          aria-label={t('common.aria.buttons.cancel')}
-          onClick={() => {
-            resetPlayers();
-            navigate('/homeuser');
-          }}
-        />
-        <GenericButton
-          className="generic-button"
-          text={t('common.buttons.play')}
-          aria-label={t('common.aria.buttons.play')}
-          disabled={!formFilled}
-          onClick={() => {
-            navigate('/game');
-          }}
-        />
       </div>
     </main>
   );

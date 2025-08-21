@@ -1,8 +1,12 @@
 // components/GenericInput.tsx
 // controlled component
 
-import React, { ChangeEvent } from "react";
-import ModifyIcon from "../assets/noun-modify-4084225.svg";
+import React, { useState, ChangeEvent, useRef } from "react";
+// import ModifyIcon from "../assets/noun-modify-4084225.svg?react";
+import ModifyIcon from "../assets/square-pen.svg?react";
+import { useTranslation } from 'react-i18next';
+import Eye from "../assets/eye.svg?react";
+import EyeOff from "../assets/eye-closed.svg?react";
 
 interface GenericInputProps {
   type?: string;
@@ -15,6 +19,7 @@ interface GenericInputProps {
   errorMessage?: string;
   onBlur?: () => void;
   className?: string;
+  allowVisibility?: boolean;
 }
 
 export const GenericInput = ({
@@ -28,38 +33,82 @@ export const GenericInput = ({
   errorMessage = '',
   onBlur,
   className = '',
+  allowVisibility = false,
 }: GenericInputProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onFilled(e.target.value);
   };
 
+  const handleEditClick = () => {
+    if (inputRef.current) {
+      const input = inputRef.current;
+      input.focus();
+      const length = input.value.length;
+      input.setSelectionRange(length, length);
+    }
+  };
+
+  const { t } = useTranslation();
   const inputId = placeholder.toLowerCase().replace(/\s+/g, '-');
   const shouldShowIcon = showEditIcon && value.trim() !== "";
+  const effectiveType =
+    allowVisibility && type === "password"
+      ? isVisible
+        ? "text"
+        : "password"
+      : type;
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
-      <input
-        id={inputId}
-        type={type}
-        value={value}
-        onChange={handleChange}
-        placeholder={placeholder}
-        required={required}
-        disabled={disabled}
-        aria-invalid={!!errorMessage}
-        aria-describedby={errorMessage ? `${inputId}-error` : undefined}
-        className={`${className ? className : 'generic-input'} ${value ? "filled" : ""}`}
-        onBlur={onBlur}
-      />
-      {shouldShowIcon && (
-        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none">
-          <img src={ModifyIcon} alt="Edit" className="w-4 h-4" />
-        </div>
-      )}
+    <div className="flex flex-col">
+      <div className="relative">
+        <input
+          ref={inputRef}
+          id={inputId}
+          type={effectiveType}
+          value={value}
+          onChange={handleChange}
+          placeholder={placeholder}
+          required={required}
+          disabled={disabled}
+          aria-invalid={!!errorMessage}
+          aria-describedby={errorMessage ? `${inputId}-error` : undefined}
+          className={`${className ? className : 'generic-input'} ${value ? "filled" : ""} pr-10`}
+          onBlur={onBlur}
+        />
+
+        {shouldShowIcon && (
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:cursor-pointer"
+            aria-label={t('components.genericInput.aria.modify') ?? 'Edit'}
+            onClick={handleEditClick}
+          >
+            <ModifyIcon className="w-4 h-4" />
+          </button>
+        )}
+
+        {allowVisibility && type === "password" && (
+          <button
+            type="button"
+            onClick={() => setIsVisible(!isVisible)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:cursor-pointer"
+            aria-label={isVisible ? t('components.genericInput.aria.hidePass') : t('components.genericInput.aria.showPass')}
+          >
+            {isVisible ? (
+              <Eye className="w-5 h-5" />
+            ) : (
+              <EyeOff className="w-5 h-5" />
+            )}
+          </button>
+        )}
+      </div>
+
       {errorMessage && (
         <p
           id={`${inputId}-error`}
-          className="text-red-500 text-xs mt-1"
+          className="text-black text-xs mt-1 whitespace-pre-line pl-4"
           role="alert"
         >
           {errorMessage}
