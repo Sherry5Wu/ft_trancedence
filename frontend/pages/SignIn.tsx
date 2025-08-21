@@ -45,7 +45,7 @@ return (
         text={t('pages.signIn.aria.description')}
       />
 
-      <div className="flex flex-col justify-center p-8 ">
+      <div className="flex flex-col justify-center p-8">
         <h2 id="pageTitle" className="font-semibold text-center">
           {t('pages.signIn.title')}
         </h2>
@@ -72,7 +72,7 @@ return (
         />
 
         <GenericButton
-          className="generic-button"
+          className="generic-button m-1 -translate-y-1"
           text={t('common.buttons.logIn')}
           aria-label={t('common.aria.buttons.logIn')}
           disabled={!formFilled}
@@ -99,7 +99,7 @@ return (
               navigate(`/user/${usernameField.value}`)
             }
             else
-              alert('Sign in failed. Please try again.');
+              alert('Sign in failed. Please, check your username and password, and try again.');
         }}
       />
 
@@ -108,7 +108,7 @@ return (
           aria-label={t('pages.signInWithGoogle.aria.signInWithGoogle')}
         />
 
-        <p className="text-center text-sm">
+        <p className="text-center text-sm translate-y-2">
           {t('pages.signIn.links.notRegistered')}{' '}
           <Link
             to="/signup"
