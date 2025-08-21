@@ -2,6 +2,8 @@ import fp from 'fastify-plugin';
 
 import { googleUserLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
 import { generateAccessToken, storeRefreshToken } from '../utils/jwt.js';
+import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils/errors.js';
+import { sendError } from '../utils/sendError.js';
 
 export default fp(async (fastify) => {
   fastify.post('/auth/google-login', {
@@ -74,7 +76,11 @@ export default fp(async (fastify) => {
         needCompleteProfile: true
       });
     } catch (err) {
-      return reply.code(401).send({ message: 'Invalid or expired idToken' });
+      if (err instanceof InvalidCredentialsError) {
+        return sendError(reply, 400, 'Bad Request', err.message);
+      }
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', err.message);
     }
   });
 

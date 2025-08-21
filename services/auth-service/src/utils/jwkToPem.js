@@ -1,24 +1,20 @@
 import crypto from 'crypto';
 
-/**
- * Convert JWK (from Google) to PEM
- * @param {object} jwk - JSON Web Key object
- * @returns {string} PEM formatted public key
- */
 function jwkToPem(jwk) {
-  if (jwk.kty !== 'RSA') {
+  if (!jwk || jwk.kty !== 'RSA') {
     throw new Error('Only RSA keys are supported');
   }
 
-  const exponent = Buffer.from(jwk.e, 'base64');
-  const modulus = Buffer.from(jwk.n, 'base64');
+  // Use the JWK fields directly (Google provides n and e as base64url strings)
+  const jwkForNode = {
+    kty: 'RSA',
+    n: jwk.n,
+    e: jwk.e
+  };
 
   const pubKey = crypto.createPublicKey({
-    key: {
-      n: modulus,
-      e: exponent,
-    },
-    format: 'jwk',
+    key: jwkForNode,
+    format: 'jwk'
   });
 
   return pubKey.export({ type: 'spki', format: 'pem' });
