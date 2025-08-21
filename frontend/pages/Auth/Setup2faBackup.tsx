@@ -14,34 +14,45 @@ const Setup2faBackupPage: React.FC = () => {
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Simulate fetching backup codes from backend
   useEffect(() => {
-    const fetchBackupCodes = async () => {
-      try {
-        setTimeout(() => {
-          // This array should come from the backend
-          setBackupCodes([
-            'ABCD-1234',
-            'EFGH-5678',
-            'IJKL-9101',
-            'MNOP-1122',
-            'QRST-3344',
-            'UVWX-5566',
-            'YZAB-7788',
-            'CDEF-9900',
-            'GHIJ-1111',
-            'KLMN-2222',
-          ]);
-          setLoading(false);
-        }, 1000); // Simulated delay
-      } catch (error) {
-        console.error('Failed to fetch backup codes:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchBackupCodes();
+    const storedCodes = localStorage.getItem('backupCodes');
+    if (storedCodes) {
+      setBackupCodes(JSON.parse(storedCodes));
+      setLoading(false);
+    } else {
+      setLoading(false);
+      console.error('No backup codes found');
+    }
   }, []);
+
+  // // Simulate fetching backup codes from backend
+  // useEffect(() => {
+  //   const fetchBackupCodes = async () => {
+  //     try {
+  //       setTimeout(() => {
+  //         // This array should come from the backend
+  //         setBackupCodes([
+  //           'ABCD-1234',
+  //           'EFGH-5678',
+  //           'IJKL-9101',
+  //           'MNOP-1122',
+  //           'QRST-3344',
+  //           'UVWX-5566',
+  //           'YZAB-7788',
+  //           'CDEF-9900',
+  //           'GHIJ-1111',
+  //           'KLMN-2222',
+  //         ]);
+  //         setLoading(false);
+  //       }, 1000); // Simulated delay
+  //     } catch (error) {
+  //       console.error('Failed to fetch backup codes:', error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchBackupCodes();
+  // }, []);
 
   // Download file directly on the frontend a text file
   // 1. Convert the array of backup codes into a string, with each code on a new line.

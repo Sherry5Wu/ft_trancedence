@@ -14,6 +14,23 @@ const Setup2faSuccessPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
 
+  const handle2faConfirmation = async () => {
+    try {
+      const res = await fetch('https://localhost:8443/as/auth/2fa/status', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.enabled) {
+        navigate(`/user/${user?.username}`);
+      } else {
+        alert('2FA setup not complete, please retry.');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <main
       className="pageLayout"
@@ -60,7 +77,8 @@ const Setup2faSuccessPage: React.FC = () => {
         <GenericButton
           className="generic-button"
           text={t('common.buttons.done')}
-          onClick={() => navigate(`/user/${user?.username}`)}
+          // onClick={() => navigate(`/user/${user?.username}`)}
+          onClick={handle2faConfirmation}
           aria-label={t('common.aria.buttons.done')}
           // send to backend auth as {true}
         />
