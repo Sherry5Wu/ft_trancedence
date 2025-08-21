@@ -230,7 +230,7 @@ export const fetchUserStats = async (username: string): Promise<UserStats | null
 	}
 };
 
-export const fetchMatchData = async (username: string): Promise<MatchData | null> => {
+export const fetchMatchData = async (username: string): Promise<MatchData [] | null> => {
     try {
         const response = await fetch(`https://localhost:8443/stats/match_history/username/${username}`, {
             method: 'GET',
