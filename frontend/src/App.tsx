@@ -24,7 +24,7 @@ import TournamentPlayers from '../pages/Tournament/TournamentConfirm';
 import LeaderboardPage from '../pages/Leaderboard';
 import RivalsPage from '../pages/Rivals/Rivals';
 import NotFoundPage from '../pages/NotFoundPage';
-import GamePage from '../pages/GamePage';
+import GamePage from '../pages/GamePage/GamePage';
 import AboutPage from '../pages/Infos/About';
 import ContactPage from '../pages/Infos/Contact';
 import PrivacyPage from '../pages/Infos/Privacy';
