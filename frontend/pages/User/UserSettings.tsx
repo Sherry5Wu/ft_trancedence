@@ -160,6 +160,7 @@ const SettingsPage = () => {
             labelOn={t('pages.userSettings.twoFactor.labelOn')}
             labelOff={t('pages.userSettings.twoFactor.labelOff')}
             aria-label={t('pages.userSettings.aria.2faToggle')}
+            checked={!!user?.twoFA} 
             onClick={() => 
               navigate('/setup2fa')
             }
