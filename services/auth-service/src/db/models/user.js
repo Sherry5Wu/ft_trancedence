@@ -21,7 +21,7 @@ export default (sequelize) => { // export a default function, not the User model
     },
     username: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true, // for googe sign in
       unique: true,
       validate: {
         len: [6, 20],
