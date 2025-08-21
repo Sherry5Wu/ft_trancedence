@@ -29,10 +29,10 @@ export const Navbar = () => {
     const { user, setUser } = useUserContext();
     const { darkMode, setDarkMode } = useDarkModeContext();
     const { largeText, setLargeText} = useAccessibilityContext();
-    const searchField = useValidationField('', isValidUsername);
+    const { t, i18n } = useTranslation();
+    const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
     const [rivalData, setRivalData] = useState<FetchedUserData[]>([]);
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation();
     const accessToken = useUserContext().user?.accessToken;
     
     // fetch users from search bar
@@ -59,7 +59,7 @@ export const Navbar = () => {
         if (user)
             navigate(`/user/${user?.username}`);
         else
-            navigate('/signin')
+            navigate('/')
     } 
 
     const handleLogOut = () => {

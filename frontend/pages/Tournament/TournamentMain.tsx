@@ -6,9 +6,8 @@ import { AccessiblePageDescription } from '../../components/AccessiblePageDescri
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import DownArrow from '../../assets/noun-down-arrow-down-1144832.svg?react';
-// import ToBeDoneBracket from '../../components/ToBeDoneBracket';
-// import BracketViewer from '../../components/BracketViewer';
 import ModularBracketViewer from '../../components/ModularBracketViewer';
+import { useUserContext } from '../../context/UserContext';
 
 type Result = 'win' | 'loss' | 'draw';
 
@@ -41,6 +40,7 @@ async function fetchAllTournamentHistory(): Promise<TournamentHistoryRow[]> {
 export default function TournamentsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   const [rows, setRows] = useState<TournamentHistoryRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -214,7 +214,9 @@ export default function TournamentsPage() {
           className="generic-button"
           text={t('common.buttons.back')}
           aria-label={t('common.aria.buttons.back')}
-          onClick={() => navigate('/homeuser')}
+          onClick={() =>
+            navigate(`/user/${user?.username}`)
+          }
         />
         <GenericButton
           className="generic-button"

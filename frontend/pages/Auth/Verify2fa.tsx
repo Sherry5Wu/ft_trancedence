@@ -6,12 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { GenericButton } from '../../components/GenericButton';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
+import { useUserContext } from '../../context/UserContext';
 
 const Verify2faPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [code, setCode] = useState('');
   const formFilled = /^\d{6}$/.test(code);
+  const { user } = useUserContext();
   
   return (
     <main
@@ -55,7 +57,7 @@ const Verify2faPage: React.FC = () => {
             className="generic-button"
             text={t('common.buttons.verify')}
             disabled={!formFilled}
-            onClick={() => navigate('/homeuser')}
+            onClick={() => navigate(`/user/${user?.username}`)}
           />
         </div>
 

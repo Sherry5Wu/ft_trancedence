@@ -1,5 +1,6 @@
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recharts';
 import { UserStats } from '../utils/Interfaces';
+import { useTranslation } from 'react-i18next';
 
 const fetchData = (user: string) => {
     //FETCH REAL DATA FROM BACKEND
@@ -28,6 +29,8 @@ const colors = ['#2E6F40', '#252525', '#CD1C18'];
 // }
 
 function userStatsToPieData(stats: UserStats) {
+    const { t } = useTranslation();
+
     const pieData = [
         { key: "games_won", value: stats.games_won },
         { key: "games_draw", value: stats.games_draw },
@@ -36,11 +39,11 @@ function userStatsToPieData(stats: UserStats) {
 
     const newPie = pieData.map((entry) => {
         if (entry.key === 'games_won')
-            return { ...entry, key: 'WINS'}
+            return { ...entry, key: t('components.pieGraph.wins')}
         if (entry.key === 'games_draw')
-            return { ...entry, key: 'DRAWS'}
+            return { ...entry, key: t('components.pieGraph.draws')}
         if (entry.key === 'games_lost')
-            return { ...entry, key: 'LOSSES'}
+            return { ...entry, key: t('components.pieGraph.losses')}
     })
 
     return newPie;

@@ -5,18 +5,18 @@
       "failure": "Temporary failure message!"
     },
     "buttons": {
-      "cancel": "Cancel",
-      "save": "Save",
-      "next": "Next",
-      "back": "Back",
+      "cancel": "CANCEL",
+      "save": "SAVE",
+      "next": "NEXT",
+      "back": "BACK",
       "ok": "OK",
-      "done": "Done",
-      "new": "New",
+      "done": "DONE",
+      "new": "NEW",
       "signIn": "SIGN IN",
-      "signUp": "Sign Up",
-      "logIn": "Log In",
-      "play": "Play",
-      "start": "Start",
+      "signUp": "SIGN UP",
+      "logIn": "LOG IN",
+      "play": "PLAY",
+      "start": "START",
       "tournament": "Tournament",
       "rivals": "Rivals",
       "leaderboard": "Leaderboard",
@@ -32,7 +32,13 @@
       "confirmPin": "Confirm your player PIN",
       "player1": "Player 1",
       "player2": "Player 2",
-      "playerAlias": "Player alias"
+      "playerAlias": "Player alias",
+      "searchUsers": "Search for other users"
+    },
+    "tooltips": {
+      "PINcode": "You need your PIN code to confirm your presence when playing locally against other players",
+      "2fa": "Enhances account security by requiring a code from Google Authenticator each time you sign in.",
+      "guestPlayer": "If you play against a guest the game data won’t be saved and the result won’t affect your score"
     },
     "aria": {
       "buttons": {
@@ -68,18 +74,47 @@
       }
     },
     "errors": {
+      "invalidUsername": "Username must:\n• Be 6–20 characters long\n• Start with a letter\n• Only include letters, numbers, or specific special\n characters: dots (.), underscores (_), or hyphens (-)",
+      "invalidAlias": "Alias must:\n• Be 6–20 characters long\n• Start with a letter\n• Only include letters, numbers, or specific special\n characters: dots (.), underscores (_), or hyphens (-)",
+      "invalidEmail": "Email must be in a valid format:\n• Example: name@domain.com",
+      "invalidPassword": "Password must:\n• Be 8–32 characters long\n• Include uppercase and lowercase letters\n• Include at least one number\n• Include at least one special character (@$!%*?&)",
+      "invalidPIN": "PIN must:\n• Be exactly 4 digits\n• Numbers only (0–9)",
+      "invalidTitle": "Title must:\n• Be 1–32 characters long\n• Letters and numbers only (no spaces or symbols)",
       "passwordMismatch": "Passwords do not match. Please try again.",
       "pinMismatch": "PINs do not match. Please re-enter to confirm.",
       "newSameAsOldPassword": "New password must be different from the current password.",
       "newSameAsOldPIN": "New PIN must be different from the current PIN code.",
       "aliasNotUnique": "This alias is already taken. Please choose a different one.",
-      "invalidAlias": "Invalid alias format. Please check and try again.",
       "duplicateAlias": "Player aliases must be different from each other.",
       "invalidLogin": "Invalid login. Please check and try again."
     }
   },
 
   "pages": {
+    "about": {
+      "title": "About this project",
+      "text": "P | N G - P · N G is our ft_transcendence project, developed as part of the 42 Network core curriculum. It’s a full-stack web application that combines real-time gameplay, and modern web technologies to deliver an engaging and competitive experience. This project showcases our skills in full-stack development, system design, and teamwork.",
+      "aria": {
+        "label": "",
+        "description": ""
+      }
+    },
+    "contact": {
+      "title": "Contact us",
+      "text": "For any questions, feedback, or to get in touch with the team behind this project, feel free to visit our profiles. We look forward to hearing from you!",
+      "aria": {
+        "label": "",
+        "description": ""
+      }
+    },
+    "privacy": {
+      "title": "Privacy",
+      "text": "",
+      "aria": {
+        "label": "",
+        "description": ""
+      }
+    },
     "notFound": {
       "title": "404 - Page Not Found",
       "message": "Oops! The page you're looking for doesn't exist.",
@@ -129,6 +164,13 @@
       }
     },
 
+    "signInWithGoogle": {
+      "button": "Sign in with Google",
+      "aria": {
+        "signInWithGoogle": "Navigate to the sign in with yourGoogle "
+      }
+    },
+
     "signUp": {
       "title": "Sign Up",
       "toggle2FA": "2FA with Google Authenticator",
@@ -165,9 +207,13 @@
         "title": "Setup Two-factor Authentication",
         "scanQrTitle": "Scan the QR code",
         "scanQrInstructions": "Open the Google Authenticator app and scan this QR code.",
+        "loadingQr": "Loading QR Code...",
+        "loadingSetupKeys": "Loading setup keys...",
         "manualSetupPrompt": "Unable to scan? You can use the",
         "manualSetupLink": "setup key",
         "manualSetupSuffix": "to manually configure your authenticator app.",
+        "manualSetupTitle": "Setup Two-factor Authenticaion manually",
+        "manualSetupInstructions": "Please enter this key manually in your authentication app to set up your account.",
         "downloadAppInfo": "Don’t have the app? Google Authenticator is a free 2FA app.",
         "verifyCodeTitle": "Verify the code from the app",
         "aria": {
@@ -175,6 +221,8 @@
           "description": "This page helps users set up two-factor authentication (2FA) for their account. The user needs to scan a QR code with the Google Authenticator app and verify the code from the app to complete the setup.",
           "scanQrImage": "QR code to scan with Google Authenticator app",
           "manualSetupLink": "Link to manual setup key for authenticator app",
+          "manualSetupInstructions": "Instructions for manual 2FA setup",
+          "setupKeyDisplay": "Your manual 2FA setup key",
           "verifyInput": "Input field to enter the verification code from app",
           "verifyButton": "Submit the verification code"
         }
@@ -183,6 +231,7 @@
         "title": "Setup Two-factor Authentication",
         "backupTitle": "Backup verification codes",
         "backupInstructions": "With 2FA enabled for your account, you can use the recovery codes as a second factor to authenticate in case you lose your device. We recommend keeping them in a secure place.",
+        "loadingCodes": "Loading backup codes...",
         "warningTitle": "Keep your recovery codes in a safe spot.",
         "warningInfo": "If you lose your device and can’t find your recovery codes, you will lose access to your account.",
         "aria": {
@@ -221,7 +270,9 @@
 
     "userSettings": {
       "accountSettings": {
-        "title": "Account Settings"
+        "title": "Account Settings",
+        "uploadProfile": "",
+        "uploadedProfileAlt": ""
       },
       "security": {
         "title": "Security"
@@ -232,7 +283,7 @@
       },
       "aria": {
         "label": "User settings page, manage your profile, account settings, and security preferences.",
-        "description": "Edit your personal information, change your password and PIN, and enable two-factor authentication for enhanced security.",
+        "description": "See your personal information, change your password and PIN, and enable two-factor authentication for enhanced security.",
         "saveChanges": "Save account settings changes",
         "changePassword": "Go to change password page",
         "changePIN": "Go to change PIN page",
@@ -242,17 +293,26 @@
 
     "changePassword": {
       "title": "Change password",
+      "newPassword": "Enter your new password",
+      "confirmNewPassword": "Confirm new password",
       "aria": {
         "label": "Change Password Page",
-        "description": "Page to change your account password. Enter your current password, a new password, and confirm the new password."
+        "description": "Page to change your account password. Enter your current password, a new password, and confirm the new password.",
+        "password": "Input field to enter your new password",
+        "confirmNewPassword": "Input field to confirm your new password"
       }
       
     },
+
     "changePIN": {
       "title": "Change PIN",
+      "newPIN": "Enter your new player PIN",
+      "confirmNewPIN": "Confirm new player PIN",
       "aria": {
         "label": "Change PIN code Page",
-        "description": "Page to change your PIN code. Enter your current PIN code, a new PIN, and confirm the new PIN."
+        "description": "Page to change your PIN code. Enter your current PIN code, a new PIN, and confirm the new PIN.",
+        "PIN": "Input field to enter your new PIN code",
+        "confirmNewPIN": "Input field to confirm your new PIN code"
       }
     },
 
@@ -328,7 +388,7 @@
     },
 
     "rival": {
-      "title": "",
+      "title": "RIVALS",
       "aria": {
         "label": "",
         "description": "",
@@ -340,6 +400,7 @@
     "leaderboard": {
       "title": "Leaderboard",
       "empty": "No players to show.",
+      "loadingLeaderboard": "Loading leaderboard players...",
       "columns": {
         "username": "Username",
         "rival": "Rival",
@@ -350,6 +411,7 @@
         "label": "Top players ranking list",
         "description": "View the top 10 players ranked by score in descending order, with your ranking visible even if you're not in the top 10.",
         "table": "Table displaying the top players in the leaderboard",
+        "emptyTable": "No players on the leaderboard yet",
         "columnUsername": "Leaderboard username column",
         "columnRival": "Leaderboard rival column",
         "columnTotalGames": "Leaderboard total games column",
@@ -358,8 +420,70 @@
     }
   },
 
+  "components": {
+    "footer": {
+      "rights": "All rights reserved",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privary",
+      "aria": {
+        "label": "",
+        "description": "", 
+        "about": "",
+        "contact": "",
+        "privacy": ""
+      }
+    },
+    "navBar": {
+      
+      "aria": {
 
-  "components": {}
+      }
+    },
+    "pieGraph": {
+      "wins": "WINS",
+      "draws": "DRAWS",
+      "losses": "LOSSES",
+      "aria": {
 
+      }
+    },
+    "rivalRows": {
+      "loadingRivals": "Loading rivals...",
+      "noRivals": "No rivals yet",
+      "name": "Name",
+      "score": "Score",
+      "winRatio": "Win ratio",
+      "userRivalWinsLosses": "Your wins/losses",
+      "matchesPlayed": "Matches played",
+      "aria": {
 
+      }
+      },
+      "searchBar": {
+        "noUser": "No users found",
+        "aria": {
+
+        }
+      },
+      "stats": {
+        "noData": "No data found",
+        "scoreHistory": "SCORE HISTORY",
+        "scoreGainsVsLosses": "SCORE GAINS/LOSSES",
+        "winRate": "WIN RATE",
+        "playedGames": "PLAYED GAMES",
+        "worstRival": "WORST RIVAL",
+        "winStreak": "WIN STREAK",
+        "longestWinStreak": "LONGEST WIN STREAK",
+        "aria": {
+
+        }
+      },
+      "genericInput": {
+        "aria": {
+          "showPass": "Show password or PIN code",
+          "hidePass": "Hide password or PIN code"
+        }
+      }
+  }
 }

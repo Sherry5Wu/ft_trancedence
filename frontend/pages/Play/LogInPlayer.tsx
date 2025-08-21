@@ -19,8 +19,8 @@ const LogInPlayerPage: React.FC = () => {
     removePlayer,
   } = usePlayersContext();
 
-  const usernameField = useValidationField('', isValidUsername);
-  const pinField = useValidationField('', isValidPin);
+  const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+  const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
 
   const location = useLocation();
   const playerIndex: number = location.state?.playerIndex ?? 1;
@@ -88,6 +88,7 @@ const LogInPlayerPage: React.FC = () => {
         onFilled={pinField.onFilled}
         onBlur={pinField.onBlur}
         errorMessage={pinField.error}
+        allowVisibility
       />
 
       <GenericButton

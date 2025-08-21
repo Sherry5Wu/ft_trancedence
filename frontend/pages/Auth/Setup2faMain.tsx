@@ -1,18 +1,38 @@
 // /src/pages/Auth/Setup2faMain.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate, Link } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
+import QRCodeGenerator from '../../components/QRCodeGenerator';
 
 const Setup2faMainPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [code, setCode] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [setupKey, setSetupKey] = useState<string | null>(null);
+  const [showManualSetup, setShowManualSetup] = useState(false);
   const formFilled = /^\d{6}$/.test(code);
+
+  // Simulate fetching QR code URL and setup key together
+  useEffect(() => {
+    const fetch2FAData = async () => {
+      try {
+        setTimeout(() => {
+          setQrCodeUrl('https://www.example.com/2fa');
+          setSetupKey('ABCD EFGH IJKL MNOP');
+        }, 2000); // Simulated delay
+      } catch (error) {
+        console.error('Failed to fetch 2FA data:', error);
+      }
+    };
+
+    fetch2FAData();
+  }, []);
 
   return (
     <main
@@ -43,14 +63,32 @@ const Setup2faMainPage: React.FC = () => {
         <p>
           {t('pages.twoFactorAuth.setup.scanQrInstructions')}
         </p>
-        
-        {/* QR code fetch from backend */}
+      </section>
 
+        <div className='inline-block border-2 border-black rounded-3xl p-6'>
+        {qrCodeUrl ? (
+          <QRCodeGenerator
+            value={qrCodeUrl} // Pass the fetched URL to the QRCodeGenerator
+            size={256}
+            fgColor='#000000'
+            bgColor='#FFFFFF'
+          />
+        ) : (
+          <p>{t('pages.twoFactorAuth.setup.loadingQr')}</p>
+        )}
+        </div>
+
+        <section className="max-w-md text-center space-y-2">
         <p>
           {t('pages.twoFactorAuth.setup.manualSetupPrompt')}{' '}
-          <Link to="/404" className="underline" aria-label={t('pages.twoFactorAuth.setup.aria.manualSetupLink')}>
+          <button
+            className="underline"
+            onClick={() => setShowManualSetup(true)}
+            aria-label={t('pages.twoFactorAuth.setup.aria.manualSetupLink')}
+          >
             {t('pages.twoFactorAuth.setup.manualSetupLink')}
-          </Link>{' '}{t('pages.twoFactorAuth.setup.manualSetupSuffix')}
+          </button>{' '}
+          {t('pages.twoFactorAuth.setup.manualSetupSuffix')}
         </p>
 
         <p>
@@ -77,7 +115,7 @@ const Setup2faMainPage: React.FC = () => {
           className="generic-button"
           text={t('common.buttons.cancel')}
           onClick={() =>
-            navigate(-1)
+            navigate('/settings')
           }
           aria-label={t('common.aria.buttons.cancel')}
         />
@@ -91,6 +129,50 @@ const Setup2faMainPage: React.FC = () => {
           aria-label={t('common.aria.buttons.next')}
         />
       </div>
+      
+      {showManualSetup && (
+        <div
+          className="fixed inset-0 bg-[#FFCC00] bg-opacity-50 flex items-center justify-center z-50"
+          role="dialog"
+          aria-labelledby="manualSetupTitle"
+          aria-describedby="manualSetupInstructions"
+          aria-modal="true"
+        >
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg">
+            <h2
+              id="manualSetupTitle"
+              className="font-semibold text-lg mb-4"
+            >
+              {t('pages.twoFactorAuth.setup.manualSetupTitle')}
+            </h2>
+
+            {setupKey ? (              
+              <>
+                <p id="manualSetupInstructions">
+                  {t('pages.twoFactorAuth.setup.manualSetupInstructions')}
+                </p>
+                <div
+                  className="mt-4 p-3 bg-[#FDFBD4] rounded font-mono break-all"
+                  aria-label={t('pages.twoFactorAuth.setup.aria.setupKeyDisplay')}
+                >
+                  {setupKey}
+                </div>
+              </>
+            ) : (
+              <p>{t('pages.twoFactorAuth.setup.loadingSetupKeys')}</p>
+            )}
+
+            <div className="mt-6 flex justify-end gap-3">
+              <GenericButton
+                className="generic-button"
+                text={t('common.buttons.ok')}
+                aria-label={t('common.aria.buttons.ok')}
+                onClick={() => setShowManualSetup(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
