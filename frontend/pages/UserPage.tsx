@@ -72,6 +72,8 @@ const UserPage = () => {
 	console.log("RIVALS in user page");
 	console.log(user?.rivals);
 	console.log('isRival = ' + isRival);
+	// console.log("RANK");
+	// console.log(userStats.rank);
 
 	return (
 		<div className='pageLayout'>
@@ -91,7 +93,7 @@ const UserPage = () => {
 			</div>
 			<div className='flex justify-between'>
 				<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
-				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '?'}</h4>
+				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
 			</div>
 		</div>
 
@@ -143,7 +145,9 @@ const UserPage = () => {
 		text={undefined}
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='REMOVE FROM RIVALS'
-		onClick={() => removeRival(param.username, user?.accessToken)} />
+		onClick={() => {
+			removeRival(param.username, user?.accessToken)}
+		 	} />
 	
 		:
 
@@ -153,7 +157,14 @@ const UserPage = () => {
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
 		hoverLabel='ADD TO RIVALS'
 		onClick={() => {
-			addRival(param.username, user?.accessToken);
+			if (user && param.username)
+			{
+				addRival(param.username, user?.accessToken);
+				setUser({
+					...user, 
+					rivals: [...user.rivals, 
+						{rival_username: param.username}]})
+			};
 		}} />
 		}
 

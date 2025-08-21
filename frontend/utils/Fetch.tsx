@@ -164,7 +164,7 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 
 export const removeRival = async (rivalName: string, accessToken: string) => {
 	try {
-		const response = await fetch(`https://localhost:8443/stats/rivals/${rivalName}`, {
+		const response = await fetch(`https://localhost:8443/stats/rivals/username/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
