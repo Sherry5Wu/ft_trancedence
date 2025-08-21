@@ -230,45 +230,7 @@ export const fetchUserStats = async (username: string): Promise<UserStats | null
 	}
 };
 
-export const postMatchData = async (accessToken: string, matchData: MatchData) => {
-// export const postMatchData = async (accessToken: string) => {
-    // const matchData: MatchData = 
-    //     {
-    //         player_name: 'user',
-    //         player_username: 'username',
-    //         played_at: new Date('2025-07-13 18:08').toLocaleString('en-GB'),
-    //         duration: 300,
-    //         player_score: 2,
-    //         opponent_score: 5,
-    //         opponent_id: '1',
-    //         opponent_name: 'opponentname',
-    //         opponent_username: "opponentusername",
-    //         result: 'loss',
-    //     }
-
-    try {
-        const response = await fetch(`https://localhost:8443/stats/match_history/`, {
-        method: 'POST',
-        headers: {
-        "Authorization": `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(matchData)
-    });
-
-        if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-
-        return await response.json();
-    }
-
-    catch (error) {
-        console.error('Error: ', error);
-            return null;
-    }
-};
-
-export const getMatchData = async (username: string): Promise<MatchData | null> => {
+export const fetchMatchData = async (username: string): Promise<MatchData | null> => {
     try {
         const response = await fetch(`https://localhost:8443/stats/match_history/username/${username}`, {
             method: 'GET',
@@ -286,7 +248,7 @@ export const getMatchData = async (username: string): Promise<MatchData | null> 
 
     catch (error) {
         console.error('Error: ', error);
-            return null;
+        return null;
     }
 };
 
@@ -321,4 +283,28 @@ export const fetchUsers = async (accessToken: string) => {
 		console.error('Error:', error);
 		return null;
 	}
+};
+
+
+export const disable2FA = async (accessToken?: string): Promise<boolean> => {
+  if (!accessToken) return false;
+
+  try {
+    const response = await fetch('/api/user/disable-2fa', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to disable 2FA: ${response.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error disabling 2FA:', error);
+    return false;
+  }
 };

@@ -281,6 +281,9 @@
         "title": "Two-factor authentication",
         "labelOn": "Enabled 2FA",
         "labelOff": "Disabled 2FA",
+        "disableConfirm": "Are you sure you want to disable two-factor authentication?",
+        "disabled": "Two-factor authentication has been disabled.",
+        "disableFailed": "Disabling two-factor authentication failed. Please try again.",
         "description": "Two-factor authentication is an enhanced security measure. Once enabled, you’ll be required to give two types of identification when you log into this website. Google Authenticator is supported."
       },
       "aria": {
@@ -427,7 +430,7 @@
       "rights": "All rights reserved",
       "about": "About",
       "contact": "Contact",
-      "privacy": "Privary",
+      "privacy": "Privacy",
       "aria": {
         "label": "",
         "description": "", 

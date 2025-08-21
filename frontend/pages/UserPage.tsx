@@ -73,9 +73,13 @@ const UserPage = () => {
 	// console.log("RIVALS in user page");
 	// console.log(user?.rivals);
 	// console.log('isRival = ' + isRival);
-	// console.log("RANK");
-	// console.log(userStats.rank);
-	console.log()
+	// if (userStats)
+	// {
+	// 	console.log("RANK");
+	// 	console.log(userStats.rank);
+	// }
+
+	console.log('param username = ' + param.username);
 
 	return (
 		<div className='pageLayout'>
@@ -200,7 +204,7 @@ const UserPage = () => {
 				</button>
 				</div>
 				<div className={`transition-all ease-in-out duration-300 ${history ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
-				{history && <MatchHistory player1={param.username} />}
+				{history && <MatchHistory player={param.username} />}
 				</div>
 			</div>
 			</div>)
