@@ -491,7 +491,7 @@
         }
       }
   },
-  
+
   "game": {
     "player1": "Player 1",
     "player2": "Player 2",
@@ -510,11 +510,13 @@
         "fast": "Fast"
       },
       "winCondition": {
+        "subtitle": "Win condition",
         "bestOf5": "Best of 5",
         "bestOf9": "Best of 9",
         "bestOf19": "Best of 19"
       },
       "map": {
+        "subtitle": "Map option",
         "default": "Default",
         "large": "Large",
         "obstacles": "Obstacles"
