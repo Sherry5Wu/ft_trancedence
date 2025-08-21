@@ -50,7 +50,7 @@ export interface RivalData {
 	games_played_against_rival?: number,
 	wins_against_rival?: number, 
 	loss_against_rival?: number,
-	//picture: '../assets/profilepics/B2.png'
+	picture?: string,
 }
 
 export interface FetchedUserData {

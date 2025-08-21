@@ -1,30 +1,36 @@
 import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
-import { getMatchData, postMatchData } from '../utils/Fetch';
+import { fetchMatchData } from '../utils/Fetch';
 import { MatchData } from '../utils/Interfaces';
 
-export const MatchHistory = (player: string) => {
-    const [matchData, setMatchData] = useState<MatchData[] | null>(null);
+export const MatchHistory = ({ player }: { player: string }) => {
+    const [matchData, setMatchData] = useState<MatchData | null>(null);
     const [loading, setLoading] = useState(true);
     const { user } = useUserContext();
 
     if (!user)
         return ;
 
+    console.log('player = ' + player);
+
     useEffect(() => {
-        setLoading(true);
-        // postMatchData(user.accessToken); //FOR TESTING REMOVE LATER
-        getMatchData(player).then((data) => {
+        const loadMatchData = async () => {
+            console.log('player is ' + player);
+            setLoading(true);
+            const data = await fetchMatchData(player);
+            console.log('PLAYER MATCH HISTORY');
+            console.log(data);
             setMatchData(data);
             setLoading(false);
-    });
-    }, [user.accessToken, player]);
+        }
+        loadMatchData();
+    }, [player]);
 
     if (loading)
         return <div className='flex justify-center my-5'>Loading...</div>
 
-    if (matchData?.length === 0)
+    if (!matchData || matchData.length === 0)
     {
         return (
             <div aria-label='empty match history' className='bg-[#FFEE8C] rounded-full text-center'>

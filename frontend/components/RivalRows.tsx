@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RivalData } from '../utils/Interfaces';
+import { RivalData, FetchedUserData } from '../utils/Interfaces';
 import { useUserContext } from '../context/UserContext';
 import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import TrashIcon from '../assets/noun-trash-3552649.svg?react'
 import { useTranslation } from 'react-i18next';
-import { fetchRivalData } from '../utils/Fetch';
+import { fetchRivalData, fetchUsers } from '../utils/Fetch';
 
 const calculateWinRatio = (wins: number | undefined, losses: number | undefined, games_played_against_rival: number | undefined) => {
 	if (wins === undefined || losses === undefined || games_played_against_rival === undefined)
@@ -15,12 +15,35 @@ const calculateWinRatio = (wins: number | undefined, losses: number | undefined,
 	return (wins / wins + losses) * 100;
 }
 
+const getRivalPic = (rivalName: string) => {
+	const { user } = useUserContext();
+	const [rivalPic, setRivalPic] = useState('');
+
+	useEffect(() => {
+		if (!user)
+			return ;
+		const loadRivalPic = async () => {
+			const allUsers = await fetchUsers(user?.accessToken);
+			if (!allUsers)
+				return ;
+			const rival = allUsers.filter((u: FetchedUserData) => u.username === rivalName);
+			if (rival)
+				setRivalPic(rival.avatarUrl);
+			
+		}
+		loadRivalPic();
+	}, [user, rivalName])
+
+	return rivalPic;
+}
+
 export const RivalRows = () => {
 	const { t } = useTranslation();
 	const { user } = useUserContext();
   	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
 	const [rivalData, setRivalData] = useState<RivalData[]>([]);
+	const [rivalPic, setRivalPic] = useState('');
 
 	if (!user)
 		return ;
@@ -28,8 +51,10 @@ export const RivalRows = () => {
 	useEffect(() => {
 		const loadRivals = async () => {
 			setLoading(true);
-			const data = await fetchRivalData(user?.username);
-			setRivalData(data);
+			const rivalData = await fetchRivalData(user?.username);
+			// const allUsers = await fetchUsers(user?.accessToken);
+			// const rival = allUsers.filter((u: FetchedUserData) => u.username === rival.rival_username);
+			setRivalData(rivalData);
 			setLoading(false);
 		}
 		loadRivals();
@@ -59,7 +84,7 @@ export const RivalRows = () => {
 					<div key={index} className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
 						<li className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'
 								onClick={() => navigate(`/user/${rival.rival_username}`)}>
-							<span></span>{/* <img src={rival.picture} className='profilePicSmall'/> */}
+							 <span></span>{/*img src={rivalPicURL} className='profilePicSmall'/> */}
 							<span className='col-span-2'>{rival.rival_username}</span>
 							<span className='col-span-2'>{rival.rival_elo_score}</span>
 							<span className={`col-span-2 ${winratio >= 50 ? winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{winratio}%</span>
