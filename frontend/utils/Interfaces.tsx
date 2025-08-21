@@ -101,6 +101,7 @@ export interface User {
     accessToken: string;
     refreshToken: string;
     googleIdToken?: string;
+    twoFA: boolean;
 }
 
 export interface UserType {

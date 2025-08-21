@@ -156,7 +156,9 @@ const SettingsPage = () => {
             {t('pages.userSettings.twoFactor.description')}
 
           <ToggleButton
-            label={t('pages.userSettings.twoFactor.title')}
+            // label={t('pages.userSettings.twoFactor.title')}
+            labelOn={t('pages.userSettings.twoFactor.labelOn')}
+            labelOff={t('pages.userSettings.twoFactor.labelOff')}
             aria-label={t('pages.userSettings.aria.2faToggle')}
             onClick={() => 
               navigate('/setup2fa')

@@ -3,13 +3,16 @@ import { useAccessibilityContext } from '../context/AccessibilityContext';
 
 
 interface ToggleButtonProps {
-    label?: string;
+    labelOn?: string;
+    labelOff?: string;
+    // label?: string;
     className?: string;
     disabled?: boolean
     onClick?: () => void;
 }
 
-export const ToggleButton = ( { label, onClick, className, disabled = false}: ToggleButtonProps) => {
+// export const ToggleButton = ( { label, onClick, className, disabled = false}: ToggleButtonProps) => {
+export const ToggleButton = ({ labelOn = 'On', labelOff = 'Off', onClick, className, disabled = false }: ToggleButtonProps) => {
     const [isOn, setIsOn] = useState(false);
 
     const handleClick = () => {
@@ -29,7 +32,8 @@ export const ToggleButton = ( { label, onClick, className, disabled = false}: To
                     {/* {isOn ? 'ON' : 'OFF'} */}
                 </div>
             </button>
-            <span className='ml-3'>{label}</span>
+            {/* <span className='ml-3'>{label}</span> */}
+            <span className="ml-3">{isOn ? labelOn : labelOff}</span>            
         </div>
     );
 } 
