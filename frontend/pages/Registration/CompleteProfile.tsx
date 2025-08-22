@@ -88,7 +88,7 @@ const CompleteProfilePage: React.FC = () => {
         refreshToken: newUser.refreshToken,
       });
 
-      navigate(`/user/${newUser.username}`);
+      navigate(`/user/${newUser.user.username}`);
     } catch (err) {
       console.error("Error saving profile:", err);
       alert("Something went wrong, please try again.");
