@@ -37,10 +37,14 @@ export const MatchHistory = ({ player }: { player: string }) => {
                 const player1 = allUsers.find((u: FetchedUserData) => u.username === match.player_username);
                 if (player1)
                     setProfilePic1(player1.avatarUrl);
+                else
+                    setProfilePic1('../assets/noun-profile-7808629.svg');
 
                 const player2 = allUsers.find((u: FetchedUserData) => u.username === match.opponent_username);
                 if (player2)
                     setProfilePic2(player2.avatarUrl);
+                else
+                    setProfilePic2('../assets/noun-profile-7808629.svg');
             })
         }
         loadProfilePicURL();
