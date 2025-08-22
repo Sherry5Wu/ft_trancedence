@@ -499,6 +499,7 @@
     "player1": "Player 1",
     "player2": "Player 2",
     "startMatch": "Start Match",
+    "optionsButton": "Options",
     "pauseMatch": "Game paused",
     "finishMatch": "Match is over!",
     "winner": "Winner",
