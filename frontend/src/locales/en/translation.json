@@ -95,24 +95,24 @@
       "title": "About this project",
       "text": "P | N G - P · N G is our ft_transcendence project, developed as part of the 42 Network core curriculum. It’s a full-stack web application that combines real-time gameplay, and modern web technologies to deliver an engaging and competitive experience. This project showcases our skills in full-stack development, system design, and teamwork.",
       "aria": {
-        "label": "",
-        "description": ""
+        "label": "About this project section",
+        "description": "Detailed information about the project, its purpose, and the technologies used."
       }
     },
     "contact": {
       "title": "Contact us",
       "text": "For any questions, feedback, or to get in touch with the team behind this project, feel free to visit our profiles. We look forward to hearing from you!",
       "aria": {
-        "label": "",
-        "description": ""
+        "label": "Contact information and team profiles",
+        "description": "Information on how to contact the project team and links to their profiles."
       }
     },
     "privacy": {
       "title": "Privacy",
       "text": "",
       "aria": {
-        "label": "",
-        "description": ""
+        "label": "Privacy policy section",
+        "description": "Details about the project's privacy practices and data handling policies."
       }
     },
     "notFound": {
@@ -398,9 +398,9 @@
     "rival": {
       "title": "RIVALS",
       "aria": {
-        "label": "",
-        "description": "",
-        "table": ""
+        "label": "Rivals page",
+        "description": "Page displaying a list of your rivals with statistics including score, win ratio, and matches played.",
+        "table": "Table listing rivals, their scores, win ratios, your wins and losses against them, and matches played."
       }
 
     },
@@ -435,25 +435,33 @@
       "contact": "Contact",
       "privacy": "Privacy",
       "aria": {
-        "label": "",
-        "description": "", 
-        "about": "",
-        "contact": "",
-        "privacy": ""
+        "label": "Footer section",
+        "description": "Contains links to About, Contact, and Privacy pages",
+        "about": "Link to About page with information about the project",
+        "contact": "Link to Contact page for reaching out to the team",
+        "privacy": "Link to Privacy policy page"
       }
     },
     "navBar": {
-      
-      "aria": {
-
-      }
+    "aria": {
+      "languageMenu": "Language selection menu",
+      "accessibilityMenu": "Accessibility options menu",
+      "darkModeToggle": "Toggle dark mode",
+      "titleButton": "Go to user profile or homepage",
+      "rivalSearch": "Search bar to find other users",
+      "profileMenu": "User profile menu with settings and logout options"
+    }
     },
     "pieGraph": {
       "wins": "WINS",
       "draws": "DRAWS",
       "losses": "LOSSES",
       "aria": {
-
+        "label": "Game results pie chart",
+        "description": "Pie chart showing the distribution of wins, draws, and losses",
+        "wins": "Number of games won",
+        "draws": "Number of games drawn",
+        "losses": "Number of games lost"
       }
     },
     "rivalRows": {
@@ -462,16 +470,22 @@
       "name": "Name",
       "score": "Score",
       "winRatio": "Win ratio",
-      "userRivalWinsLosses": "Your wins/losses",
+      "userRivalWinsLosses": "Your wins / losses",
       "matchesPlayed": "Matches played",
       "aria": {
-
+        "listLabel": "List of rivals",
+        "listItemLabel": "Rival statistics",
+        "winRatioDescription": "Percentage of games won against this rival",
+        "clickableRow": "View rival profile"
       }
       },
       "searchBar": {
         "noUser": "No users found",
         "aria": {
-
+          "inputLabel": "User search input",
+          "listLabel": "Search results",
+          "listItemLabel": "User option",
+          "noResultsMessage": "No users found matching your search"
         }
       },
       "stats": {
@@ -484,7 +498,13 @@
         "winStreak": "WIN STREAK",
         "longestWinStreak": "LONGEST WIN STREAK",
         "aria": {
-
+          "scoreHistory": "Line graph showing the user's score history over time",
+          "scoreGainsVsLosses": "Bar graph displaying score gains versus losses",
+          "winRate": "Pie chart illustrating the user's win rate distribution",
+          "playedGames": "Total number of games played",
+          "worstRival": "User's worst rival based on performance",
+          "winStreak": "Current win streak count",
+          "longestWinStreak": "User's longest win streak ever"
         }
       },
       "genericInput": {
