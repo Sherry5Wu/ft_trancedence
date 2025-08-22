@@ -60,6 +60,9 @@ export default fp(async (fastify) => {
       if (existingUser) {
         // Generate tokens and user information
         const { accessToken, refreshToken, user } = await googleUserLogin(existingUser);
+
+        console.log('existingUer-again:', user); // for testing only
+        
         // Store the refreshToken into DB
         try {
           await storeRefreshToken(refreshToken, existingUser.id, ip, userAgent);
@@ -72,6 +75,7 @@ export default fp(async (fastify) => {
         // checking the 2FA status
         const TwoFAStatus = user.is2FAEnabled && user.is2FAConfirmed;
 
+        console.log('existingUer-again:', user); // for testing only
         // return to frontend
         return reply.code(200).send({ accessToken, refreshToken, user, TwoFAStatus });
       }
@@ -84,8 +88,9 @@ export default fp(async (fastify) => {
       }
 
       // for testing only
-      console.log("==> Sending needCompleteProfile response");
-      console.dir({ needCompleteProfile: true }, { depth: null });
+      // console.log("==> Sending needCompleteProfile response");
+      // console.dir({ needCompleteProfile: true }, { depth: null });
+
       // 5. Otherwise tell client profile completion is required (no DB row created)
       return reply.code(200).send({
         needCompleteProfile: true

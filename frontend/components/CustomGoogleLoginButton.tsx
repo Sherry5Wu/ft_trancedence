@@ -279,7 +279,7 @@ const CustomGoogleLoginButton: React.FC = () => {
   const handleClick = () => {
     if (!window.google) return alert("Google script not loaded yet");
     // Open the popup flow (works cross-browser)
-    google.accounts.id.prompt(); 
+    google.accounts.id.prompt();
   };
 
   return (
