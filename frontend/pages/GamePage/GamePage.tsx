@@ -75,27 +75,27 @@ function pairSequential(ps: Player[]): { pairs: Pair[]; carry: Player[] } {
   return { pairs, carry };
 }
 
-function buildP1Payload(
-  p1: { id?: string; username?: string },
-  p2: { id?: string; username?: string },
-  s1: number,
-  s2: number,
+function buildPayload(
+  me: { id?: string; username?: string },
+  opp: { id?: string; username?: string },
+  myScore: number,
+  theirScore: number,
   durationStr: string,
   played_at_iso: string
 ) {
-  const player_username = p1?.username ?? 'Player 1';
-  const opponent_username = p2?.username ?? 'Player 2';
+  const meName = me?.username ?? 'Player';
+  const oppName = opp?.username ?? 'Opponent';
   return {
-    player_id: p1?.id ? String(p1.id) : 'guest',
-    player_username,
-    player_name: player_username,
-    opponent_id: p2?.id ? String(p2.id) : null,
-    opponent_username,
-    opponent_name: opponent_username,
-    player_score: s1,
-    opponent_score: s2,
+    player_id: me?.id ? String(me.id) : 'guest',
+    player_username: meName,
+    player_name: meName,
+    opponent_id: opp?.id ? String(opp.id) : 'guest',
+    opponent_username: oppName,
+    opponent_name: oppName,
+    player_score: myScore,
+    opponent_score: theirScore,
     duration: durationStr,
-    result: s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw',
+    result: myScore > theirScore ? 'win' : myScore < theirScore ? 'loss' : 'draw',
     played_at: played_at_iso,
   } as const;
 }
@@ -115,6 +115,7 @@ export default function GamePage() {
 
   const { user } = useUserContext();
   const [startAt, setStartAt] = useState<Date | null>(null);
+  const matchSnapshot = useRef<{ p1: Player; p2: Player; startedAt: Date } | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   type Phase =
@@ -185,14 +186,29 @@ export default function GamePage() {
     : (rawPlayers?.[1]?.username ?? 'Player 2');
 
   const handleStart = () => {
-    setStartAt(new Date());
+    const now = new Date();
+    setStartAt(now);
     setSubmitted(false);
+    if (isTournament && currentPair) {
+      matchSnapshot.current = { p1: currentPair[0], p2: currentPair[1], startedAt: now };
+    } else {
+      const p1 = (rawPlayers?.[0] as any) ?? { id: 'guest', username: 'Player 1', elo: 1000 };
+      const p2 = (rawPlayers?.[1] as any) ?? { id: 'guest', username: 'Player 2', elo: 1000 };
+      matchSnapshot.current = { p1, p2, startedAt: now };
+    }
     setPhase('playing');
   };
 
   // Called by the main when a match finishes
   const handleMatchEnd = async (winnerName: string, s1: number, s2: number) => {
-    const started = startAt ?? new Date();
+    const snap = matchSnapshot.current;
+    const p1 = snap?.p1 ?? currentPair?.[0];
+    const p2 = snap?.p2 ?? currentPair?.[1];
+
+    // Failsafe
+    if (!p1 || !p2) return;
+
+    const started = snap?.startedAt ?? startAt ?? new Date();
     const ended = new Date();
     const durationMs = ended.getTime() - started.getTime();
     const durationStr = formatHMS(durationMs);
@@ -236,27 +252,21 @@ export default function GamePage() {
     }
 
     async function submitAll() {
-      if (submitted) {
-        afterSubmitUI();
-        return;
-      }
+      if (submitted) { afterSubmitUI(); return; }
 
       try {
-        if (isTournament && currentPair) {
-          const p1 = currentPair[0];
-          const p2 = currentPair[1];
+        // Single match history payload, only P1 perspective is posted for fetch logic
+        const payloadP1 = buildPayload(p1, p2, s1, s2, durationStr, played_at_iso);
+        await Promise.all([
+          postMatchHistory(payloadP1, user?.accessToken),
+        ]);
 
-          await postMatchHistory(
-            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
-            user?.accessToken
-          );
-
-          // Tournament history
+        // Tournament history payload
+        if (isTournament) {
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
             const stage_number = stageForPosting(roundNum, bracketSize || entrants.length || 2);
-            const resultForP1: 'win' | 'loss' | 'draw' =
-              s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
+            const resultP1: 'win' | 'loss' | 'draw' = s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
 
             await postTournamentHistory({
               tournament_id,
@@ -264,27 +274,21 @@ export default function GamePage() {
               match_number: matchIdx + 1,
               player_name: p1.username,
               opponent_name: p2.username,
-              result: resultForP1,
+              result: resultP1,
             });
           }
-        } else {
-          // Regular match
-          const p1 = (rawPlayers?.[0] as any) ?? {};
-          const p2 = (rawPlayers?.[1] as any) ?? {};
-                  
-          await postMatchHistory(
-            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
-            user?.accessToken
-          );
         }
 
         setSubmitted(true);
         afterSubmitUI();
-      } catch (err: any) {
+      } catch (err) {
         if (!isTournament) {
           setPostResult({ winner: winnerName, s1, s2 });
           setPhase('post');
         }
+      } finally {
+        // clear snapshot so it can't accidentally leak to the next match
+        matchSnapshot.current = null;
       }
     }
 
@@ -325,9 +329,6 @@ export default function GamePage() {
                       </label>
                     ))}
                   </div>
-                  <div className="text-xs mt-1 opacity-80">
-                    Actual speed: {baseSpeed.toFixed(3)}
-                  </div>
                 </fieldset>
 
                 <label className="block mb-6">
@@ -354,10 +355,6 @@ export default function GamePage() {
                     <option value="large">Large</option>
                     <option value="obstacles">Obstacles</option>
                   </select>
-                  <div className="text-xs mt-1 opacity-80">
-                    {mapKey === 'default' && 'Initial test version.'}
-                    {mapKey === 'large' && 'Double the size'}
-                  </div>
                 </label>
 
                 {/* Controls */}
