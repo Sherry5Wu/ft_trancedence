@@ -1,27 +1,27 @@
-import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData } from "../utils/Interfaces";
+import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, LeaderboardData, FetchedUserData } from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
-  console.log('Sending user:', player);
-  try {
-    const response = await fetch('https://localhost:8443/as/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(player)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    
-    return await response.json();
-  } 
-  
-  catch (error) {
-    console.error('Error:', error);
-    return null;
-  }
+	// console.log('Sending user:', player);
+	try {
+		const response = await fetch('https://localhost:8443/as/auth/register', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+		},
+			body: JSON.stringify(player)
+		});
+		
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		
+		return await response.json();
+	} 
+	
+	catch (error) {
+		console.error('Error:', error);
+		return null;
+	}
 };
 
 export const signInUser = async (player: LoginData) => {
@@ -134,9 +134,9 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 		rival_username: rivalName
 	};
 
-	console.log("IN ADD_RIVAL:");
-	console.log(data);
-	console.log(accessToken);
+	// console.log("IN ADD_RIVAL:");
+	// console.log(data);
+	// console.log(accessToken);
 
 	try {
 		const response = await fetch(`https://localhost:8443/stats/rivals`, {
@@ -167,7 +167,6 @@ export const removeRival = async (rivalName: string, accessToken: string) => {
 		const response = await fetch(`https://localhost:8443/stats/rivals/username/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
-				// 'Content-Type': 'application/json',
 				'Authorization': `Bearer ${accessToken}`,
 			},
 		});
@@ -252,7 +251,7 @@ export const fetchMatchData = async (username: string): Promise<MatchData [] | n
     }
 };
 
-export const fetchUsers = async (accessToken: string) => {
+export const fetchUsers = async (accessToken: string): Promise<FetchedUserData []> => {
     //   const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
     //   return rivalData.sort();
 	try {
@@ -269,11 +268,6 @@ export const fetchUsers = async (accessToken: string) => {
 		}
 
 		const userDataArray = await response.json();
-		// const filteredUserDataArray = userDataArray.users.map((username: string) => {
-		// 	return username;
-		// })
-		// console.log('PRINT FROM FETCH USERS');
-		// console.log(filteredUserDataArray);
 		return userDataArray.users.sort((a: any, b: any) => {
 			a.username.localeCompare(b.username);
 		}) ;
@@ -281,7 +275,7 @@ export const fetchUsers = async (accessToken: string) => {
 
 	catch (error) {
 		console.error('Error:', error);
-		return null;
+		return [];
 	}
 };
 

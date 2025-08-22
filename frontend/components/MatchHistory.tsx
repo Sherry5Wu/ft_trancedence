@@ -3,6 +3,7 @@ import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
 import { fetchMatchData, fetchUsers } from '../utils/Fetch';
 import { MatchData, FetchedUserData } from '../utils/Interfaces';
+import { DEFAULT_AVATAR } from '../utils/constants';
 
 export const MatchHistory = ({ player }: { player: string }) => {
     const [matchData, setMatchData] = useState<MatchData[] | null>(null);
@@ -33,18 +34,18 @@ export const MatchHistory = ({ player }: { player: string }) => {
             if (!allUsers)
                 return ;
 
-            const updatedData = matchData.map((match: MatchData) => {
+            matchData.map((match: MatchData) => {
                 const player1 = allUsers.find((u: FetchedUserData) => u.username === match.player_username);
                 if (player1)
-                    setProfilePic1(player1.avatarUrl);
-                else
-                    setProfilePic1('../assets/noun-profile-7808629.svg');
+                    setProfilePic1(player1.avatarUrl || DEFAULT_AVATAR);
+				else
+					setProfilePic1(DEFAULT_AVATAR);
 
                 const player2 = allUsers.find((u: FetchedUserData) => u.username === match.opponent_username);
                 if (player2)
-                    setProfilePic2(player2.avatarUrl);
-                else
-                    setProfilePic2('../assets/noun-profile-7808629.svg');
+                    setProfilePic2(player2.avatarUrl || DEFAULT_AVATAR);
+				else
+					setProfilePic2(DEFAULT_AVATAR);
             })
         }
         loadProfilePicURL();

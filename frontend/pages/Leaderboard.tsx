@@ -1,128 +1,59 @@
 // pages/Leaderboard.tsx
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { useUserContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import MedalIcon from '../assets/noun-medal-6680492.svg?react';
+import { UserStats, LeaderboardStats, FetchedUserData } from '../utils/Interfaces';
+import { fetchUsers, fetchUserStats } from '../utils/Fetch';
+import { DEFAULT_AVATAR } from '../utils/constants';
 
-const LeaderboardPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const { user } = useUserContext();
-  const [loading, setLoading] = useState(true);
+const LeaderboardPage = () => {
+	const { t, i18n } = useTranslation();
+	const navigate = useNavigate();
+	const { user } = useUserContext();
+	const [loading, setLoading] = useState(true);
+	const [leaderboardData, setLeaderboardData] = useState<LeaderboardStats[]>([]);
 
-  // Mocked leaderboard data
-  interface PlayerStats {
-    username: string;
-    profilePic: string;
-    totalGames: number;
-    totalScore: number;
-    isRival?: 'y' | 'n';
-  }
-  const mockLeaderboard: PlayerStats[] = [
-  {
-      username: 'Rival0',
-      profilePic: '../assets/profilepics/Bluey.png',
-      totalGames: 10,
-      totalScore: 25,
-      isRival: 'n',
-    },
-    {
-      username: 'Rival1',
-      profilePic: '../assets/profilepics/B2.png',
-      totalGames: 12,
-      totalScore: 30,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival2',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 9,
-      totalScore: 22,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival3',
-      profilePic: '../assets/profilepics/Bandit.png',
-      totalGames: 15,
-      totalScore: 18,
-      isRival: 'y',
-    },
-    { 
-      username: 'Rival4',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 155,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival5',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 15,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival6',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 15,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival7',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 155,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival8',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 55,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival9',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 15,
-      isRival: 'y',
-    },
-    {
-      username: 'Rival10',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 15,
-      isRival: 'y',
-    },    
-    {
-      username: 'Rival11',
-      profilePic: '../assets/profilepics/image.jpg',
-      totalGames: 8,
-      totalScore: 15,
-      isRival: 'y',
-    },    
-    {
-      username: 'Paddington',
-      profilePic: '../assets/profilepics/Bluey.png',
-      totalGames: 1,
-      totalScore: 2,
-    },
-  ];
+	useEffect(() => {
+		const getLeaderboard = async () => {
+			setLoading(true);
+			try {
+				if (!user)
+					return ;
+				const users: FetchedUserData[] = await fetchUsers(user?.accessToken);
+				const leaderboard: LeaderboardStats[] = await Promise.all (
+					users.map(async u => {
+						const userStats = await fetchUserStats(u.username);
+						const leaderboardEntry: LeaderboardStats = {
+							userInfo: u,
+							stats: userStats,
+						}
+						return leaderboardEntry;
+					}
+				))
+				setLeaderboardData(leaderboard);
+			}
+			catch(error) {
+				console.error('Error: ', error);
+				return null;
+			}
+			setLoading(false);
+		}
+		getLeaderboard();
+	}, [])
 
-  const leaderboardData = mockLeaderboard
-    .sort((a, b) => b.totalScore - a.totalScore) // sort by score descending
+
+  leaderboardData.sort((a, b) => b.stats.elo_score - a.stats.elo_score) // sort by score descending
     .slice(0, 10); // limit to top 10
 
 	if (leaderboardData.length == 0)
     	return <div className='flex justify-center'>{t('pages.leaderboard.empty')}</div>;
 
-	// if (loading)
-	// 	return <div className='flex justify-center'>{t('pages.leaderboard.loadingLeaderboard')}</div>;
+	if (loading)
+		return <div className='flex justify-center'>{t('pages.leaderboard.loadingLeaderboard')}</div>;
 
   return (
     <main
@@ -172,15 +103,15 @@ const LeaderboardPage: React.FC = () => {
             </li>
           ) : (
             leaderboardData.map((player, idx) => {
-              const isCurrentUser = player.username === user?.username;
+              const isCurrentUser = player.userInfo.username === user?.username;
               return (
               <li
-                key={player.username}
-                onClick={() => navigate(`/user/${player.username}`)}
+                key={player.userInfo.username}
+                onClick={() => navigate(`/user/${player.userInfo.username}`)}
                 className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 ${
                   isCurrentUser ? 'bg-[#FDFBD4] border-2' : 'bg-[#FFEE8C]'
                 } hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
-                aria-label={`Player ${player.username} at position ${idx + 1}`}
+                aria-label={`Player ${player.userInfo.username} at position ${idx + 1}`}
               >
                 <span className="relative flex justify-center items-center w-8 h-8 mx-auto">
                   {(idx === 0 || idx === 1 || idx === 2) && (
@@ -189,25 +120,25 @@ const LeaderboardPage: React.FC = () => {
                   <span className="z-10">{idx + 1}</span>
                 </span>
                 <img
-                  src={player.profilePic}
-                  alt={`${player.username}'s profile picture`}
+                  src={player.userInfo.avatarUrl || DEFAULT_AVATAR}
+                  alt={`${player.userInfo.username}'s profile picture`}
                   className="h-11 w-11 rounded-full object-cover border-2"
                 />
-                <span className="truncate">{player.username}</span>
-                <span>{player.isRival}</span>
-                <span>{player.totalGames}</span>
-                <span className="font-semibold">{player.totalScore}</span>
+                <span className="truncate">{player.userInfo.username}</span>
+                {/* <span>{player.isRival}</span> */}
+                <span>{player.stats.games_played}</span>
+                <span className="font-semibold">{player.stats.elo_score}</span>
               </li>
               );
             })
           )}
 
-          {!leaderboardData.some((p) => p.username === user?.username) && (() => {
-            const currentUser = mockLeaderboard.find((p) => p.username === user?.username);
+          {!leaderboardData.some((p) => p.userInfo.username === user?.username) && (() => {
+            const currentUser = leaderboardData.find((p) => p.userInfo.username === user?.username);
             if (!currentUser) return null;
-            const currentUserIndex = mockLeaderboard
-              .sort((a, b) => b.totalScore - a.totalScore)
-              .findIndex((p) => p.username === user?.username);
+            const currentUserIndex = leaderboardData
+              .sort((a, b) => b.stats.elo_score - a.stats.elo_score)
+              .findIndex((p) => p.userInfo.username === user?.username);
 
             return (
               <>
@@ -215,20 +146,20 @@ const LeaderboardPage: React.FC = () => {
                   . . .
                 </div>
                 <li
-                  onClick={() => navigate(`/user/${currentUser.username}`)}
+                  onClick={() => navigate(`/user/${currentUser.userInfo.username}`)}
                   className="grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 bg-[#FDFBD4] border-2 hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300"
-                  aria-label={`Current user ${currentUser.username} at position ${currentUserIndex + 1}`}
+                  aria-label={`Current user ${currentUser.userInfo.username} at position ${currentUserIndex + 1}`}
                 >
                   <span>{currentUserIndex + 1}</span>
                   <img
-                    src={currentUser.profilePic}
-                    alt={`${currentUser.username}'s profile picture`}
+                    src={currentUser.userInfo.avatarUrl || DEFAULT_AVATAR}
+                    alt={`${currentUser.userInfo.username}'s profile picture`}
                     className="h-11 w-11 rounded-full object-cover border-2"
                   />
-                  <span className="truncate">{currentUser.username}</span>
-                  <span>{currentUser.isRival}</span>
-                  <span>{currentUser.totalGames}</span>
-                  <span className="font-semibold">{currentUser.totalScore}</span>
+                  <span className="truncate">{currentUser.userInfo.username}</span>
+                  {/* <span>{currentUser.isRival}</span> */}
+                  <span>{currentUser.stats.games_played}</span>
+                  <span className="font-semibold">{currentUser.stats.elo_score}</span>
                 </li>
               </>
             );

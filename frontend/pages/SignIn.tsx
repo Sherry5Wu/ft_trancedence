@@ -14,6 +14,7 @@ import { useValidationField } from '../utils/Hooks';
 import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
 import { LoginData } from '../utils/Interfaces';
 import { signInUser } from '../utils/Fetch';
+import { DEFAULT_AVATAR } from '../utils/constants';
 
 // const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
 const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
@@ -88,7 +89,7 @@ return (
                 username: signInData.data.user.username,
                 id: signInData.data.user.id,
                 email: signInData.data.user.email,
-                profilePic: signInData.data.user.avatarUrl || '../assets/noun-profile-7808629.svg',
+                profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
                 score: signInData.stats.score,
                 rank: signInData.stats.score,
                 rivals: signInData.rivals,

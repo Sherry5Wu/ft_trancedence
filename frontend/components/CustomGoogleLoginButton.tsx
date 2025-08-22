@@ -238,7 +238,7 @@ const CustomGoogleLoginButton: React.FC = () => {
         // Navigate to the user page
         navigate(`/user/${userData.username}`);
       } 
-      
+
       // else {
       //   // navigate('/about');
       //   setUser(prev => ({ ...prev, ...result }));
