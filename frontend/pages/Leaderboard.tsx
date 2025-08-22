@@ -24,17 +24,26 @@ const LeaderboardPage = () => {
 				if (!user)
 					return ;
 				const users: FetchedUserData[] = await fetchUsers(user?.accessToken);
-				const leaderboard: LeaderboardStats[] = await Promise.all (
+				const leaderboard: (LeaderboardStats | null)[] = await Promise.all (
 					users.map(async u => {
 						const userStats = await fetchUserStats(u.username);
-						const leaderboardEntry: LeaderboardStats = {
-							userInfo: u,
-							stats: userStats,
+						if (userStats)
+						{
+							const leaderboardEntry: LeaderboardStats = {
+								userInfo: u,
+								stats: userStats,
+							}
+							return leaderboardEntry;
 						}
-						return leaderboardEntry;
+						else
+							return null;
 					}
 				))
-				setLeaderboardData(leaderboard);
+				if (leaderboard)
+				{
+					const filteredLeaderboard = leaderboard.filter((entry): entry is LeaderboardStats => entry !== null);
+					setLeaderboardData(filteredLeaderboard);
+				}
 			}
 			catch(error) {
 				console.error('Error: ', error);
@@ -45,12 +54,16 @@ const LeaderboardPage = () => {
 		getLeaderboard();
 	}, [])
 
+	if (!leaderboardData || leaderboardData.length == 0)
+    	return (
+			<>
+				<h1 id="pageTitle" className="h1 font-semibold text-center">{t('pages.leaderboard.title')}</h1>
+				<div className='flex justify-center translate-y-10'>{t('pages.leaderboard.empty')}</div>
+			</>);
 
-  leaderboardData.sort((a, b) => b.stats.elo_score - a.stats.elo_score) // sort by score descending
-    .slice(0, 10); // limit to top 10
+  	leaderboardData.sort((a, b) => b.stats.elo_score - a.stats.elo_score) // sort by score descending
+    	.slice(0, 10); // limit to top 10
 
-	if (leaderboardData.length == 0)
-    	return <div className='flex justify-center'>{t('pages.leaderboard.empty')}</div>;
 
 	if (loading)
 		return <div className='flex justify-center'>{t('pages.leaderboard.loadingLeaderboard')}</div>;
@@ -74,20 +87,17 @@ const LeaderboardPage = () => {
       {leaderboardData.length > 0 && (
         <div
           aria-label={t('pages.leaderboard.aria.table')}
-          className="grid grid-cols-6 mb-1 text-center font-medium"
+          className="grid grid-cols-8 text-center font-medium min-w-md translate-y-2"
         >
-          <span></span>
-          <span></span>
-          <span aria-label={t('pages.leaderboard.aria.columnUsername')}>
+          <span className='col-span-1'></span>
+          <span className='col-span-1'></span>
+          <span className='col-span-2' aria-label={t('pages.leaderboard.aria.columnUsername')}>
             {t('pages.leaderboard.columns.username')}
           </span>
-          <span aria-label={t('pages.leaderboard.aria.columnRival')}>
-            {t('pages.leaderboard.columns.rival')}
-          </span>
-          <span aria-label={t('pages.leaderboard.aria.columnTotalGames')}>
+          <span className='col-span-2' aria-label={t('pages.leaderboard.aria.columnTotalGames')}>
             {t('pages.leaderboard.columns.totalGames')}
           </span>
-          <span aria-label={t('pages.leaderboard.aria.columnScore')}>
+          <span className='col-span-2' aria-label={t('pages.leaderboard.aria.columnScore')}>
             {t('pages.leaderboard.columns.score')}
           </span>
         </div>
@@ -99,7 +109,7 @@ const LeaderboardPage = () => {
               className="grid items-center text-center rounded-xl h-12 mb-2 px-40 bg-[#FFEE8C]"
               aria-label={t('pages.leaderboard.empty')}
             >
-              <span className="col-span-6">{t('pages.leaderboard.empty')}</span>
+              <span className="col-span-8">{t('pages.leaderboard.empty')}</span>
             </li>
           ) : (
             leaderboardData.map((player, idx) => {
@@ -108,26 +118,27 @@ const LeaderboardPage = () => {
               <li
                 key={player.userInfo.username}
                 onClick={() => navigate(`/user/${player.userInfo.username}`)}
-                className={`grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 ${
+                className={`grid grid-cols-8 gap-x-2 min-w-md items-center text-center rounded-xl h-12 mb-2 ${
                   isCurrentUser ? 'bg-[#FDFBD4] border-2' : 'bg-[#FFEE8C]'
                 } hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
                 aria-label={`Player ${player.userInfo.username} at position ${idx + 1}`}
               >
-                <span className="relative flex justify-center items-center w-8 h-8 mx-auto">
-                  {(idx === 0 || idx === 1 || idx === 2) && (
-                    <MedalIcon className="absolute w-12 h-12" aria-hidden="true" />
-                  )}
-                  <span className="z-10">{idx + 1}</span>
+                <span className="relative flex justify-center items-center w-8 h-8 mx-auto col-span-1">
+					{(idx === 0 || idx === 1 || idx === 2) && (
+						<MedalIcon className="absolute w-12 h-12" aria-hidden="true" />
+					)}
+					<span className="z-10">{idx + 1}</span>
                 </span>
-                <img
-                  src={player.userInfo.avatarUrl || DEFAULT_AVATAR}
-                  alt={`${player.userInfo.username}'s profile picture`}
-                  className="h-11 w-11 rounded-full object-cover border-2"
-                />
-                <span className="truncate">{player.userInfo.username}</span>
-                {/* <span>{player.isRival}</span> */}
-                <span>{player.stats.games_played}</span>
-                <span className="font-semibold">{player.stats.elo_score}</span>
+                <span className='flex justify-center col-span-1'>
+					<img
+						src={player.userInfo.avatarUrl || DEFAULT_AVATAR}
+						alt={`${player.userInfo.username}'s profile picture`}
+						className="h-11 w-11 rounded-full object-cover border-2"
+					/>
+				</span>
+                <span className="truncate col-span-2">{player.userInfo.username}</span>
+                <span className='col-span-2'>{player.stats.games_played}</span>
+                <span className="font-bold col-span-2 text-lg">{player.stats.elo_score}</span>
               </li>
               );
             })
@@ -147,19 +158,20 @@ const LeaderboardPage = () => {
                 </div>
                 <li
                   onClick={() => navigate(`/user/${currentUser.userInfo.username}`)}
-                  className="grid grid-cols-6 gap-x-2 items-center text-center rounded-xl h-12 mb-2 bg-[#FDFBD4] border-2 hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300"
+                  className="grid grid-cols-8 gap-x-2 items-center text-center rounded-xl h-12 mb-2 bg-[#FDFBD4] border-2 hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300"
                   aria-label={`Current user ${currentUser.userInfo.username} at position ${currentUserIndex + 1}`}
                 >
-                  <span>{currentUserIndex + 1}</span>
-                  <img
-                    src={currentUser.userInfo.avatarUrl || DEFAULT_AVATAR}
-                    alt={`${currentUser.userInfo.username}'s profile picture`}
-                    className="h-11 w-11 rounded-full object-cover border-2"
-                  />
-                  <span className="truncate">{currentUser.userInfo.username}</span>
-                  {/* <span>{currentUser.isRival}</span> */}
-                  <span>{currentUser.stats.games_played}</span>
-                  <span className="font-semibold">{currentUser.stats.elo_score}</span>
+                  <span className='col-span-1'>{currentUserIndex + 1}</span>
+                  <span className='col-span-1 flex justify-center'>
+					<img
+						src={currentUser.userInfo.avatarUrl || DEFAULT_AVATAR}
+						alt={`${currentUser.userInfo.username}'s profile picture`}
+						className="h-11 w-11 rounded-full object-cover border-2"
+                  	/>
+				  </span>
+                  <span className="truncate col-span-2">{currentUser.userInfo.username}</span>
+                  <span className='col-span-2'>{currentUser.stats.games_played}</span>
+                  <span className="font-bold col-span-2 text-lg">{currentUser.stats.elo_score}</span>
                 </li>
               </>
             );

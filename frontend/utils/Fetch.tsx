@@ -1,4 +1,4 @@
-import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, LeaderboardData, FetchedUserData } from "../utils/Interfaces";
+import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, FetchedUserData } from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
 	// console.log('Sending user:', player);
