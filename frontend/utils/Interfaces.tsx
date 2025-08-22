@@ -105,7 +105,6 @@ export interface User {
     // playedGames: boolean;
     accessToken: string;
     refreshToken: string;
-    googleIdToken?: string;
     twoFA: boolean;
 }
 
