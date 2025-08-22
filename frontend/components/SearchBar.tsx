@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FetchedUserData } from "../utils/Interfaces";
 import { fetchUsers } from '../utils/Fetch';
 import { useUserContext } from "../context/UserContext";
+import { DEFAULT_AVATAR } from "../utils/constants";
 
 export const SearchBar = ({
     type = "text",
@@ -69,7 +70,7 @@ export const SearchBar = ({
                                 className={'dropdown-option !py-1'}
                                 onClick={() => handleOptionClick(option.username)}
                             >
-                            {option.avatarUrl ? <img src={option.avatarUrl} className="profilePicMini" /> : <img src='../assets/noun-profile-7808629.svg' className="profilePicMini" />}
+                            {option.avatarUrl ? <img src={option.avatarUrl} className="profilePicMini" /> : <img src={DEFAULT_AVATAR} className="profilePicMini" />}
                             {option.username}
                             </li>
                         ))

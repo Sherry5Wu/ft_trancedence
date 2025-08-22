@@ -14,7 +14,6 @@ import LangIcon from '../assets/noun-globe-7929553.svg?react';
 import AccessIcon from '../assets/noun-accessibility-4682113.svg?react';
 import SunIcon from '../assets/noun-sun-7956354.svg?react';
 import MoonIcon from '../assets/noun-moon-5258339.svg?react';
-import ProfileIcon from '../assets/noun-profile-7808629.svg?react';
 import SettingsIcon from '../assets/noun-setting-2060937.svg?react';
 import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 import { useTranslation } from 'react-i18next';

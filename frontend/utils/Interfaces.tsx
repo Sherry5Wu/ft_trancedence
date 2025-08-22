@@ -69,11 +69,16 @@ export interface SearchBarInputProps {
     isOpen?: boolean;
 }
 
+export interface LeaderboardStats {
+    userInfo: FetchedUserData,
+    stats: UserStats,
+}
+
 export interface UserStats {
     games_played: number;
     win_streak: number;
     longest_win_streak: number;
-    worstRival: string;
+    // worstRival: string;
     games_draw: number;
     games_lost: number;
     games_won: number;

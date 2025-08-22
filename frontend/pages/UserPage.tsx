@@ -9,8 +9,9 @@ import { UserStats, ScoreHistory, FetchedUserData } from '../utils/Interfaces';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
-import LeaderboardIcon from '../assets/noun-leaderboard-7709285.svg';
+import LeaderboardIcon from '../assets/noun-leaderboard-7940150.svg';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
+import { DEFAULT_AVATAR } from '../utils/constants';
 
 const UserPage = () => {
 	const { user, setUser } = useUserContext();
@@ -29,22 +30,28 @@ const UserPage = () => {
 		if (!user)
 			navigate('/signin');
 		const loadStats = async () => {
-			if (!param.username)
-				return ;
+			try {
+				if (!param.username)
+					return ;
 
-			setLoading(true);
+				setLoading(true);
 
-			const statPromise = fetchUserStats(param.username);
-			const scorePromise = fetchScoreHistory(param.username);
+				const statPromise = fetchUserStats(param.username);
+				const scorePromise = fetchScoreHistory(param.username);
 
-			const stats = await statPromise;
-			const score = await scorePromise;
+				const stats = await statPromise;
+				const score = await scorePromise;
 
-			setUserStats(stats);
-			setScoreHistory(score);
-			setLoading(false);
-			setStats(false);
-			setHistory(false);
+				setUserStats(stats);
+				setScoreHistory(score);
+				setLoading(false);
+				setStats(false);
+				setHistory(false);
+			}
+			catch(error) {
+				console.error('Error: ', error);
+				return null;
+			}
 		}
 		loadStats();
 	}, [user, param.username]);
@@ -53,12 +60,18 @@ const UserPage = () => {
 		if (!user)
 			return ;
 		const loadProfilePicURL = async () => {
-			const allUsers = await fetchUsers(user?.accessToken);
-			if (!allUsers)
-				return ;
-			const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
-			if (pageOwner)
-				setProfilePicURL(pageOwner.avatarUrl);
+			try {
+				const allUsers = await fetchUsers(user?.accessToken);
+				if (!allUsers)
+					return ;
+				const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
+				if (pageOwner)
+					setProfilePicURL(pageOwner.avatarUrl ?? '');
+			}
+			catch(error) {
+				console.error('Error: ' + error);
+				return null;
+			}
 		}
 		loadProfilePicURL();
 	}, [param.username, user?.profilePic, user])
@@ -88,7 +101,7 @@ const UserPage = () => {
 
 		<div className='profilePicBig'>
 			{profilePicURL ? 
-				<img src={profilePicURL} className='profilePicBig'/> : <img src='../assets/noun-profile-7808629.svg' className='w-full h-full object-cover'/>}
+				<img src={profilePicURL} className='profilePicBig'/> : <img src={DEFAULT_AVATAR} className='w-full h-full object-cover'/>}
 		</div>
 
 		<div className='w-56 truncate mb-12'>
