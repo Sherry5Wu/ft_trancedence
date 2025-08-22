@@ -37,8 +37,8 @@
     },
     "tooltips": {
       "PINcode": "You need your PIN code to confirm your presence when playing locally against other players",
-      "2fa": "Enhances account security by requiring a code from Google Authenticator each time you sign in.",
-      "guestPlayer": "If you play against a guest the game data won’t be saved and the result won’t affect your score"
+      "2fa": "Enhances account security by requiring a code from Google Authenticator each time you sign in",
+      "guestPlayer": "If you play against a guest, the game data won’t be saved, and the result won’t affect your score"
     },
     "aria": {
       "buttons": {
@@ -406,13 +406,13 @@
     },
 
     "leaderboard": {
-      "title": "Leaderboard",
-      "empty": "No players to show.",
+      "title": "LEADERBOARD",
+      "empty": "No players to show",
       "loadingLeaderboard": "Loading leaderboard players...",
       "columns": {
         "username": "Username",
         "rival": "Rival",
-        "totalGames": "Total games",
+        "totalGames": "Games played",
         "score": "Score"
       },
       "aria": {
@@ -499,6 +499,7 @@
     "player1": "Player 1",
     "player2": "Player 2",
     "startMatch": "Start Match",
+    "optionsButton": "Options",
     "pauseMatch": "Game paused",
     "finishMatch": "Match is over!",
     "winner": "Winner",
