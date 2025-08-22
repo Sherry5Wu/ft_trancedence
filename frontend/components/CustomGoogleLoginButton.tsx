@@ -267,8 +267,8 @@ const CustomGoogleLoginButton: React.FC = () => {
         navigate("/signup/complete-profile");
       } else {
         navigate('/about');
-        // setUser(prev => ({ ...prev, ...result }));
-        // navigate(`/user/${result.username}`);
+        // setUser(prev => ({ ...prev, ...result, ...result.user }));
+        // navigate(`/user/${result.user.username}`);
       }
     } catch (err) {
       console.error("Error during Google login:", err);

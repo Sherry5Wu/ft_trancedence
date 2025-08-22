@@ -28,7 +28,7 @@ export default fp(async (fastify) => {
             needCompleteProfile: { type: 'boolean' },
             accessToken: { type: 'string' },
             refreshToken: { type: 'string' },
-            user: { type: 'object' }, // or define full user schema
+            user: { $ref: 'publicUser#' },
             TwoFAStatus: { type: 'boolean' },
             message: { type: 'string' } // for error-like responses
           },
@@ -37,7 +37,7 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-    // 1. get the idToken
+    // 1. get the idToken.
     const { idToken } = req.body;
     const ip = req.ip || null;
     const userAgent = req.headers['user-agent'] || null;
@@ -62,7 +62,7 @@ export default fp(async (fastify) => {
         const { accessToken, refreshToken, user } = await googleUserLogin(existingUser);
 
         console.log('existingUer-again:', user); // for testing only
-        
+
         // Store the refreshToken into DB
         try {
           await storeRefreshToken(refreshToken, existingUser.id, ip, userAgent);
