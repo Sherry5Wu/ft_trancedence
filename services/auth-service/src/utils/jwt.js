@@ -79,28 +79,70 @@ function decodeToken(token) {
  * @param {string|null} userAgent
  * @returns {Promise<Object>} created RefreshToken row
  */
-async function storeRefreshToken(token, userId, ip = null, userAgent = null) {
-  if (!token || !userId) {
+async function storeRefreshTokenHash(rawRefreshToken, userId, ip = null, userAgent = null) {
+  if (!rawRefreshToken || !userId) {
     throw new InvalidCredentialsError('Token and userId are required');
   }
-  let expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // fallback expiry: 7 days expiration
+
+  // derive expiry from token when possible
+  let expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // fallback 7d
   try {
-    const decoded = decodeToken(token);
+    const decoded = decodeToken(rawRefreshToken);
     if (decoded && decoded.exp) {
       expiresAt = new Date(decoded.exp * 1000);
     }
   } catch (err) {
-    // ignore decode errors and use fallback expiry.
+    // decode may fail; fallback used
   }
 
+  const tokenHash = hashToken(rawRefreshToken);
+
+  // store hashed token, not raw token
   const created = await RefreshToken.create({
-    token,
+    tokenHash,
     userId,
     expiresAt,
     ipAddress: ip,
     userAgent
   });
+
   return created;
+}
+
+/* --- validate refresh token: verify signature + DB presence & status --- */
+async function validateRefreshToken(rawRefreshToken) {
+  // 1) verify signature/expiry of JWT
+  let decoded;
+  try {
+    decoded = verifyRefreshToken(rawRefreshToken);
+  } catch (err) {
+    // will throw TokenExpiredError or JsonWebTokenError
+    throw err;
+  }
+
+  // 2) check DB for hashed token record
+  const tokenHash = hashToken(rawRefreshToken);
+  const tokenRow = await RefreshToken.findOne({ where: { tokenHash } });
+
+  if (!tokenRow) throw new Error('Refresh token not found');            // invalid
+  if (tokenRow.revokedAt) throw new Error('Refresh token revoked');     // revoked
+  if (tokenRow.replacedByToken) throw new Error('Refresh token rotated'); // rotated/replaced
+  if (tokenRow.expiresAt && new Date() > tokenRow.expiresAt) throw new Error('Refresh token expired');
+
+  // return both decoded payload and DB row for further processing
+  return { decoded, tokenRow };
+}
+
+/* --- createTokens: produce raw tokens and store hashed refresh token --- */
+async function createTokens(payload, meta = {}) {
+  // payload
+  const accessToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(payload); // raw JWT refresh token
+
+  // store hash in DB
+  await storeRefreshTokenHash(refreshToken, payload.id, meta.ipAddress || null, meta.userAgent || null);
+
+  return { accessToken, refreshToken };
 }
 
 export {
@@ -109,5 +151,7 @@ export {
   verifyAccessToken,
   verifyRefreshToken,
   decodeToken,
-  storeRefreshToken,
+  storeRefreshTokenHash,
+  validateRefreshToken,
+  createTokens,
 };

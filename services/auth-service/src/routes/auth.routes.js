@@ -11,6 +11,7 @@ import {
 } from '../services/jwt.service.js';
 import { InvalidCredentialsError, ValidationError, ConflictError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
+import { setAuthCookie, clearAuthCookie } from '../utils/authCookie.js';
 
 export default fp(async (fastify) => {
   /**
@@ -91,8 +92,7 @@ export default fp(async (fastify) => {
           description: 'Successful login',
           type: 'object',
           properties: {
-            accessToken: { type: 'string', description: 'JWT access token' },
-            refreshToken: { type: 'string', description: 'JWT refresh token' },
+            success: { type: 'boolean' },
             user: { $ref: 'publicUser#' },
             TwoFAStatus: { type: 'boolean', description: 'Whether 2FA is enabled and confirmed' },
           }
@@ -109,7 +109,12 @@ export default fp(async (fastify) => {
         req.body.password
       );
       const TwoFAStatus = user.is2FAEnabled && user.is2FAConfirmed;
-      return { accessToken, refreshToken, user, TwoFAStatus };
+
+      setAuthCookie(reply, accessToken, true); // accessToken cookie
+      setAuthCookie(reply, refreshToken, false); // refreshToken cookie
+
+      reply.send({ success: true, user, TwoFAStatus });
+      // return { accessToken, refreshToken, user, TwoFAStatus };
     } catch (err) {
       if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad request', err.message);
       if (err instanceof NotFoundError) sendError(reply, 404, 'Not found', err.message);
@@ -121,97 +126,117 @@ export default fp(async (fastify) => {
   fastify.post('/auth/refresh', {
     schema: {
       tags: ['Auth'],
-      summary: 'Rotate tokens',
-      description: `
-        Rotates access and refresh tokens using a valid refresh token.
-        Useful for maintaining session without requiring login.
-      `,
-      body: {
-        type: 'object',
-        required: ['refreshToken'],
-        properties: {
-          refreshToken: { type: 'string', description: 'Refresh token to rotate' },
-        }
-      },
+      summary: 'Rotate tokens (cookie-based)',
+      description: 'Rotate access and refresh tokens using refresh token cookie.',
       response: {
         200: {
-          description: 'New access and refresh tokens',
+          description: 'New tokens set in cookies',
           type: 'object',
-          properties: {
-            accessToken: { type: 'string' },
-            refreshToken: { type: 'string' }
-          }
+          properties: { success: { type: 'boolean' } }
         },
         401: { $ref: 'errorResponse#' },
-        500: { $ref: 'errorResponse#' },
+        500: { $ref: 'errorResponse#' }
       }
     }
   }, async (req, reply) => {
-    const { accessToken, refreshToken } = await rotateTokens(
-      req.body.refreshToken,
-      { ipAddress: req.ip, userAgent: req.headers['user-agent'] }
-    );
-    return { accessToken, refreshToken };
+    try {
+      // Read refresh token from cookie
+      const refreshToken = req.cookies?.['__Host-refreshToken'] || null;
+      if (!refreshToken) {
+        return sendError(reply, 401, 'Unauthorized', 'Missing refresh token cookie');
+      }
+
+      // rotateTokens must validate the refresh token, rotate (issue new access + refresh)
+      // and return { accessToken, refreshToken: newRefreshToken }
+      const { accessToken, refreshToken: newRefreshToken } = await rotateTokens(
+        refreshToken,
+        { ipAddress: req.ip, userAgent: req.headers['user-agent'] }
+      );
+
+      // Set cookies for both tokens
+      setAuthCookie(reply, accessToken, true);
+      setAuthCookie(reply, newRefreshToken, false);
+
+      return reply.send({ success: true });
+    } catch (err) {
+      // rotateTokens should throw for invalid/expired refresh token
+      return sendError(reply, 401, 'Unauthorized', err.message);
+    }
   });
 
   // ---------------- Logout ----------------
   fastify.post('/auth/logout', {
-    schema: {
-      tags: ['Auth'],
-      summary: 'Logout user',
-      description: 'Revokes the provided refresh token, logging the user out.',
-      body: {
-        type: 'object',
-        required: ['refreshToken'],
-        properties: { refreshToken: { type: 'string' } },
-      },
-      response: {
-        204: { description: 'Successfully logged out', type: 'null' },
-        400: { $ref: 'errorResponse#' },
-        500: { $ref: 'errorResponse#' },
-      }
+  schema: {
+    tags: ['Auth'],
+    summary: 'Logout user',
+    description: 'Revokes refresh token (from cookie) and clears auth cookies.',
+    response: {
+      204: { description: 'Successfully logged out', type: 'null' },
+      400: { $ref: 'errorResponse#' },
+      500: { $ref: 'errorResponse#' },
     }
-  }, async (req, reply) => {
-    await revokeRefreshToken(req.body.refreshToken);
+  }
+}, async (req, reply) => {
+  try {
+    // Read refresh token from HttpOnly cookie
+   const refreshToken = req.cookies?.['__Host-refreshToken'] || null;
+
+    // If present, revoke it server-side (rotate/blacklist DB, etc.)
+    if (refreshToken) {
+      await revokeRefreshToken(refreshToken);
+    }
+
+    // Clear both access and refresh cookies
+    clearAuthCookie(reply, true);  // clear __Host-accessToken
+    clearAuthCookie(reply, false); // clear __Host-refreshToken
+
     return reply.code(204).send();
-  });
+  } catch (err) {
+    return sendError(
+      reply,
+      err.statusCode || 500,
+      err.name || 'Internal Server Error',
+      err.message || 'Logout failed'
+    );
+  }
+});
 
   // ---------------- Verify Token ----------------
-  fastify.post('/auth/verify-token', {
-    schema: {
-      tags: ['Auth'],
-      summary: 'Verify access token',
-      description: `
-        Validates JWT token for other microservices.
-        Returns basic user info if token is valid.
-      `,
-      headers: {
-        type: 'object',
-        required: ['authorization'],
-        properties: { authorization: { type: 'string', description: 'Bearer token' } }
-      },
-      response: {
-        200: {
-          description: 'User info from valid token',
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            username: { type: 'string' },
-            email: { type: 'string' },
-            role: { type: 'string' }
-          }
-        },
-        401: { $ref: 'errorResponse#' },
-        500: { $ref: 'errorResponse#' },
-      }
-    }
-  }, async (req, reply) => {
-    await fastify.authenticate(req, reply);
-    return {
-      id: req.user.id,
-      username: req.user.username,
-      email: req.user.email,
-      role: req.user.role || 'user'
-    };
-  });
+  // fastify.post('/auth/verify-token', {
+  //   schema: {
+  //     tags: ['Auth'],
+  //     summary: 'Verify access token',
+  //     description: `
+  //       Validates JWT token for other microservices.
+  //       Returns basic user info if token is valid.
+  //     `,
+  //     headers: {
+  //       type: 'object',
+  //       required: ['authorization'],
+  //       properties: { authorization: { type: 'string', description: 'Bearer token' } }
+  //     },
+  //     response: {
+  //       200: {
+  //         description: 'User info from valid token',
+  //         type: 'object',
+  //         properties: {
+  //           id: { type: 'string' },
+  //           username: { type: 'string' },
+  //           email: { type: 'string' },
+  //           role: { type: 'string' }
+  //         }
+  //       },
+  //       401: { $ref: 'errorResponse#' },
+  //       500: { $ref: 'errorResponse#' },
+  //     }
+  //   }
+  // }, async (req, reply) => {
+  //   await fastify.authenticate(req, reply);
+  //   return {
+  //     id: req.user.id,
+  //     username: req.user.username,
+  //     email: req.user.email,
+  //     role: req.user.role || 'user'
+  //   };
+  // });
 });
