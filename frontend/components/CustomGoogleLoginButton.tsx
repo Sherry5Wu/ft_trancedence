@@ -171,63 +171,123 @@
 
 
 // CustomGoogleLoginButton.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
+
 
 const CustomGoogleLoginButton: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setUser } = useUserContext();
 
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        const idToken = tokenResponse?.credential;
+  // access token recieved:
+  // const login = useGoogleLogin({
+  //   flow: "implicit", // ensures we get id_token directly
+  //   scope: "openid profile email",
+  //   response_type: "id_token", // 👈 ensure ID token is returned
+  //   onSuccess: async (tokenResponse) => {
+  //     try {
+  //       // In implicit flow, tokenResponse has `credential` or `id_token`
+  //       const idToken = tokenResponse.id_token || (tokenResponse as any).credential;
 
-        if (!idToken) {
-          console.error('No ID token returned from Google');
-          return;
-        }
+  //       if (!idToken) {
+  //         console.error("No ID token returned from Google", tokenResponse);
+  //         return;
+  //       }
 
-        // Save token locally
-        setUser(prev => ({ ...prev, googleIdToken: idToken }));
+  //       // Save token in context + sessionStorage (for reload safety)
+  //       setUser((prev) => ({ ...prev, googleIdToken: idToken }));
+  //       sessionStorage.setItem("googleIdToken", idToken);
 
-        // Send to backend
-        const response = await fetch('https://localhost:8443/as/auth/google-login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idToken }),
-        });
+  //       // Send token to backend for pre-check
+  //       const res = await fetch("https://localhost:8443/as/auth/google-login",
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ idToken }),
+  //       });
 
-        if (!response.ok) throw new Error('Backend login failed');
+  //       if (!res.ok) throw new Error("Backend login failed");
 
-        const result = await response.json();
+  //       const result = await res.json();
 
-        if (result.needCompleteProfile) {
-          navigate('/signup/complete-profile');
-        } else {
-          // If backend returns user data, update context
-          setUser(prev => ({ ...prev, ...result }));
-          navigate(`/user/${result.username}`);
-        }
-      } catch (err) {
-        console.error('Error during Google login:', err);
-        alert('Login failed, please try again.');
+  //       if (result.needCompleteProfile) {
+  //         navigate("/signup/complete-profile");
+  //       } else {
+  //         // If backend returns user data, update context
+  //         setUser((prev) => ({ ...prev, ...result }));
+  //         navigate(`/user/${result.username}`);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error during Google login:", err);
+  //       alert("Login failed, please try again.");
+  //     }
+  //   },
+  //   onError: () => {
+  //     console.error("Google login failed");
+  //   },
+  // });
+
+
+  useEffect(() => {
+    /* global google */
+    if (window.google) {
+      google.accounts.id.initialize({
+        client_id: "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com",
+        callback: handleCredentialResponse,
+      });
+    }
+  }, []);
+
+  const handleCredentialResponse = async (response: any) => {
+    const idToken = response.credential;
+    if (!idToken) {
+      console.error("No ID token returned from Google");
+      return;
+    }
+
+    // Save in sessionStorage so CompleteProfile page can access it
+    sessionStorage.setItem("googleIdToken", idToken);
+
+    try {
+      const backendRes = await fetch("https://localhost:8443/as/auth/google-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!backendRes.ok) throw new Error("Backend login failed");
+
+      const result = await backendRes.json();
+
+      if (result.needCompleteProfile) {
+        navigate("/signup/complete-profile");
+      } else {
+        navigate('/about');
+        // setUser(prev => ({ ...prev, ...result }));
+        // navigate(`/user/${result.username}`);
       }
-    },
-    onError: () => {
-      console.error('Google login failed');
-    },
-  });
+    } catch (err) {
+      console.error("Error during Google login:", err);
+      alert("Login failed, please try again.");
+    }
+  };
+
+  const handleClick = () => {
+    if (!window.google) return alert("Google script not loaded yet");
+    // Open the popup flow (works cross-browser)
+    google.accounts.id.prompt(); 
+  };
 
   return (
     <button
       type="button"
       className="google-signin-button"
-      onClick={() => login()}
+      // onClick={() => login()}
+      onClick={handleClick}
     >
       <svg
         viewBox="0 0 533.5 544.3"

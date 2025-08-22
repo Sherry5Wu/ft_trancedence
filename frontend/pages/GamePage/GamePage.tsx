@@ -1,6 +1,7 @@
 import React, { useRef, useState, Suspense, useMemo, useEffect } from 'react';
 import { usePlayersContext } from '../../context/PlayersContext'
 import { useUserContext } from '../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 import { postMatchHistory, postTournamentHistory, formatHMS } from './postresulttest';
 import KeyBindingsPanel, { KeyBindings, loadBindings, labelForCode } from './KeyBindings';
 
@@ -75,27 +76,27 @@ function pairSequential(ps: Player[]): { pairs: Pair[]; carry: Player[] } {
   return { pairs, carry };
 }
 
-function buildP1Payload(
-  p1: { id?: string; username?: string },
-  p2: { id?: string; username?: string },
-  s1: number,
-  s2: number,
+function buildPayload(
+  me: { id?: string; username?: string },
+  opp: { id?: string; username?: string },
+  myScore: number,
+  theirScore: number,
   durationStr: string,
   played_at_iso: string
 ) {
-  const player_username = p1?.username ?? 'Player 1';
-  const opponent_username = p2?.username ?? 'Player 2';
+  const meName = me?.username ?? 'Player';
+  const oppName = opp?.username ?? 'Opponent';
   return {
-    player_id: p1?.id ? String(p1.id) : 'guest',
-    player_username,
-    player_name: player_username,
-    opponent_id: p2?.id ? String(p2.id) : null,
-    opponent_username,
-    opponent_name: opponent_username,
-    player_score: s1,
-    opponent_score: s2,
+    player_id: me?.id ? String(me.id) : 'guest',
+    player_username: meName,
+    player_name: meName,
+    opponent_id: opp?.id ? String(opp.id) : 'guest',
+    opponent_username: oppName,
+    opponent_name: oppName,
+    player_score: myScore,
+    opponent_score: theirScore,
     duration: durationStr,
-    result: s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw',
+    result: myScore > theirScore ? 'win' : myScore < theirScore ? 'loss' : 'draw',
     played_at: played_at_iso,
   } as const;
 }
@@ -103,6 +104,7 @@ function buildP1Payload(
 // Flow of the page Options -> Game -> Post-match screen -> ...
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const navigate = useNavigate();
   const [bindings, setBindings] = useState<KeyBindings>(() => loadBindings());
   const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle } = usePlayersContext();
   const [mapKey, setMapKey] = useState<MapKey>('default');
@@ -113,19 +115,53 @@ export default function GamePage() {
   const [winMode, setWinMode] = useState<WinMode>('bo5');
   const target = useMemo(() => winTarget(winMode), [winMode]);
 
+  // Temporary options, only applied if confirmed in the options
+  const [draftBindings, setDraftBindings] = useState<KeyBindings>(bindings);
+  const [draftSpeedPreset, setDraftSpeedPreset] = useState<SpeedPreset>(speedPreset);
+  const [draftWinMode, setDraftWinMode] = useState<WinMode>(winMode);
+  const [draftMapKey, setDraftMapKey] = useState<MapKey>(mapKey);
+
   const { user } = useUserContext();
   const [startAt, setStartAt] = useState<Date | null>(null);
+  const matchSnapshot = useRef<{ p1: Player; p2: Player; startedAt: Date } | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   type Phase =
+    | 'home' 
     | 'options'
     | 'prematch'
     | 'playing'
     | 'post'
     | 'champion';
 
-  const initialPhase: Phase = isTournament ? 'prematch' : 'options';
+  const initialPhase: Phase = isTournament ? 'prematch' : 'home';
   const [phase, setPhase] = useState<Phase>(initialPhase);
+
+  // Initialise options phase
+  useEffect(() => {
+    if (phase === 'options') {
+      setDraftBindings(bindings);
+      setDraftSpeedPreset(speedPreset);
+      setDraftWinMode(winMode);
+      setDraftMapKey(mapKey);
+    }
+  }, [phase, bindings, speedPreset, winMode, mapKey]);
+
+  const openOptions = () => setPhase('options');
+
+  const cancelOptions = () => {
+    // Discard changes
+    setPhase('home');
+  };
+
+  const confirmOptions = () => {
+    // Persist changes
+    setBindings(draftBindings);
+    setSpeedPreset(draftSpeedPreset);
+    setWinMode(draftWinMode);
+    setMapKey(draftMapKey);
+    setPhase('home');
+  };
 
   // Non‑tournament post screen
   const [postResult, setPostResult] = useState<{ winner: string; s1: number; s2: number } | null>(null);
@@ -185,14 +221,29 @@ export default function GamePage() {
     : (rawPlayers?.[1]?.username ?? 'Player 2');
 
   const handleStart = () => {
-    setStartAt(new Date());
+    const now = new Date();
+    setStartAt(now);
     setSubmitted(false);
+    if (isTournament && currentPair) {
+      matchSnapshot.current = { p1: currentPair[0], p2: currentPair[1], startedAt: now };
+    } else {
+      const p1 = (rawPlayers?.[0] as any) ?? { id: 'guest', username: 'Player 1', elo: 1000 };
+      const p2 = (rawPlayers?.[1] as any) ?? { id: 'guest', username: 'Player 2', elo: 1000 };
+      matchSnapshot.current = { p1, p2, startedAt: now };
+    }
     setPhase('playing');
   };
 
   // Called by the main when a match finishes
   const handleMatchEnd = async (winnerName: string, s1: number, s2: number) => {
-    const started = startAt ?? new Date();
+    const snap = matchSnapshot.current;
+    const p1 = snap?.p1 ?? currentPair?.[0];
+    const p2 = snap?.p2 ?? currentPair?.[1];
+
+    // Failsafe
+    if (!p1 || !p2) return;
+
+    const started = snap?.startedAt ?? startAt ?? new Date();
     const ended = new Date();
     const durationMs = ended.getTime() - started.getTime();
     const durationStr = formatHMS(durationMs);
@@ -236,27 +287,21 @@ export default function GamePage() {
     }
 
     async function submitAll() {
-      if (submitted) {
-        afterSubmitUI();
-        return;
-      }
+      if (submitted) { afterSubmitUI(); return; }
 
       try {
-        if (isTournament && currentPair) {
-          const p1 = currentPair[0];
-          const p2 = currentPair[1];
+        // Single match history payload, only P1 perspective is posted for fetch logic
+        const payloadP1 = buildPayload(p1, p2, s1, s2, durationStr, played_at_iso);
+        await Promise.all([
+          postMatchHistory(payloadP1, user?.accessToken),
+        ]);
 
-          await postMatchHistory(
-            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
-            user?.accessToken
-          );
-
-          // Tournament history
+        // Tournament history payload
+        if (isTournament) {
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
             const stage_number = stageForPosting(roundNum, bracketSize || entrants.length || 2);
-            const resultForP1: 'win' | 'loss' | 'draw' =
-              s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
+            const resultP1: 'win' | 'loss' | 'draw' = s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
 
             await postTournamentHistory({
               tournament_id,
@@ -264,27 +309,21 @@ export default function GamePage() {
               match_number: matchIdx + 1,
               player_name: p1.username,
               opponent_name: p2.username,
-              result: resultForP1,
+              result: resultP1,
             });
           }
-        } else {
-          // Regular match
-          const p1 = (rawPlayers?.[0] as any) ?? {};
-          const p2 = (rawPlayers?.[1] as any) ?? {};
-                  
-          await postMatchHistory(
-            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
-            user?.accessToken
-          );
         }
 
         setSubmitted(true);
         afterSubmitUI();
-      } catch (err: any) {
+      } catch (err) {
         if (!isTournament) {
           setPostResult({ winner: winnerName, s1, s2 });
           setPhase('post');
         }
+      } finally {
+        // clear snapshot so it can't accidentally leak to the next match
+        matchSnapshot.current = null;
       }
     }
 
@@ -293,7 +332,7 @@ export default function GamePage() {
 
   const handlePlayAgain = () => {
     // Return to options and remove the game from the background for a clean start option
-    setPhase('options');
+    setPhase('home');
     setPostResult(null);
   };
 
@@ -302,13 +341,53 @@ export default function GamePage() {
     <div className="flex flex-col items-center -mt-6 md:-mt-10 lg:-mt-3 space-y-2">
       <div className="w-9/10 mx-auto">
 
-        {/* Match Options */}
-        {!isTournament && phase === 'options' && (
+      {/* Home screen */}
+        {!isTournament && phase === 'home' && (
           <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
-              <div className="w-full max-w-md p-6">
-                <h2 className="text-xl font-semibold mb-4 text-center">Match Options</h2>
+              <div className="w-full max-w-md p-6 text-center space-y-4">
+                <h2 className="text-2xl font-bold mb-2">Game</h2>
+                <button
+                  onClick={handleStart}
+                  className="w-full px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500"
+                >
+                  Start match
+                </button>
+                <button
+                  onClick={openOptions}
+                  className="w-full px-4 py-3 rounded-xl bg-neutral-800 hover:bg-neutral-700"
+                >
+                  Options
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
+      {/* Match Options */}
+      {!isTournament && phase === 'options' && (
+        <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
+            <div className="w-full max-w-md p-6">
+      
+              {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <button
+                    onClick={cancelOptions}
+                    className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <h2 className="text-xl font-semibold">Match Options</h2>
+                  <button
+                    onClick={confirmOptions}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm"
+                  >
+                    Confirm
+                  </button>
+                </div>
+      
+                {/* Speed settings */}
                 <fieldset className="mb-6">
                   <legend className="block text-sm text-neutral-300 mb-2">Base Ball Speed</legend>
                   <div className="grid grid-cols-3 gap-2">
@@ -318,63 +397,49 @@ export default function GamePage() {
                           type="radio"
                           name="speed"
                           value={opt}
-                          checked={speedPreset === opt}
-                          onChange={() => setSpeedPreset(opt)}
+                          checked={draftSpeedPreset === opt}
+                          onChange={() => setDraftSpeedPreset(opt)}
                         />
                         <span className="capitalize">{opt}</span>
                       </label>
                     ))}
                   </div>
-                  <div className="text-xs mt-1 opacity-80">
-                    Actual speed: {baseSpeed.toFixed(3)}
-                  </div>
                 </fieldset>
-
+                  
+                {/* Win mode */}
                 <label className="block mb-6">
                   <span className="block text-sm text-neutral-300 mb-1">Win Condition</span>
                   <select
                     className="w-full rounded-lg bg-neutral-800 p-2"
-                    value={winMode}
-                    onChange={(e) => setWinMode(e.target.value as WinMode)}
+                    value={draftWinMode}
+                    onChange={(e) => setDraftWinMode(e.target.value as WinMode)}
                   >
                     <option value="bo5">Best of 5</option>
                     <option value="bo9">Best of 9</option>
                     <option value="bo19">Best of 19</option>
                   </select>
                 </label>
-
+                  
+                {/* Map selection */}
                 <label className="block mb-6">
                   <span className="block text-sm text-neutral-300 mb-1">Map</span>
                   <select
                     className="w-full rounded-lg bg-neutral-800 p-2 text-neutral-100"
-                    value={mapKey}
-                    onChange={(e) => setMapKey(e.target.value as MapKey)}
+                    value={draftMapKey}
+                    onChange={(e) => setDraftMapKey(e.target.value as MapKey)}
                   >
                     <option value="default">Default</option>
                     <option value="large">Large</option>
                     <option value="obstacles">Obstacles</option>
                   </select>
-                  <div className="text-xs mt-1 opacity-80">
-                    {mapKey === 'default' && 'Initial test version.'}
-                    {mapKey === 'large' && 'Double the size'}
-                  </div>
                 </label>
-
+                  
                 {/* Controls */}
-                  <KeyBindingsPanel
-                    playerNames={[p1Name, p2Name]}
-                    value={bindings}
-                    onChange={setBindings}
-                  />
-
-                <div className="flex justify-center">
-                  <button
-                    onClick={handleStart}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
-                  >
-                    Start Match
-                  </button>
-                </div>
+                <KeyBindingsPanel
+                  playerNames={[p1Name, p2Name]}
+                  value={draftBindings}
+                  onChange={setDraftBindings}
+                />
               </div>
             </div>
           </div>
@@ -478,6 +543,13 @@ export default function GamePage() {
                 >
                   Play again
                 </button>
+                        
+                <button
+                  onClick={() => user?.username && navigate(`/user/${encodeURIComponent(user.username)}`)}
+                  className="block mx-auto mt-3 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
+                >
+                  Exit
+                </button>
               </div>
             </div>
           </div>
@@ -495,12 +567,23 @@ export default function GamePage() {
                     {[...carryToNextRound, ...winnersThisRound][0]?.username || '—'}
                   </span>
                 </div>
+
+                {/* Exit button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => navigate('/tournaments')}
+                    className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700"
+                    aria-label="Exit to tournaments"
+                  >
+                    Exit
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Controls */}
+        {/* Controls screen under the game window */}
         <div className="mt-4 rounded-2xl bg-black text-white border border-white/10 p-4" role="note" aria-label="Game controls">
           <div className="grid gap-3 sm:grid-cols-2 text-sm text-zinc-300">
             <div>

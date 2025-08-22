@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
     volumes:
       - auth_data:/app/data
-      - ./service/auth-service/uploads:/app/uploads
+      - ./services/auth-service/uploads:/app/uploads
 
   frontend-service:
     build:

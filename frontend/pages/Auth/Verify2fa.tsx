@@ -11,10 +11,45 @@ import { useUserContext } from '../../context/UserContext';
 const Verify2faPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [code, setCode] = useState('');
-  const formFilled = /^\d{6}$/.test(code);
   const { user } = useUserContext();
-  
+
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleCodeComplete = async (enteredCode: string) => {
+    setIsVerifying(true);
+    setError(null);
+
+    try {
+      const response = await fetch('https://localhost:8443/as/auth/2fa/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ token: enteredCode }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.verified) {
+        setIsValid(true);
+      } else {
+        setIsValid(false);
+        setError(t('pages.twoFactorAuth.verify.invalidCode'));
+      }
+    } catch (err) {
+      console.error(err);
+      setIsValid(false);
+      setError(t('pages.twoFactorAuth.verify.errorMessage'));
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleVerifyClick = () => {
+    navigate(`/user/${user?.username}`);
+  };
+
   return (
     <main
       className="pageLayout"
@@ -45,28 +80,42 @@ const Verify2faPage: React.FC = () => {
         </h2>
 
         <VerificationCodeInput
-          onComplete={setCode}
+          onComplete={handleCodeComplete}
           aria-label={t('pages.twoFactorAuth.verify.aria.codeInput')}
           // Error handling: If user input fails validation, ensure accessible error messages
           // are displayed and linked with aria-describedby or aria-invalid attributes.
-          // Check this when backend is connected to frontend
         />
+
+        {isVerifying && 
+          <p>
+            {t('pages.twoFactorAuth.verify.checking')}
+          </p>}
+        
+        {error &&
+          <p className="text-red-600">
+            {error}
+          </p>}
 
         <div className="flex justify-center mt-6">
           <GenericButton
             className="generic-button"
             text={t('common.buttons.verify')}
-            disabled={!formFilled}
-            onClick={() => navigate(`/user/${user?.username}`)}
+            disabled={!isValid || isVerifying}
+            onClick={handleVerifyClick}
           />
         </div>
 
         <p className="text-sm mt-6">
           {t('pages.twoFactorAuth.verify.backupPrompt')}{' '}
-          <Link to="/404" className="underline" aria-label={t('pages.twoFactorAuth.verify.aria.backupLink')}>
+          <Link
+            to="/404"
+            className="underline"
+            aria-label={t('pages.twoFactorAuth.verify.aria.backupLink')}
+          >
             {t('pages.twoFactorAuth.verify.backupLink')}
           </Link>
         </p>
+
       </div>
     </main>
   );

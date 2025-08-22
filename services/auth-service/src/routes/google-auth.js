@@ -2,6 +2,11 @@ import fp from 'fastify-plugin';
 
 import { googleUserLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
 import { generateAccessToken, storeRefreshToken } from '../utils/jwt.js';
+import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils/errors.js';
+import { sendError } from '../utils/sendError.js';
+import { models } from '../db/index.js';
+
+const { User } = models;
 
 export default fp(async (fastify) => {
   fastify.post('/auth/google-login', {
@@ -18,7 +23,16 @@ export default fp(async (fastify) => {
       response: {
         200: {
           description: 'Login success or profile incomplete',
-          type: 'object'
+          type: 'object',
+          properties: {
+            needCompleteProfile: { type: 'boolean' },
+            accessToken: { type: 'string' },
+            refreshToken: { type: 'string' },
+            user: { type: 'object' }, // or define full user schema
+            TwoFAStatus: { type: 'boolean' },
+            message: { type: 'string' } // for error-like responses
+          },
+          additionalProperties: true  // <-- optional, but helpful during dev
         }
       }
     }
@@ -69,12 +83,19 @@ export default fp(async (fastify) => {
         return reply.code(409).send({ message: 'Email is already registered' });
       }
 
+      // for testing only
+      console.log("==> Sending needCompleteProfile response");
+      console.dir({ needCompleteProfile: true }, { depth: null });
       // 5. Otherwise tell client profile completion is required (no DB row created)
       return reply.code(200).send({
         needCompleteProfile: true
       });
     } catch (err) {
-      return reply.code(401).send({ message: 'Invalid or expired idToken' });
+      if (err instanceof InvalidCredentialsError) {
+        return sendError(reply, 400, 'Bad Request', err.message);
+      }
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', err.message);
     }
   });
 

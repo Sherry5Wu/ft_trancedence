@@ -109,13 +109,6 @@ async function authenticateUser(identifier, password, opts= {}) {
   const accessToken = generateAccessToken(accessTokenPayload);
   const refreshToken = generateRefreshToken(refreshTokenPayload);
 
-  // Save refresh token in DB with assocation
-  // await RefreshToken.create({
-  //   token: refreshToken,
-  //   userId: user.id,
-  //   expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
-  // });
-
   await storeRefreshToken(refreshToken, user.id, ip, userAgent);
 
   // return the only asked data

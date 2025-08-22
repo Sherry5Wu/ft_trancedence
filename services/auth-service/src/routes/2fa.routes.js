@@ -8,6 +8,7 @@ import {
   getTwoFAStatus
 } from '../services/2fa.service.js';
 import { ValidationError, NotFoundError } from '../utils/errors.js';
+import { sendError } from '../utils/sendError.js';
 
 export default fp(async (fastify) => {
   /**
@@ -16,16 +17,6 @@ export default fp(async (fastify) => {
    *   name: TwoFactorAuth
    *   description: Endpoints for Two-Factor Authentication (2FA) setup and management
    */
-
-  // -- Helpers for uniform error responses
-  function sendError(reply, statusCode, shortName, message, details = []) {
-    reply.status(statusCode).send({
-      status: statusCode,
-      error: shortName,
-      message,
-      details
-    });
-  }
 
   // Setup 2FA
   fastify.post('/2fa/setup', {
@@ -138,7 +129,7 @@ export default fp(async (fastify) => {
         { is2FAConfirmed: true },
         { where: { id: userId } },
       );
-      
+
       return { verified: true };
     } catch (err) {
       if (err instanceof NotFoundError) {

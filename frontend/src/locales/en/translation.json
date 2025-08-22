@@ -259,6 +259,9 @@
         "verifyCodeTitle": "Verify the code from the app",
         "backupPrompt": "Can’t find your device?",
         "backupLink": "Use a backup code",
+        "checking": "Checking 2fa verification code ...",
+        "invalidCode": "Invalid verification code. Please try again.",
+        "errorMessage": "Something went wrong. Please try again.",
         "aria": {
           "label": "Verify two-factor authentication code to complete login.",
           "description": "Enter the 6-digit verification code from your Google Authenticator app to complete the login process.",

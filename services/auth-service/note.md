@@ -10,6 +10,8 @@ safer for production.
 5. run the test case auth.routes.test.js
 
 6. hash the refreshToken
+7. google sign in error
+8. how to import different export funcitons.
 
 
 Build and run docker
