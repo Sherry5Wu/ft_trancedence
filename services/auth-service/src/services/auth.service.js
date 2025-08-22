@@ -29,6 +29,11 @@ const { User, RefreshToken } = models;
  * @return {Promise<object>} Created user (without sensitive fields)
  */
 async function registerUser(email, username, password, pinCode) {
+  // ?.trim() ensures you don’t get an error if the value is null or undefined
+  if (!email?.trim() || !username.trim() || !password.trim() || !pinCode.trim()) {
+    throw new InvalidCredentialsError('The request must contain: email, usename, password and pinCode');
+  }
+
   let normalizedEmail;
   try {
       normalizedEmail = normalizeAndValidateEmail(email);
@@ -71,6 +76,10 @@ async function registerUser(email, username, password, pinCode) {
  * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
  */
 async function authenticateUser(identifier, password, opts= {}) {
+   if (!identifier?.trim() || !password.trim()) {
+    throw new InvalidCredentialsError('The request must contain: email and password');
+  }
+
   const { ip = null, userAgent = null } = opts;
 
   // Find user by email or username, including secrets
@@ -92,7 +101,9 @@ async function authenticateUser(identifier, password, opts= {}) {
   // }
 
   const isMatch = await comparePassword(password, user.passwordHash);
+  console.log('isMatch:', isMatch); // for testing only
   if (!isMatch){
+    console.log('Error message: password does not match'); // for testing only
     throw new InvalidCredentialsError('Incorrect password');
   }
 

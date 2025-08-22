@@ -78,6 +78,56 @@ export const signInUser = async (player: LoginData) => {
 	}
 };
 
+export const signInGoogleUser = async (idToken: string) => {
+	try {
+		const response = await fetch("https://localhost:8443/as/auth/google-login", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ idToken }),
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		// If profile is incomplete, just return result so caller can redirect
+		if (data.needCompleteProfile) {
+			return { needCompleteProfile: true };
+		}
+
+		const statResponse = await fetch("https://localhost:8443/stats/user_match_data/", {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+		});
+
+		if (!statResponse.ok) {
+			throw new Error(`HTTP error! Status: ${statResponse.status}`);
+		}
+
+		const stats = await statResponse.json();
+
+		const rivalResponse = await fetch(`https://localhost:8443/stats/rivals/${data.user.id}`, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+		});
+
+		if (!rivalResponse.ok) {
+			throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
+		}
+
+		const rivals = await rivalResponse.json();
+
+		return { data, stats, rivals };
+	} 
+	
+	catch (error) {
+		console.error("Error during Google sign-in:", error);
+		return null;
+	}
+};
+
 export const updateProfilePic = async (file: File, accessToken: string) => {
 	try {
 		const formData = new FormData();
@@ -284,7 +334,7 @@ export const disable2FA = async (accessToken?: string): Promise<boolean> => {
   if (!accessToken) return false;
 
   try {
-    const response = await fetch('/api/user/disable-2fa', {
+    const response = await fetch('https://localhost:8443/as/auth/user/disable-2fa', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
