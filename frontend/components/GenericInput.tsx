@@ -93,6 +93,7 @@ export const GenericInput = ({
           <button
             type="button"
             onClick={() => setIsVisible(!isVisible)}
+            tabIndex={-1}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:cursor-pointer"
             aria-label={isVisible ? t('components.genericInput.aria.hidePass') : t('components.genericInput.aria.showPass')}
           >
