@@ -211,7 +211,7 @@ const CustomGoogleLoginButton: React.FC = () => {
         } else {
           // If backend returns user data, update context
           setUser(prev => ({ ...prev, ...result }));
-          navigate(`/user/${result.username}`);
+          navigate(`/user/${result.user.username}`);
         }
       } catch (err) {
         console.error('Error during Google login:', err);
