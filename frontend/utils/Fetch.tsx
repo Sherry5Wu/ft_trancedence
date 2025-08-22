@@ -1,4 +1,4 @@
-import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, LeaderboardData, FetchedUserData } from "../utils/Interfaces";
+import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, LeaderboardData, FetchedUserData, UserGoogleProfileData, GoogleCompleteResponse } from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
 	// console.log('Sending user:', player);
@@ -22,6 +22,25 @@ export const createUser = async (player: UserProfileData): Promise<UserProfileDa
 		console.error('Error:', error);
 		return null;
 	}
+};
+
+export const createUserFromGoogle = async (player: UserGoogleProfileData): Promise<GoogleCompleteResponse | null> => {
+  try {
+    const response = await fetch("https://localhost:8443/as/auth/google-complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(player),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error creating user from Google:", error);
+    return null;
+  }
 };
 
 export const signInUser = async (player: LoginData) => {

@@ -1,6 +1,6 @@
 // CustomGoogleLoginButton.tsx
 import React, { useEffect } from 'react';
-import { useGoogleLogin } from '@react-oauth/google';
+// import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,7 @@ const CustomGoogleLoginButton: React.FC = () => {
     // global google
     if (window.google) {
       google.accounts.id.initialize({
+        // THIS SHOULD BE PROTECTED .ENV
         client_id: "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com",
         callback: handleCredentialResponse,
       });

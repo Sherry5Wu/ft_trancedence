@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import { GenericInput } from '../../components/GenericInput';
-import { ToggleButton } from '../../components/ToggleButton';
 import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 import { useUserContext } from '../../context/UserContext';
+import { createUserFromGoogle } from "../../utils/Fetch";
 
 const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
@@ -35,53 +35,90 @@ const CompleteProfilePage: React.FC = () => {
 
   const idToken = sessionStorage.getItem("googleIdToken");
 
-  const handleSave = async () => {
-    if (!idToken) {
-      alert("Google sign-in is required before completing profile.");
-      return;
-    }
+  // const handleSave = async () => {
+  //   if (!idToken) {
+  //     alert("Google sign-in is required before completing profile.");
+  //     return;
+  //   }
 
-    try {
-      const response = await fetch("https://localhost:8443/as/auth/google-complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idToken,
-          username: usernameField.value,
-          pinCode: pinField.value,
-        }),
-      });
+  //   try {
+  //     const response = await fetch("https://localhost:8443/as/auth/google-complete", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         idToken,
+  //         username: usernameField.value,
+  //         pinCode: pinField.value,
+  //       }),
+  //     });
 
-      if (!response.ok) throw new Error("Failed to complete profile");
+  //     if (!response.ok) throw new Error("Failed to complete profile");
 
-      const newUser = await response.json();
+  //     const newUser = await response.json();
 
-      // Clear token after registration
-      sessionStorage.removeItem("googleIdToken");
+  //     // Clear token after registration
+  //     sessionStorage.removeItem("googleIdToken");
 
-    // Map the backend response to userContext
-    const userData = {
-      username: newUser.user.username,
-      id: newUser.user.id,
-      email: "", // Not returned by backend
-      profilePic: newUser.user.avatarUrl || '../assets/noun-profile-7808629.svg',
-      score: 0, // Default because stats not returned yet
-      rank: 0,  // Default because rank not returned yet
-      rivals: [], // Default empty array
-      accessToken: newUser.accessToken,
-      refreshToken: newUser.refreshToken,
-      twoFA: newUser.TwoFAStatus,
-    };
+  //   // Map the backend response to userContext
+  //   const userData = {
+  //     username: newUser.user.username,
+  //     id: newUser.user.id,
+  //     email: "", // Not returned by backend
+  //     profilePic: newUser.user.avatarUrl || '../assets/noun-profile-7808629.svg',
+  //     score: 0, // Default because stats not returned yet
+  //     rank: 0,  // Default because rank not returned yet
+  //     rivals: [], // Default empty array
+  //     accessToken: newUser.accessToken,
+  //     refreshToken: newUser.refreshToken,
+  //     twoFA: newUser.TwoFAStatus,
+  //   };
 
-    // Update context and navigate
-    setUser(userData);
-    navigate(`/user/${userData.username}`);
+  //   // Update context and navigate
+  //   setUser(userData);
+  //   navigate(`/user/${userData.username}`);
 
-    } catch (err) {
-      console.error("Error saving profile:", err);
-      alert("Something went wrong, please try again.");
-    }
+  //   } catch (err) {
+  //     console.error("Error saving profile:", err);
+  //     alert("Something went wrong, please try again.");
+  //   }
+  // };
+const handleSave = async () => {
+  if (!idToken) {
+    alert("Google sign-in is required before completing profile.");
+    return;
+  }
+
+  const newUser = await createUserFromGoogle({
+    idToken,
+    username: usernameField.value,
+    pinCode: pinField.value,
+  });
+
+  if (!newUser) {
+    alert("Something went wrong, please try again.");
+    return;
+  }
+
+  // Clear token after registration
+  sessionStorage.removeItem("googleIdToken");
+
+  // Map backend response to context
+  const userData = {
+    username: newUser.user.username,
+    id: newUser.user.id,
+    email: "", // not returned by backend
+    profilePic: newUser.user.avatarUrl || "../assets/noun-profile-7808629.svg",
+    score: 0,
+    rank: 0,
+    rivals: [],
+    accessToken: newUser.accessToken,
+    refreshToken: newUser.refreshToken,
+    twoFA: newUser.TwoFAStatus,
   };
+
+  setUser(userData);
+  navigate(`/user/${userData.username}`);
+};
 
   return (
     <main

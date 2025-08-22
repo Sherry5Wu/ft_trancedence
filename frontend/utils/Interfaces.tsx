@@ -26,6 +26,12 @@ export interface UserProfileData {
   pinCode: string;
 }
 
+export interface UserGoogleProfileData {
+  idToken: string;
+  username: string;
+  pinCode: string;
+}
+
 export interface LoginData {
   identifier: string,
   password: string
@@ -111,4 +117,15 @@ export interface User {
 export interface UserType {
     user: User | null;
     setUser: (user: User | null) => void;
+}
+
+export interface GoogleCompleteResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    username: string;
+    avatarUrl: string;
+  };
+  TwoFAStatus: boolean;
 }
