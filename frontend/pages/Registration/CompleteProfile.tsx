@@ -41,7 +41,6 @@ const CompleteProfilePage: React.FC = () => {
 
   const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
-
   const [confirmPin, setConfirmPin] = useState('');
 
   const pinMismatch =
@@ -56,6 +55,45 @@ const CompleteProfilePage: React.FC = () => {
     !usernameField.error &&
     !pinField.error &&
     !pinMismatch;
+
+  const idToken = sessionStorage.getItem("googleIdToken");
+
+  const handleSave = async () => {
+    if (!idToken) {
+      alert("Google sign-in is required before completing profile.");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://localhost:8443/as/auth/google-complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idToken,
+          username: usernameField.value,
+          pinCode: pinField.value,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to complete profile");
+
+      const newUser = await res.json();
+
+      // Clear token after registration
+      sessionStorage.removeItem("googleIdToken");
+
+      setUser({
+        ...newUser,
+        accessToken: newUser.accessToken,
+        refreshToken: newUser.refreshToken,
+      });
+
+      navigate(`/user/${newUser.username}`);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      alert("Something went wrong, please try again.");
+    }
+  };
 
   return (
     <main
@@ -116,40 +154,44 @@ const CompleteProfilePage: React.FC = () => {
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        onClick={async () => {
-          try {
-            if (!user?.googleIdToken) {
-              alert("Google sign-in is required before completing profile.");
-              return;
-            }
+        onClick={handleSave}
+          //   onClick={async () => {
+          //     try {
+          //       if (!idToken) {
+          //         alert("Google sign-in is required before completing profile.");
+          //         return;
+          //       }
 
-            const response = await fetch("https://localhost:8443/as/auth/google-complete", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                idToken: user.googleIdToken,
-                username: usernameField.value,
-                pinCode: pinField.value,
-              }),
-            });
+          //       const response = await fetch("https://localhost:8443/as/auth/google-complete", {
+          //         method: "POST",
+          //         headers: { "Content-Type": "application/json" },
+          //         body: JSON.stringify({
+          //           idToken,
+          //           username: usernameField.value,
+          //           pinCode: pinField.value,
+          //         }),
+          //       });
 
-            if (!response.ok) throw new Error("Failed to complete profile");
+          //       if (!response.ok) throw new Error("Failed to complete profile");
 
-            const newUser = await response.json();
+          //       const newUser = await response.json();
 
-            setUser({
-              ...newUser,
-              accessToken: newUser.accessToken,
-              refreshToken: newUser.refreshToken,
-            });
+          //       // Clear saved token after registration
+          //       sessionStorage.removeItem("googleIdToken");
 
-            navigate(`/user/${newUser.username}`);
-          } catch (err) {
-            console.error("Error saving profile:", err);
-            alert("Something went wrong, please try again.");
-          }
-        }}
-      />
+          //       setUser({
+          //         ...newUser,
+          //         accessToken: newUser.accessToken,
+          //         refreshToken: newUser.refreshToken,
+          //       });
+
+          //       navigate(`/user/${newUser.username}`);
+          //     } catch (err) {
+          //       console.error("Error saving profile:", err);
+          //       alert("Something went wrong, please try again.");
+          //     }
+          //   }}
+          />
       </div>
       </div>
     </main>
