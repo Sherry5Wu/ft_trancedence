@@ -4,6 +4,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
+import { signInGoogleUser } from '../utils/Fetch';
 
 const CustomGoogleLoginButton: React.FC = () => {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ const CustomGoogleLoginButton: React.FC = () => {
   const { setUser } = useUserContext();
 
   useEffect(() => {
-    /* global google */
+    // global google
     if (window.google) {
       google.accounts.id.initialize({
         client_id: "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com",
@@ -30,44 +31,33 @@ const CustomGoogleLoginButton: React.FC = () => {
     // Save in sessionStorage so CompleteProfile page can access it
     sessionStorage.setItem("googleIdToken", idToken);
 
-    try {
-      const backendRes = await fetch("https://localhost:8443/as/auth/google-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idToken }),
+    const signInData = await signInGoogleUser(idToken);
+
+      if (!signInData) {
+        alert("Login failed, please try again.");
+        return;
+      }
+
+      if (signInData.needCompleteProfile) {
+        navigate("/signup/complete-profile");
+        return;
+      }
+
+      setUser({
+        username: signInData.data.user.username,
+        id: signInData.data.user.id,
+        email: "", // Not provided by backend yet
+        profilePic: signInData.data.user.avatarUrl || "../assets/noun-profile-7808629.svg",
+        score: signInData.stats.score,
+        rank: signInData.stats.score,
+        rivals: signInData.rivals,
+        accessToken: signInData.data.accessToken,
+        refreshToken: signInData.data.refreshToken,
+        twoFA: signInData.data.TwoFAStatus,
       });
 
-      if (!backendRes.ok) throw new Error("Backend login failed");
-
-      const result = await backendRes.json();
-
-      if (result.needCompleteProfile) {
-        navigate("/signup/complete-profile");
-      }
-      else {
-        // Map the backend response to your User interface
-        const userData = {
-          username: result.user.username,
-          id: result.user.id,
-          email: "", // Not returned by backend, you can leave empty or fetch later
-          profilePic: result.user.avatarUrl || '../assets/noun-profile-7808629.svg',
-          score: 0, // Default because Google login response has no stats yet
-          rank: 0,  // Default because Google login response has no rank yet
-          rivals: [], // Default empty array
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
-          twoFA: result.TwoFAStatus,
-        };
-
-        // Update the context with the mapped user and navigate to the user page
-        setUser(userData);
-        navigate(`/user/${userData.username}`);
-      } 
-    } catch (err) {
-      console.error("Error during Google login:", err);
-      alert("Login failed, please try again.");
-    }
-  };
+      navigate(`/user/${signInData.data.user.username}`);
+    };
 
   const handleClick = () => {
     if (!window.google) return alert("Google script not loaded yet");
@@ -79,7 +69,6 @@ const CustomGoogleLoginButton: React.FC = () => {
     <button
       type="button"
       className="google-signin-button"
-      // onClick={() => login()}
       onClick={handleClick}
     >
       <svg

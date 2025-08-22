@@ -59,7 +59,7 @@ const CompleteProfilePage: React.FC = () => {
       // Clear token after registration
       sessionStorage.removeItem("googleIdToken");
 
-    // Map the backend response to your User interface
+    // Map the backend response to userContext
     const userData = {
       username: newUser.user.username,
       id: newUser.user.id,

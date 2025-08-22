@@ -17,7 +17,7 @@ import { signInUser } from '../utils/Fetch';
 import { DEFAULT_AVATAR } from '../utils/constants';
 
 // const clientId = "604876395020-v57ifnl042bi718lgm2lckhpbfqdog6b.apps.googleusercontent.com";
-const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
+// const clientId = "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com";
 
 const SignInPage: React.FC = () => {
   const { t } = useTranslation(); 
@@ -34,7 +34,7 @@ const SignInPage: React.FC = () => {
     !passwordField.error;
 
 return (
-    <GoogleOAuthProvider clientId={clientId}>
+    // <GoogleOAuthProvider clientId={clientId}>
       <main
         className="pageLayout"
         role="main"
@@ -121,7 +121,7 @@ return (
         </p>
         </div>
       </main>
-    </GoogleOAuthProvider>
+    // {/* </GoogleOAuthProvider> */}
   );
 };
 
