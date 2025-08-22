@@ -1,31 +1,55 @@
 import { useEffect, useState, ReactElement } from 'react';
 import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
-import { fetchMatchData } from '../utils/Fetch';
-import { MatchData } from '../utils/Interfaces';
+import { fetchMatchData, fetchUsers } from '../utils/Fetch';
+import { MatchData, FetchedUserData } from '../utils/Interfaces';
 
 export const MatchHistory = ({ player }: { player: string }) => {
-    const [matchData, setMatchData] = useState<MatchData | null>(null);
+    const [matchData, setMatchData] = useState<MatchData[] | null>(null);
     const [loading, setLoading] = useState(true);
+    const [profilePic1, setProfilePic1] = useState('');
+    const [profilePic2, setProfilePic2] = useState('');
     const { user } = useUserContext();
 
     if (!user)
         return ;
 
-    console.log('player = ' + player);
-
     useEffect(() => {
         const loadMatchData = async () => {
-            console.log('player is ' + player);
             setLoading(true);
             const data = await fetchMatchData(player);
-            console.log('PLAYER MATCH HISTORY');
-            console.log(data);
             setMatchData(data);
             setLoading(false);
         }
         loadMatchData();
     }, [player]);
+
+    useEffect(() => {
+        if (!user || !matchData)
+            return ;
+
+        const loadProfilePicURL = async () => {
+            const allUsers = await fetchUsers(user?.accessToken);
+            if (!allUsers)
+                return ;
+
+            const updatedData = matchData.map((match: MatchData) => {
+                const player1 = allUsers.find((u: FetchedUserData) => u.username === match.player_username);
+                if (player1)
+                    setProfilePic1(player1.avatarUrl);
+                else
+                    setProfilePic1('../assets/noun-profile-7808629.svg');
+
+                const player2 = allUsers.find((u: FetchedUserData) => u.username === match.opponent_username);
+                if (player2)
+                    setProfilePic2(player2.avatarUrl);
+                else
+                    setProfilePic2('../assets/noun-profile-7808629.svg');
+            })
+        }
+        loadProfilePicURL();
+    }, [matchData])
+    
 
     if (loading)
         return <div className='flex justify-center my-5'>Loading...</div>
@@ -49,8 +73,8 @@ export const MatchHistory = ({ player }: { player: string }) => {
 
             <ul aria-label='match history rows' className=''>
                 {matchData.map((match: MatchData, index: number) => {
-                    const localTime = new Date(match.played_at).toLocaleString('fi-FI', {
-                      dateStyle: 'medium',
+                    const localTime = new Date(match.played_at).toLocaleString('en-GB', {
+                      dateStyle: 'short',
                       timeStyle: 'short',
                       timeZone: 'Europe/Helsinki',
                     });
@@ -58,9 +82,9 @@ export const MatchHistory = ({ player }: { player: string }) => {
                         <span className='ml-3'>{localTime}</span>
                         <span className='col-span-2 truncate flex items-center justify-center gap-2'>
                             <span className=''>{match.player_username ? match.player_username : match.player_name} </span> 
-                            <img src={match.player1pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
+                            <img src={profilePic1} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
                             <span>vs</span>
-                            <img src={match.player2pic} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
+                            <img src={profilePic2} className={`h-11 w-11 rounded-full object-cover border-4 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
                             <span className=''>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
                         </span> 
                         <span className=''>{match.player_score} - {match.opponent_score}</span>

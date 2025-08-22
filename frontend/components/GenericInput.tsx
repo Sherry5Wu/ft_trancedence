@@ -105,7 +105,7 @@ export const GenericInput = ({
         )}
       </div>
 
-      {errorMessage && (
+      <div className={`transition-all ease-in-out duration-500 ${errorMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
         <p
           id={`${inputId}-error`}
           className="text-black text-xs mt-1 whitespace-pre-line pl-4"
@@ -113,7 +113,7 @@ export const GenericInput = ({
         >
           {errorMessage}
         </p>
-      )}
+      </div>
     </div>
   );
 };

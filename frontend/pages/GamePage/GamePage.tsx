@@ -1,9 +1,10 @@
 import React, { useRef, useState, Suspense, useMemo, useEffect } from 'react';
-import { usePlayersContext } from '../context/PlayersContext'
-import { useUserContext } from '../context/UserContext';
+import { usePlayersContext } from '../../context/PlayersContext'
+import { useUserContext } from '../../context/UserContext';
 import { postMatchHistory, postTournamentHistory, formatHMS } from './postresulttest';
+import KeyBindingsPanel, { KeyBindings, loadBindings, labelForCode } from './KeyBindings';
 
-const GameCanvas = React.lazy(() => import('../game/main'));
+const GameCanvas = React.lazy(() => import('../../game/main'));
 
 type WinMode = 'bo5' | 'bo9' | 'bo19';
 const winTarget = (m: WinMode) => (m === 'bo5' ? 3 : m === 'bo9' ? 5 : 10);
@@ -18,44 +19,6 @@ const SPEED_MAP: Record<SpeedPreset, number> = {
 type Player = { id: string; username: string; elo: number };
 type Pair = [Player, Player];
 type MapKey = 'default' | 'large' | 'obstacles';
-type Action = 'up' | 'down' | 'boost' | 'shield';
-type PlayerId = 'p1' | 'p2';
-type KeyBinding = { up: string; down: string; boost: string, shield: string };
-type KeyBindings = { p1: KeyBinding; p2: KeyBinding };
-
-const DEFAULT_BINDINGS: KeyBindings = {
-  p1: { up: 'KeyW', down: 'KeyS', boost: 'KeyA', shield: 'KeyD' },
-  p2: { up: 'ArrowUp', down: 'ArrowDown', boost: 'ArrowRight', shield: 'ArrowLeft' },
-};
-
-const BINDINGS_STORAGE_KEY = 'pong.bindings.v1';
-
-function loadBindings(): KeyBindings {
-  try {
-    const raw = localStorage.getItem(BINDINGS_STORAGE_KEY);
-    if (!raw) return DEFAULT_BINDINGS;
-    const parsed = JSON.parse(raw);
-    if (parsed?.p1?.up && parsed?.p2?.up) return parsed as KeyBindings;
-  } catch {}
-  return DEFAULT_BINDINGS;
-}
-
-function saveBindings(b: KeyBindings) {
-  try { localStorage.setItem(BINDINGS_STORAGE_KEY, JSON.stringify(b)); } catch {}
-}
-
-// Display key labels
-function labelForCode(code: string): string {
-  if (code.startsWith('Key')) return code.slice(3);
-  if (code.startsWith('Digit')) return code.slice(5);
-  const special: Record<string, string> = {
-    ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→',
-    Space: 'Space', ShiftLeft: 'L‑Shift', ShiftRight: 'R‑Shift',
-    ControlLeft: 'L‑Ctrl', ControlRight: 'R‑Ctrl',
-    AltLeft: 'L‑Alt', AltRight: 'R‑Alt',
-  };
-  return special[code] ?? code;
-}
 
 // Stage helpers
 function nextPow2(n: number) {
@@ -112,9 +75,35 @@ function pairSequential(ps: Player[]): { pairs: Pair[]; carry: Player[] } {
   return { pairs, carry };
 }
 
+function buildP1Payload(
+  p1: { id?: string; username?: string },
+  p2: { id?: string; username?: string },
+  s1: number,
+  s2: number,
+  durationStr: string,
+  played_at_iso: string
+) {
+  const player_username = p1?.username ?? 'Player 1';
+  const opponent_username = p2?.username ?? 'Player 2';
+  return {
+    player_id: p1?.id ? String(p1.id) : 'guest',
+    player_username,
+    player_name: player_username,
+    opponent_id: p2?.id ? String(p2.id) : null,
+    opponent_username,
+    opponent_name: opponent_username,
+    player_score: s1,
+    opponent_score: s2,
+    duration: durationStr,
+    result: s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw',
+    played_at: played_at_iso,
+  } as const;
+}
+
 // Flow of the page Options -> Game -> Post-match screen -> ...
 export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [bindings, setBindings] = useState<KeyBindings>(() => loadBindings());
   const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle } = usePlayersContext();
   const [mapKey, setMapKey] = useState<MapKey>('default');
 
@@ -126,8 +115,6 @@ export default function GamePage() {
 
   const { user } = useUserContext();
   const [startAt, setStartAt] = useState<Date | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   type Phase =
@@ -199,18 +186,9 @@ export default function GamePage() {
 
   const handleStart = () => {
     setStartAt(new Date());
-    setSubmitError(null);
-    setSubmitting(false);
     setSubmitted(false);
     setPhase('playing');
   };
-
-  function loggedInId() {
-    return user?.id ?? (rawPlayers?.[0] as any)?.id ?? 'guest';
-  }
-  function loggedInUsername() {
-    return user?.username ?? (rawPlayers?.[0]?.username ?? 'Player 1');
-  }
 
   // Called by the main when a match finishes
   const handleMatchEnd = async (winnerName: string, s1: number, s2: number) => {
@@ -220,87 +198,13 @@ export default function GamePage() {
     const durationStr = formatHMS(durationMs);
     const played_at_iso = started.toISOString();
 
-    const player_id = loggedInId();
-    const player_username = loggedInUsername();
-
-    // Figure out the opponent identity for each mode
-    let oppId: string | null = null;
-    let oppUsername = 'guest';
-    let oppDisplay = 'Guest';
-
-    if (isTournament && currentPair) {
-      const p1 = currentPair[0];
-      const p2 = currentPair[1];
-
-      const isUserP1 = p1.username === player_username;
-      const opp = isUserP1 ? p2 : p1;
-
-      // overwrite to ensure we post from the logged-in perspective
-      oppId = opp?.id ?? null;
-      oppUsername = opp?.username ?? 'guest';
-      oppDisplay = oppUsername;
-
-      // Map scores to the logged-in player
-      const player_score = isUserP1 ? s1 : s2;
-      const opponent_score = isUserP1 ? s2 : s1;
-
-      const result =
-        player_score > opponent_score ? 'win' :
-        player_score < opponent_score ? 'loss' : 'draw';
-
-      const statsPayload = {
-        player_id,
-        player_username,
-        player_name: player_username,
-        opponent_id: oppId,
-        opponent_username: oppUsername,
-        opponent_name: oppDisplay,
-        player_score,
-        opponent_score,
-        duration: durationStr,
-        result,
-        played_at: played_at_iso,
-      } as const;
-
-      await submitAll(statsPayload);
-    } else {
-      // Non‑tournament
-      const opp = (rawPlayers?.[1] as any) ?? {};
-      oppId = opp?.id ? String(opp.id) : null;
-      oppUsername = opp?.username ?? 'guest';
-      oppDisplay = oppUsername;
-
-      const player_score = s1;
-      const opponent_score = s2;
-
-      const result =
-        player_score > opponent_score ? 'win' :
-        player_score < opponent_score ? 'loss' : 'draw';
-
-      const statsPayload = {
-        player_id,
-        player_username,
-        player_name: player_username,
-        opponent_id: oppId,
-        opponent_username: oppUsername,
-        opponent_name: oppDisplay,
-        player_score,
-        opponent_score,
-        duration: durationStr,
-        result,
-        played_at: played_at_iso,
-      } as const;
-
-      await submitAll(statsPayload);
-    }
-
-    // local UI flow continues
     function afterSubmitUI() {
       if (!isTournament) {
         setPostResult({ winner: winnerName, s1, s2 });
         setPhase('post');
         return;
       }
+      // Advance bracket
       const winner =
         currentPair[0].username === winnerName ? currentPair[0] :
         currentPair[1].username === winnerName ? currentPair[1] :
@@ -331,110 +235,61 @@ export default function GamePage() {
       setPhase('prematch');
     }
 
-    async function submitAll(statsPayload: {
-      player_id: string;
-      player_username: string;
-      player_name: string;
-      opponent_id: string | null;
-      opponent_username: string;
-      opponent_name: string;
-      player_score: number;
-      opponent_score: number;
-      duration: string;
-      result: 'win' | 'loss' | 'draw';
-      played_at: string;
-    }) {
+    async function submitAll() {
       if (submitted) {
         afterSubmitUI();
         return;
       }
-      setSubmitting(true);
-      setSubmitError(null);
 
       try {
-        await postMatchHistory(statsPayload, user?.accessToken);
+        if (isTournament && currentPair) {
+          const p1 = currentPair[0];
+          const p2 = currentPair[1];
 
-        if (isTournament) {
+          await postMatchHistory(
+            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
+            user?.accessToken
+          );
+
+          // Tournament history
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
             const stage_number = stageForPosting(roundNum, bracketSize || entrants.length || 2);
-            await postTournamentHistory(
-              {
-                tournament_id,
-                stage_number,
-                match_number: matchIdx + 1,
-                player_name: player_username,
-                opponent_name: statsPayload.opponent_username,
-                result: statsPayload.result,
-              },
-            );
+            const resultForP1: 'win' | 'loss' | 'draw' =
+              s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
+
+            await postTournamentHistory({
+              tournament_id,
+              stage_number,
+              match_number: matchIdx + 1,
+              player_name: p1.username,
+              opponent_name: p2.username,
+              result: resultForP1,
+            });
           }
+        } else {
+          // Regular match
+          const p1 = (rawPlayers?.[0] as any) ?? {};
+          const p2 = (rawPlayers?.[1] as any) ?? {};
+                  
+          await postMatchHistory(
+            buildP1Payload(p1, p2, s1, s2, durationStr, played_at_iso),
+            user?.accessToken
+          );
         }
 
         setSubmitted(true);
-        setSubmitting(false);
         afterSubmitUI();
       } catch (err: any) {
-        setSubmitting(false);
-        setSubmitError(err?.message || 'Failed to submit match result');
         if (!isTournament) {
           setPostResult({ winner: winnerName, s1, s2 });
           setPhase('post');
         }
       }
     }
+
+    await submitAll();
   };
-
-  // Key bingings
-  const [bindings, setBindings] = useState<KeyBindings>(() => loadBindings());
-  // Which binding we’re currently capturing (if any)
-  const [capture, setCapture] = useState<{ player: PlayerId; action: Action } | null>(null);
-  // Prevent duplicate conflicts
-  const enforceUnique = true;
-  
-  // When capturing, the next keydown sets the binding
-  useEffect(() => {
-    if (!capture) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const code = e.code;
-      setBindings(prev => {
-        if (enforceUnique) {
-          for (const pid of ['p1','p2'] as PlayerId[]) {
-            for (const act of ['up','down','boost','shield'] as Action[]) {
-              if (!(pid === capture.player && act === capture.action) && prev[pid][act] === code) {
-                return prev;
-              }
-            }
-          }
-        }
-        const next = { ...prev, [capture.player]: { ...prev[capture.player], [capture.action]: code } };
-        saveBindings(next);
-        return next;
-      });
-      setCapture(null);
-    };
-    window.addEventListener('keydown', onKeyDown, { once: true });
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [capture]);
-
-  function findConflicts(b: KeyBindings): string[] {
-    const all: Array<{ who: string; code: string }> = [];
-    (['p1','p2'] as PlayerId[]).forEach(pid => {
-      (['up','down','boost','shield'] as Action[]).forEach(act => {
-        all.push({ who: `${pid}:${act}`, code: b[pid][act] });
-      });
-    });
-    const seen = new Map<string, string>();
-    const dups: string[] = [];
-    for (const item of all) {
-      if (seen.has(item.code)) dups.push(`${seen.get(item.code)} ↔ ${item.who} (${item.code})`);
-      else seen.set(item.code, item.who);
-    }
-    return dups;
-  }
-  const conflicts = findConflicts(bindings);
 
   const handlePlayAgain = () => {
     // Return to options and remove the game from the background for a clean start option
@@ -506,105 +361,11 @@ export default function GamePage() {
                 </label>
 
                 {/* Controls */}
-                  <div className="mb-6">
-                    <div className="block text-sm text-neutral-300 mb-2">Controls</div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Player 1 */}
-                      <div className="rounded-lg bg-neutral-800 p-3">
-                        <div className="font-semibold mb-2">{p1Name} (Player 1)</div>
-                        {(['up','down','boost','shield'] as Action[]).map((act) => (
-                          <div key={act} className="flex items-center justify-between gap-2 py-1">
-                            <span className="capitalize text-neutral-300">{act}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="px-2 py-1 rounded bg-neutral-900 text-xs">
-                                {labelForCode(bindings.p1[act])}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => setCapture({ player: 'p1', action: act })}
-                                className={`px-2 py-1 rounded border text-xs ${
-                                  capture?.player === 'p1' && capture?.action === act
-                                    ? 'border-emerald-500 text-emerald-400'
-                                    : 'border-white/10 text-neutral-200'
-                                }`}
-                              >
-                                {capture?.player === 'p1' && capture?.action === act ? 'Press any key…' : 'Rebind'}
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                        <button
-                          type="button"
-                          className="mt-3 text-xs underline"
-                          onClick={() => { setBindings(b => { const next = { ...b, p1: DEFAULT_BINDINGS.p1 }; saveBindings(next); return next; }); }}
-                        >
-                          Reset P1 to defaults
-                        </button>
-                      </div>
-                      
-                      {/* Player 2 */}
-                      <div className="rounded-lg bg-neutral-800 p-3">
-                        <div className="font-semibold mb-2">{p2Name} (Player 2)</div>
-                        {(['up','down','boost','shield'] as Action[]).map((act) => (
-                          <div key={act} className="flex items-center justify-between gap-2 py-1">
-                            <span className="capitalize text-neutral-300">{act}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="px-2 py-1 rounded bg-neutral-900 text-xs">
-                                {labelForCode(bindings.p2[act])}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => setCapture({ player: 'p2', action: act })}
-                                className={`px-2 py-1 rounded border text-xs ${
-                                  capture?.player === 'p2' && capture?.action === act
-                                    ? 'border-emerald-500 text-emerald-400'
-                                    : 'border-white/10 text-neutral-200'
-                                }`}
-                              >
-                                {capture?.player === 'p2' && capture?.action === act ? 'Press any key…' : 'Rebind'}
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                        <button
-                          type="button"
-                          className="mt-3 text-xs underline"
-                          onClick={() => { setBindings(b => { const next = { ...b, p2: DEFAULT_BINDINGS.p2 }; saveBindings(next); return next; }); }}
-                        >
-                          Reset P2 to defaults
-                        </button>
-                      </div>
-                    </div>
-                      
-                    {conflicts.length > 0 && (
-                      <div className="mt-2 text-xs text-amber-400">
-                        Conflicts detected: {conflicts.join(', ')}
-                      </div>
-                    )}
-                    <div className="mt-2 flex gap-3">
-                      <button
-                        type="button"
-                        className="text-xs underline"
-                        onClick={() => { setBindings(DEFAULT_BINDINGS); saveBindings(DEFAULT_BINDINGS); }}
-                      >
-                        Reset all to defaults
-                      </button>
-                      <button
-                        type="button"
-                        className="text-xs underline"
-                        onClick={() => {
-                          setBindings(b => {
-                            const swapped: KeyBindings = { p1: b.p2, p2: b.p1 };
-                            saveBindings(swapped);
-                            return swapped;
-                          });
-                        }}
-                      >
-                        Swap P1/P2
-                      </button>
-                    </div>
-                  </div>
+                  <KeyBindingsPanel
+                    playerNames={[p1Name, p2Name]}
+                    value={bindings}
+                    onChange={setBindings}
+                  />
 
                 <div className="flex justify-center">
                   <button

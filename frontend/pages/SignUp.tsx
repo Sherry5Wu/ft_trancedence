@@ -136,17 +136,6 @@ return (
           allowVisibility
         />
 
-        {/* <div className="relative inline-flex items-center">
-          <ToggleButton
-            label={t('pages.signUp.toggle2FA')}
-            aria-label={t('common.aria.toggles.toggle2FA')}
-            onClick={() => navigate('/setup2fa')}
-          />
-          <div className="absolute right-[-30px]">
-            <Tooltip text={t('common.tooltips.2fa')} />
-          </div>
-        </div> */}
-
         <GenericButton
           className="generic-button"
           text={t('common.buttons.signUp')}
@@ -170,7 +159,7 @@ return (
         }}
         />
 
-        <p className="text-center text-sm">
+        <p className="text-center text-sm translate-y-2">
           {t('pages.signUp.alreadyHaveAccount')}{' '}
           <Link
             to="/signin"

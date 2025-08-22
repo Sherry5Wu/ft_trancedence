@@ -18,21 +18,61 @@ const Setup2faMainPage: React.FC = () => {
   const [showManualSetup, setShowManualSetup] = useState(false);
   const formFilled = /^\d{6}$/.test(code);
 
-  // Simulate fetching QR code URL and setup key together
+  // // Simulate fetching QR code URL and setup key together
+  // useEffect(() => {
+  //   const fetch2FAData = async () => {
+  //     try {
+  //       setTimeout(() => {
+  //         setQrCodeUrl('https://www.example.com/2fa');
+  //         setSetupKey('ABCD EFGH IJKL MNOP');
+  //       }, 2000); // Simulated delay
+  //     } catch (error) {
+  //       console.error('Failed to fetch 2FA data:', error);
+  //     }
+  //   };
+
+  //   fetch2FAData();
+  // }, []);
+
   useEffect(() => {
     const fetch2FAData = async () => {
       try {
-        setTimeout(() => {
-          setQrCodeUrl('https://www.example.com/2fa');
-          setSetupKey('ABCD EFGH IJKL MNOP');
-        }, 2000); // Simulated delay
-      } catch (error) {
-        console.error('Failed to fetch 2FA data:', error);
+        const response = await fetch('https://localhost:8443/as/auth/2fa/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // ensures cookie/JWT is sent
+        });
+        if (!response.ok) throw new Error('Failed to setup 2FA');
+        const data = await response.json();
+        setQrCodeUrl(data.qrCode);
+        setSetupKey(data.secret);
+        // store backup codes temporarily in localStorage to show in next step
+        localStorage.setItem('backupCodes', JSON.stringify(data.backupCodes));
+      } catch (err) {
+        console.error(err);
       }
     };
-
     fetch2FAData();
   }, []);
+
+  const handleVerify = async () => {
+    try {
+      const response = await fetch('https://localhost:8443/as/auth/2fa/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ token: code }),
+      });
+      const data = await response.json();
+      if (data.verified) {
+        navigate('/setup2fa-backup');
+      } else {
+        alert('Invalid code, try again');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <main
@@ -123,9 +163,10 @@ const Setup2faMainPage: React.FC = () => {
           className="generic-button"
           text={t('common.buttons.next')}
           disabled={!formFilled}
-          onClick={() =>
-            navigate('/setup2fa-backup')
-          }
+          // onClick={() =>
+          //   navigate('/setup2fa-backup')
+          // }
+          onClick={handleVerify}
           aria-label={t('common.aria.buttons.next')}
         />
       </div>
