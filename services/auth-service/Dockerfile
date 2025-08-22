@@ -6,6 +6,9 @@
 # Stage 1: Development (includes devDependencies, nodemon, etc.)
 FROM node:20-alpine AS dev
 
+# Install curl
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Install all dependencies (prod + dev) package-lock.json

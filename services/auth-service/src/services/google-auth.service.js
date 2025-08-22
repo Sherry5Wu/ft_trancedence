@@ -249,26 +249,39 @@ async function googleCompleteRegistration(idToken, username, pinCode, ip = null,
       isVerified: true
     }, { transaction });
 
-    // generate tokens
-    const accessToken = generateAccessToken({ id: newUser.id });
-    const refreshToken = generateRefreshToken({ id: newUser.id });
+    // build token payloads
+    const accessTokenPayload = {
+      id: newUser.id,
+      email: newUser.email,
+      username: newUser.username,
+      is2FAEnabled: !!newUser.twoFASecret,
+    };
+    const refreshTokenPayload = { id: newUser.id };
 
-    // persist refresh token (outside transaction is fine, but we do inside here)
+    const accessToken = generateAccessToken(accessTokenPayload);
+    const refreshToken = generateRefreshToken(refreshTokenPayload);
+
+    // persist refresh token
     try {
       await persistRefreshToken(refreshToken, newUser.id, ip, userAgent);
     } catch (err) {
-      // non-fatal, but log
-      /* eslint-disable no-console */
       console.warn('Failed to persist refresh token for new user:', err.message);
-      /* eslint-enable no-console */
     }
 
     await transaction.commit();
 
+    const publicUser = {
+      id: newUser.id,
+      username: newUser.username,
+      avatarUrl: newUser.avatarUrl || null,
+      is2FAEnabled: !!newUser.twoFASecret,
+      is2FAConfirmed: newUser.is2FAConfirmed || false,
+    };
+
     return {
-      userId: newUser.id,
       accessToken,
-      refreshToken
+      refreshToken,
+      user: publicUser
     };
   } catch (err) {
     await transaction.rollback();
