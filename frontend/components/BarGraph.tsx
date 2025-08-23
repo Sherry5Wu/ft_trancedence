@@ -24,9 +24,7 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
 
     const correctedData: ScoreHistory[] = [{id: 0, elo_score: 1000}, ...data];
 	const differenceData = calculateDifference({ correctedData });
-    console.log('DIFFERENCE DATA');
-    console.log(differenceData);
-
+    
     return (
         <ResponsiveContainer width="100%" aspect={1.5}>
             <BarChart width={500} height={300} data={differenceData} >

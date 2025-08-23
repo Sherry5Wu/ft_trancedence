@@ -65,6 +65,8 @@ export const MatchHistory = ({ player }: { player: string }) => {
 
     console.log(profilePic1);
     console.log(profilePic2);
+    console.log('MATCH DATA');
+    console.log(matchData);
 
     return (
         <div aria-label='match history' className=''>
@@ -82,7 +84,7 @@ export const MatchHistory = ({ player }: { player: string }) => {
                       timeStyle: 'short',
                       timeZone: 'Europe/Helsinki',
                     });
-                    return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center min-w-200'>
+                    return <li key={index} className={`grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center min-w-200 ${match.opponent_id.includes('guest-') === true ? 'italic opacity-70' : 'normal opacity-100'}`}>
                         <span className='ml-3'>{localTime}</span>
                         <span className='col-span-2 grid grid-cols-[max-content_auto_auto_auto_max-content] truncate items-center justify-center gap-2'>
                             <span className='max-w-[50px]'>{match.player_username ? match.player_username : match.player_name} </span> 
