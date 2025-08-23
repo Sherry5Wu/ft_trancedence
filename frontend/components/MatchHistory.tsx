@@ -8,9 +8,10 @@ import { DEFAULT_AVATAR } from '../utils/constants';
 export const MatchHistory = ({ player }: { player: string }) => {
     const [matchData, setMatchData] = useState<MatchData[] | null>(null);
     const [loading, setLoading] = useState(true);
-    const [profilePic1, setProfilePic1] = useState(null);
-    const [profilePic2, setProfilePic2] = useState(null);
+    const [profilePic1, setProfilePic1] = useState('');
+    const [profilePic2, setProfilePic2] = useState('');
     const { user } = useUserContext();
+    let localTime = 0;
 
     if (!user)
         return ;
@@ -42,6 +43,7 @@ export const MatchHistory = ({ player }: { player: string }) => {
 					setProfilePic1(DEFAULT_AVATAR);
 
                 const player2 = allUsers.find((u: FetchedUserData) => u.username === match.opponent_username);
+                console.log('player 2 found = ' + player2);
                 if (player2)
                     setProfilePic2(player2.avatarUrl || DEFAULT_AVATAR);
 				else
@@ -49,7 +51,7 @@ export const MatchHistory = ({ player }: { player: string }) => {
             })
         }
         loadProfilePicURL();
-    }, [matchData])
+    }, [matchData, localTime])
     
 
     if (loading)
@@ -65,8 +67,8 @@ export const MatchHistory = ({ player }: { player: string }) => {
 
     console.log(profilePic1);
     console.log(profilePic2);
-    console.log('MATCH DATA');
-    console.log(matchData);
+    // console.log('MATCH DATA');
+    // console.log(matchData);
 
     return (
         <div aria-label='match history' className=''>
@@ -79,7 +81,7 @@ export const MatchHistory = ({ player }: { player: string }) => {
 
             <ul aria-label='match history rows' className=''>
                 {matchData.map((match: MatchData, index: number) => {
-                    const localTime = new Date(match.played_at).toLocaleString('en-GB', {
+                    localTime = new Date(match.played_at).toLocaleString('en-GB', {
                       dateStyle: 'short',
                       timeStyle: 'short',
                       timeZone: 'Europe/Helsinki',

@@ -10,11 +10,12 @@ const calculateDifference = ({ correctedData }: { correctedData: ScoreHistory[] 
 			const nextScore = array[index + 1];
 			return (
 			{
-				id: score.id,
+				id: score.id + 1,
 				elo_score: nextScore.elo_score - score.elo_score,
 			});
 		}
 	}).filter(Boolean);
+    newData.unshift({id: 0, elo_score: 0});
 	return newData;
 }
 
@@ -23,8 +24,12 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
 		return <div className='flex justify-center my-5'>No data yet</div>
 
     const correctedData: ScoreHistory[] = [{id: 0, elo_score: 1000}, ...data];
+    correctedData.sort((a, b) => a.id - b.id);
 	const differenceData = calculateDifference({ correctedData });
-    
+    // console.log('DATA');
+    // console.log(correctedData);
+    // console.log(differenceData);
+
     return (
         <ResponsiveContainer width="100%" aspect={1.5}>
             <BarChart width={500} height={300} data={differenceData} >
