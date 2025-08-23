@@ -49,12 +49,12 @@ export function updateRivalsDataTable(player_username, rival_username, games_pla
   }
 }
 
-export function updateUserMatchDataTable(playerId, newScore, playerName, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, username) {
+export function updateUserMatchDataTable(playerId, newScore, playerName, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, username, winstreak) {
   try 
   {
     const insertStmt = db.prepare(`
-        INSERT INTO user_match_data (player_username, player_id, player_name, elo_score, games_played, games_lost, games_won, longest_win_streak, games_draw, rank)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        INSERT INTO user_match_data (player_username, player_id, player_name, elo_score, games_played, games_lost, games_won, longest_win_streak, games_draw, win_streak)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(player_id) DO UPDATE SET
         player_name = excluded.player_name,
         elo_score = excluded.elo_score,
@@ -63,9 +63,10 @@ export function updateUserMatchDataTable(playerId, newScore, playerName, gamesPl
         games_won = excluded.games_won,
         games_draw = excluded.games_draw,
         longest_win_streak = excluded.longest_win_streak,
-        player_username = excluded.player_username
+        player_username = excluded.player_username,
+        win_streak = excluded.win_streak
       `);
-      insertStmt.run(username, playerId, playerName, Math.round(newScore), gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw);
+      insertStmt.run(username, playerId, playerName, Math.round(newScore), gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, winstreak);
       // Päivitä kaikkien käyttäjien rankit aina kun joku muuttuu
       updateAllUserRanks();
       console.log(`\u2705 Updated or created player: ${playerId} (${playerName})`);

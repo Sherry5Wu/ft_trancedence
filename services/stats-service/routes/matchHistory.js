@@ -1,4 +1,4 @@
-import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon, calculateLongestWinStreak, calculateGamesDraw, checkIfRivals, calculateGamesPlayedAgainstRival, calculateWinsAgainstRival, calculateLossAgainstRival} from '../utils/calculations.js'
+import { calculateEloScore, calculateGamesLost, calculateGamesPlayed, calculateGamesWon, calculateCurrentWinStreak, calculateLongestWinStreak, calculateGamesDraw, checkIfRivals, calculateGamesPlayedAgainstRival, calculateWinsAgainstRival, calculateLossAgainstRival} from '../utils/calculations.js'
 import { updateUserMatchDataTable, updateScoreHistoryTable, updateRivalsDataTable } from '../utils/updateFunctions.js';
 import { db } from '../db/init.js';
 import { requireAuth } from '../utils/auth.js';
@@ -107,31 +107,6 @@ export default async function matchHistoryRoutes(fastify) {
         else
             outcome = 0.5;
 
-        const updateWin = db.prepare(`
-                UPDATE user_match_data
-                SET
-                    win_streak = win_streak + 1
-                WHERE player_id = ?
-            `);
-         const resetStreak = db.prepare(`
-                UPDATE user_match_data
-                SET
-                    win_streak = 0
-                WHERE player_id = ?
-            `);
-        if (outcome === 1)
-        {
-            updateWin.run(player_id);
-            if (player_id !== opponent_id)
-                resetStreak.run(opponent_id);   
-        }
-        else
-        {
-            updateWin.run(opponent_id);
-            if (player_id !== opponent_id)
-                resetStreak.run(player_id);
-        }
-
         let eloChanges = null;
         let playerElo = 0;
         if (!is_guest_opponent) {
@@ -147,6 +122,7 @@ export default async function matchHistoryRoutes(fastify) {
         const gamesLost = calculateGamesLost(player_id);
         const gamesWon = calculateGamesWon(player_id);
         const longestWinStreak = calculateLongestWinStreak(player_id);
+        const currentWinStreak = calculateCurrentWinStreak(player_id);
         const gamesDraw = calculateGamesDraw(player_id);
         if (!is_guest_opponent) {
             const opponentGamesPlayed = calculateGamesPlayed(opponent_id);
@@ -154,7 +130,8 @@ export default async function matchHistoryRoutes(fastify) {
             const opponentGamesWon = calculateGamesWon(opponent_id);
             const opponentlongestWinStreak = calculateLongestWinStreak(opponent_id);
             const opponentGamesDraw = calculateGamesDraw(opponent_id);
-            updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username);
+            const opponentWinStreak = calculateCurrentWinStreak(opponent_id);
+            updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username, opponentWinStreak);
             updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at, opponent_username);
         }
 
@@ -170,7 +147,7 @@ export default async function matchHistoryRoutes(fastify) {
         }
         
         // Rank lasketaan automaattisesti updateUserMatchDataTable-funktiossa
-        updateUserMatchDataTable(player_id, playerElo, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username);
+        updateUserMatchDataTable(player_id, playerElo, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username, currentWinStreak);
         updateScoreHistoryTable(player_id, playerElo, played_at, player_username);
         reply.send({ message: 'Match added to history successfully' });
         } catch (err) {

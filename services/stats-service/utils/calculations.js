@@ -119,7 +119,6 @@ export function calculateLongestWinStreak(player_id) {
   let currentStreak = 0;
   let longestStreak = 0;
   rows.forEach((item) => {
-    currentStreak = 0;
     if (item.result === 'win') {
       currentStreak += 1;
       longestStreak = Math.max(longestStreak, currentStreak);
@@ -129,6 +128,20 @@ export function calculateLongestWinStreak(player_id) {
     }
   });
   return longestStreak;
+}
+
+export function calculateCurrentWinStreak(player_id) {
+  console.log("Calculating current winstreak");
+  const rows = getMatchHistoryForPlayer(player_id);
+  let currentStreak = 0;
+  for (const item of rows) {
+    if (item.result === 'win') {
+      currentStreak += 1;
+    } else {
+      break;
+    }
+  }
+  return currentStreak;
 }
 
 export function checkIfRivals(player_username, rival_username) {

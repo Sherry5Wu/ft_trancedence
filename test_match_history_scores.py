@@ -94,48 +94,6 @@ def test_login_user():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     assert ACCESS_TOKEN != None
 
-def test_get_user_match_data():
-    """Test GET /user_match_data - public route"""
-    response = requests.get(f"{STATS_URL}/user_match_data", verify=False)
-    assert response.status_code == 200
-    data = response.json()
-    assert isinstance(data, list)
-    if data:
-        assert 'rank' in data[0]
-        assert isinstance(data[0]['rank'], int)
-
-def test_get_user_match_data_by_id():
-    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
-    headers = get_auth_headers(ACCESS_TOKEN)
-
-    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
-    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
-    assert response1.status_code == 200
-    user_id = response1.json()["id"]
-    print(f"{STATS_URL}/user_match_data/{user_id}")
-    response = requests.get(f"{STATS_URL}/user_match_data/{user_id}", verify=False)
-    user_data = response.json()
-    print(user_data)
-    assert response.status_code == 200
-    assert 'rank' in user_data
-    assert isinstance(user_data['rank'], int)
-
-def test_get_user_match_data_by_username():
-    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
-    headers = get_auth_headers(ACCESS_TOKEN)
-
-    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
-    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
-    assert response1.status_code == 200
-    username = response1.json()["username"]
-    print(f"{STATS_URL}/user_match_data/{username}")
-    response = requests.get(f"{STATS_URL}/user_match_data/username/{username}", verify=False)
-    user_data = response.json()
-    print(user_data)
-    assert response.status_code == 200
-    assert 'rank' in user_data
-    assert isinstance(user_data['rank'], int)
-
 def test_get_score_history():
     """Test GET /score_history - public route"""
     response = requests.get(f"{STATS_URL}/score_history", verify=False)
@@ -463,3 +421,45 @@ def test_duration_formats():
         assert response.status_code == 200
     
     print("✅ Duration formats test passed")
+
+def test_get_user_match_data():
+    """Test GET /user_match_data - public route"""
+    response = requests.get(f"{STATS_URL}/user_match_data", verify=False)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    if data:
+        assert 'rank' in data[0]
+        assert isinstance(data[0]['rank'], int)
+
+def test_get_user_match_data_by_id():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+    print(f"{STATS_URL}/user_match_data/{user_id}")
+    response = requests.get(f"{STATS_URL}/user_match_data/{user_id}", verify=False)
+    user_data = response.json()
+    print(user_data)
+    assert response.status_code == 200
+    assert 'rank' in user_data
+    assert isinstance(user_data['rank'], int)
+
+def test_get_user_match_data_by_username():
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Tarkistetaan että token on validi ja saadaan käyttäjän ID
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+    print(f"{STATS_URL}/user_match_data/{username}")
+    response = requests.get(f"{STATS_URL}/user_match_data/username/{username}", verify=False)
+    user_data = response.json()
+    print(user_data)
+    assert response.status_code == 200
+    assert 'rank' in user_data
+    assert isinstance(user_data['rank'], int)
