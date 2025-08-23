@@ -84,14 +84,14 @@ export const MatchHistory = ({ player }: { player: string }) => {
                       timeStyle: 'short',
                       timeZone: 'Europe/Helsinki',
                     });
-                    return <li key={index} className={`grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center min-w-200 ${match.opponent_id.includes('guest-') === true ? 'italic opacity-70' : 'normal opacity-100'}`}>
+                    return <li key={index} className='grid grid-cols-5 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center min-w-200'>
                         <span className='ml-3'>{localTime}</span>
                         <span className='col-span-2 grid grid-cols-[max-content_auto_auto_auto_max-content] truncate items-center justify-center gap-2'>
                             <span className='max-w-[50px]'>{match.player_username ? match.player_username : match.player_name} </span> 
                             <img src={profilePic1} className={` h-11 w-11 rounded-full object-cover border-4 flex-shrink-0 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
                             <span className='span-1'>vs</span>
                             <img src={profilePic2} className={` h-11 w-11 rounded-full object-cover border-4 flex-shrink-0 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
-                            <span className='max-w-[50px]'>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
+                            <span className={`max-w-[50px] ${match.opponent_id.includes('guest-') === true ? 'italic' : 'normal'}`}>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
                         </span> 
                         <span className=''>{match.player_score} - {match.opponent_score}</span>
                         <span className=''>{match.duration}</span>
