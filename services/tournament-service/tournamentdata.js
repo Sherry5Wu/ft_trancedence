@@ -60,6 +60,62 @@ fastify.get('/tournament_history/:tournament_id', (request, reply) => {
   }
 });
 
+// ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!
+// Lisää useita rivejä kerralla tournament_history-tauluun
+fastify.post('/tournament_history/update_all', (request, reply) => {
+  // TODO: Lisää autentikaatiotarkistus tähän jos käytössä (esim. JWT)
+  const { entries } = request.body ?? {};
+  if (!Array.isArray(entries) || entries.length === 0) {
+    return reply.status(400).send({ error: 'entries (array) required' });
+  }
+
+  // Validoi jokainen rivi
+  const validResults = ['win', 'loss', 'draw'];
+  const errors = [];
+  const insertData = [];
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    const hasId = typeof e.tournament_id === 'string' && e.tournament_id.trim().length > 0;
+    const hasStage = Number.isInteger(e.stage_number);
+    const hasMatch = Number.isInteger(e.match_number);
+    const hasPName = typeof e.player_name === 'string' && e.player_name.trim().length > 0;
+    const hasOName = typeof e.opponent_name === 'string' && e.opponent_name.trim().length > 0;
+    const validResult = e.result && validResults.includes(e.result);
+    if (!hasId || !hasStage || !hasMatch || !hasPName || !hasOName || !validResult) {
+      errors.push({ index: i, error: 'Invalid or missing fields' });
+    } else {
+      insertData.push([
+        e.tournament_id,
+        e.stage_number,
+        e.match_number,
+        e.player_name,
+        e.opponent_name,
+        e.result
+      ]);
+    }
+  }
+  if (insertData.length === 0) {
+    return reply.status(400).send({ error: 'No valid entries', details: errors });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO tournament_history (tournament_id, stage_number, match_number, player_name, opponent_name, result)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+    const results = [];
+    const insertMany = db.transaction((rows) => {
+      for (const row of rows) {
+        const res = stmt.run(...row);
+        results.push({ id: res.lastInsertRowid });
+      }
+    });
+    insertMany(insertData);
+    reply.send({ inserted: results.length, ids: results.map(r => r.id), errors });
+  } catch (err) {
+    reply.status(500).send({ error: err.message });
+  }
+});
 
 // Reitti uuden matchin lisäämiseen (POST JSON-bodyllä)
 // ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!

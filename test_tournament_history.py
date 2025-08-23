@@ -30,3 +30,35 @@ def test_get_specific_tournament():
     data = response.json()
     assert isinstance(data, list)
     assert any(match["tournament_id"] == tournament_id for match in data)
+
+def test_update_all_bulk_insert():
+    # Esimerkkidata: kaksi riviä
+    entries = [
+        {
+            "tournament_id": "test-tournament-1",
+            "stage_number": 1,
+            "match_number": 1,
+            "player_name": "Alice",
+            "opponent_name": "Bob",
+            "result": "win"
+        },
+        {
+            "tournament_id": "test-tournament-1",
+            "stage_number": 1,
+            "match_number": 2,
+            "player_name": "Charlie",
+            "opponent_name": "Dave",
+            "result": "loss"
+        }
+    ]
+    headers = {"Content-Type": "application/json"}
+    url = f"{BASE_URL}/tournament_history/update_all"
+    response = requests.post(url, json={"entries": entries}, headers=headers, verify=False)
+    print("Status code:", response.status_code)
+    try:
+        print("Response:", response.json())
+    except Exception:
+        print("Response is not JSON:", response.text)
+    assert response.status_code == 200
+    assert "inserted" in response.json()
+    assert response.json()["inserted"] == 2
