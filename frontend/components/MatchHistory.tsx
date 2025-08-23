@@ -18,17 +18,17 @@ const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]})
             player2 && player2.avatarUrl ? setAvatar2(player2.avatarUrl) : setAvatar2(DEFAULT_AVATAR);
         }    
         loadAvatarURL();
-    }, []);
+    }, [match, users]);
 
-    console.log("AVATARS:");
-    console.log(avatar1);
-    console.log(avatar2);
+    // console.log("AVATARS:");
+    // console.log(avatar1);
+    // console.log(avatar2);
 
     const localTime = new Date(match.played_at).toLocaleString('en-GB', {
-                dateStyle: 'short',
-                timeStyle: 'short',
-                timeZone: 'Europe/Helsinki',
-            });
+        dateStyle: 'short',
+        timeStyle: 'short',
+        timeZone: 'Europe/Helsinki',
+    });
 
     return (
         <>
