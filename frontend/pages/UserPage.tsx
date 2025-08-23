@@ -92,7 +92,7 @@ const UserPage = () => {
 	// 	console.log(userStats.rank);
 	// }
 
-	console.log('param username = ' + param.username);
+	// console.log('param username = ' + param.username);
 
 	return (
 		<div className='pageLayout'>

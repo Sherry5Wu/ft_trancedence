@@ -8,8 +8,8 @@ import { DEFAULT_AVATAR } from '../utils/constants';
 export const MatchHistory = ({ player }: { player: string }) => {
     const [matchData, setMatchData] = useState<MatchData[] | null>(null);
     const [loading, setLoading] = useState(true);
-    const [profilePic1, setProfilePic1] = useState('');
-    const [profilePic2, setProfilePic2] = useState('');
+    const [profilePic1, setProfilePic1] = useState(null);
+    const [profilePic2, setProfilePic2] = useState(null);
     const { user } = useUserContext();
 
     if (!user)
@@ -62,6 +62,9 @@ export const MatchHistory = ({ player }: { player: string }) => {
              -
             </div>
     )};
+
+    console.log(profilePic1);
+    console.log(profilePic2);
 
     return (
         <div aria-label='match history' className=''>

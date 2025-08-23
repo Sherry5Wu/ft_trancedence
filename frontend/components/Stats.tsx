@@ -4,26 +4,50 @@ import { PieGraph } from '../components/PieGraph';
 import { UserStats, ScoreHistory } from '../utils/Interfaces'
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
+import { useUserContext } from '../context/UserContext';
+import { DEFAULT_AVATAR } from '../utils/constants';
+import { fetchUsers } from '../utils/Fetch';
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
-  const { t } = useTranslation();
-  const [worstRivalPic, setWorstRivalPic] = useState('');
-  const [worstRivalName, setWorstRivalName] = useState('');
+    const { t } = useTranslation();
+    const [worstRivalPic, setWorstRivalPic] = useState('');
+    const [worstRivalName, setWorstRivalName] = useState('');
+    const { user } = useUserContext();
 
-  // console.log('Userstats: ');
-  // console.log(userStats);
-  // console.log('Score history: ')
-  // console.log(scoreHistory);
+    if (!userStats || !scoreHistory)
+        return <div className='flex justify-center my-5'>{t('components.stats.noData')}</div>
 
-  if (!userStats || !scoreHistory)
-    return <div className='flex justify-center my-5'>{t('components.stats.noData')}</div>
+    useEffect(() => {
+        const findWorstRival = async () => {
+            let mostMatches = -1;
+            let rivalName = '';
+            let rivalPicURL = null;
+            if (user && user.rivals.length !== 0)
+            {
+                for (const rival of user.rivals)
+                {
+                    if (rival.games_played_against_rival > mostMatches)
+                    {
+                        mostMatches = rival.games_played_against_rival;
+                        rivalName = rival.rival_username;
+                        // rivalPicURL = rival.picture;
+                    }
+                }
+                const users = await fetchUsers(user.accessToken)
+                rivalPicURL = users.find(u => u.username === rivalName)?.avatarUrl;
+                
+                setWorstRivalName(rivalName);
+                if (rivalPicURL)
+                    setWorstRivalPic(rivalPicURL);
+                else
+                    setWorstRivalPic(DEFAULT_AVATAR);
+                // console.log('rivalName = ' + rivalName);
+                // console.log('rivalPicUrl = ' + rivalPicURL);
+            }
 
-  // useEffect(() => {
-  //   const findWorstRival = async () => {
-
-  //   }
-  //   findWorstRival();
-  // }, []);
+        }
+        findWorstRival();
+    }, []);
 
 	return (
       <div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>
@@ -54,9 +78,9 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
 
           <div className='flex flex-col items-center'>
             <button className='group relative flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center}'>
-              <div className='absolute text-3xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 
-                              group-hover:opacity-100 transition-opacity ease-in-out'>{worstRivalName}</div>
-              <img src={''} className='profilePic mt-1' />
+              <div className='absolute text-2xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 translate-y-2
+                              group-hover:opacity-100 group-hover:translate-y-0 transition ease-in-out'>{worstRivalName}</div>
+              <img src={worstRivalPic} className='profilePic mt-1 -translate-y-0.5' />
             </button>
             <h4 className='h4 my-2 font-semibold'>{t('components.stats.worstRival')}</h4>
           </div>

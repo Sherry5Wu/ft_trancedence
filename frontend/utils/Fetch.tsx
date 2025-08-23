@@ -203,10 +203,6 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 		rival_username: rivalName
 	};
 
-	// console.log("IN ADD_RIVAL:");
-	// console.log(data);
-	// console.log(accessToken);
-
 	try {
 		const response = await fetch(`https://localhost:8443/stats/rivals`, {
 			method: 'POST',
@@ -221,7 +217,6 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
 		const responseData = await response.json();
-		console.log(responseData);
 		return responseData;
 
 	}
