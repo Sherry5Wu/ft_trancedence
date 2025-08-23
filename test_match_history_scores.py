@@ -295,11 +295,33 @@ def test_post_match_history():
     print(response.json)
     assert response.status_code == 200
     json_response = response.json()
-    assert json_response["player_name"] == "PlayerOne"
-    assert json_response["opponent_name"] == "PlayerTwo"
-    assert json_response["result"] == "win"
-    # ✅ PÄIVITETTY: Tarkista uudet kentät responssissa
+    assert "message" in json_response
+    assert json_response["message"] == "Match added to history successfully"
     print("✅ POST match_history test passed")
+
+def test_post_match_history_guest_opponent():
+    """Test POST /match_history with is_guest_opponent = 1"""
+    test_setup_users()
+    headers = get_auth_headers(ACCESS_TOKEN)
+    data = {
+        "player_score": 21,
+        "opponent_score": 0,
+        "duration": "00:03:00",
+        "opponent_id": "guest-opponent-001",
+        "player_name": "PlayerOne",
+        "opponent_name": "GuestPlayer",
+        "result": "win",
+        "opponent_username": "guest",
+        "played_at": f"{DATETIME}",
+        "is_guest_opponent": 1
+    }
+    response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
+    print(response.json())
+    assert response.status_code == 200
+    json_response = response.json()
+    assert "message" in json_response
+    assert json_response["message"] == "Match added to history successfully"
+    print("✅ POST match_history with guest opponent test passed")
 
 def test_get_match_history_all():
     """Test GET /match_history - public route"""

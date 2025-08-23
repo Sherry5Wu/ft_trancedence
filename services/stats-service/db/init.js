@@ -30,6 +30,7 @@ db.prepare(`
       opponent_score INTEGER NOT NULL,
       duration TIME,
       result TEXT CHECK(result IN ('win', 'loss', 'draw')) NOT NULL,
+      is_guest_opponent INTEGER NOT NULL DEFAULT 0,
       played_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `).run();

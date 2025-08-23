@@ -66,7 +66,7 @@ export default async function matchHistoryRoutes(fastify) {
         // TURVALLISUUS: player_id vain tokenista
         const player_id = request.id;  // Uniikki ID tokenista - EI VOI HUIJATA
         const player_username = request.username;
-        const {opponent_username, opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at} = request.body;  // Display name voi vaihtua
+        const { opponent_username, opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at, is_guest_opponent = 0 } = request.body;  // Display name voi vaihtua
     
 
         /// add type checking for the values before updating
@@ -93,10 +93,11 @@ export default async function matchHistoryRoutes(fastify) {
     
         try {
         const stmt = db.prepare(`
-            INSERT INTO match_history (player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO match_history (
+                player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result, is_guest_opponent
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
-        const resultDb = stmt.run(player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result);
+        stmt.run(player_username, opponent_username, played_at, duration, player_score, opponent_score, opponent_id, player_id, player_name, opponent_name, result, is_guest_opponent);
 
         let outcome;
         if (result === 'win')
@@ -130,50 +131,48 @@ export default async function matchHistoryRoutes(fastify) {
             if (player_id !== opponent_id)
                 resetStreak.run(player_id);
         }
+
+        let eloChanges = null;
+        let playerElo = 0;
+        if (!is_guest_opponent) {
+            eloChanges = calculateEloScore(player_id, opponent_id, outcome, player_name, opponent_name);
+            playerElo = eloChanges.player1.new;
+        } else {
+            // Hae nykyinen elo-score user_match_data-taulusta
+            const userData = db.prepare('SELECT elo_score FROM user_match_data WHERE player_id = ?').get(player_id);
+            playerElo = userData ? userData.elo_score : 1000; // oletus 1000 jos ei löydy
+        }
     
         const gamesPlayed = calculateGamesPlayed(player_id);
         const gamesLost = calculateGamesLost(player_id);
         const gamesWon = calculateGamesWon(player_id);
         const longestWinStreak = calculateLongestWinStreak(player_id);
         const gamesDraw = calculateGamesDraw(player_id);
-        const eloChanges = calculateEloScore(player_id, opponent_id, outcome, player_name, opponent_name);
-        const opponentGamesPlayed = calculateGamesPlayed(opponent_id);
-        const opponentGamesLost = calculateGamesLost(opponent_id);
-        const opponentGamesWon = calculateGamesWon(opponent_id);
-        const opponentlongestWinStreak = calculateLongestWinStreak(opponent_id);
-        const opponentGamesDraw = calculateGamesDraw(opponent_id);
+        if (!is_guest_opponent) {
+            const opponentGamesPlayed = calculateGamesPlayed(opponent_id);
+            const opponentGamesLost = calculateGamesLost(opponent_id);
+            const opponentGamesWon = calculateGamesWon(opponent_id);
+            const opponentlongestWinStreak = calculateLongestWinStreak(opponent_id);
+            const opponentGamesDraw = calculateGamesDraw(opponent_id);
+            updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username);
+            updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at, opponent_username);
+        }
 
-        if (checkIfRivals(player_username, opponent_username)) {
+        if (checkIfRivals(player_username, opponent_username) && !is_guest_opponent) {
             const playedagainstRival1 = calculateGamesPlayedAgainstRival(player_username, opponent_username);
             const gamesWonRival1 = calculateWinsAgainstRival(player_username, opponent_username);
             const gamesLostRival1 = calculateLossAgainstRival(player_username, opponent_username);
-            updateRivalsDataTable(player_username, opponent_username, playedagainstRival, gamesWonRival, gamesLostRival, eloChanges.player1.new);
+            updateRivalsDataTable(player_username, opponent_username, playedagainstRival1, gamesWonRival1, gamesLostRival1, eloChanges.player1.new);
             const playedagainstRival2 = calculateGamesPlayedAgainstRival(opponent_username, player_username);
             const gamesWonRival2 = calculateWinsAgainstRival(opponent_username, player_username);
             const gamesLostRival2 = calculateLossAgainstRival(opponent_username, player_username);
-            updateRivalsDataTable(opponent_username, player_username, playedagainstRival, gamesWonRival, gamesLostRival, eloChanges.player2.new);
+            updateRivalsDataTable(opponent_username, player_username, playedagainstRival2, gamesWonRival2, gamesLostRival2, eloChanges.player2.new);
         }
         
         // Rank lasketaan automaattisesti updateUserMatchDataTable-funktiossa
-        updateUserMatchDataTable(player_id, eloChanges.player1.new, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username);
-        updateUserMatchDataTable(opponent_id, eloChanges.player2.new, opponent_name, opponentGamesPlayed, opponentGamesLost, opponentGamesWon, opponentlongestWinStreak, opponentGamesDraw, opponent_username);
-        updateScoreHistoryTable(player_id, eloChanges.player1.new, played_at, player_username);
-        updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at, opponent_username);
-        reply.send({ 
-            id: resultDb.lastInsertRowid, 
-            player_id, 
-            player_name, 
-            opponent_name, 
-            result,
-            gamesPlayed,
-            gamesLost,
-            gamesWon,
-            opponentGamesPlayed,
-            opponentGamesLost,
-            opponentGamesWon,
-            eloChanges,
-            message: 'Match added to history successfully'
-        });
+        updateUserMatchDataTable(player_id, playerElo, player_name, gamesPlayed, gamesLost, gamesWon, longestWinStreak, gamesDraw, player_username);
+        updateScoreHistoryTable(player_id, playerElo, played_at, player_username);
+        reply.send({ message: 'Match added to history successfully' });
         } catch (err) {
         console.error('Error when trying to add match history', err)
         reply.status(500).send({ error: err.message });
@@ -181,4 +180,3 @@ export default async function matchHistoryRoutes(fastify) {
     });
 
 }
-  
