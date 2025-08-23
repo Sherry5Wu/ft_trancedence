@@ -1,29 +1,10 @@
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, Cell, ResponsiveContainer } from 'recharts';
 import { ScoreHistory } from '../utils/Interfaces';
 
-// const fetchData = (user: string) => {
-//     //FETCH REAL DATA FROM BACKEND
-
-//     //mockdata
-//     const data = [
-//         {key: 0, value: 0},
-//         {key: 1, value: 100},
-//         {key: 2, value: 50},
-//         {key: 3, value: 50},
-//         {key: 4, value: -200},
-//         {key: 5, value: -150},
-//         {key: 6, value: 250}
-//     ];
-
-//     const newData = [];
-
-//     return data;
-// };
-
-const calculateDifference = ({ data }: { data: ScoreHistory[] | null }) => {
-	if (!data)
+const calculateDifference = ({ correctedData }: { correctedData: ScoreHistory[] | null }) => {
+	if (!correctedData)
 		return [];
-	const newData = data.map((score, index, array) => {
+	const newData = correctedData.map((score, index, array) => {
 		if (index < (array.length - 1))
 		{
 			const nextScore = array[index + 1];
@@ -41,7 +22,10 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
 	if (!data)
 		return <div className='flex justify-center my-5'>No data yet</div>
 
-	const differenceData = calculateDifference({ data });
+    const correctedData: ScoreHistory[] = [{id: 0, elo_score: 1000}, ...data];
+	const differenceData = calculateDifference({ correctedData });
+    console.log('DIFFERENCE DATA');
+    console.log(differenceData);
 
     return (
         <ResponsiveContainer width="100%" aspect={1.5}>
@@ -54,7 +38,7 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
                     ))}
                 </Bar>
                 <XAxis dataKey='id' />
-                <YAxis />
+                <YAxis domain={['auto', 'auto']} />
                 <ReferenceLine y={0} stroke='black' strokeWidth={2}/>
             </BarChart>
         </ResponsiveContainer>
