@@ -60,9 +60,47 @@ fastify.get('/tournament_history/:tournament_id', (request, reply) => {
   }
 });
 
+const requireAuth = async (request, reply) => {
+    try {
+        const authHeader = request.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return reply.status(401).send({ error: 'Missing or invalid authorization header' });
+        }
+        console.log("Authenticating...")
+        const response = await fetch('http://auth-service:3001/auth/verify-token', {
+          method: 'POST',
+          headers: {
+            'Authorization': authHeader
+          }
+        });
+    
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Authentication failed' }));
+          return reply.status(response.status).send(errorData);
+        }
+    
+        const userData = await response.json();
+        
+        request.id = userData.id;
+        request.email = userData.email;
+        request.username = userData.username;
+        console.log("loggin userData");
+        console.log(userData);
+        
+        console.log(`✅ Authenticated user: ${userData.username} (${userData.id})`);
+        
+      } catch (error) {
+        console.error('🚨 Auth service connection error:', error.message);
+        return reply.status(503).send({ 
+          error: 'Authentication service unavailable',
+          details: error.message 
+        });
+    }
+};
+
 // ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!
 // Lisää useita rivejä kerralla tournament_history-tauluun
-fastify.post('/tournament_history/update_all', (request, reply) => {
+fastify.post('/tournament_history/update_all', { preHandler: requireAuth }, (request, reply) => {
   // TODO: Lisää autentikaatiotarkistus tähän jos käytössä (esim. JWT)
   const { entries } = request.body ?? {};
   if (!Array.isArray(entries) || entries.length === 0) {
@@ -119,8 +157,7 @@ fastify.post('/tournament_history/update_all', (request, reply) => {
 
 // Reitti uuden matchin lisäämiseen (POST JSON-bodyllä)
 // ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!
-fastify.post('/tournament_history', (request, reply) => {
-  // TURVALLISUUS: player_id vain tokenista
+fastify.post('/tournament_history', { preHandler: requireAuth }, (request, reply) => {
   const { tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body ?? {};
 
   const validResult = result && ['win', 'loss', 'draw'].includes(result);

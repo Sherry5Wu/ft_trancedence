@@ -1,5 +1,4 @@
 import { db } from '../db/init.js';
-import { calculateLongestWinStreak } from '../utils/calculations.js';
 export default async function userMatchDataRoutes(fastify) {
   // /user_match_data
   fastify.get('/', (request, reply) => {
