@@ -33,7 +33,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 const App = () => {
 
   return (
-    <div className='bg-[#FFCC00]'>
+    <div className='bg-[#FFCC00] scale-[1.0]'>
       <Router>
         <div className="flex flex-col min-h-screen">
           <header className='sticky top-0 z-50'>

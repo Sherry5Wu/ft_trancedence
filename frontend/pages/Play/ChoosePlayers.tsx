@@ -167,7 +167,7 @@ const formFilled =
                 setPlayer2Type("guest");
                 player2Field.setValue('');
                 removePlayer(players[1]?.id);
-                alert(t('pages.choosePlayers.player2GuestAlert'));
+                //alert(t('pages.choosePlayers.player2GuestAlert'));
               }}
             />
             <div className="absolute right-[-30px]">

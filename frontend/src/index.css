@@ -15,8 +15,12 @@
   }
 }
 
-/* body, html {
-} */
+body, html {
+    /* font-size: 20px; */
+    /* transform: scale(1.2); */
+    /* transform-origin: top left; */
+    /* width: 83.3333%; */
+}
 
 .pageLayout {
   @apply flex flex-col items-center mr-7 gap-y-5

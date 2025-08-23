@@ -106,10 +106,10 @@ export const GenericInput = ({
         )}
       </div>
 
-      <div className={`transition-all ease-in-out duration-500 ${errorMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+      <div className={`transition-all ease-in-out duration-500 w-[300px] ${errorMessage ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
         <p
           id={`${inputId}-error`}
-          className="text-black text-xs mt-1 whitespace-pre-line pl-4"
+          className="text-black text-xs my-1 whitespace-pre pl-4"
           role="alert"
         >
           {errorMessage}

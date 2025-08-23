@@ -35,10 +35,10 @@ const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]})
             <span className='ml-3'>{localTime}</span>
             <span className='col-span-2 grid grid-cols-[max-content_auto_auto_auto_max-content] truncate items-center justify-center gap-2'>
             <span className='max-w-[50px]'>{match.player_username ? match.player_username : match.player_name} </span> 
-                <img src={avatar1} className={` h-11 w-11 rounded-full object-cover border-4 flex-shrink-0 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
+                <img src={avatar1} className={`profilePicSmall !border-4 flex-shrink-0 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
                 <span className=''>vs</span>
-                <img src={avatar2} className={` h-11 w-11 rounded-full object-cover border-4 flex-shrink-0 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
-                <span className={`max-w-[50px] ${match.opponent_id.includes('guest-') === true ? 'italic' : 'normal'}`}>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
+                <img src={avatar2} className={`profilePicSmall !border-4 flex-shrink-0 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
+                <span className={`max-w-[70px] ${match.opponent_id.includes('guest-') === true ? 'italic' : 'normal'}`}>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
             </span> 
             <span className=''>{match.player_score} - {match.opponent_score}</span>
             <span className=''>{match.duration}</span>

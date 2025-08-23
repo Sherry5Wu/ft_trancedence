@@ -101,7 +101,7 @@ const UserPage = () => {
 
 		<div className='profilePicBig'>
 			{profilePicURL ? 
-				<img src={profilePicURL} className='profilePicBig'/> : <img src={DEFAULT_AVATAR} className='w-full h-full object-cover'/>}
+				<img src={profilePicURL} className='profilePic'/> : <img src={DEFAULT_AVATAR} className='w-full h-full object-cover'/>}
 		</div>
 
 		<div className='w-56 truncate mb-12'>

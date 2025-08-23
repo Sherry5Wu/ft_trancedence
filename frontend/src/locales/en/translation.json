@@ -74,12 +74,12 @@
       }
     },
     "errors": {
-      "invalidUsername": "Username must:\n• Be 6–20 characters long\n• Start with a letter\n• Only include letters, numbers, or specific special\n characters: dots (.), underscores (_), or hyphens (-)",
-      "invalidAlias": "Alias must:\n• Be 6–20 characters long\n• Start with a letter\n• Only include letters, numbers, or specific special\n characters: dots (.), underscores (_), or hyphens (-)",
-      "invalidEmail": "Email must be in a valid format:\n• Example: name@domain.com",
-      "invalidPassword": "Password must:\n• Be 8–32 characters long\n• Include uppercase and lowercase letters\n• Include at least one number\n• Include at least one special character (@$!%*?&)",
-      "invalidPIN": "PIN must:\n• Be exactly 4 digits\n• Numbers only (0–9)",
-      "invalidTitle": "Title must:\n• Be 1–32 characters long\n• Letters and numbers only (no spaces or symbols)",
+      "invalidUsername": "Username must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include: letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
+      "invalidAlias": "Alias must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
+      "invalidEmail": "Email must be in a valid format: \n • Example: name@domain.com",
+      "invalidPassword": "Password must: \n • Be 8–32 characters long \n • Include uppercase and lowercase letters \n • Include at least one number \n • Include at least one special character (@$!%*?&)",
+      "invalidPIN": "PIN must: \n • Be exactly 4 digits \n • Numbers only (0–9)",
+      "invalidTitle": "Title must: \n • Be 1–32 characters long \n • Letters and numbers only (no spaces or symbols)",
       "passwordMismatch": "Passwords do not match. Please try again.",
       "pinMismatch": "PINs do not match. Please re-enter to confirm.",
       "newSameAsOldPassword": "New password must be different from the current password.",

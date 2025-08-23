@@ -41,7 +41,7 @@ return (
         text={t('pages.signIn.aria.description')}
       />
 
-      <div className="flex flex-col justify-center p-8">
+      <div className="flex flex-col justify-center p-8 w-[270px]">
         <h2 id="pageTitle" className="font-semibold text-center">
           {t('pages.signIn.title')}
         </h2>
