@@ -50,10 +50,12 @@ export const MatchHistory = ({ player }: { player: string }) => {
     const [matchData, setMatchData] = useState<MatchData[] | null>(null);
     const [allUsers, setAllUsers] = useState<FetchedUserData[]>([]);
     const [loading, setLoading] = useState(true);
-    const { user } = useUserContext();
+    const { user, refresh } = useUserContext();
 
-    if (!user)
-        return ; 
+    useEffect(() => {
+        if (!user) 
+            refresh();
+    }, [user]);
 
     useEffect(() => {
         const loadMatchData = async () => {
@@ -70,7 +72,7 @@ export const MatchHistory = ({ player }: { player: string }) => {
             return ;
 
         const getPlayers = async () => {
-            const users = await fetchUsers(user?.accessToken);
+            const users = await fetchUsers();
             setAllUsers(users);
         }
         getPlayers();

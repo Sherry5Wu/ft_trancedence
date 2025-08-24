@@ -90,6 +90,7 @@ return (
                 rivals: signInData.rivals,
                 accessToken: signInData.data.accessToken,
                 refreshToken: signInData.data.refreshToken,
+                expiry: Date.now() + 15 * 60 * 1000,
                 twoFA: signInData.data.twoFA,
               });
               navigate(`/user/${usernameField.value}`)

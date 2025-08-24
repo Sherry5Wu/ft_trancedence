@@ -1,4 +1,22 @@
+import { RefreshCcw } from "lucide-react";
+import { useUserContext} from '../context/UserContext';
 import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, FetchedUserData, UserGoogleProfileData, GoogleCompleteResponse } from "../utils/Interfaces";
+
+export const useRequestNewToken = () => {
+    const { user, refresh } = useUserContext();
+
+    return async () => {
+        if (!user)
+            return null;
+
+        if (Date.now() > user.expiry)
+        {
+            const newToken = await refresh();
+            return newToken;
+        }
+        return (user?.accessToken);
+    }
+}
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
 	// console.log('Sending user:', player);
@@ -147,15 +165,19 @@ export const signInGoogleUser = async (idToken: string) => {
 	}
 };
 
-export const updateProfilePic = async (file: File, accessToken: string) => {
+export const updateProfilePic = async (file: File) => {
 	try {
 		const formData = new FormData();
 		formData.append('avatar', file);
 
+        const requestNewToken = useRequestNewToken();
+        const token = await requestNewToken();
+        console.log('NEW TOKEN')
+        console.log(token);
 		const response = await fetch('https://localhost:8443/as/users/me/upload-avatar', {
 			method: 'POST',
 			headers: {
-				'Authorization': `Bearer ${accessToken}`,
+				'Authorization': `Bearer ${token}`,
 			}, 
 			body: formData,
 		})
@@ -198,17 +220,20 @@ export const fetchRivalData = async (username: string) => {
   }
 };
 
-export const addRival = async (rivalName: string, accessToken: string) => {
+export const addRival = async (rivalName: string) => {
 	const data = {
 		rival_username: rivalName
 	};
 
 	try {
+        const requestNewToken = useRequestNewToken();
+        const token = requestNewToken();
+
 		const response = await fetch(`https://localhost:8443/stats/rivals`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${accessToken}`,
+				'Authorization': `Bearer ${token}`,
 			},
 			body: JSON.stringify(data),
 		});
@@ -226,12 +251,14 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 	}
 };
 
-export const removeRival = async (rivalName: string, accessToken: string) => {
+export const removeRival = async (rivalName: string) => {
 	try {
+        const requestNewToken = useRequestNewToken();
+        const token = requestNewToken();
 		const response = await fetch(`https://localhost:8443/stats/rivals/username/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
-				'Authorization': `Bearer ${accessToken}`,
+				'Authorization': `Bearer ${token}`,
 			},
 		});
 
@@ -275,7 +302,7 @@ export const fetchScoreHistory = async (username: string): Promise<ScoreHistory[
 export const fetchUserStats = async (username: string): Promise<UserStats | null> => {
 	try {
 		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${username}`, {
-		method: 'GET'
+		    method: 'GET'
 		});
 
 		if (!response.ok)
@@ -315,15 +342,15 @@ export const fetchMatchData = async (username: string): Promise<MatchData [] | n
     }
 };
 
-export const fetchUsers = async (accessToken: string): Promise<FetchedUserData []> => {
-    //   const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
-    //   return rivalData.sort();
+export const fetchUsers = async (): Promise<FetchedUserData []> => {
 	try {
+        const requestNewToken = useRequestNewToken();
+        const token = requestNewToken();
 		const response = await fetch(`https://localhost:8443/as/users/all`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
-				"Authorization": `Bearer ${accessToken}`,
+				"Authorization": `Bearer ${token}`,
 			},
 		});
 		
@@ -344,25 +371,27 @@ export const fetchUsers = async (accessToken: string): Promise<FetchedUserData [
 };
 
 
-export const disable2FA = async (accessToken?: string): Promise<boolean> => {
-  if (!accessToken) return false;
+export const disable2FA = async (): Promise<boolean> => {
+    // if (!accessToken) return false
+    try {
+        const requestNewToken = useRequestNewToken();
+        const token = requestNewToken();
+        const response = await fetch('https://localhost:8443/as/auth/user/disable-2fa', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            },
+        });
 
-  try {
-    const response = await fetch('https://localhost:8443/as/auth/user/disable-2fa', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+        if (!response.ok) {
+            throw new Error(`Failed to disable 2FA: ${response.statusText}`);
+        }
 
-    if (!response.ok) {
-      throw new Error(`Failed to disable 2FA: ${response.statusText}`);
+        return true;
+    } 
+    catch (error) {
+        console.error('Error disabling 2FA:', error);
+        return false;
     }
-
-    return true;
-  } catch (error) {
-    console.error('Error disabling 2FA:', error);
-    return false;
-  }
 };

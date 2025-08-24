@@ -23,7 +23,7 @@ const LeaderboardPage = () => {
 			try {
 				if (!user)
 					return ;
-				const users: FetchedUserData[] = await fetchUsers(user?.accessToken);
+				const users: FetchedUserData[] = await fetchUsers();
 				const leaderboard: (LeaderboardStats | null)[] = await Promise.all (
 					users.map(async u => {
 						const userStats = await fetchUserStats(u.username);

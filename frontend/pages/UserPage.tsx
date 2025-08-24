@@ -61,7 +61,7 @@ const UserPage = () => {
 			return ;
 		const loadProfilePicURL = async () => {
 			try {
-				const allUsers = await fetchUsers(user?.accessToken);
+				const allUsers = await fetchUsers();
 				if (!allUsers)
 					return ;
 				const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
@@ -167,7 +167,7 @@ const UserPage = () => {
 		onClick={() => {
 			if (user && param.username)
 			{
-				removeRival(param.username, user?.accessToken)
+				removeRival(param.username)
 				setUser({
 					...user, 
 					rivals: user?.rivals.filter(r => r.rival_username !== param.username)})
@@ -183,7 +183,7 @@ const UserPage = () => {
 		onClick={() => {
 			if (user && param.username)
 			{
-				addRival(param.username, user?.accessToken);
+				addRival(param.username);
 				setUser({
 					...user, 
 					rivals: [...user.rivals, 

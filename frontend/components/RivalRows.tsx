@@ -15,27 +15,25 @@ const calculateWinRatio = (wins: number | undefined, losses: number | undefined,
 	return (wins / wins + losses) * 100;
 }
 
-const getRivalPic = (rivalName: string) => {
-	const { user } = useUserContext();
-	const [rivalPic, setRivalPic] = useState('');
+// const getRivalPic = (rivalName: string) => {
+// 	const { user } = useUserContext();
+// 	const [rivalPic, setRivalPic] = useState('');
 
-	useEffect(() => {
-		if (!user)
-			return ;
-		const loadRivalPic = async () => {
-			const allUsers = await fetchUsers(user?.accessToken);
-			if (!allUsers)
-				return ;
-			const rival = allUsers.filter((u: FetchedUserData) => u.username === rivalName);
-			if (rival)
-				setRivalPic(rival.avatarUrl);
-			
-		}
-		loadRivalPic();
-	}, [user, rivalName])
-
-	return rivalPic;
-}
+// 	useEffect(() => {
+// 		if (!user)
+// 			return ;
+// 		const loadRivalPic = async () => {
+// 			const allUsers = await fetchUsers(user?.accessToken);
+// 			if (!allUsers)
+// 				return ;
+// 			const rival = allUsers.find((u: FetchedUserData) => u.username === rivalName);
+// 			if (rival)
+// 				setRivalPic(rival.avatarUrl);
+// 		}
+// 		loadRivalPic();
+// 	}, [user, rivalName])
+// 	return rivalPic;
+// }
 
 export const RivalRows = () => {
 	const { t } = useTranslation();
@@ -52,10 +50,11 @@ export const RivalRows = () => {
 		const loadRivals = async () => {
 			setLoading(true);
 			const rivalData = await fetchRivalData(user?.username);
-			// const allUsers = await fetchUsers(user?.accessToken);
-			// const rival = allUsers.filter((u: FetchedUserData) => u.username === rival.rival_username);
+			const allUsers = await fetchUsers();
+			const rival: any = allUsers.find((u: FetchedUserData) => u.username === rival.rival_username);
 			setRivalData(rivalData);
 			setLoading(false);
+            setRivalPic(rival.avatarUrl);
 		}
 		loadRivals();
 	}, [user])
@@ -84,7 +83,7 @@ export const RivalRows = () => {
 					<div key={index} className='flex items-center transition ease-in-out duration-300 hover:scale-105 hover:cursor-pointer'>
 						<li className='grid grid-cols-12 h-12 w-full mb-2 bg-[#FFEE8C] rounded-xl items-center text-center'
 								onClick={() => navigate(`/user/${rival.rival_username}`)}>
-							 <span></span>{/*img src={rivalPicURL} className='profilePicSmall'/> */}
+							<img src={rivalPic} className='profilePicSmall'/>
 							<span className='col-span-2'>{rival.rival_username}</span>
 							<span className='col-span-2'>{rival.rival_elo_score}</span>
 							<span className={`col-span-2 ${winratio >= 50 ? winratio === 50 ? 'text-black' : 'text-[#2E6F40]' : 'text-[#CD1C18]'}`}>{winratio}%</span>

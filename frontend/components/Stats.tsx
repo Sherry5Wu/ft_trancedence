@@ -33,7 +33,7 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
                         // rivalPicURL = rival.picture;
                     }
                 }
-                const users = await fetchUsers(user.accessToken)
+                const users = await fetchUsers()
                 rivalPicURL = users.find(u => u.username === rivalName)?.avatarUrl;
                 
                 setWorstRivalName(rivalName);

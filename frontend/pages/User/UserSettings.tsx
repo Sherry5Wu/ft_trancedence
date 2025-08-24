@@ -42,7 +42,7 @@ const SettingsPage = () => {
       // reader.readAsDataURL(file);
 
       try {
-        const avatarUrl = await updateProfilePic(file, user?.accessToken);
+        const avatarUrl = await updateProfilePic(file);
         console.log('avatarurl = ' + avatarUrl);
         if (!user)
           return ;
