@@ -148,7 +148,7 @@ export default fp(async (fastify) => {
     if (!user) {
       return reply.code(404).send({
         error: 'User not found',
-        message: 'User with id ${req.params.id} does not exist'
+        message: `User with id ${req.params.id} does not exist`
       });
     }
     return user; // only return id, username, avatarUrl
@@ -178,7 +178,8 @@ export default fp(async (fastify) => {
           description: 'Bad Request - validation failed or incorrect old password',
           type: 'object',
           properties: {
-            error: { type: 'string' },
+            success: { type: 'boolean' },
+            code: { type: 'string' },
             message: { type: 'string' }
           }
         },
@@ -186,29 +187,56 @@ export default fp(async (fastify) => {
           description: 'Unauthorized - invalid or missing token',
           type: 'object',
           properties: {
-            error: { type: 'string' },
+            success: { type: 'boolean' },
+            code: { type: 'string' },
+            message: { type: 'string' }
+          }
+        },
+        404: {
+          description: 'User not found',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            code: { type: 'string' },
             message: { type: 'string' }
           }
         }
       }
     }
   }, async (req, reply) => {
-    const { oldPassword, newPassword } = req.body;
-    // Validate old password first
-    const userRecord = await fastify.models.User.scope('withSecrets').findByPk(req.user.id);
-    if (!userRecord) {
-      throw new ValidationError('User not found');
+    try {
+      const { oldPassword, newPassword } = req.body;
+
+      const userRecord = await fastify.models.User.scope('withSecrets').findByPk(req.user.id);
+      if (!userRecord) {
+        return reply.code(404).send({
+          success: false,
+          code: 'USER_NOT_FOUND',
+          message: 'User not found'
+        });
+      }
+
+      const isMatch = await comparePassword(oldPassword, userRecord.passwordHash);
+      if (!isMatch) {
+        return reply.code(400).send({
+          success: false,
+          code: 'INVALID_OLD_PASSWORD',
+          message: 'Incorrect current password'
+        });
+      }
+
+      await updatePassword(req.user.id, newPassword);
+      return reply.code(204).send();
+    } catch (err) {
+      return reply.code(500).send({
+        success: false,
+        code: 'INTERNAL_ERROR',
+        message: 'An unexpected error occurred'
+      });
     }
-    const isMatch = await comparePassword(oldPassword, userRecord.passwordHash);
-    if (!isMatch) {
-      throw new ValidationError('Incorrect current password');
-    }
-    // Update to new password
-    await updatePassword(req.user.id, newPassword);
-    return reply.code(204).send();
   });
 
-  fastify.patch('/users/me/pincode', {
+  fastify.patch('/users/me/update-pincode', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
@@ -234,35 +262,140 @@ export default fp(async (fastify) => {
       response: {
         204: { description: 'Pin code updated successfully', type: 'null' },
         400: {
-          description: 'Bad Request - validation failed or incorrect old password',
+          description: 'Bad Request - validation failed or incorrect old pin code',
           type: 'object',
           properties: {
-            error: { type: 'string' },
+            success: { type: 'boolean' },
+            code: { type: 'string' },
             message: { type: 'string' }
           }
         },
-        401: {
-          description: 'Unauthorized - invalid or missing token',
+        404: {
+          description: 'User was not found',
           type: 'object',
           properties: {
-            error: { type: 'string' },
+            success: { type: 'boolean' },
+            code: { type: 'string' },
             message: { type: 'string' }
           }
         }
       }
     }
   }, async (req, reply) => {
-    const { oldPinCode, newPinCode } = req.body;
-    const userRecord = await fastify.models.User.scope('withSecrets').findByPk(req.user.id);
-    if (!userRecord) {
-      throw new ValidationError('User not found');
+    try {
+      const { oldPinCode, newPinCode } = req.body;
+      const userRecord = await fastify.models.User.scope('withSecrets').findByPk(req.user.id);
+
+      if (!userRecord) {
+        return reply.code(404).send({
+          success: false,
+          code: 'USER_NOT_FOUND',
+          message: 'User not found'
+        });
+      }
+
+      const isMatch = await comparePassword(oldPinCode, userRecord.pinCodeHash);
+      if (!isMatch) {
+        return reply.code(400).send({
+          success: false,
+          code: 'INVALID_OLD_PIN',
+          message: 'Incorrect old pin code'
+        });
+      }
+
+      await updatePinCode(req.user.id, newPinCode);
+      return reply.code(204).send();
+    } catch (err) {
+      return reply.code(500).send({
+        success: false,
+        code: 'INTERNAL_ERROR',
+        message: 'An unexpected error occurred'
+      });
     }
-    const isMatch = await comparePassword(oldPinCode, userRecord.pinCodeHash);
-    if (!isMatch) {
-      throw new ValidationError('Incorrect pin code');
+  });
+
+
+  /**
+   * @route   POST /users/me/upload-avatar
+   * @desc    Upload avatar image and update user's avatar URL in DB
+   * Accepts multipart/form-data with field name `avatar` (single file)
+   */
+  fastify.post('/users/verify-pincode', {
+    schema: {
+      tages: ['Auth'],
+      summary: 'Verify user pinCode',
+      body: {
+        type: 'object',
+        required: ['username', 'pinCode'], // Ask frontend want to send username or userId??
+        properties: {
+          username: { type: 'string', pattern: '^[a-zA-Z][a-zA-Z0-9._-]{5,19}$' },
+          pinCode: { type: 'string', pattern: '^\\d{4}$' },
+        }
+      },
+      response: {
+        200: {
+          description: 'pinCode matches or failed due to incorrect PIN',
+          type: 'object',
+          required: ['success', 'code', 'message'],
+          properties: {
+            success: { type: 'boolean', description: 'Whether the verification succeeded' },
+            code: { type: 'string', enum: ['PIN_MATCHES', 'PIN_NOT_MATCH'],
+                    description: 'Business code indicating the reuslt of the operation' },
+            message: { type: 'string', description: 'Human-readable message' },
+            data: {
+              type: 'object',
+              nullable: true,
+              properties: { userId: { type: 'string', description: 'ID of the user whose PIN code was verified' } }
+            }
+          }
+        },
+        404: {
+          description: "User not found",
+          type: 'object',
+          required: ['success', 'code', 'message'],
+          properties: {
+            success: { type: 'boolean', example: false },
+            code: { type: 'string', enum: ['USER_NOT_FOUND'] },
+            message: { type: 'string', example: 'User not found' }
+          }
+        },
+        429: {
+          description: 'Too many attempts, PIN temporarily locked',
+          type: 'object',
+          required: ['success', 'code', 'message'],
+          properties: {
+            success: { type: 'boolean', example: false },
+            code: { type: 'string', enum: ['TOO_MANY_ATTEMPTS'] },
+            message: { type: 'string', example: 'Too many attempts, try later' }
+          }
+        }
+      }
+    }, async handler(rep, reply) {
+      const { username, pinCode } = req.body;
+
+      const existingUser = await getUserByUsername(username);
+      if (!existingUser) {
+        return reply.code(404).send({
+          success: false,
+          code: 'USER_NOT_FOUND',
+          message: 'User not found'
+        });
+      }
+      const isMatch = await comparePassword(pinCode, existingUser.pinCodeHash);
+      if (!isMatch) {
+        return reply.code(200).send({
+          success: false,
+          code: 'PIN_NOT_MATCH',
+          message: 'Pin code is incorrect',
+        });
+      }
+      return reply.code(200).send({
+        success: true,
+        code: 'PIN_MATCHES',
+        message: 'Pin code matches',
+        data: { userId: existingUser.id },
+      });
     }
-    await updatePinCode(req.user.id, newPinCode);
-    return reply.code(204).send();
   });
 
   /**

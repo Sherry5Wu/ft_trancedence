@@ -3,6 +3,7 @@ import {
   registerUser,
   authenticateUser,
   getUserById,
+  getUserByUsername,
   getUserByIdentifier,
 } from '../services/auth.service.js';
 import {
@@ -200,6 +201,7 @@ export default fp(async (fastify) => {
     );
   }
 });
+
 
   // ---------------- Verify Token ----------------
   // fastify.post('/auth/verify-token', {

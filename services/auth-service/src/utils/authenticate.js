@@ -29,8 +29,6 @@ async function authenticate(fastify, options) {
 export default fp(authenticate);
 
 
-
-
 /**
  * Middleware for verifying JWTs on protected routes.
  * Supports both Authorization header and HttpOnly cookie.
