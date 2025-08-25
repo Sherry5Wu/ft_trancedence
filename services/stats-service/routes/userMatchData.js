@@ -19,14 +19,14 @@ export default async function userMatchDataRoutes(fastify) {
         if (row) {
           reply.send(row);
         } else {
-          reply.status(404).send({ error: 'Player was not found' });
+          reply.send([]);
         }
       } catch (err) {
         reply.status(500).send({ error: err.message });
       }
     });
 
-    // /user_match_data/:player_username
+  // /user_match_data/username/:player_username
   fastify.get('/username/:player_username', (request, reply) => {
     const { player_username } = request.params;
     try {
@@ -35,7 +35,7 @@ export default async function userMatchDataRoutes(fastify) {
       if (row) {
         reply.send(row);
       } else {
-        reply.status(404).send({ error: 'Player was not found' });
+        reply.send([]);
       }
     } catch (err) {
       reply.status(500).send({ error: err.message });

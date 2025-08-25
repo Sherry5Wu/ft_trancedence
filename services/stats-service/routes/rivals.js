@@ -28,7 +28,8 @@ export default async function rivalsRoutes(fastify) {
                 }));
                 reply.send(rivalsWithAvatars);
             } else {
-                reply.status(404).send({ error: 'Player_id was not found' });
+                // Palauta tyhjä taulukko 200-statuksella
+                reply.send([]);
             }
         }
         catch (err) {
@@ -36,7 +37,6 @@ export default async function rivalsRoutes(fastify) {
         }
     });
 
-    // /rivals/username/:player_username
     fastify.get('/username/:player_username', async (request, reply) => {
         const { player_username } = request.params;
         try {
@@ -49,7 +49,8 @@ export default async function rivalsRoutes(fastify) {
                 }));
                 reply.send(rivalsWithAvatars);
             } else {
-                reply.status(404).send({ error: 'Player username was not found' });
+                // Palauta tyhjä taulukko 200-statuksella
+                reply.send([]);
             }
         }
         catch (err) {
