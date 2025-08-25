@@ -226,7 +226,7 @@ export default fp(async (fastify) => {
       }
 
       await updatePassword(req.user.id, newPassword);
-      return reply.code(204).send();
+      return reply.code(200).send({ success: true, code: 'PASSWORD_UPDATED', message: 'The user password has been updated' });
     } catch (err) {
       return reply.code(500).send({
         success: false,
@@ -298,13 +298,13 @@ export default fp(async (fastify) => {
       if (!isMatch) {
         return reply.code(400).send({
           success: false,
-          code: 'INVALID_OLD_PIN',
+          code: 'OLD_PIN_NOT-MATCH',
           message: 'Incorrect old pin code'
         });
       }
 
       await updatePinCode(req.user.id, newPinCode);
-      return reply.code(204).send();
+      return reply.code(200).send({ success: true, code: 'PIN_CODE_UPDATED', message: 'The user PIN code has been updated' });
     } catch (err) {
       return reply.code(500).send({
         success: false,
