@@ -85,8 +85,8 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
           <div className='flex flex-col items-center'>
             <button className='group relative flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center}'>
               <div className='absolute text-2xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 translate-y-2
-                              group-hover:opacity-100 group-hover:translate-y-0 transition ease-in-out duration-300'>{worstRivalName}</div>
-              <img src={worstRivalPic} className='profilePic' />
+                              group-hover:opacity-100 group-hover:translate-y-1 transition ease-in-out duration-300'>{worstRivalName}</div>
+              <img src={worstRivalPic} className='profilePic !border-0' />
             </button>
             <h4 className='h4 my-2 font-semibold'>{t('components.stats.worstRival')}</h4>
           </div>

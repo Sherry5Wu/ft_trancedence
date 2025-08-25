@@ -54,8 +54,8 @@ export const RivalRows = () => {
 			const rivalData = await fetchRivalData(user?.username);
 			const allUsers = await fetchUsers(token);
 			//const rival = allUsers.find((u: FetchedUserData) => u.username === rivalData.rival_username);
+			//setRivalPic(rival.avatarUrl);
 			setRivalData(rivalData);
-            // setRivalPic(rival.avatarUrl);
 			setLoading(false);
 		}
 		loadRivals();
