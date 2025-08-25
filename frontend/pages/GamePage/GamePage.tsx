@@ -298,7 +298,7 @@ export default function GamePage() {
         // Regular match: post history from player 1 perspective
         if (!isTournament) {
           const payloadP1 = buildPayload(p1, p2, s1, s2, durationStr, played_at_iso);
-          await postMatchHistory(payloadP1, user?.accessToken);
+          await postMatchHistory(payloadP1, user?.accessToken ?? undefined);
         }
       
         // Tournament: Accumulate entries to push at the end
@@ -464,7 +464,7 @@ export default function GamePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
                 <div className="text-sm opacity-70 mb-2">
-                  {t('game.tournament.round')} {roundNum} {t('game.tournament.match')} {matchIdx + 1} / {pairs.length}
+                  {t('game.tournament.round')} {roundNum} • {t('game.tournament.match')} {matchIdx + 1} / {pairs.length}
                 </div>
                 <h2 className="text-2xl font-bold mb-6">{t('game.tournament.nextMatch')}</h2>
                 <div className="text-xl font-semibold mb-6">
@@ -473,7 +473,7 @@ export default function GamePage() {
 
                 {upcomingPair && (
                   <div className="text-xs opacity-70 mb-6">
-                    {t('game.tournament.upNext')} {upcomingPair[0].username} {t('game.tournament.vs')} {upcomingPair[1].username}
+                    {t('game.tournament.upNext')}: {upcomingPair[0].username} {t('game.tournament.vs')} {upcomingPair[1].username}
                   </div>
                 )}
 
@@ -546,9 +546,9 @@ export default function GamePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
                 <h2 className="text-2xl font-bold mb-2">{t('game.match.end')}</h2>
-                <div className="text-lg mb-1">{t('game.match.winner')} <span className="font-semibold">{postResult.winner}</span></div>
+                <div className="text-lg mb-1">{t('game.match.winner')}: <span className="font-semibold">{postResult.winner}</span></div>
                 <div className="text-sm opacity-80 mb-6">
-                  {t('game.match.finalScore')} {postResult.s1} – {postResult.s2}
+                  {t('game.match.finalScore')}: {postResult.s1} – {postResult.s2}
                 </div>
                 <button
                   onClick={handlePlayAgain}

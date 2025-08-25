@@ -120,7 +120,7 @@ export default function KeyBindingsPanel({
 
   const Row = ({ pid, act }: { pid: PlayerId; act: Action }) => (
     <div className="flex items-center justify-between gap-2 py-1">
-      <span className="capitalize text-neutral-300">{act}</span>
+      <span className="text-neutral-300">{act}</span>
       <div className="flex items-center gap-2">
         <span className="px-2 py-1 rounded bg-neutral-900 text-xs">
           {labelForCode(value[pid][act])}

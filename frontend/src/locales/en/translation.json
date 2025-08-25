@@ -583,16 +583,16 @@
     },
     "match": {
       "end": "Match Over",
-      "winner": "Winner: ",
-      "finalScore": "Final Score: ",
+      "winner": "Winner",
+      "finalScore": "Final Score",
       "playAgain": "Play again"
     },
     "tournament": {
-      "round": "Round ",
-      "match": " • Match ",
-      "vs": " vs ",
+      "round": "Round",
+      "match": "Match",
+      "vs": "vs",
       "nextMatch": "Next Match",
-      "upNext": "Up next:",
+      "upNext": "Up next",
       "complete": "Tournament completed!",
       "champion": "Tournament champion: "
     }
