@@ -366,3 +366,59 @@ export const disable2FA = async (accessToken?: string): Promise<boolean> => {
     return false;
   }
 };
+
+export const updateUserPin = async (
+  oldPinCode: string,
+  newPinCode: string,
+  accessToken: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch("https://localhost:8443/as/users/me/pincode", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ oldPinCode, newPinCode }),
+    });
+
+    if (response.status === 204) {
+      return true;
+    }
+
+    // If backend returns 400/401, throw so caller can handle
+    const errorBody = await response.json();
+    throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
+  } catch (error) {
+    console.error("Error updating PIN:", error);
+    return false;
+  }
+};
+
+export const updateUserPassword = async (
+  oldPassword: string,
+  newPassword: string,
+  accessToken: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch("https://localhost:8443/as/users/me/password", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+
+    if (response.status === 204) {
+      return true;
+    }
+
+    // If backend sends 400/401 with JSON body
+    const errorBody = await response.json();
+    throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return false;
+  }
+};

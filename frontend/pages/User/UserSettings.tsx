@@ -9,7 +9,6 @@ import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
-import PlusIcon from '../../assets/symbols/noun-plus-rounded-5432794.svg';
 import { updateProfilePic } from '../../utils/Fetch';
 import { disable2FA } from '../../utils/Fetch';
 
@@ -113,17 +112,17 @@ const SettingsPage = () => {
           </h3>
           
           <GenericInput
-            placeholder={t('common.placeholders.email')}
-            aria-label={t('common.aria.inputs.email')}
-            value={user?.email || ''}
-            onFilled={() => {}}
-            disabled
-          />
-
-          <GenericInput
             placeholder={t('common.placeholders.username')}
             aria-label={t('common.aria.inputs.username')}
             value={user?.username || ''}
+            onFilled={() => {}}
+            disabled
+          />
+          
+          <GenericInput
+            placeholder={t('common.placeholders.email')}
+            aria-label={t('common.aria.inputs.email')}
+            value={user?.email || ''}
             onFilled={() => {}}
             disabled
           />
@@ -134,6 +133,7 @@ const SettingsPage = () => {
             {t('pages.userSettings.security.title')}
           </h3>
           
+          {/** Disable this button if it's a user registered with GoogleSignIn */}
           <GenericButton
             className="generic-button"
             text={t('pages.changePassword.title')}

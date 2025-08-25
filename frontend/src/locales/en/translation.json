@@ -74,6 +74,7 @@
       }
     },
     "errors": {
+      "unauthorized": "unauthorized",
       "invalidUsername": "Username must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include: letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
       "invalidAlias": "Alias must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
       "invalidEmail": "Email must be in a valid format: \n • Example: name@domain.com",
@@ -86,7 +87,9 @@
       "newSameAsOldPIN": "New PIN must be different from the current PIN code.",
       "aliasNotUnique": "This alias is already taken. Please choose a different one.",
       "duplicateAlias": "Player aliases must be different from each other.",
-      "invalidLogin": "Invalid login. Please check and try again."
+      "invalidLogin": "Invalid login. Please check and try again.",
+      "incorrectPIN": "Incorrect PIN code. Please check and try again.",
+      "incorrectPassword": "Incorrect password. Please check and try again."
     }
   },
 

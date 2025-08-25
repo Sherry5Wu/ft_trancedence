@@ -9,10 +9,13 @@ import { GenericButton } from '../../components/GenericButton';
 import { CloseButton } from '../../components/CloseButton';
 import { useValidationField } from '../../utils/Hooks';
 import { isValidPin } from '../../utils/Validation';
+import { useUserContext } from '../../context/UserContext';
+import { updateUserPin } from "../../utils/Fetch";
 
 const ChangePINPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useUserContext();
 
   const currentPinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
   const newPinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
@@ -40,27 +43,24 @@ const ChangePINPage: React.FC = () => {
 
   return (
     <main
-      className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto"
+      className="pageLayout"
       role="main"
       aria-labelledby="pageTitle"
       aria-describedby="pageDescription"
     >
-      <h1 id="pageTitle" className="sr-only">
-        {t('pages.changePIN.aria.label')}
-      </h1>
+    <AccessiblePageDescription
+      id="pageDescription"
+      text={t('pages.changePIN.aria.description')}
+    />
 
-      <AccessiblePageDescription
-        id="pageDescription"
-        text={t('pages.changePIN.aria.description')}
-      />
-
+    <div className="flex flex-col justify-center p-8 space-y-4 max-w-sm mx-auto">
       <CloseButton
         className="ml-auto"
         aria-label={t('common.aria.buttons.cancel')}
         onClick={() => navigate('/settings')}
       />
 
-      <h2 className="font-semibold text-center">
+      <h2 id="pageTitle" className="font-semibold text-center">
         {t('pages.changePIN.title')}
       </h2>
 
@@ -72,6 +72,7 @@ const ChangePINPage: React.FC = () => {
         onFilled={currentPinField.onFilled}
         onBlur={currentPinField.onBlur}
         errorMessage={currentPinField.error}
+        allowVisibility
       />
 
       <GenericInput
@@ -85,6 +86,7 @@ const ChangePINPage: React.FC = () => {
           newPinField.error ||
           (newPinIsSame ? t('common.errors.newSameAsOldPIN') : '')
         }
+        allowVisibility
       />
 
       <GenericInput
@@ -94,6 +96,7 @@ const ChangePINPage: React.FC = () => {
         value={confirmNewPin}
         onFilled={setConfirmNewPin}
         errorMessage={pinMismatch ? t('common.errors.pinMismatch') : ''}
+        allowVisibility
       />
 
       <GenericButton
@@ -101,11 +104,29 @@ const ChangePINPage: React.FC = () => {
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        onClick={() => {
-          alert(t('common.alerts.success'));
-          navigate('/settings');
+        onClick={async () => {
+          const accessToken = user?.accessToken
+          if (!accessToken) {
+            alert(t("common.errors.unauthorized"));
+            navigate("/signin");
+            return;
+          }
+
+          const success = await updateUserPin(
+            currentPinField.value,
+            newPinField.value,
+            accessToken
+          );
+
+          if (success) {
+            alert(t("common.alerts.success"));
+            navigate("/settings");
+          } else {
+            alert(t("common.errors.incorrectPIN"));
+          }
         }}
       />
+      </div>
     </main>
   );
 };
