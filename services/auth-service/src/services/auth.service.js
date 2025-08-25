@@ -14,7 +14,7 @@ import { Op } from 'sequelize';
 
 import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
-import { generateAccessToken, generateRefreshToken , storeRefreshToken } from '../utils/jwt.js';
+import { generateAccessToken, generateRefreshToken , storeRefreshTokenHash} from '../utils/jwt.js';
 import { ConflictError, InvalidCredentialsError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { normalizeAndValidateEmail, normalizeEmail, validatePassword, validateUsername, validatePincode } from '../utils/validators.js';
 
@@ -65,7 +65,7 @@ async function registerUser(email, username, password, pinCode) {
     const userData = user.toJSON();
     delete userData.passwordHash;
     delete userData.pinCodeHash;
-
+    
     return userData;
 }
 
@@ -120,15 +120,15 @@ async function authenticateUser(identifier, password, opts= {}) {
   const accessToken = generateAccessToken(accessTokenPayload);
   const refreshToken = generateRefreshToken(refreshTokenPayload);
 
-  await storeRefreshToken(refreshToken, user.id, ip, userAgent);
+  await storeRefreshTokenHash(refreshToken, user.id, ip, userAgent);
 
   // return the only asked data
   const publicUser = {
     id: user.id,
     username: user.username,
     avatarUrl: user.avatarUrl || null, // include only if you support it
-    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
-    is2FAConfirmed: user.is2FAConfirmed,
+    TwoFAStatus: user.is2FAEnabled && user.is2FAConfirmed,
+    registerFromGoogle: !!user.googleId,
   };
 
   return { accessToken, refreshToken, user: publicUser };

@@ -7,7 +7,7 @@ export default (sequelize) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    token: {
+    tokenHash: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -23,7 +23,7 @@ export default (sequelize) => {
       type: DataTypes.DATE,
        allowNull: true,
     },
-    replacedByToken: {
+    replacedByTokenHash: {
       type: DataTypes.STRING, // Useful for token rotation tracking
        allowNull: true,
     },
@@ -39,7 +39,7 @@ export default (sequelize) => {
     timestamps: true,
     indexes: [
       { fields: ['userId'] },
-      { fields: ['token'] }, // for quick lookup of token
+      { fields: ['tokenHash'] }, // for quick lookup of token
     ]
   });
 

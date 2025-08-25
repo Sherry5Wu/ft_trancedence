@@ -1,6 +1,16 @@
-import { RefreshCcw } from "lucide-react";
-import { useUserContext} from '../context/UserContext';
-import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, FetchedUserData, UserGoogleProfileData, GoogleCompleteResponse } from "../utils/Interfaces";
+import { 
+	MatchData, 
+	ScoreHistory, 
+	UserStats, 
+	UserProfileData, 
+	LoginData, 
+	RivalData, 
+	FetchedUserData, 
+	UserGoogleProfileData,
+	GoogleCompleteResponse, 
+	VerifyPinResponse,
+	RegisteredPlayerData
+	} from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
 	// console.log('Sending user:', player);
@@ -373,10 +383,91 @@ export const disable2FA = async (token: string): Promise<boolean> => {
             throw new Error(`Failed to disable 2FA: ${response.statusText}`);
         }
 
-        return true;
-    } 
-    catch (error) {
-        console.error('Error disabling 2FA:', error);
-        return false;
+    return true;
+  } catch (error) {
+    console.error('Error disabling 2FA:', error);
+    return false;
+  }
+};
+
+export const updateUserPin = async (
+  oldPinCode: string,
+  newPinCode: string,
+  accessToken: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch("https://localhost:8443/as/users/me/update-pincode", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ oldPinCode, newPinCode }),
+    });
+
+    if (response.status === 204) {
+      return true;
     }
+
+    // If backend returns 400/401, throw so caller can handle
+    const errorBody = await response.json();
+    throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
+  } catch (error) {
+    console.error("Error updating PIN:", error);
+    return false;
+  }
+};
+
+export const updateUserPassword = async (
+  oldPassword: string,
+  newPassword: string,
+  accessToken: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch("https://localhost:8443/as/users/me/update-password", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+
+    if (response.status === 204) {
+      return true;
+    }
+
+    // If backend sends 400/401 with JSON body
+    const errorBody = await response.json();
+    throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return false;
+  }
+};
+
+export const loginRegisteredPlayer = async ( player: RegisteredPlayerData ): Promise<VerifyPinResponse> => {
+  try {
+    const response = await fetch("https://localhost:8443/as/users/verify-pincode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(player),
+    });
+
+    // Handles 404 (User not found) or 429 (Too many attempts) from backend
+    if (!response.ok) {
+      const errorBody = await response.json();
+      return errorBody as VerifyPinResponse;
+    }
+
+    const data: VerifyPinResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error verifying PIN:", error);
+    return {
+      success: false,
+      code: "PIN_NOT_MATCH",
+      message: "Unexpected error occurred",
+    };
+  }
 };

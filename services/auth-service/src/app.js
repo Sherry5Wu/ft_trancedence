@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
 import multipart from '@fastify/multipart';
+import Cookie from '@fastify/cookie';
 
 // Load environment variables
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -92,6 +93,11 @@ async function buildApp() {
       deepLinking: false,
     },
   });
+
+  await app.register(Cookie, {
+  secret: "super-secret-string", //for signed cookies
+});
+
 
   app.register(authRoutes);
   app.register(twoFARoutes);

@@ -9,8 +9,7 @@ import {
   rotateTokens,
   revokeRefreshToken,
 } from '../services/jwt.service.js';
-import { InvalidCredentialsError, ValidationError, ConflictError, NotFoundError } from '../utils/errors.js';
-import { sendError } from '../utils/sendError.js';
+import { NotFoundError } from '../utils/errors.js';
 
 export default fp(async (fastify) => {
   /**
@@ -48,9 +47,8 @@ export default fp(async (fastify) => {
           description: 'User successfully registered',
           $ref: 'publicUser#'
         },
-        400: { description:'Bad Request', $ref: 'errorResponse#' },
-        409: { description:'Conflict', $ref: 'errorResponse' },
-        500: { description:'Server Internal Error',$ref: 'errorResponse#' },
+        400: { $ref: 'errorResponse#' },
+        500: { $ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
@@ -63,9 +61,7 @@ export default fp(async (fastify) => {
       );
       return reply.code(201).send(user);
     } catch (err) {
-      if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad request', err.message);
-      if (err instanceof ConflictError) sendError(reply, 409, 'Conflict error', err.message);
-      return sendError(reply, err.statusCode || 500, err.name || 'Internal Server Error', err.message);
+      reply.code(err.statusCode || 500).send({ error: err.message });
     }
   });
 
@@ -97,9 +93,8 @@ export default fp(async (fastify) => {
             TwoFAStatus: { type: 'boolean', description: 'Whether 2FA is enabled and confirmed' },
           }
         },
-        400: { description:'Bad Request', $ref: 'errorResponse#' },
-        404: { description: 'Not found', $ref: 'errorResponse#' },
-        500: { description:'Server Internal Error',$ref: 'errorResponse#' },
+        401: { $ref: 'errorResponse#' },
+        500: { $ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
@@ -111,9 +106,7 @@ export default fp(async (fastify) => {
       const TwoFAStatus = user.is2FAEnabled && user.is2FAConfirmed;
       return { accessToken, refreshToken, user, TwoFAStatus };
     } catch (err) {
-      if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad request', err.message);
-      if (err instanceof NotFoundError) sendError(reply, 404, 'Not found', err.message);
-      return sendError(reply, err.statusCode || 500, err.name || 'Internal Server Error', err.message);
+      reply.code(err.statusCode || 500).send({ error: err.message });
     }
   });
 

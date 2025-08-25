@@ -176,8 +176,8 @@ async function googleUserLogin(user) {
     id: user.id,
     username: user.username,
     avatarUrl: user.avatarUrl || null, // include only if you support it
-    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
-    is2FAConfirmed: user.is2FAConfirmed,
+    TwoFAStatus: user.is2FAEnabled && user.is2FAConfirmed,
+    registerFromGoogle: !!user.googleId,
   };
 
   return { accessToken, refreshToken, user: publicUser };

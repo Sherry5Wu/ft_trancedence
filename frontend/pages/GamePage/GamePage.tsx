@@ -107,7 +107,7 @@ export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
   const [bindings, setBindings] = useState<KeyBindings>(() => loadBindings());
-  const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle } = usePlayersContext();
+  const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle, resetPlayers } = usePlayersContext();
   const [mapKey, setMapKey] = useState<MapKey>('default');
 
   // Options
@@ -548,7 +548,14 @@ export default function GamePage() {
                 </button>
 
                 <button
-                  onClick={() => user?.username && navigate(`/user/${encodeURIComponent(user.username)}`)}
+                  onClick={() => {
+                    resetPlayers();
+                    if (user?.username) {
+                      navigate(`/user/${encodeURIComponent(user.username)}`);
+                    } else {
+                      navigate('/signin');
+                    }
+                  }}
                   className="block mx-auto mt-3 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                 >
                   Exit
@@ -574,7 +581,10 @@ export default function GamePage() {
                 {/* Exit button */}
                 <div className="flex justify-center">
                   <button
-                    onClick={() => navigate('/tournaments')}
+                    onClick={() => {
+                      resetPlayers();
+                      navigate('/tournaments');
+                    }}
                     className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700"
                     aria-label="Exit to tournaments"
                   >

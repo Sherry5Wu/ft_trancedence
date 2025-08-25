@@ -116,9 +116,8 @@ async function rotateTokens(token, meta = {}) {
   // create new tokens
   const payload = {
     id: decoded.id,
-    email: decoded.email,
+    // email: decoded.email,
     username: decoded.username,
-    role: decoded.role,
     is2FAEnabled: decoded.is2FAEnabled,
   };
 

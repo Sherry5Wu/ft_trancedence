@@ -103,6 +103,7 @@ def test_get_score_history():
 def test_get_score_history_id():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
     headers = get_auth_headers(ACCESS_TOKEN)
+    print(headers)
 
     # Tarkistetaan että token on validi ja saadaan käyttäjän ID
     response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
@@ -119,6 +120,7 @@ def test_get_score_history_by_username():
 
     # Tarkistetaan että token on validi ja saadaan käyttäjän ID
     response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(response1.json())
     assert response1.status_code == 200
     username = response1.json()["username"]
     print(f"{STATS_URL}/user_match_data/{username}")

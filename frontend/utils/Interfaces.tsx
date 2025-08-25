@@ -37,6 +37,11 @@ export interface LoginData {
   password: string
 }
 
+export interface RegisteredPlayerData {
+  username: string,
+  pinCode: string
+}
+
 export interface MatchData {
     played_at: string,
     player_name: string,
@@ -110,7 +115,7 @@ export interface User {
     rivals: RivalData[];
     accessToken: string;
     expiry: number;
-    refreshToken: string;
+    // refreshToken: string;
     twoFA: boolean;
 }
 
@@ -155,4 +160,11 @@ export interface GoogleCompleteResponse {
     avatarUrl: string;
   };
   TwoFAStatus: boolean;
+}
+
+export interface VerifyPinResponse {
+  success: boolean;
+  code: "PIN_MATCHES" | "PIN_NOT_MATCH" | "USER_NOT_FOUND" | "TOO_MANY_ATTEMPTS";
+  message: string;
+  data?: { userId: string };
 }

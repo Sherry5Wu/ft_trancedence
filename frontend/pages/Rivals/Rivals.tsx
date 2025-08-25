@@ -16,16 +16,7 @@ const RivalsPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
-    // const [rivalData, setRivalData] = useState<string[]>([]);
     const { user } = useUserContext();
-
-    // useEffect(() => {
-    //   const fetchRivals = async () => {
-    //     const data = await fetchRivalData(user?.username);
-    //     setRivalData(data);
-    //   };
-    //   fetchRivals();
-    // }, [user])
   
     return (
     	<div className='pageLayout'>

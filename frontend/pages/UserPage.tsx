@@ -87,8 +87,8 @@ const UserPage = () => {
 
 	// console.log("ACCESS TOKEN");
 	// console.log(user?.accessToken);
-	// console.log("RIVALS in user page");
-	// console.log(user?.rivals);
+	console.log("RIVALS in user page");
+	console.log(user?.rivals);
 	// console.log('isRival = ' + isRival);
 	// if (userStats)
 	// {
@@ -171,10 +171,10 @@ const UserPage = () => {
 		onClick={() => {
 			if (user && param.username)
 			{
-				removeRival(param.username, token)
+				removeRival(param.username, token);
 				setUser({
 					...user, 
-					rivals: user?.rivals.filter(r => r.rival_username !== param.username)})
+					rivals: user?.rivals.filter(r => r.rival_username !== param.username)});
 			}}} />
 	
 		:
@@ -191,7 +191,7 @@ const UserPage = () => {
 				setUser({
 					...user, 
 					rivals: [...user.rivals, 
-						{rival_username: param.username}]})
+						{rival_username: param.username}]});
 			};
 		}} />
 		}

@@ -183,12 +183,9 @@ body, html {
   @apply bg-[#FFEE8C]  text-[#999] cursor-not-allowed;
 }
 
-
-
 .profilePicMini {
   @apply h-6 w-6 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C] items-center -translate-x-1
 }
-
 
 .h1 {
   @apply text-4xl flex justify-center font-bold
