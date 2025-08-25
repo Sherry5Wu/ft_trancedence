@@ -111,7 +111,7 @@ export default fp(async (fastify) => {
       );
 
       setRefreshTokenCookie(reply, refreshToken); // refreshToken cookie
-      reply.send({ success: true,accessToken, user});
+      reply.send({ success: true,  accessToken, user});
       // return { accessToken, refreshToken, user, TwoFAStatus };
     } catch (err) {
       if (err instanceof InvalidCredentialsError) return sendError(reply, 400, 'Bad request', err.message);
