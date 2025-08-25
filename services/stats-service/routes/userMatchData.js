@@ -19,7 +19,7 @@ export default async function userMatchDataRoutes(fastify) {
         if (row) {
           reply.send(row);
         } else {
-          reply.status(404).send({ error: 'Player was not found' });
+          reply.send([]);
         }
       } catch (err) {
         reply.status(500).send({ error: err.message });
@@ -35,7 +35,7 @@ export default async function userMatchDataRoutes(fastify) {
       if (row) {
         reply.send(row);
       } else {
-        reply.status(404).send({ error: 'Player was not found' });
+        reply.send([]);
       }
     } catch (err) {
       reply.status(500).send({ error: err.message });
