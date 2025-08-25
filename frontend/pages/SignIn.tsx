@@ -96,7 +96,7 @@ return (
               navigate(`/user/${usernameField.value}`)
             }
             else
-              alert('Sign in failed. Please, check your username and password, and try again.');
+              alert('Sign in failed. Please check your username and password, and try again.');
         }}
       />
 
@@ -105,11 +105,11 @@ return (
           aria-label={t('pages.signInWithGoogle.aria.signInWithGoogle')}
         />
 
-        <p className="text-center text-sm translate-y-2">
+        <p className="text-center text-sm translate-y-3">
           {t('pages.signIn.links.notRegistered')}{' '}
           <Link
             to="/signup"
-            className="underline"
+            className="underline hover:bg-black hover:text-white rounded-xl px-1 py-0.5 hover:no-underline"
             aria-label={t('pages.signIn.aria.signUpLink')}
           >
             {t('pages.signIn.links.signUp')}
