@@ -89,7 +89,7 @@ return (
                 rank: signInData.stats.score,
                 rivals: signInData.rivals,
                 accessToken: signInData.data.accessToken,
-                refreshToken: signInData.data.refreshToken,
+                // refreshToken: signInData.data.refreshToken,
                 expiry: Date.now() + 15 * 60 * 1000,
                 twoFA: signInData.data.twoFA,
               });

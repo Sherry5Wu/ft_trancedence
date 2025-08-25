@@ -115,7 +115,7 @@ export interface User {
     rivals: RivalData[];
     accessToken: string;
     expiry: number;
-    refreshToken: string;
+    // refreshToken: string;
     twoFA: boolean;
 }
 

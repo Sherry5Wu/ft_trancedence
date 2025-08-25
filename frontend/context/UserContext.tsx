@@ -16,7 +16,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     const refresh = async () => {
         try {
-            const response = await fetch('https://localhost:8443/as/auth/login', {
+            const response = await fetch('https://localhost:8443/as/auth/refresh', {
                 method: 'POST',
                 credentials: 'include' //so that backend sends httpOnly refresh cookie
             });
@@ -27,6 +27,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             }
             const data = await response.json();
             const newExpiration = Date.now() + 15 * 60 * 1000; //replace with something from backend?
+			console.log("REFRESH OK");
 
             setUser({
                 ...data.user,
@@ -42,9 +43,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    useEffect(() => {
-        refresh();
-    }, []);
+	useEffect(() => {
+		refresh();
+	}, []);
 
     return (
         <userContext.Provider value={{ user, setUser, refresh }}>
