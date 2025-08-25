@@ -35,90 +35,46 @@ const CompleteProfilePage: React.FC = () => {
 
   const idToken = sessionStorage.getItem("googleIdToken");
 
-  // const handleSave = async () => {
-  //   if (!idToken) {
-  //     alert("Google sign-in is required before completing profile.");
-  //     return;
-  //   }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (!formFilled) return;
 
-  //   try {
-  //     const response = await fetch("https://localhost:8443/as/auth/google-complete", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         idToken,
-  //         username: usernameField.value,
-  //         pinCode: pinField.value,
-  //       }),
-  //     });
+    if (!idToken) {
+      alert(t('common.alerts.failure.completeProfile'));
+      return;
+    }
 
-  //     if (!response.ok) throw new Error("Failed to complete profile");
+    const newUser = await createUserFromGoogle({
+      idToken,
+      username: usernameField.value,
+      pinCode: pinField.value,
+    });
 
-  //     const newUser = await response.json();
+    if (!newUser) {
+      alert("Something went wrong, please try again.");
+      return;
+    }
 
-  //     // Clear token after registration
-  //     sessionStorage.removeItem("googleIdToken");
+    sessionStorage.removeItem("googleIdToken");
 
-  //   // Map the backend response to userContext
-  //   const userData = {
-  //     username: newUser.user.username,
-  //     id: newUser.user.id,
-  //     email: "", // Not returned by backend
-  //     profilePic: newUser.user.avatarUrl || '../assets/noun-profile-7808629.svg',
-  //     score: 0, // Default because stats not returned yet
-  //     rank: 0,  // Default because rank not returned yet
-  //     rivals: [], // Default empty array
-  //     accessToken: newUser.accessToken,
-  //     refreshToken: newUser.refreshToken,
-  //     twoFA: newUser.TwoFAStatus,
-  //   };
+    const userData = {
+      username: newUser.user.username,
+      id: newUser.user.id,
+      email: "", 
+      profilePic: newUser.user.avatarUrl || "../assets/noun-profile-7808629.svg",
+      score: 0,
+      rank: 0,
+      rivals: [],
+      accessToken: newUser.accessToken,
+      refreshToken: newUser.refreshToken,
+      twoFA: newUser.TwoFAStatus,
+      googleUser: newUser.registerFromGoogle,
+    };
 
-  //   // Update context and navigate
-  //   setUser(userData);
-  //   navigate(`/user/${userData.username}`);
-
-  //   } catch (err) {
-  //     console.error("Error saving profile:", err);
-  //     alert("Something went wrong, please try again.");
-  //   }
-  // };
-const handleSave = async () => {
-  if (!idToken) {
-    alert("Google sign-in is required before completing profile.");
-    return;
-  }
-
-  const newUser = await createUserFromGoogle({
-    idToken,
-    username: usernameField.value,
-    pinCode: pinField.value,
-  });
-
-  if (!newUser) {
-    alert("Something went wrong, please try again.");
-    return;
-  }
-
-  // Clear token after registration
-  sessionStorage.removeItem("googleIdToken");
-
-  // Map backend response to context
-  const userData = {
-    username: newUser.user.username,
-    id: newUser.user.id,
-    email: "", // not returned by backend
-    profilePic: newUser.user.avatarUrl || "../assets/noun-profile-7808629.svg",
-    score: 0,
-    rank: 0,
-    rivals: [],
-    accessToken: newUser.accessToken,
-    refreshToken: newUser.refreshToken,
-    twoFA: newUser.TwoFAStatus,
+    setUser(userData);
+    navigate(`/user/${userData.username}`);
   };
-
-  setUser(userData);
-  navigate(`/user/${userData.username}`);
-};
 
   return (
     <main
@@ -137,6 +93,7 @@ const handleSave = async () => {
           {t('pages.completeProfile.title')}
         </h1>
 
+      <form onSubmit={handleSubmit} className="flex flex-col">
       <GenericInput
         type="text"
         placeholder={t('common.placeholders.username')}
@@ -169,12 +126,13 @@ const handleSave = async () => {
       />
 
       <GenericButton
+        type="submit"
         className="generic-button"
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        onClick={handleSave}
-          />
+      />
+      </form>
       </div>
       </div>
     </main>

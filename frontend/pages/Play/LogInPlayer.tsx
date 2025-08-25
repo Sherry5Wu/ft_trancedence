@@ -33,30 +33,11 @@ const LogInPlayerPage: React.FC = () => {
     !usernameField.error &&
     !pinField.error;
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     const response = await fakeFetchPlayer(usernameField.value, pinField.value);
-  //     // check if there is error on username + PIN code,
-  //     // invalid PIN or invalid username, or any?
-  //     const player = {
-  //       id: response.id,
-  //       username: response.username,
-  //       photo: response.photo,
-  //     };
-  //     // to remove existing player at same index
-  //     if (players.length > playerIndex) { 
-  //       removePlayer(players[playerIndex].id);
-  //     }
-
-  //     addPlayer(player);
-  //     navigate(returnTo);
-  //   } catch (err) {
-  //     alert(t('common.errors.invalidLogin'));
-  //   }
-  // };
-
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+  
+    if (!formFilled) return;
+  
     try {
       const response = await loginRegisteredPlayer({
         username: usernameField.value,
@@ -107,6 +88,7 @@ const LogInPlayerPage: React.FC = () => {
         {t('pages.logInPlayer.title')}
       </h1>
 
+      <form onSubmit={handleSubmit} className="flex flex-col">
       <GenericInput
         type="text"
         placeholder={t('common.placeholders.username')}
@@ -129,24 +111,15 @@ const LogInPlayerPage: React.FC = () => {
       />
 
       <GenericButton
+        type="submit"
         className="generic-button"
         text={t('common.buttons.ok')}
         aria-label={t('common.aria.buttons.ok')}
         disabled={!formFilled}
-        onClick={handleSubmit}
       />
+      </form>
     </main>
   );
 };
 
 export default LogInPlayerPage;
-
-// Temporary fake fetch function (replace with actual API)
-// const fakeFetchPlayer = async (username: string, pin: string) => {
-//   await new Promise((r) => setTimeout(r, 500)); // simulate delay
-//   return {
-//     id: Date.now().toString(),
-//     username,
-//     photo: `https://api.dicebear.com/6.x/initials/svg?seed=${username}`,
-//   };
-// };

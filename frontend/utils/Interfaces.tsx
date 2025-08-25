@@ -160,6 +160,7 @@ export interface GoogleCompleteResponse {
     avatarUrl: string;
   };
   TwoFAStatus: boolean;
+  registerFromGoogle: boolean;
 }
 
 export interface VerifyPinResponse {

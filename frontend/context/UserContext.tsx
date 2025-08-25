@@ -65,6 +65,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 	useEffect(() => {
 		refresh();
+		
 	}, []);
 
     return (
