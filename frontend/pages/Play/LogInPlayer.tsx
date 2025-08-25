@@ -58,7 +58,10 @@ const LogInPlayerPage: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await loginRegisteredPlayer(usernameField.value, pinField.value);
+      const response = await loginRegisteredPlayer({
+        username: usernameField.value,
+        pinCode: pinField.value
+      });
 
       if (!response.success || response.code !== "PIN_MATCHES") {
         if (response.code === "USER_NOT_FOUND") {
