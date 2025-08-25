@@ -521,8 +521,11 @@
   },
 
   "game": {
+    "title": "Game",
     "player1": "Player 1",
     "player2": "Player 2",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
     "startMatch": "Start Match",
     "optionsButton": "Options",
     "pauseMatch": "Game paused",
@@ -530,13 +533,17 @@
     "winner": "Winner",
     "finalScore": "Final Score",
     "playAgain": "Play again",
+    "loading": "Loading...",
+    "exit": "Exit",
     "options": {
-      "title": "match options",
+      "title": "Match Options",
       "ballSpeed": {
         "subtitle": "Base ball speed",
-        "slow": "Slow",
-        "medium": "Medium",
-        "fast": "Fast"
+        "speed": {
+          "slow": "Slow",
+          "medium": "Medium",
+          "fast": "Fast"
+        }
       },
       "winCondition": {
         "subtitle": "Win condition",
@@ -545,33 +552,43 @@
         "bestOf19": "Best of 19"
       },
       "map": {
-        "subtitle": "Map option",
+        "subtitle": "Map",
         "default": "Default",
         "large": "Large",
         "obstacles": "Obstacles"
       }
     },
     "controls": {
-      "move": "Move",
+      "title": "Controls",
+      "move": "Move: ",
       "up": "Up",
       "down": "Down",
-      "boost": "Boost",
+      "boost": "Boost: ",
       "shield": "Shield",
-      "reset": "Reset to default controls",
+      "reset": "Reset to defaults",
       "resetAll": "Reset all player to default controls",
-      "swap": "Swap players controls keys"
+      "swap": "Swap controls",
+      "conflict": "Conflicts detected: "
     },
-    "instruction": {
+    "pauseMenu": {
+      "title": "Game Paused",
       "start": "Press space to start",
       "pause": "Press space to continue"
     },
+    "match": {
+      "end": "Match Over",
+      "winner": "Winner: ",
+      "finalScore": "Final Score: ",
+      "playAgain": "Play again"
+    },
     "tournament": {
-      "round": "Round",
-      "match": "Match",
+      "round": "Round ",
+      "match": " • Match ",
+      "vs": " vs ",
       "nextMatch": "Next Match",
-      "upNextMatch": "Up next match",
-      "status": "Tournament completed!",
-      "champion": "Tournament champion"
+      "upNext": "Up next:",
+      "complete": "Tournament completed!",
+      "champion": "Tournament champion: "
     }
   }
 }
