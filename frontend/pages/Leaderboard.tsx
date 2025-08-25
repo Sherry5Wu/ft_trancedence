@@ -9,6 +9,7 @@ import MedalIcon from '../assets/noun-medal-6680492.svg?react';
 import { UserStats, LeaderboardStats, FetchedUserData } from '../utils/Interfaces';
 import { fetchUsers, fetchUserStats } from '../utils/Fetch';
 import { DEFAULT_AVATAR } from '../utils/constants';
+import { useRequestNewToken } from '../utils/Hooks';
 
 const LeaderboardPage = () => {
 	const { t, i18n } = useTranslation();
@@ -16,14 +17,16 @@ const LeaderboardPage = () => {
 	const { user } = useUserContext();
 	const [loading, setLoading] = useState(true);
 	const [leaderboardData, setLeaderboardData] = useState<LeaderboardStats[]>([]);
+	const requestNewToken = useRequestNewToken();
 
 	useEffect(() => {
 		const getLeaderboard = async () => {
 			setLoading(true);
 			try {
-				if (!user)
+				const token = await requestNewToken();
+				if (!user || !token)
 					return ;
-				const users: FetchedUserData[] = await fetchUsers();
+				const users: FetchedUserData[] = await fetchUsers(token);
 				const leaderboard: (LeaderboardStats | null)[] = await Promise.all (
 					users.map(async u => {
 						const userStats = await fetchUserStats(u.username);
