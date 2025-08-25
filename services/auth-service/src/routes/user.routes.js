@@ -158,7 +158,7 @@ export default fp(async (fastify) => {
    * @route   PATCH /users/me/password
    * @desc    Update current user password
    */
-  fastify.patch('/users/me/password', {
+  fastify.patch('/users/me/update-password', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
@@ -316,9 +316,8 @@ export default fp(async (fastify) => {
 
 
   /**
-   * @route   POST /users/me/upload-avatar
-   * @desc    Upload avatar image and update user's avatar URL in DB
-   * Accepts multipart/form-data with field name `avatar` (single file)
+   * @route   POST /users/verify-pincode
+   * @desc    Verify player's PIN code
    */
   fastify.post('/users/verify-pincode', {
     schema: {
@@ -328,8 +327,8 @@ export default fp(async (fastify) => {
         type: 'object',
         required: ['username', 'pinCode'], // Ask frontend want to send username or userId??
         properties: {
-          username: { type: 'string', pattern: '^[a-zA-Z][a-zA-Z0-9._-]{5,19}$' },
-          pinCode: { type: 'string', pattern: '^\\d{4}$' },
+          username: { type: 'string'},
+          pinCode: { type: 'string'},
         }
       },
       response: {
@@ -370,7 +369,7 @@ export default fp(async (fastify) => {
           }
         }
       }
-    }, async handler(rep, reply) {
+    }, async handler(req, reply) {
       const { username, pinCode } = req.body;
 
       const existingUser = await getUserByUsername(username);

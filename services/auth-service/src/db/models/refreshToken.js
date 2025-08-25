@@ -39,7 +39,7 @@ export default (sequelize) => {
     timestamps: true,
     indexes: [
       { fields: ['userId'] },
-      { fields: ['token'] }, // for quick lookup of token
+      { fields: ['tokenHash'] }, // for quick lookup of token
     ]
   });
 

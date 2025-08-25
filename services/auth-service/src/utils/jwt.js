@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 
 import { models } from '../db/index.js';
 import { InvalidCredentialsError } from './errors.js'
+import { hashToken } from './crypto.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
