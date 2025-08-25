@@ -16,7 +16,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
     const refresh = async () => {
         try {
-            const response = await fetch('/auth/refresh', {
+            const response = await fetch('as/auth/refresh', {
                 method: 'POST', 
                 credentials: 'include' //so that backend sends httpOnly refresh cookie
             });
