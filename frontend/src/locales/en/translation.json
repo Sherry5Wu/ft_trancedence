@@ -2,7 +2,10 @@
   "common": {
     "alerts": {
       "success": "Temporary success message!",
-      "failure": "Temporary failure message!"
+      "failure": {
+        "signIn": "Sign in failed. Please, check your username and password, and try again.",
+        "signUp": "Registration failed. Please try again."
+      }
     },
     "buttons": {
       "cancel": "CANCEL",
