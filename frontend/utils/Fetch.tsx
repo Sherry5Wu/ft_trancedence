@@ -365,27 +365,44 @@ export const fetchUsers = async (token: string | null) => {
 	}
 };
 
+export const verify2FA = async (tokenCode: string, accessToken: string) => {
+  try {
+    const response = await fetch("https://localhost:8443/as/auth/2fa/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ token: tokenCode }),
+    });
 
-export const disable2FA = async (token: string): Promise<boolean> => {
-	if (!token)
-		return false;
+    if (!response.ok) {
+      const errorBody = await response.json();
+      return { verified: false, ...errorBody };
+    }
 
-    try {
-        const response = await fetch('https://localhost:8443/as/auth/user/disable-2fa', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-            },
-        });
+    return await response.json();
+  } catch (err) {
+    console.error(err);
+    return { verified: false };
+  }
+};
 
-        if (!response.ok) {
-            throw new Error(`Failed to disable 2FA: ${response.statusText}`);
-        }
+export const disable2FA = async (accessToken: string): Promise<boolean> => {
+  if (!accessToken) return false;
 
-    return true;
-  } catch (error) {
-    console.error('Error disabling 2FA:', error);
+  try {
+    const response = await fetch('https://localhost:8443/as/auth/2fa', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return response.ok;
+  } catch (err) {
+    console.error('Error disabling 2FA:', err);
     return false;
   }
 };

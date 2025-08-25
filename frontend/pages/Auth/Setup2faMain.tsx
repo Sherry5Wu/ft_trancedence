@@ -8,10 +8,13 @@ import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
 import QRCodeGenerator from '../../components/QRCodeGenerator';
+import { useUserContext } from '../../context/UserContext';
+import { verify2FA } from '../../utils/Fetch';
 
 const Setup2faMainPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useUserContext();
   const [code, setCode] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [setupKey, setSetupKey] = useState<string | null>(null);
@@ -33,44 +36,53 @@ const Setup2faMainPage: React.FC = () => {
 
   //   fetch2FAData();
   // }, []);
+  
+  const accessToken = user?.accessToken;
+  console.log("Access token:", accessToken);
 
+  // Fetch QR code, secret, and backup codes
   useEffect(() => {
+    if (!accessToken) return;
+
     const fetch2FAData = async () => {
       try {
         const response = await fetch('https://localhost:8443/as/auth/2fa/setup', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include', // ensures cookie/JWT is sent
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
+
         if (!response.ok) throw new Error('Failed to setup 2FA');
+
         const data = await response.json();
         setQrCodeUrl(data.qrCode);
         setSetupKey(data.secret);
-        // store backup codes temporarily in localStorage to show in next step
+
+        // store backup codes temporarily
         localStorage.setItem('backupCodes', JSON.stringify(data.backupCodes));
       } catch (err) {
         console.error(err);
       }
     };
-    fetch2FAData();
-  }, []);
 
+    fetch2FAData();
+  }, [accessToken]);
+
+  // Verify 6-digit TOTP code
   const handleVerify = async () => {
-    try {
-      const response = await fetch('https://localhost:8443/as/auth/2fa/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ token: code }),
-      });
-      const data = await response.json();
-      if (data.verified) {
-        navigate('/setup2fa-backup');
-      } else {
-        alert('Invalid code, try again');
-      }
-    } catch (err) {
-      console.error(err);
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    const result = await verify2FA(code, accessToken);
+    if (result?.verified) {
+      navigate('/setup2fa-backup');
+    } else {
+      alert(t('pages.twoFactorAuth.setup.invalidCode'));
     }
   };
 
