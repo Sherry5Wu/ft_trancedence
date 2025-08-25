@@ -65,7 +65,7 @@ export default fp(async (fastify) => {
 
         // Store the refreshToken into DB
         try {
-          await storeRefreshToken(refreshToken, existingUser.id, ip, userAgent);
+          await storeRefreshTokenHash(refreshToken, existingUser.id, ip, userAgent);
         } catch (err) {
           // Treat persistence failure as a server error (do not continue)
           console.err('Falied to persist refresh token:', err);
