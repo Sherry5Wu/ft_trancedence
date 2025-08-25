@@ -9,6 +9,7 @@ import { GenericInput } from '../../components/GenericInput';
 import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 import { usePlayersContext } from '../../context/PlayersContext';
+import { loginRegisteredPlayer } from '../../utils/Fetch';
 
 const LogInPlayerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -32,25 +33,58 @@ const LogInPlayerPage: React.FC = () => {
     !usernameField.error &&
     !pinField.error;
 
+  // const handleSubmit = async () => {
+  //   try {
+  //     const response = await fakeFetchPlayer(usernameField.value, pinField.value);
+  //     // check if there is error on username + PIN code,
+  //     // invalid PIN or invalid username, or any?
+  //     const player = {
+  //       id: response.id,
+  //       username: response.username,
+  //       photo: response.photo,
+  //     };
+  //     // to remove existing player at same index
+  //     if (players.length > playerIndex) { 
+  //       removePlayer(players[playerIndex].id);
+  //     }
+
+  //     addPlayer(player);
+  //     navigate(returnTo);
+  //   } catch (err) {
+  //     alert(t('common.errors.invalidLogin'));
+  //   }
+  // };
+
+
   const handleSubmit = async () => {
     try {
-      const response = await fakeFetchPlayer(usernameField.value, pinField.value);
-      // check if there is error on username + PIN code,
-      // invalid PIN or invalid username, or any?
-      const player = {
-        id: response.id,
-        username: response.username,
-        photo: response.photo,
-      };
-      // to remove existing player at same index
-      if (players.length > playerIndex) { 
-        removePlayer(players[playerIndex].id);
+      const response = await loginRegisteredPlayer(usernameField.value, pinField.value);
+
+      if (!response.success || response.code !== "PIN_MATCHES") {
+        if (response.code === "USER_NOT_FOUND") {
+          alert(t("common.errors.userNotFound"));
+        } else if (response.code === "TOO_MANY_ATTEMPTS") {
+          alert(t("common.errors.tooManyAttempts"));
+        } else {
+          alert(t("common.errors.invalidLogin"));
+        }
+        return;
       }
 
+      const player = {
+        id: response.data?.userId || Date.now().toString(),
+        username: usernameField.value,
+        photo: `https://api.dicebear.com/6.x/initials/svg?seed=${usernameField.value}`, // update to player's picture
+      };
+
+      if (players.length > playerIndex) {
+        removePlayer(players[playerIndex].id);
+      }
       addPlayer(player);
+
       navigate(returnTo);
     } catch (err) {
-      alert(t('common.errors.invalidLogin'));
+      alert(t("common.errors.invalidLogin"));
     }
   };
 
@@ -105,11 +139,11 @@ const LogInPlayerPage: React.FC = () => {
 export default LogInPlayerPage;
 
 // Temporary fake fetch function (replace with actual API)
-const fakeFetchPlayer = async (username: string, pin: string) => {
-  await new Promise((r) => setTimeout(r, 500)); // simulate delay
-  return {
-    id: Date.now().toString(),
-    username,
-    photo: `https://api.dicebear.com/6.x/initials/svg?seed=${username}`,
-  };
-};
+// const fakeFetchPlayer = async (username: string, pin: string) => {
+//   await new Promise((r) => setTimeout(r, 500)); // simulate delay
+//   return {
+//     id: Date.now().toString(),
+//     username,
+//     photo: `https://api.dicebear.com/6.x/initials/svg?seed=${username}`,
+//   };
+// };
