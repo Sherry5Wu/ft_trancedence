@@ -26,13 +26,14 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
     const correctedData: ScoreHistory[] = [{id: 0, elo_score: 1000}, ...data];
     correctedData.sort((a, b) => a.id - b.id);
 	const differenceData = calculateDifference({ correctedData });
+	const indexedData = differenceData.map((data, index) => ({...data, index: index}))
     console.log('DATA');
     console.log(correctedData);
     console.log(differenceData);
 
     return (
         <ResponsiveContainer width="100%" aspect={1.5}>
-            <BarChart width={500} height={300} data={differenceData} >
+            <BarChart width={500} height={300} data={indexedData} >
                 <Tooltip cursor={false}/>
                 <CartesianGrid stroke='#aaa' strokeDasharray='3 3' />
                 <Bar dataKey='elo_score' barSize={20} stroke='black' strokeWidth={2} activeBar={<Rectangle fill="#FFEE8C" />}>
@@ -40,7 +41,7 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
                         <Cell key={`cell-${index}`} fill={entry.elo_score >= 0 ? '#2E6F40' : '#CD1C18'} />
                     ))}
                 </Bar>
-                <XAxis dataKey='id' />
+                <XAxis dataKey='index' />
                 <YAxis domain={['auto', 'auto']} />
                 <ReferenceLine y={0} stroke='black' strokeWidth={2}/>
             </BarChart>
