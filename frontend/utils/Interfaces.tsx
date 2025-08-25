@@ -122,6 +122,7 @@ export interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
     refresh: () => Promise<string | null>;
+	logOut: () => void;
 }
 
 export interface Players {

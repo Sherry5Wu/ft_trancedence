@@ -18,7 +18,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         try {
             const response = await fetch('https://localhost:8443/as/auth/refresh', {
                 method: 'POST',
-                credentials: 'include' //so that backend sends httpOnly refresh cookie
+                credentials: 'include'
             });
             if (!response.ok)
             {
@@ -43,12 +43,33 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+
+	const logOut = async () => {
+		try {
+			const response = await fetch('https://localhost:8443/as/auth/logout', {
+				method: 'POST',
+				credentials: 'include'
+			});
+
+			if (!response.ok)
+				throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		catch(error) {
+			console.log('Log out failed: ', error);
+		}
+		finally {
+			setUser(null);
+			console.log('LOGGING OUT');
+		}
+	}
+
 	useEffect(() => {
 		refresh();
+		
 	}, []);
 
     return (
-        <userContext.Provider value={{ user, setUser, refresh }}>
+        <userContext.Provider value={{ user, setUser, refresh, logOut }}>
             {children}
         </userContext.Provider>
     )
