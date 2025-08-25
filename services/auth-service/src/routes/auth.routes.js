@@ -12,7 +12,7 @@ import {
 } from '../services/jwt.service.js';
 import { InvalidCredentialsError, ValidationError, ConflictError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
-import { setAuthCookie, clearAuthCookie } from '../utils/authCookie.js';
+import { setRefreshTokenCookie, clearRefreshTokenCookie } from '../utils/authCookie.js';
 
 export default fp(async (fastify) => {
   /**
@@ -94,8 +94,8 @@ export default fp(async (fastify) => {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
+            accessToken: { type: 'string' },
             user: { $ref: 'publicUser#' },
-            TwoFAStatus: { type: 'boolean', description: 'Whether 2FA is enabled and confirmed' },
           }
         },
         400: { description:'Bad Request', $ref: 'errorResponse#' },
@@ -109,16 +109,13 @@ export default fp(async (fastify) => {
         req.body.identifier,
         req.body.password
       );
-      const TwoFAStatus = user.is2FAEnabled && user.is2FAConfirmed;
 
-      setAuthCookie(reply, accessToken, true); // accessToken cookie
-      setAuthCookie(reply, refreshToken, false); // refreshToken cookie
-
-      reply.send({ success: true, user, TwoFAStatus });
+      setRefreshTokenCookie(reply, refreshToken); // refreshToken cookie
+      reply.send({ success: true,accessToken, user});
       // return { accessToken, refreshToken, user, TwoFAStatus };
     } catch (err) {
-      if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad request', err.message);
-      if (err instanceof NotFoundError) sendError(reply, 404, 'Not found', err.message);
+      if (err instanceof InvalidCredentialsError) return sendError(reply, 400, 'Bad request', err.message);
+      if (err instanceof NotFoundError) return sendError(reply, 404, 'Not found', err.message);
       return sendError(reply, err.statusCode || 500, err.name || 'Internal Server Error', err.message);
     }
   });
@@ -154,11 +151,9 @@ export default fp(async (fastify) => {
         { ipAddress: req.ip, userAgent: req.headers['user-agent'] }
       );
 
-      // Set cookies for both tokens
-      setAuthCookie(reply, accessToken, true);
-      setAuthCookie(reply, newRefreshToken, false);
+      setRefreshTokenCookie(reply, newRefreshToken);
 
-      return reply.send({ success: true });
+      return reply.send({ success: true, accessToken });
     } catch (err) {
       // rotateTokens should throw for invalid/expired refresh token
       return sendError(reply, 401, 'Unauthorized', err.message);
@@ -188,8 +183,7 @@ export default fp(async (fastify) => {
     }
 
     // Clear both access and refresh cookies
-    clearAuthCookie(reply, true);  // clear __Host-accessToken
-    clearAuthCookie(reply, false); // clear __Host-refreshToken
+    clearRefreshTokenCookie(reply, false); // clear __Host-refreshToken
 
     return reply.code(204).send();
   } catch (err) {

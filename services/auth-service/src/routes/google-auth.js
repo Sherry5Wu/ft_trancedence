@@ -5,6 +5,7 @@ import { generateAccessToken, storeRefreshTokenHash } from '../utils/jwt.js';
 import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
+import { setRefreshTokenCookie } from '../utils/authCookie.js';
 
 const { User } = models;
 
@@ -29,7 +30,6 @@ export default fp(async (fastify) => {
             accessToken: { type: 'string' },
             refreshToken: { type: 'string' },
             user: { $ref: 'publicUser#' },
-            TwoFAStatus: { type: 'boolean' },
             message: { type: 'string' } // for error-like responses
           },
           additionalProperties: true  // <-- optional, but helpful during dev
@@ -72,12 +72,11 @@ export default fp(async (fastify) => {
           return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
         }
 
-        // checking the 2FA status
-        const TwoFAStatus = user.is2FAEnabled && user.is2FAConfirmed;
-
         console.log('existingUer-again:', user); // for testing only
         // return to frontend
-        return reply.code(200).send({ accessToken, refreshToken, user, TwoFAStatus });
+
+        setRefreshTokenCookie(reply, refreshToken);
+        return reply.code(200).send({ accessToken, user, });
       }
 
       // 4b. Not registered by gogole -> check if email already exists

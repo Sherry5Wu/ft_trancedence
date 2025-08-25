@@ -61,10 +61,10 @@ export default fp(async (fastify) => {
           description: 'User profile retrieved successfully',
           allOf: [ // capital 'O'
             { $ref: 'publicUser#' },
-            {
-              type: 'object',
-              properties: { is2FAEnabled: { type: 'boolean' } }
-            }
+            // {
+            //   type: 'object',
+            //   properties: { is2FAEnabled: { type: 'boolean' } }
+            // }
           ],
         },
         401: {
@@ -151,7 +151,7 @@ export default fp(async (fastify) => {
         message: `User with id ${req.params.id} does not exist`
       });
     }
-    return user; // only return id, username, avatarUrl
+    return user;
   });
 
   /**
