@@ -2,7 +2,7 @@ import React, { useRef, useState, Suspense, useMemo, useEffect } from 'react';
 import { usePlayersContext } from '../../context/PlayersContext'
 import { useUserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { postMatchHistory, postTournamentHistory, formatHMS } from './postresulttest';
+import { postMatchHistory, postTournamentHistory, formatHMS, TournamentPayload } from './postresulttest';
 import KeyBindingsPanel, { KeyBindings, loadBindings, labelForCode } from './KeyBindings';
 import { useTranslation } from 'react-i18next';
 
@@ -126,6 +126,7 @@ export default function GamePage() {
   const [startAt, setStartAt] = useState<Date | null>(null);
   const matchSnapshot = useRef<{ p1: Player; p2: Player; startedAt: Date } | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const pendingTournamentEntries = useRef<TournamentPayload[]>([]);
 
   const { t } = useTranslation();
 
@@ -213,6 +214,7 @@ export default function GamePage() {
     setMatchIdx(0);
     setRoundNum(1);
     setPhase('prematch');
+    pendingTournamentEntries.current = [];
   }, [isTournament, entrants]);
 
   const p1Name = isTournament
@@ -293,45 +295,53 @@ export default function GamePage() {
       if (submitted) { afterSubmitUI(); return; }
 
       try {
-        // Single match history payload, only P1 perspective is posted for fetch logic
-        const payloadP1 = buildPayload(p1, p2, s1, s2, durationStr, played_at_iso);
-        await Promise.all([
-          postMatchHistory(payloadP1, user?.accessToken),
-        ]);
-
-        // Tournament history payload
+        // Regular match: post history from player 1 perspective
+        if (!isTournament) {
+          const payloadP1 = buildPayload(p1, p2, s1, s2, durationStr, played_at_iso);
+          await postMatchHistory(payloadP1, user?.accessToken);
+        }
+      
+        // Tournament: Accumulate entries to push at the end
         if (isTournament) {
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
             const stage_number = stageForPosting(roundNum, bracketSize || entrants.length || 2);
             const resultP1: 'win' | 'loss' | 'draw' = s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
 
-            await postTournamentHistory({
+            const entry: TournamentPayload = {
               tournament_id,
               stage_number,
               match_number: matchIdx + 1,
               player_name: p1.username,
               opponent_name: p2.username,
               result: resultP1,
-            });
+            };
+
+            pendingTournamentEntries.current.push(entry);
+            const token = user?.accessToken;
+            if (token) {
+              await postTournamentHistory(pendingTournamentEntries.current, token);
+              pendingTournamentEntries.current = [];
+            } else {
+              console.warn('No access token available — bulk tournament post skipped.');
+            }
           }
         }
-
+      
         setSubmitted(true);
         afterSubmitUI();
       } catch (err) {
+        console.error(err);
         if (!isTournament) {
           setPostResult({ winner: winnerName, s1, s2 });
           setPhase('post');
         }
       } finally {
-        // clear snapshot so it can't accidentally leak to the next match
         matchSnapshot.current = null;
       }
     }
-
     await submitAll();
-  };
+  }
 
   const handlePlayAgain = () => {
     // Return to options and remove the game from the background for a clean start option
@@ -349,7 +359,7 @@ export default function GamePage() {
           <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center space-y-4">
-                <h2 className="text-2xl font-bold mb-2">Game</h2>
+                <h2 className="text-2xl font-bold mb-2">{t('game.title')}</h2>
                 <button
                   onClick={handleStart}
                   className="w-full px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500"
@@ -379,20 +389,20 @@ export default function GamePage() {
                     onClick={cancelOptions}
                     className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm"
                   >
-                    Cancel
+                    {t('game.cancel')}
                   </button>
-                  <h2 className="text-xl font-semibold">Match Options</h2>
+                  <h2 className="text-xl font-semibold">{t('game.options.title')}</h2>
                   <button
                     onClick={confirmOptions}
                     className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm"
                   >
-                    Confirm
+                    {t('game.confirm')}
                   </button>
                 </div>
       
                 {/* Speed settings */}
                 <fieldset className="mb-6">
-                  <legend className="block text-sm text-neutral-300 mb-2">Base Ball Speed</legend>
+                  <legend className="block text-sm text-neutral-300 mb-2">{t('game.options.ballSpeed.subtitle')}</legend>
                   <div className="grid grid-cols-3 gap-2">
                     {(['slow','medium','fast'] as SpeedPreset[]).map(opt => (
                       <label key={opt} className="flex items-center gap-2 rounded-lg bg-neutral-800 p-2 cursor-pointer">
@@ -403,7 +413,7 @@ export default function GamePage() {
                           checked={draftSpeedPreset === opt}
                           onChange={() => setDraftSpeedPreset(opt)}
                         />
-                        <span className="capitalize">{opt}</span>
+                        <span>{t(`game.speed.${opt}`)}</span>
                       </label>
                     ))}
                   </div>
@@ -411,29 +421,29 @@ export default function GamePage() {
                   
                 {/* Win mode */}
                 <label className="block mb-6">
-                  <span className="block text-sm text-neutral-300 mb-1">Win Condition</span>
+                  <span className="block text-sm text-neutral-300 mb-1">{t('game.options.winCondition.subtitle')}</span>
                   <select
                     className="w-full rounded-lg bg-neutral-800 p-2"
                     value={draftWinMode}
                     onChange={(e) => setDraftWinMode(e.target.value as WinMode)}
                   >
-                    <option value="bo5">Best of 5</option>
-                    <option value="bo9">Best of 9</option>
-                    <option value="bo19">Best of 19</option>
+                    <option value="bo5">{t('game.options.winCondition.bestOf5')}</option>
+                    <option value="bo9">{t('game.options.winCondition.bestOf9')}</option>
+                    <option value="bo19">{t('game.options.winCondition.bestOf19')}</option>
                   </select>
                 </label>
                   
                 {/* Map selection */}
                 <label className="block mb-6">
-                  <span className="block text-sm text-neutral-300 mb-1">Map</span>
+                  <span className="block text-sm text-neutral-300 mb-1">{t('game.options.map.subtitle')}</span>
                   <select
                     className="w-full rounded-lg bg-neutral-800 p-2 text-neutral-100"
                     value={draftMapKey}
                     onChange={(e) => setDraftMapKey(e.target.value as MapKey)}
                   >
-                    <option value="default">Default</option>
-                    <option value="large">Large</option>
-                    <option value="obstacles">Obstacles</option>
+                    <option value="default">{t('game.options.map.default')}</option>
+                    <option value="large">{t('game.options.map.large')}</option>
+                    <option value="obstacles">{t('game.options.map.obstacles')}</option>
                   </select>
                 </label>
                   
@@ -454,16 +464,16 @@ export default function GamePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
                 <div className="text-sm opacity-70 mb-2">
-                  Round {roundNum} • Match {matchIdx + 1} / {pairs.length}
+                  {t('game.tournament.round')} {roundNum} {t('game.tournament.match')} {matchIdx + 1} / {pairs.length}
                 </div>
-                <h2 className="text-2xl font-bold mb-6">Next Match</h2>
+                <h2 className="text-2xl font-bold mb-6">{t('game.tournament.nextMatch')}</h2>
                 <div className="text-xl font-semibold mb-6">
-                  {currentPair[0].username} <span className="opacity-70">vs</span> {currentPair[1].username}
+                  {currentPair[0].username} <span className="opacity-70">{t('game.tournament.vs')}</span> {currentPair[1].username}
                 </div>
 
                 {upcomingPair && (
                   <div className="text-xs opacity-70 mb-6">
-                    Up next: {upcomingPair[0].username} vs {upcomingPair[1].username}
+                    {t('game.tournament.upNext')} {upcomingPair[0].username} {t('game.tournament.vs')} {upcomingPair[1].username}
                   </div>
                 )}
 
@@ -471,7 +481,7 @@ export default function GamePage() {
                   onClick={handleStart}
                   className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                 >
-                  Start Match
+                  {t('game.startMatch')}
                 </button>
               </div>
             </div>
@@ -481,7 +491,7 @@ export default function GamePage() {
         {/* Game Container */}
         {(phase === 'playing') && (
           <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
-            <Suspense fallback={<div className="absolute inset-0 grid place-items-center">Loading game…</div>}>
+            <Suspense fallback={<div className="absolute inset-0 grid place-items-center">{t('game.loading')}</div>}>
               <GameCanvas
                 canvasRef={canvasRef}
                 playerNames={[p1Name, p2Name]}
@@ -507,7 +517,7 @@ export default function GamePage() {
               id="startPrompt"
               className="absolute top-1/3 left-1/2 transform -translate-x-1/2 text-white font-sans text-lg z-10 pointer-events-none"
             >
-              Press Space to start
+              {t('game.pauseMenu.start')}
             </div>
             <div
               id="scoreBoard"
@@ -524,8 +534,8 @@ export default function GamePage() {
               style={{ visibility: 'hidden' }}
               className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-white font-sans z-20 pointer-events-none"
             >
-              <div className="text-4xl font-bold mb-2">Game Paused</div>
-              <div className="text-base opacity-75">Press Space to continue</div>
+              <div className="text-4xl font-bold mb-2">{t('game.pauseMenu.title')}</div>
+              <div className="text-base opacity-75">{t('game.pauseMenu.pause')}</div>
             </div>
           </div>
         )}
@@ -535,16 +545,16 @@ export default function GamePage() {
           <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
-                <h2 className="text-2xl font-bold mb-2">Match Over</h2>
-                <div className="text-lg mb-1">Winner: <span className="font-semibold">{postResult.winner}</span></div>
+                <h2 className="text-2xl font-bold mb-2">{t('game.match.end')}</h2>
+                <div className="text-lg mb-1">{t('game.match.winner')} <span className="font-semibold">{postResult.winner}</span></div>
                 <div className="text-sm opacity-80 mb-6">
-                  Final Score: {postResult.s1} – {postResult.s2}
+                  {t('game.match.finalScore')} {postResult.s1} – {postResult.s2}
                 </div>
                 <button
                   onClick={handlePlayAgain}
                   className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                 >
-                  Play again
+                  {t('game.match.playAgain')}
                 </button>
 
                 <button
@@ -558,7 +568,7 @@ export default function GamePage() {
                   }}
                   className="block mx-auto mt-3 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                 >
-                  Exit
+                  {t('game.exit')}
                 </button>
               </div>
             </div>
@@ -570,9 +580,9 @@ export default function GamePage() {
           <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
-                <h2 className="text-3xl font-bold mb-4">Tournament Complete</h2>
+                <h2 className="text-3xl font-bold mb-4">{t('game.tournament.complete')}</h2>
                 <div className="text-lg opacity-80 mb-6">
-                  Tournament Champion:&nbsp;
+                  {t('game.tournament.champion')}&nbsp;
                   <span className="font-semibold">
                     {[...carryToNextRound, ...winnersThisRound][0]?.username || '—'}
                   </span>
@@ -588,7 +598,7 @@ export default function GamePage() {
                     className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700"
                     aria-label="Exit to tournaments"
                   >
-                    Exit
+                    {t('game.exit')}
                   </button>
                 </div>
               </div>
@@ -603,7 +613,7 @@ export default function GamePage() {
               <div className="font-medium mb-1">{p1Name}</div>
               <ul className="space-y-1">
                 <li>
-                  Move:&nbsp;
+                  {t('game.controls.move')}&nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p1.up)}
                   </kbd>
@@ -613,7 +623,7 @@ export default function GamePage() {
                   </kbd>
                 </li>
                 <li>
-                  Boost:&nbsp;
+                  {t('game.controls.boost')}&nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p1.boost)}
                   </kbd>
@@ -625,7 +635,7 @@ export default function GamePage() {
               <div className="font-medium mb-1">{p2Name}</div>
               <ul className="space-y-1">
                 <li>
-                  Move:&nbsp;
+                  {t('game.controls.move')}&nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p2.up)}
                   </kbd>
@@ -635,7 +645,7 @@ export default function GamePage() {
                   </kbd>
                 </li>
                 <li>
-                  Boost:&nbsp;
+                  {t('game.controls.boost')}&nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p2.boost)}
                   </kbd>
