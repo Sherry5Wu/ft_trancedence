@@ -21,6 +21,7 @@ import {
   TokenRevokedError,
   NotFoundError,
 } from '../utils/errors.js';
+import { hashToken, compareToken } from '../utils/crypto.js';
 
 const { RefreshToken } = models;
 
@@ -41,9 +42,11 @@ async function createTokens(payload, { ipAddress = null, userAgent = null } = {}
   const decoded = decodeToken(refreshToken);
   const expiresAt = decoded && decoded.exp ? new Date(decoded.exp * 1000) : null;
 
+  const tokenHash = hashToken(refreshToken);
+
   // persist refresh token in DB
   await RefreshToken.create({
-    token: refreshToken,
+    tokenHash,
     userId: payload.id,
     expiresAt,
     ipAddress,
@@ -75,7 +78,7 @@ function validateAccessToken(token) {
  * @throws {TokenExpiredError|TokenRevokedError|NotFoundError}
  */
 async function validateRefreshToken(token) {
-  // verify signature
+  // verify signature (JWT check)
   let decoded;
   try {
     decoded = verifyRefreshToken(token);
@@ -84,15 +87,21 @@ async function validateRefreshToken(token) {
     throw error;
   }
 
-  // find stored token
-  const stored = await RefreshToken.findOne({ where: { token } });
+  // hash incoming token before lookup
+  const tokenHash = hashToken(token);
+  const stored = await RefreshToken.findOne({ where: { tokenHash } });
   if (!stored) throw new NotFoundError('Refresh token not found');
 
-  // check revoked
+  // revoked?
   if (stored.revokedAt) throw new TokenRevokedError();
 
-  // check expiration
+  // expired?
   if (stored.expiresAt && stored.expiresAt < new Date()) throw new TokenExpiredError();
+
+  // optional: timing safe compare (extra hardening, even though DB lookup is already by hash)
+  if (!compareToken(token, stored.tokenHash)) {
+    throw new NotFoundError('Refresh token mismatch');
+  }
 
   return decoded;
 }
@@ -104,30 +113,41 @@ async function validateRefreshToken(token) {
  * @returns {Promise<{ accessToken: string, refreshToken: string }>}
  */
 async function rotateTokens(token, meta = {}) {
-  // validate old token
+  // validate old
   const decoded = await validateRefreshToken(token);
 
-  // revoke old token
+  // revoke old
+  const oldHash = hashToken(token);
   await RefreshToken.update(
     { revokedAt: new Date(), replacedByToken: 'rotating' },
-    { where: { token } },
+    { where: { tokenHash: oldHash } }
   );
 
-  // create new tokens
+  // issue new tokens
   const payload = {
     id: decoded.id,
-    // email: decoded.email,
     username: decoded.username,
     is2FAEnabled: decoded.is2FAEnabled,
   };
-
   const { accessToken, refreshToken } = await createTokens(payload, meta);
 
-  // update replacedBytoken reference
+  // save new refresh token (hashed)
+  const newHash = hashToken(refreshToken);
+  await RefreshToken.create({
+    userId: decoded.id,
+    tokenHash: newHash,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // example: 7 days
+    createdByIp: meta.ipAddress || null,
+    userAgent: meta.userAgent || null,
+    replacedByToken: null,
+  });
+
+  // update replacedBy reference for old one
   await RefreshToken.update(
-    { replacedByToken: refreshToken },
-    { where: { token } }
+    { replacedByToken: newHash },
+    { where: { tokenHash: oldHash } }
   );
+
   return { accessToken, refreshToken };
 }
 
@@ -137,7 +157,8 @@ async function rotateTokens(token, meta = {}) {
  * @returns {Promise<void>}
  */
 async function revokeRefreshToken(token) {
-  const stored = await RefreshToken.findOne({ where: { token } });
+  const tokenHash = hashToken(token);
+  const stored = await RefreshToken.findOne({ where: { tokenHash } });
   if (!stored) return;
   await stored.update({ revokedAt: new Date() });
 }

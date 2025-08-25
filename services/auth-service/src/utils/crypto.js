@@ -20,6 +20,16 @@ function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
 
+// Compare tokens
+function compareToken(rawToken, hashedToken) {
+  if (!rawToken || !hashedToken) throw new InvalidCredentialsError('Missing rawToken or hashedToken');
+  const hashedRaw = hashToken(rawToken);
+  // use a timing-safe comparison to prevent timing attacks
+  return crypto.timingSafeEqual(
+    Buffer.from(hashedRaw),
+    Buffer.from(hashedToken)
+  );
+}
 
 /**
  * AES-256-GCM encryption / decryption for TOTP secret
@@ -70,4 +80,5 @@ export {
   encryptSecret,
   decryptSecret,
   hashToken,
+  compareToken,
 };

@@ -202,41 +202,41 @@ export default fp(async (fastify) => {
 
 
   // ---------------- Verify Token ----------------
-  // fastify.post('/auth/verify-token', {
-  //   schema: {
-  //     tags: ['Auth'],
-  //     summary: 'Verify access token',
-  //     description: `
-  //       Validates JWT token for other microservices.
-  //       Returns basic user info if token is valid.
-  //     `,
-  //     headers: {
-  //       type: 'object',
-  //       required: ['authorization'],
-  //       properties: { authorization: { type: 'string', description: 'Bearer token' } }
-  //     },
-  //     response: {
-  //       200: {
-  //         description: 'User info from valid token',
-  //         type: 'object',
-  //         properties: {
-  //           id: { type: 'string' },
-  //           username: { type: 'string' },
-  //           email: { type: 'string' },
-  //           role: { type: 'string' }
-  //         }
-  //       },
-  //       401: { $ref: 'errorResponse#' },
-  //       500: { $ref: 'errorResponse#' },
-  //     }
-  //   }
-  // }, async (req, reply) => {
-  //   await fastify.authenticate(req, reply);
-  //   return {
-  //     id: req.user.id,
-  //     username: req.user.username,
-  //     email: req.user.email,
-  //     role: req.user.role || 'user'
-  //   };
-  // });
+  fastify.post('/auth/verify-token', {
+    schema: {
+      tags: ['Auth'],
+      summary: 'Verify access token',
+      description: `
+        Validates JWT token for other microservices.
+        Returns basic user info if token is valid.
+      `,
+      headers: {
+        type: 'object',
+        required: ['authorization'],
+        properties: { authorization: { type: 'string', description: 'Bearer token' } }
+      },
+      response: {
+        200: {
+          description: 'User info from valid token',
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            username: { type: 'string' },
+            email: { type: 'string' },
+            role: { type: 'string' }
+          }
+        },
+        401: { $ref: 'errorResponse#' },
+        500: { $ref: 'errorResponse#' },
+      }
+    }
+  }, async (req, reply) => {
+    await fastify.authenticate(req, reply);
+    return {
+      id: req.user.id,
+      username: req.user.username,
+      email: req.user.email,
+      role: req.user.role || 'user'
+    };
+  });
 });
