@@ -564,15 +564,17 @@
     },
     "controls": {
       "title": "Controls",
-      "move": "Move: ",
+      "move": "Move",
       "up": "Up",
       "down": "Down",
-      "boost": "Boost: ",
+      "boost": "Boost",
       "shield": "Shield",
       "reset": "Reset to defaults",
-      "resetAll": "Reset all player to default controls",
+      "resetAll": "Reset all players to default controls",
       "swap": "Swap controls",
-      "conflict": "Conflicts detected: "
+      "conflict": "Conflicts detected: ",
+      "pressAnyKey": "press any key",
+      "rebind": "rebind"
     },
     "pauseMenu": {
       "title": "Game Paused",

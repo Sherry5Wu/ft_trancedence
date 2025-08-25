@@ -111,7 +111,7 @@ export interface User {
     score: number;
     rank: number;
     rivals: RivalData[];
-    accessToken: string;
+    accessToken: string | null;
     expiry: number;
     // refreshToken: string;
     twoFA: boolean;

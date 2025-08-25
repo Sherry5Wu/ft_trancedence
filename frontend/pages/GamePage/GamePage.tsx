@@ -107,7 +107,7 @@ export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
   const [bindings, setBindings] = useState<KeyBindings>(() => loadBindings());
-  const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle, resetPlayers } = usePlayersContext();
+  const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle, resetPlayers, setIsTournament } = usePlayersContext();
   const [mapKey, setMapKey] = useState<MapKey>('default');
 
   // Options
@@ -413,7 +413,7 @@ export default function GamePage() {
                           checked={draftSpeedPreset === opt}
                           onChange={() => setDraftSpeedPreset(opt)}
                         />
-                        <span>{t(`game.speed.${opt}`)}</span>
+                        <span>{t(`game.options.ballSpeed.speed.${opt}`)}</span>
                       </label>
                     ))}
                   </div>
@@ -593,9 +593,10 @@ export default function GamePage() {
                   <button
                     onClick={() => {
                       resetPlayers();
+                      setIsTournament(false);
                       navigate('/tournaments');
                     }}
-                    className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700"
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                     aria-label="Exit to tournaments"
                   >
                     {t('game.exit')}
@@ -613,7 +614,7 @@ export default function GamePage() {
               <div className="font-medium mb-1">{p1Name}</div>
               <ul className="space-y-1">
                 <li>
-                  {t('game.controls.move')}&nbsp;
+                  {t('game.controls.move')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p1.up)}
                   </kbd>
@@ -623,7 +624,7 @@ export default function GamePage() {
                   </kbd>
                 </li>
                 <li>
-                  {t('game.controls.boost')}&nbsp;
+                  {t('game.controls.boost')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p1.boost)}
                   </kbd>
@@ -635,7 +636,7 @@ export default function GamePage() {
               <div className="font-medium mb-1">{p2Name}</div>
               <ul className="space-y-1">
                 <li>
-                  {t('game.controls.move')}&nbsp;
+                  {t('game.controls.move')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p2.up)}
                   </kbd>
@@ -645,7 +646,7 @@ export default function GamePage() {
                   </kbd>
                 </li>
                 <li>
-                  {t('game.controls.boost')}&nbsp;
+                  {t('game.controls.boost')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p2.boost)}
                   </kbd>

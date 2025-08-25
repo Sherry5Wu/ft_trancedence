@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type Action = 'up' | 'down' | 'boost' | 'shield';
 export type PlayerId = 'p1' | 'p2';
@@ -71,6 +72,7 @@ export default function KeyBindingsPanel({
 }: KeyBindingsPanelProps) {
   const [capture, setCapture] = useState<{ player: PlayerId; action: Action } | null>(null);
   const conflicts = useMemo(() => findConflicts(value), [value]);
+  const { t } = useTranslation();
 
   // Capture next keydown as the binding
   useEffect(() => {
@@ -132,7 +134,9 @@ export default function KeyBindingsPanel({
               : 'border-white/10 text-neutral-200'
           }`}
         >
-          {capture?.player === pid && capture?.action === act ? 'Press any key…' : 'Rebind'}
+          {capture?.player === pid && capture?.action === act
+            ? t('game.controls.pressAnyKey')
+            : t('game.controls.rebind')}
         </button>
       </div>
     </div>
@@ -140,7 +144,7 @@ export default function KeyBindingsPanel({
 
   return (
     <div className={`mb-6 ${className}`}>
-      <div className="block text-sm text-neutral-300 mb-2">Controls</div>
+      <div className="block text-sm text-neutral-300 mb-2">{t('game.controls.title')}</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Player 1 */}
         <div className="rounded-lg bg-neutral-800 p-3">
@@ -149,7 +153,7 @@ export default function KeyBindingsPanel({
             <Row key={`p1-${act}`} pid="p1" act={act} />
           ))}
           <button type="button" className="mt-3 text-xs underline" onClick={() => resetP('p1')}>
-            Reset P1 to defaults
+            {t('game.controls.reset')}
           </button>
         </div>
         {/* Player 2 */}
@@ -159,23 +163,23 @@ export default function KeyBindingsPanel({
             <Row key={`p2-${act}`} pid="p2" act={act} />
           ))}
           <button type="button" className="mt-3 text-xs underline" onClick={() => resetP('p2')}>
-            Reset P2 to defaults
+            {t('game.controls.reset')}
           </button>
         </div>
       </div>
 
       {conflicts.length > 0 && (
         <div className="mt-2 text-xs text-amber-400">
-          Conflicts detected: {conflicts.join(', ')}
+          {t('game.controls.conflict')} {conflicts.join(', ')}
         </div>
       )}
 
       <div className="mt-2 flex gap-3">
         <button type="button" className="text-xs underline" onClick={resetAll}>
-          Reset all to defaults
+          {t('game.controls.resetAll')}
         </button>
         <button type="button" className="text-xs underline" onClick={swapBoth}>
-          Swap P1/P2
+          {t('game.controls.swap')}
         </button>
       </div>
     </div>
