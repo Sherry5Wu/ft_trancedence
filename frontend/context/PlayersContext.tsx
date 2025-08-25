@@ -1,32 +1,7 @@
 // context/PlayersContext.tsx
 
 import { createContext, useContext, useState, ReactNode } from "react";
-
-interface Players {
-  id: string;
-  username: string;
-  photo: string;
-}
-
-interface PlayersContextType {
-  players: Players[];
-  tournamentTitle?: string;
-  totalPlayers?: number;
-
-  isTournament: boolean;
-  setIsTournament: (v: boolean) => void;
-
-  setTitle: (newTitle: string) => void;
-  setTotalPlayers: (n: number) => void;
-
-  addPlayer: (player: Players) => void;
-  setPlayer: (index: number, player: Players) => void;
-  removePlayer: (id: string) => void;
-  setPlayerUsername: (id: string, newUsername: string) => void;
-
-  resetPlayers: () => void;
-  resetPlayerListOnly: () => void;
-}
+import { Players, PlayersContextType } from "../utils/Interfaces";
 
 const PlayersContext = createContext<PlayersContextType | undefined>(undefined);
 

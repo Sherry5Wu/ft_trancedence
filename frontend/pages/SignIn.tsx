@@ -41,7 +41,7 @@ return (
         text={t('pages.signIn.aria.description')}
       />
 
-      <div className="flex flex-col justify-center p-8">
+      <div className="flex flex-col justify-center p-8 w-[270px]">
         <h2 id="pageTitle" className="font-semibold text-center">
           {t('pages.signIn.title')}
         </h2>
@@ -90,6 +90,7 @@ return (
                 rivals: signInData.rivals,
                 accessToken: signInData.data.accessToken,
                 refreshToken: signInData.data.refreshToken,
+                expiry: Date.now() + 15 * 60 * 1000,
                 twoFA: signInData.data.twoFA,
               });
               navigate(`/user/${usernameField.value}`)

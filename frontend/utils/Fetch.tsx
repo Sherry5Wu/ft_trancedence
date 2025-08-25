@@ -1,3 +1,5 @@
+import { RefreshCcw } from "lucide-react";
+import { useUserContext} from '../context/UserContext';
 import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, FetchedUserData, UserGoogleProfileData, GoogleCompleteResponse } from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
@@ -147,7 +149,10 @@ export const signInGoogleUser = async (idToken: string) => {
 	}
 };
 
-export const updateProfilePic = async (file: File, accessToken: string) => {
+export const updateProfilePic = async (file: File, token: string | null) => {
+	if (!token)
+		return ;
+
 	try {
 		const formData = new FormData();
 		formData.append('avatar', file);
@@ -155,7 +160,7 @@ export const updateProfilePic = async (file: File, accessToken: string) => {
 		const response = await fetch('https://localhost:8443/as/users/me/upload-avatar', {
 			method: 'POST',
 			headers: {
-				'Authorization': `Bearer ${accessToken}`,
+				'Authorization': `Bearer ${token}`,
 			}, 
 			body: formData,
 		})
@@ -198,7 +203,10 @@ export const fetchRivalData = async (username: string) => {
   }
 };
 
-export const addRival = async (rivalName: string, accessToken: string) => {
+export const addRival = async (rivalName: string, token: string | null) => {
+	if (!token)
+		return ;
+
 	const data = {
 		rival_username: rivalName
 	};
@@ -208,7 +216,7 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${accessToken}`,
+				'Authorization': `Bearer ${token}`,
 			},
 			body: JSON.stringify(data),
 		});
@@ -226,12 +234,15 @@ export const addRival = async (rivalName: string, accessToken: string) => {
 	}
 };
 
-export const removeRival = async (rivalName: string, accessToken: string) => {
+export const removeRival = async (rivalName: string, token: string | null) => {
+	if (!token)
+		return ;
+
 	try {
 		const response = await fetch(`https://localhost:8443/stats/rivals/username/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
-				'Authorization': `Bearer ${accessToken}`,
+				'Authorization': `Bearer ${token}`,
 			},
 		});
 
@@ -275,7 +286,7 @@ export const fetchScoreHistory = async (username: string): Promise<ScoreHistory[
 export const fetchUserStats = async (username: string): Promise<UserStats | null> => {
 	try {
 		const response = await fetch(`https://localhost:8443/stats/user_match_data/username/${username}`, {
-		method: 'GET'
+		    method: 'GET'
 		});
 
 		if (!response.ok)
@@ -315,15 +326,16 @@ export const fetchMatchData = async (username: string): Promise<MatchData [] | n
     }
 };
 
-export const fetchUsers = async (accessToken: string): Promise<FetchedUserData []> => {
-    //   const rivalData = ['B2', 'Coco', 'Winston', 'B3', 'Frank', 'Snickers', 'Rad', 'Bluey', 'Chili', 'Cornelius'];
-    //   return rivalData.sort();
+export const fetchUsers = async (token: string | null) => {
+	if (!token)
+		return ;
+
 	try {
 		const response = await fetch(`https://localhost:8443/as/users/all`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
-				"Authorization": `Bearer ${accessToken}`,
+				"Authorization": `Bearer ${token}`,
 			},
 		});
 		
@@ -344,25 +356,27 @@ export const fetchUsers = async (accessToken: string): Promise<FetchedUserData [
 };
 
 
-export const disable2FA = async (accessToken?: string): Promise<boolean> => {
-  if (!accessToken) return false;
+export const disable2FA = async (token: string): Promise<boolean> => {
+	if (!token)
+		return false;
 
-  try {
-    const response = await fetch('https://localhost:8443/as/auth/user/disable-2fa', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    try {
+        const response = await fetch('https://localhost:8443/as/auth/user/disable-2fa', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            },
+        });
 
-    if (!response.ok) {
-      throw new Error(`Failed to disable 2FA: ${response.statusText}`);
+        if (!response.ok) {
+            throw new Error(`Failed to disable 2FA: ${response.statusText}`);
+        }
+
+        return true;
+    } 
+    catch (error) {
+        console.error('Error disabling 2FA:', error);
+        return false;
     }
-
-    return true;
-  } catch (error) {
-    console.error('Error disabling 2FA:', error);
-    return false;
-  }
 };

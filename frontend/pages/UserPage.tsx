@@ -6,6 +6,7 @@ import { useUserContext } from '../context/UserContext';
 import { Stats } from '../components/Stats';
 import { fetchUserStats, fetchScoreHistory, addRival, removeRival, fetchUsers } from '../utils/Fetch';
 import { UserStats, ScoreHistory, FetchedUserData } from '../utils/Interfaces';
+import { useRequestNewToken } from '../utils/Hooks';
 import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
 import TournamentIcon from '../assets/noun-tournament-7157459.svg';
 import RivalsIcon from '../assets/noun-battle-7526810.svg';
@@ -25,6 +26,8 @@ const UserPage = () => {
 	const navigate = useNavigate();
 	const showStats = () => setStats(!stats);
 	const showHistory = () => setHistory(!history);
+	const requestNewToken = useRequestNewToken();
+	let token: string | null;
 
 	useEffect(() => {
 		if (!user)
@@ -61,7 +64,8 @@ const UserPage = () => {
 			return ;
 		const loadProfilePicURL = async () => {
 			try {
-				const allUsers = await fetchUsers(user?.accessToken);
+        		token = await requestNewToken();
+				const allUsers = await fetchUsers(token);
 				if (!allUsers)
 					return ;
 				const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
@@ -101,7 +105,7 @@ const UserPage = () => {
 
 		<div className='profilePicBig'>
 			{profilePicURL ? 
-				<img src={profilePicURL} className='profilePicBig'/> : <img src={DEFAULT_AVATAR} className='w-full h-full object-cover'/>}
+				<img src={profilePicURL} className='profilePic'/> : <img src={DEFAULT_AVATAR} className='w-full h-full object-cover'/>}
 		</div>
 
 		<div className='w-56 truncate mb-12'>
@@ -167,7 +171,7 @@ const UserPage = () => {
 		onClick={() => {
 			if (user && param.username)
 			{
-				removeRival(param.username, user?.accessToken)
+				removeRival(param.username, token)
 				setUser({
 					...user, 
 					rivals: user?.rivals.filter(r => r.rival_username !== param.username)})
@@ -183,7 +187,7 @@ const UserPage = () => {
 		onClick={() => {
 			if (user && param.username)
 			{
-				addRival(param.username, user?.accessToken);
+				addRival(param.username, token);
 				setUser({
 					...user, 
 					rivals: [...user.rivals, 

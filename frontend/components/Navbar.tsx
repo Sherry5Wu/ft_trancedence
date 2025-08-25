@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { Menu } from './Menu';
 import { OptionToggle } from './OptionToggle';
 import { useUserContext } from '../context/UserContext';
-import { useDarkModeContext } from '../context/DarkModeContext';
 import { useAccessibilityContext } from '../context/AccessibilityContext';
 import FrenchIcon from '../assets/noun-france-6661055.svg?react';
 import EnglishIcon from '../assets/noun-uk-6661102.svg?react';
@@ -19,31 +18,32 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '../assets/noun-search-7526678.svg?react';
 import { SearchBar } from '../components/SearchBar';
-import { useValidationField } from '../utils/Hooks';
+import { useRequestNewToken, useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
 import { fetchUsers } from '../utils/Fetch';
 import { FetchedUserData } from '../utils/Interfaces';
 
 export const Navbar = () => {  
     const { user, setUser } = useUserContext();
-    const { darkMode, setDarkMode } = useDarkModeContext();
     const { largeText, setLargeText} = useAccessibilityContext();
     const { t, i18n } = useTranslation();
     const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
     const [rivalData, setRivalData] = useState<FetchedUserData[]>([]);
     const navigate = useNavigate();
-    const accessToken = useUserContext().user?.accessToken;
+    const requestNewToken = useRequestNewToken();
     
     // fetch users from search bar
     useEffect(() => {
-        if (!user) return ;
-        const fetchOtherUsers = async (accessToken) => {
-            const data = await fetchUsers(accessToken);
+        const fetchOtherUsers = async () => {
+			const token = await requestNewToken();
+			if (!user || !token)
+				return ;
+            const data = await fetchUsers(token);
             setRivalData(data);
             // console.log("DATA FROM SEARCH");
             // console.log(data);
         };
-        fetchOtherUsers(accessToken);
+        fetchOtherUsers();
     }, [user])
 
     // change languages
@@ -65,34 +65,11 @@ export const Navbar = () => {
         setUser(null);
     }
 
-    // const handleDarkMode = () => {
-    //     setDarkMode(!darkMode);
-    // }
-
-    // const handleTextSize = () => {
-    //     setLargeText(!largeText);
-    // }
-
-    // useEffect(() => {
-    //     const value = largeText ? '1.3' : '1.0';
-    //     console.log('Setting --scale-modifier to:', value);
-    //     document.documentElement.style.setProperty('--scale-modifier', value);
-    // }), [handleTextSize];
-
-
     const languageMenuItems = [
         {label: 'EN', Icon: <EnglishIcon />, onClick: () => changeLanguage('en')},
         {label: 'FR', Icon: <FrenchIcon />, onClick: () => changeLanguage('fr')},
         {label: 'PT', Icon: <PortugueseIcon />, onClick: () => changeLanguage('pt')},
     ]
-
-    // const accessibilityMenuItems = [
-    //     {   
-    //         label: 'LARGE TEXT SIZE', 
-    //         Button: () => <OptionToggle isOn={largeText}/>, 
-    //         onClick: () => handleTextSize()
-    //     },
-    // ]
 
     const profileMenuItems = [
         {Icon: <SettingsIcon className='menuIcon'/>, onClick: () => {
@@ -106,8 +83,6 @@ export const Navbar = () => {
             <nav className='flex items-center bg-[#FFCC00]'>
                 <div className='flex flex-1 justify-start gap-5'>
                     <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
-                    {/* <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' /> */}
-                    {/* <Menu aria-label='dark mode' Icon={darkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => handleDarkMode()}/> */}
                 </div>
                 <div className='flex flex-1 justify-center mb-5' >
                     <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
@@ -120,8 +95,6 @@ export const Navbar = () => {
         <nav className='flex items-center bg-[#FFCC00]'>
             <div className='flex flex-1 justify-start gap-5'>
                 <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
-                {/* <Menu aria-label='accessibility options' Icon={<AccessIcon />} elements={accessibilityMenuItems} className='menuIcon' /> */}
-                {/* <Menu aria-label='dark mode' Icon={darkMode ? <SunIcon className='menuIcon scale-150 pr-3' /> : <MoonIcon className='menuIcon scale-110 pr-5' />} className='menuIcon' onClick={() => handleDarkMode()}/> */}
             </div>
             <div className='flex flex-1 justify-center items-center' >
                 <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>

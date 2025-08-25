@@ -108,15 +108,42 @@ export interface User {
     // firstName: string;
     // lastName: string;
     rivals: RivalData[];
-    // playedGames: boolean;
     accessToken: string;
+    expiry: number;
     refreshToken: string;
     twoFA: boolean;
 }
 
-export interface UserType {
+export interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
+    refresh: () => Promise<string | null>;
+}
+
+export interface Players {
+  id: string;
+  username: string;
+  photo: string;
+}
+
+export interface PlayersContextType {
+  players: Players[];
+  tournamentTitle?: string;
+  totalPlayers?: number;
+
+  isTournament: boolean;
+  setIsTournament: (v: boolean) => void;
+
+  setTitle: (newTitle: string) => void;
+  setTotalPlayers: (n: number) => void;
+
+  addPlayer: (player: Players) => void;
+  setPlayer: (index: number, player: Players) => void;
+  removePlayer: (id: string) => void;
+  setPlayerUsername: (id: string, newUsername: string) => void;
+
+  resetPlayers: () => void;
+  resetPlayerListOnly: () => void;
 }
 
 export interface GoogleCompleteResponse {

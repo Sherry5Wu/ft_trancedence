@@ -3,8 +3,6 @@ import { useClickOutside } from "../utils/Hooks";
 import { SearchBarInputProps } from "../utils/Interfaces";
 import { useTranslation } from 'react-i18next';
 import { FetchedUserData } from "../utils/Interfaces";
-import { fetchUsers } from '../utils/Fetch';
-import { useUserContext } from "../context/UserContext";
 import { DEFAULT_AVATAR } from "../utils/constants";
 
 export const SearchBar = ({
