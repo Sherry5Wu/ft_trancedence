@@ -2,6 +2,23 @@
 
 import { useState } from 'react';
 import { RefObject, useEffect } from 'react';
+import { useUserContext } from '../context/UserContext';
+
+export const useRequestNewToken = () => {
+	const { user, refresh } = useUserContext();
+
+	return async () => {
+		if (!user)
+			return null;
+
+		if (Date.now() > user.expiry)
+		{
+			const newToken = await refresh();
+			return newToken;
+		}
+		return (user?.accessToken);
+	}
+}
 
 export const useClickOutside = (ref: RefObject<HTMLElement | null>, onOutsideClick: () => void) => {
     useEffect(() => {

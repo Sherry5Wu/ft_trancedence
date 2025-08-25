@@ -2,22 +2,6 @@ import { RefreshCcw } from "lucide-react";
 import { useUserContext} from '../context/UserContext';
 import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, FetchedUserData, UserGoogleProfileData, GoogleCompleteResponse } from "../utils/Interfaces";
 
-export const useRequestNewToken = () => {
-    const { user, refresh } = useUserContext();
-
-    return async () => {
-        if (!user)
-            return null;
-
-        if (Date.now() > user.expiry)
-        {
-            const newToken = await refresh();
-            return newToken;
-        }
-        return (user?.accessToken);
-    }
-}
-
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
 	// console.log('Sending user:', player);
 	try {
@@ -165,15 +149,14 @@ export const signInGoogleUser = async (idToken: string) => {
 	}
 };
 
-export const updateProfilePic = async (file: File) => {
+export const updateProfilePic = async (file: File, token: string | null) => {
+	if (!token)
+		return ;
+
 	try {
 		const formData = new FormData();
 		formData.append('avatar', file);
 
-        const requestNewToken = useRequestNewToken();
-        const token = await requestNewToken();
-        console.log('NEW TOKEN')
-        console.log(token);
 		const response = await fetch('https://localhost:8443/as/users/me/upload-avatar', {
 			method: 'POST',
 			headers: {
@@ -220,15 +203,15 @@ export const fetchRivalData = async (username: string) => {
   }
 };
 
-export const addRival = async (rivalName: string) => {
+export const addRival = async (rivalName: string, token: string | null) => {
+	if (!token)
+		return ;
+
 	const data = {
 		rival_username: rivalName
 	};
 
 	try {
-        const requestNewToken = useRequestNewToken();
-        const token = requestNewToken();
-
 		const response = await fetch(`https://localhost:8443/stats/rivals`, {
 			method: 'POST',
 			headers: {
@@ -251,10 +234,11 @@ export const addRival = async (rivalName: string) => {
 	}
 };
 
-export const removeRival = async (rivalName: string) => {
+export const removeRival = async (rivalName: string, token: string | null) => {
+	if (!token)
+		return ;
+
 	try {
-        const requestNewToken = useRequestNewToken();
-        const token = requestNewToken();
 		const response = await fetch(`https://localhost:8443/stats/rivals/username/${rivalName}`, {
 			method: 'DELETE',
 			headers: {
@@ -342,10 +326,11 @@ export const fetchMatchData = async (username: string): Promise<MatchData [] | n
     }
 };
 
-export const fetchUsers = async (): Promise<FetchedUserData []> => {
+export const fetchUsers = async (token: string | null) => {
+	if (!token)
+		return ;
+
 	try {
-        const requestNewToken = useRequestNewToken();
-        const token = requestNewToken();
 		const response = await fetch(`https://localhost:8443/as/users/all`, {
 			method: 'GET',
 			headers: {
@@ -371,11 +356,11 @@ export const fetchUsers = async (): Promise<FetchedUserData []> => {
 };
 
 
-export const disable2FA = async (): Promise<boolean> => {
-    // if (!accessToken) return false
+export const disable2FA = async (token: string): Promise<boolean> => {
+	if (!token)
+		return false;
+
     try {
-        const requestNewToken = useRequestNewToken();
-        const token = requestNewToken();
         const response = await fetch('https://localhost:8443/as/auth/user/disable-2fa', {
             method: 'POST',
             headers: {

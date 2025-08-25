@@ -18,7 +18,7 @@ import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '../assets/noun-search-7526678.svg?react';
 import { SearchBar } from '../components/SearchBar';
-import { useValidationField } from '../utils/Hooks';
+import { useRequestNewToken, useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
 import { fetchUsers } from '../utils/Fetch';
 import { FetchedUserData } from '../utils/Interfaces';
@@ -30,18 +30,20 @@ export const Navbar = () => {
     const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
     const [rivalData, setRivalData] = useState<FetchedUserData[]>([]);
     const navigate = useNavigate();
-    const accessToken = useUserContext().user?.accessToken;
+    const requestNewToken = useRequestNewToken();
     
     // fetch users from search bar
     useEffect(() => {
-        if (!user || !accessToken) return ;
-        const fetchOtherUsers = async (accessToken: string) => {
-            const data = await fetchUsers();
+        const fetchOtherUsers = async () => {
+			const token = await requestNewToken();
+			if (!user || !token)
+				return ;
+            const data = await fetchUsers(token);
             setRivalData(data);
             // console.log("DATA FROM SEARCH");
             // console.log(data);
         };
-        fetchOtherUsers(accessToken);
+        fetchOtherUsers();
     }, [user])
 
     // change languages

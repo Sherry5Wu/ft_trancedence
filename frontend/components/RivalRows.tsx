@@ -6,6 +6,7 @@ import SortIcon from '../assets/noun-sort-7000784.svg?react';
 import TrashIcon from '../assets/noun-trash-3552649.svg?react'
 import { useTranslation } from 'react-i18next';
 import { fetchRivalData, fetchUsers } from '../utils/Fetch';
+import { useRequestNewToken } from '../utils/Hooks';
 
 const calculateWinRatio = (wins: number | undefined, losses: number | undefined, games_played_against_rival: number | undefined) => {
 	if (wins === undefined || losses === undefined || games_played_against_rival === undefined)
@@ -42,19 +43,20 @@ export const RivalRows = () => {
 	const [loading, setLoading] = useState(true);
 	const [rivalData, setRivalData] = useState<RivalData[]>([]);
 	const [rivalPic, setRivalPic] = useState('');
-
-	if (!user)
-		return ;
+	const requestNewToken = useRequestNewToken();
 
 	useEffect(() => {
 		const loadRivals = async () => {
 			setLoading(true);
+			const token = await requestNewToken();
+        	if (!user || !token)
+				return ;
 			const rivalData = await fetchRivalData(user?.username);
-			const allUsers = await fetchUsers();
-			const rival: any = allUsers.find((u: FetchedUserData) => u.username === rival.rival_username);
+			const allUsers = await fetchUsers(token);
+			//const rival = allUsers.find((u: FetchedUserData) => u.username === rivalData.rival_username);
 			setRivalData(rivalData);
+            // setRivalPic(rival.avatarUrl);
 			setLoading(false);
-            setRivalPic(rival.avatarUrl);
 		}
 		loadRivals();
 	}, [user])

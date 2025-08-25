@@ -26,22 +26,17 @@ const RivalsPage = () => {
     //   };
     //   fetchRivals();
     // }, [user])
-
-    // if (!user) no need anymore, routes are protected on App.tsx
-    //   navigate('/signin');
   
     return (
-      <div className='pageLayout'>
-
-        <div className='flex justify-center items-center gap-3 mb-5'>
-          <RivalIcon className='size-20' />
-          <h2 className='h1 font-semibold text-center'>{t('pages.rival.title')}</h2>
-          <RivalIcon className='size-20' />
-        </div>
-        <div className=''>
-          <RivalRows />
-        </div>
-
+    	<div className='pageLayout'>
+			<div className='flex justify-center items-center gap-3 mb-5'>
+				<RivalIcon className='size-20' />
+				<h2 className='h1 font-semibold text-center'>{t('pages.rival.title')}</h2>
+				<RivalIcon className='size-20' />
+			</div>
+			<div className=''>
+				<RivalRows />
+			</div>
       </div>
     );
   };
