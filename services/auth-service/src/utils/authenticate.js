@@ -34,25 +34,30 @@ async function authenticate(fastify, options) {
   fastify.decorate('authenticate', async function (request, reply) {
     try {
       // Expect header: Authorization: Bearer <token>
-      const authHeader = req.headers['authorization'];
+      const authHeader = request.headers.authorization;
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return sendError(reply, 401, 'Unauthorized', 'Missing or invalid Authorization header');
       }
 
-      // Extract token
-      const token = authHeader.split(' ')[1];
+      const tokenMatch = authHeader.match(/^Bearer (.+)$/);
+      if (!tokenMatch) {
+        return sendError(reply, 401, 'Unauthorized', 'Invalid Authorization format');
+      }
+
+      const token = tokenMatch[1];
 
       // Verify token
       const decoded = verifyAccessToken(token);
 
       // Attach decoded user to request
-      req.user = decoded;
+      request.user = decoded;
     } catch (err) {
       // Token invalid or expired
-      return reply.status(401).send({ error: 'Unauthorized: ' + err.message });
+      return sendError(reply, 401, 'Unauthorized', err.message);
     }
   });
 }
+
 
 export default fp(authenticate);
 

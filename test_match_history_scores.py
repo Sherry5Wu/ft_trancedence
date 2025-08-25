@@ -107,6 +107,7 @@ def test_get_score_history_id():
 
     # Tarkistetaan että token on validi ja saadaan käyttäjän ID
     response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    print(response1.json())
     assert response1.status_code == 200
     user_id = response1.json()["id"]
     print(f"{STATS_URL}/user_match_data/{user_id}")

@@ -61,7 +61,11 @@ export default fp(async (fastify) => {
       );
       return reply.code(201).send(user);
     } catch (err) {
-      reply.code(err.statusCode || 500).send({ error: err.message });
+      reply.code(err.statusCode || 500).send({
+        status: err.statusCode || 500,
+        error: err.name || 'Internal Server Error',
+        message: err.message
+      });
     }
   });
 
@@ -106,7 +110,11 @@ export default fp(async (fastify) => {
       const TwoFAStatus = user.is2FAEnabled && user.is2FAConfirmed;
       return { accessToken, refreshToken, user, TwoFAStatus };
     } catch (err) {
-      reply.code(err.statusCode || 500).send({ error: err.message });
+      reply.code(err.statusCode || 500).send({
+        status: err.statusCode || 500,
+        error: err.name || 'Internal Server Error',
+        message: err.message
+      });
     }
   });
 
