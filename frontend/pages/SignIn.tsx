@@ -29,7 +29,6 @@ const SignInPage: React.FC = () => {
     !usernameField.error &&
     !passwordField.error;
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // prevent full page reload
 
@@ -44,6 +43,8 @@ const SignInPage: React.FC = () => {
 
     if (signInData) {
       alert('Signed in successfully!');
+
+      const enabledTwoFA = signInData.data.TwoFAStatus;
       setUser({
         username: signInData.data.user.username,
         id: signInData.data.user.id,
@@ -54,13 +55,19 @@ const SignInPage: React.FC = () => {
         rivals: signInData.rivals,
         accessToken: signInData.data.accessToken,
         expiry: Date.now() + 15 * 60 * 1000,
-        twoFA: signInData.data.twoFA,
+        twoFA: enabledTwoFA,
+        googleUser: signInData.data.registerFromGoogle,
       });
-      navigate(`/user/${usernameField.value}`);
+
+    if (enabledTwoFA) {
+      navigate('/verify2fa');
     } else {
-      alert('Sign in failed. Please, check your username and password, and try again.');
+      navigate(`/user/${usernameField.value}`);
     }
-  };
+  } else {
+    alert(t('common.alerts.failure.signIn'));
+  }
+};
 
   return (
       <main
