@@ -7,12 +7,15 @@ import { useState, useEffect } from 'react';
 import { useUserContext } from '../context/UserContext';
 import { DEFAULT_AVATAR } from '../utils/constants';
 import { fetchUsers } from '../utils/Fetch';
+import { useRequestNewToken } from '../utils/Hooks';
+import { FetchedUserData } from '../utils/Interfaces';
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
     const { t } = useTranslation();
     const [worstRivalPic, setWorstRivalPic] = useState('');
     const [worstRivalName, setWorstRivalName] = useState('');
     const { user } = useUserContext();
+	const requestNewToken = useRequestNewToken();
 
     if (!userStats || !scoreHistory)
         return <div className='flex justify-center my-5'>{t('components.stats.noData')}</div>
@@ -22,19 +25,22 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
             let mostMatches = -1;
             let rivalName = '';
             let rivalPicURL = null;
+			const token = await requestNewToken();
+			if (!user || !token)
+				return ;
             if (user && user.rivals.length !== 0)
             {
                 for (const rival of user.rivals)
                 {
-                    if (rival.games_played_against_rival > mostMatches)
+                    if (rival.games_played_against_rival! > mostMatches)
                     {
-                        mostMatches = rival.games_played_against_rival;
+                        mostMatches = rival.games_played_against_rival!;
                         rivalName = rival.rival_username;
                         // rivalPicURL = rival.picture;
                     }
                 }
-                const users = await fetchUsers()
-                rivalPicURL = users.find(u => u.username === rivalName)?.avatarUrl;
+                const users = await fetchUsers(token);
+                rivalPicURL = users.find((u: FetchedUserData) => u.username === rivalName)?.avatarUrl;
                 
                 setWorstRivalName(rivalName);
                 if (rivalPicURL)
