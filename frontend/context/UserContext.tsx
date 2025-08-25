@@ -35,6 +35,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 accessToken: data.accessToken,
             });
 
+            console.log(data);
+
             return data.accessToken;
 		}
         catch {
