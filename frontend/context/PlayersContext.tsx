@@ -32,7 +32,8 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removePlayer = (userToRemove: string) => {
-    setPlayers((prevPlayers) => prevPlayers.filter((player) => player.id !== userToRemove))
+    setPlayers
+    ((prevPlayers) => prevPlayers.filter((player) => player.id !== userToRemove))
   };
 
   // const setPlayerUsername = (id: string, newUsername: string) => {

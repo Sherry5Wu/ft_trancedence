@@ -95,7 +95,8 @@
       "incorrectPIN": "Incorrect PIN code. Please check and try again.",
       "incorrectPassword": "Incorrect password. Please check and try again.",
       "userNotFound": "Player not found. Please check and try again.",
-      "tooManyAttempts": "Too many attempts, PIN temporarily locked."
+      "tooManyAttempts": "Too many attempts, PIN temporarily locked.",
+      "playerAlreadyInContext": "Player already logged in. Please try a different player."
     }
   },
 

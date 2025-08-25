@@ -26,12 +26,16 @@ const LogInPlayerPage: React.FC = () => {
   const location = useLocation();
   const playerIndex: number = location.state?.playerIndex ?? 1;
   const returnTo: string = location.state?.returnTo ?? '/';
+  const usernameTaken = players.some(
+    (p) => p.username.toLowerCase() === usernameField.value.toLowerCase()
+  );
 
   const formFilled =
     usernameField.value.trim() !== '' &&
     pinField.value.trim() !== '' &&
     !usernameField.error &&
-    !pinField.error;
+    !pinField.error &&
+    !usernameTaken;
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -96,7 +100,7 @@ const LogInPlayerPage: React.FC = () => {
         value={usernameField.value}
         onFilled={usernameField.onFilled}
         onBlur={usernameField.onBlur}
-        errorMessage={usernameField.error}
+        errorMessage={usernameTaken ? t("common.errors.playerAlreadyInContext") : usernameField.error}
       />
 
       <GenericInput
