@@ -49,6 +49,27 @@ const SignUpPage = () => {
     !passwordMismatch &&
     !pinMismatch;
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formFilled) return;
+
+    const newUser: UserProfileData = {
+      username: usernameField.value,
+      email: emailField.value,
+      password: passwordField.value,
+      pinCode: pinField.value,
+    };
+
+    const signUpData = await createUser(newUser);
+
+    if (signUpData) {
+      alert('Registered successfully!');
+      navigate('/signin'); // to be done: redirect to user profile direct instead of sign in!
+    } else {
+      alert(t('common.alerts.failure.signUp'));  // what went wrong? 
+    }
+  };
 
 	return (
 		<main
@@ -67,6 +88,7 @@ const SignUpPage = () => {
 			{t('pages.signUp.title')}
 			</h2>
 
+          <form onSubmit={handleSubmit} className="flex flex-col">
 			<GenericInput
 			type="text"
 			placeholder={t('common.placeholders.username')}
@@ -137,27 +159,13 @@ const SignUpPage = () => {
 			/>
 
 			<GenericButton
+			type="submit"
 			className="generic-button"
 			text={t('common.buttons.signUp')}
 			aria-label={t('common.aria.buttons.signUp')}
 			disabled={!formFilled}
-			onClick={async () => {
-				const newUser: UserProfileData = {
-				username: usernameField.value,
-				email: emailField.value,
-				password: passwordField.value,
-				pinCode: pinField.value
-				};
-				const signUpData = await createUser(newUser);
-				if (signUpData) {
-				alert('Registered successfully!');
-				console.log(signUpData);
-				navigate('/signin');
-				}
-				else
-				alert('Registration failed. Please try again.'); // what went wrong? 
-			}}
 			/>
+			</form>
 
 			<p className="text-center text-sm translate-y-2">
 			{t('pages.signUp.alreadyHaveAccount')}{' '}
