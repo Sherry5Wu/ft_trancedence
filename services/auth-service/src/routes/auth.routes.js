@@ -48,7 +48,11 @@ export default fp(async (fastify) => {
       response: {
         201: {
           description: 'User successfully registered',
-          $ref: 'publicUser#'
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            userId: { type: 'string' },
+          }
         },
         400: { description:'Bad Request', $ref: 'errorResponse#' },
         409: { description:'Conflict', $ref: 'errorResponse' },
@@ -63,10 +67,10 @@ export default fp(async (fastify) => {
         req.body.password,
         req.body.pinCode
       );
-      return reply.code(201).send(user);
+      return reply.code(201).send({ success: true, userId: user.id });
     } catch (err) {
-      if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad request', err.message);
-      if (err instanceof ConflictError) sendError(reply, 409, 'Conflict error', err.message);
+      if (err instanceof InvalidCredentialsError) return sendError(reply, 400, 'Bad request', err.message);
+      if (err instanceof ConflictError) return sendError(reply, 409, 'Conflict error', err.message);
       return sendError(reply, err.statusCode || 500, err.name || 'Internal Server Error', err.message);
     }
   });

@@ -65,7 +65,7 @@ async function registerUser(email, username, password, pinCode) {
     const userData = user.toJSON();
     delete userData.passwordHash;
     delete userData.pinCodeHash;
-
+    
     return userData;
 }
 
