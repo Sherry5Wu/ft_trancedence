@@ -15,19 +15,6 @@ async function getAvatarUrlByUsername(username) {
     }
 }
 
-// Hakee avatarUrlin käyttäjän id:llä
-async function getAvatarUrlById(id) {
-    try {
-        const res = await fetch(`http://auth_service:3001/users/profile/id/${id}`);
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data.avatarUrl || null;
-    } catch (err) {
-        return null;
-    }
-}
-
-
 export default async function rivalsRoutes(fastify) {
     // /rivals/:player_id
     fastify.get('/:player_id', async (request, reply) => {
