@@ -111,13 +111,13 @@ const SettingsPage = () => {
             disabled
           />
           
-          <GenericInput
+          {/* <GenericInput
             placeholder={t('common.placeholders.email')}
             aria-label={t('common.aria.inputs.email')}
             value={user?.email || ''}
             onFilled={() => {}}
             disabled
-          />
+          /> */}
         </div>
 
         <div className="p-4">
@@ -125,13 +125,19 @@ const SettingsPage = () => {
             {t('pages.userSettings.security.title')}
           </h3>
           
-          {/** Disable this button if it's a user registered with GoogleSignIn */}
+		  {/** Password change only enable if your are not Google registered */}
           <GenericButton
             className="generic-button"
             text={t('pages.changePassword.title')}
             aria-label={t('pages.userSettings.aria.changePassword')}
             onClick={() => navigate('/change-password')}
+			disabled={!user?.googleUser}
           />
+		  {!user?.googleUser && (
+			<p className="max-w-sm text-center p-4">
+				{t('pages.userSettings.security.googlePasswordNotice')}
+			</p>
+			)}
 
 			<GenericButton
 				className="generic-button"
@@ -149,7 +155,6 @@ const SettingsPage = () => {
 				{t('pages.userSettings.twoFactor.description')}
 
 			<ToggleButton
-				// label={t('pages.userSettings.twoFactor.title')}
 				labelOn={t('pages.userSettings.twoFactor.labelOn')}
 				labelOff={t('pages.userSettings.twoFactor.labelOff')}
 				aria-label={t('pages.userSettings.aria.2faToggle')}

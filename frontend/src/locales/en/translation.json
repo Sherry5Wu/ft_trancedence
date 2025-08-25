@@ -287,7 +287,8 @@
         "uploadedProfileAlt": ""
       },
       "security": {
-        "title": "Security"
+        "title": "Security",
+        "googlePasswordNotice": "Password changes are managed via your Google account."
       },
       "twoFactor": {
         "title": "Two-factor authentication",

@@ -41,6 +41,32 @@ const ChangePINPage: React.FC = () => {
     !pinMismatch &&
     !newPinIsSame;
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formFilled) return;
+
+    const accessToken = user?.accessToken;
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    const success = await updateUserPin(
+      currentPinField.value,
+      newPinField.value,
+      accessToken
+    );
+
+    if (success) {
+      alert(t("common.alerts.success"));
+      navigate("/settings");
+    } else {
+      alert(t("common.errors.incorrectPIN"));
+    }
+  };
+
   return (
     <main
       className="pageLayout"
@@ -64,6 +90,7 @@ const ChangePINPage: React.FC = () => {
         {t('pages.changePIN.title')}
       </h2>
 
+          <form onSubmit={handleSubmit} className="flex flex-col">
       <GenericInput
         type="password"
         placeholder={t('common.placeholders.pin')}
@@ -100,32 +127,13 @@ const ChangePINPage: React.FC = () => {
       />
 
       <GenericButton
+        type="submit"
         className="generic-button"
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        onClick={async () => {
-          const accessToken = user?.accessToken
-          if (!accessToken) {
-            alert(t("common.errors.unauthorized"));
-            navigate("/signin");
-            return;
-          }
-
-          const success = await updateUserPin(
-            currentPinField.value,
-            newPinField.value,
-            accessToken
-          );
-
-          if (success) {
-            alert(t("common.alerts.success"));
-            navigate("/settings");
-          } else {
-            alert(t("common.errors.incorrectPIN"));
-          }
-        }}
       />
+      </form>
       </div>
     </main>
   );

@@ -41,6 +41,31 @@ const ChangePasswordPage: React.FC = () => {
     !passwordMismatch &&
     !newPasswordIsSame;
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formFilled) return;
+
+    const accessToken = user?.accessToken
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    const success = await updateUserPassword(
+      currentPasswordField.value,
+      newPasswordField.value, 
+      accessToken
+    );
+
+    if (success) {
+      alert(t("common.alerts.success"));
+      navigate("/settings");
+    } else {
+      alert(t("common.errors.incorrectPassword"));
+    }
+  };
     
   return (
     <main
@@ -101,31 +126,11 @@ const ChangePasswordPage: React.FC = () => {
       />
 
       <GenericButton
+        type="submit"
         className="generic-button"
         text={t('common.buttons.save')}
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
-        onClick={async () => {
-          const accessToken = user?.accessToken
-          if (!accessToken) {
-            alert(t("common.errors.unauthorized"));
-            navigate("/signin");
-            return;
-          }
-
-          const success = await updateUserPassword(
-            currentPasswordField.value,
-            newPasswordField.value, 
-            accessToken
-          );
-
-          if (success) {
-            alert(t("common.alerts.success"));
-            navigate("/settings");
-          } else {
-            alert(t("common.errors.incorrectPassword"));
-          }
-        }}
       />
       </div>
     </main>
