@@ -89,7 +89,9 @@
       "duplicateAlias": "Player aliases must be different from each other.",
       "invalidLogin": "Invalid login. Please check and try again.",
       "incorrectPIN": "Incorrect PIN code. Please check and try again.",
-      "incorrectPassword": "Incorrect password. Please check and try again."
+      "incorrectPassword": "Incorrect password. Please check and try again.",
+      "userNotFound": "Player not found. Please check and try again.",
+      "tooManyAttempts": "Too many attempts, PIN temporarily locked."
     }
   },
 

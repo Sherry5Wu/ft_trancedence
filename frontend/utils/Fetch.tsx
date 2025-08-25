@@ -1,6 +1,16 @@
-import { RefreshCcw } from "lucide-react";
-import { useUserContext} from '../context/UserContext';
-import { MatchData, ScoreHistory, UserStats, UserProfileData, LoginData, RivalData, FetchedUserData, UserGoogleProfileData, GoogleCompleteResponse } from "../utils/Interfaces";
+import { 
+	MatchData, 
+	ScoreHistory, 
+	UserStats, 
+	UserProfileData, 
+	LoginData, 
+	RivalData, 
+	FetchedUserData, 
+	UserGoogleProfileData,
+	GoogleCompleteResponse, 
+	VerifyPinResponse,
+	RegisteredPlayerData
+	} from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
 	// console.log('Sending user:', player);
@@ -386,7 +396,7 @@ export const updateUserPin = async (
   accessToken: string
 ): Promise<boolean> => {
   try {
-    const response = await fetch("https://localhost:8443/as/users/me/pincode", {
+    const response = await fetch("https://localhost:8443/as/users/me/update-pincode", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -414,7 +424,7 @@ export const updateUserPassword = async (
   accessToken: string
 ): Promise<boolean> => {
   try {
-    const response = await fetch("https://localhost:8443/as/users/me/password", {
+    const response = await fetch("https://localhost:8443/as/users/me/update-password", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -433,5 +443,31 @@ export const updateUserPassword = async (
   } catch (error) {
     console.error("Error updating password:", error);
     return false;
+  }
+};
+
+export const loginRegisteredPlayer = async ( player: RegisteredPlayerData ): Promise<VerifyPinResponse> => {
+  try {
+    const response = await fetch("https://localhost:8443/as/users/verify-pincode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(player),
+    });
+
+    // Handles 404 (User not found) or 429 (Too many attempts) from backend
+    if (!response.ok) {
+      const errorBody = await response.json();
+      return errorBody as VerifyPinResponse;
+    }
+
+    const data: VerifyPinResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error verifying PIN:", error);
+    return {
+      success: false,
+      code: "PIN_NOT_MATCH",
+      message: "Unexpected error occurred",
+    };
   }
 };
