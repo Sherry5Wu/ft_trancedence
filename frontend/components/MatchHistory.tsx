@@ -4,6 +4,7 @@ import { useUserContext } from '../context/UserContext';
 import { fetchMatchData, fetchUsers } from '../utils/Fetch';
 import { MatchData, FetchedUserData, User } from '../utils/Interfaces';
 import { DEFAULT_AVATAR } from '../utils/constants';
+import { useRequestNewToken } from '../utils/Hooks';
 
 const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]}) => {
     const [avatar1, setAvatar1] = useState('');
@@ -51,6 +52,7 @@ export const MatchHistory = ({ player }: { player: string }) => {
     const [allUsers, setAllUsers] = useState<FetchedUserData[]>([]);
     const [loading, setLoading] = useState(true);
     const { user, refresh } = useUserContext();
+	const requestNewToken = useRequestNewToken();
 
     useEffect(() => {
         if (!user) 
@@ -68,11 +70,11 @@ export const MatchHistory = ({ player }: { player: string }) => {
     }, []);
 
     useEffect(() => {
-        if (!user)
-            return ;
-
         const getPlayers = async () => {
-            const users = await fetchUsers();
+			const token = await requestNewToken();
+			if (!user || !token)
+				return ;
+            const users = await fetchUsers(token);
             setAllUsers(users);
         }
         getPlayers();
