@@ -4,7 +4,8 @@
       "success": "Temporary success message!",
       "failure": {
         "signIn": "Sign in failed. Please, check your username and password, and try again.",
-        "signUp": "Registration failed. Please try again."
+        "signUp": "Registration failed. Please try again.",
+        "completeProfile": "Google sign-in is required before completing profile."
       }
     },
     "buttons": {
