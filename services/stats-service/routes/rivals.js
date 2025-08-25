@@ -2,44 +2,57 @@ import { db } from '../db/init.js';
 import { requireAuth } from '../utils/auth.js';
 import { calculateLossAgainstRival, calculateGamesPlayedAgainstRival, calculateWinsAgainstRival, getEloScoreByUsername } from '../utils/calculations.js';
 
+// Hakee avatarUrlin käyttäjänimellä
+async function getAvatarUrlByUsername(username) {
+    try {
+        const res = await fetch(`http://auth_service:3001/users/profile/${username}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.avatarUrl || null;
+    } catch (err) {
+        return null;
+    }
+}
+
 export default async function rivalsRoutes(fastify) {
     // /rivals/:player_id
-    fastify.get('/:player_id', (request, reply) => {
+    fastify.get('/:player_id', async (request, reply) => {
         const { player_id } = request.params;
         try {
             const stmt = db.prepare('SELECT * FROM rivals WHERE player_id = ?');
             const rows = stmt.all(player_id);
-            if (rows)
-            {
-                reply.send(rows);
-            } 
-            else 
-            {
+            if (rows && rows.length > 0) {
+                const rivalsWithAvatars = await Promise.all(rows.map(async (rival) => {
+                    const avatarUrl = await getAvatarUrlByUsername(rival.rival_username);
+                    return { ...rival, avatarUrl };
+                }));
+                reply.send(rivalsWithAvatars);
+            } else {
                 reply.status(404).send({ error: 'Player_id was not found' });
             }
         }
-        catch (err)
-        {
+        catch (err) {
             reply.status(500).send({ error: err.message });
         }
     });
-    // /rivals/:player_username
-    fastify.get('/username/:player_username', (request, reply) => {
+
+    // /rivals/username/:player_username
+    fastify.get('/username/:player_username', async (request, reply) => {
         const { player_username } = request.params;
         try {
             const stmt = db.prepare('SELECT * FROM rivals WHERE player_username = ?');
             const rows = stmt.all(player_username);
-            if (rows)
-            {
-                reply.send(rows);
-            } 
-            else 
-            {
+            if (rows && rows.length > 0) {
+                const rivalsWithAvatars = await Promise.all(rows.map(async (rival) => {
+                    const avatarUrl = await getAvatarUrlByUsername(rival.rival_username);
+                    return { ...rival, avatarUrl };
+                }));
+                reply.send(rivalsWithAvatars);
+            } else {
                 reply.status(404).send({ error: 'Player username was not found' });
             }
         }
-        catch (err)
-        {
+        catch (err) {
             reply.status(500).send({ error: err.message });
         }
     });

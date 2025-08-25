@@ -157,13 +157,15 @@ def test_get_rival_by_id():
 
     # Tarkistetaan että token on validi ja saadaan käyttäjän ID
     response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
-    print(headers)
-    print(response1)
     assert response1.status_code == 200
     user_id = response1.json()["id"]
     response = requests.get(f"{STATS_URL}/rivals/{user_id}", verify=False)
-    print(response.json())
-    assert isinstance(response.json(), list)
+    rivals = response.json()
+    print(rivals)
+    assert isinstance(rivals, list)
+    for rival in rivals:
+        assert "avatarUrl" in rival
+        assert isinstance(rival["avatarUrl"], str) or rival["avatarUrl"] is None
 
 def test_get_rival_by_username():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
@@ -171,13 +173,15 @@ def test_get_rival_by_username():
 
     # Tarkistetaan että token on validi ja saadaan käyttäjän ID
     response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
-    print(headers)
-    print(response1)
     assert response1.status_code == 200
     username = response1.json()["username"]
     response = requests.get(f"{STATS_URL}/rivals/username/{username}", verify=False)
-    print(response.json())
-    assert isinstance(response.json(), list)
+    rivals = response.json()
+    print(rivals)
+    assert isinstance(rivals, list)
+    for rival in rivals:
+        assert "avatarUrl" in rival
+        assert isinstance(rival["avatarUrl"], str) or rival["avatarUrl"] is None
 
 def test_delete_rival_by_id():
     ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
