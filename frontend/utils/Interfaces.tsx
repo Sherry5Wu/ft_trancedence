@@ -110,13 +110,12 @@ export interface User {
     email: string;
     score: number;
     rank: number;
-    // firstName: string;
-    // lastName: string;
     rivals: RivalData[];
     accessToken: string;
     expiry: number;
     // refreshToken: string;
     twoFA: boolean;
+    googleUser: boolean;
 }
 
 export interface UserContextType {

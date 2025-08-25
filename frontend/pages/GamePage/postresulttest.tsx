@@ -14,7 +14,7 @@ type StatsPayload = {
   played_at?: string;
 };
 
-type TournamentPayload = {
+export type TournamentPayload = {
   tournament_id: string;
   stage_number: number;
   match_number: number;
@@ -44,15 +44,15 @@ export async function postMatchHistory(payload: StatsPayload, token?: string) {
   return res.json();
 }
 
-export async function postTournamentHistory(payload: TournamentPayload) {
-  const res = await fetch(`${API_BASE}/tournament_history`, {
+export async function postTournamentHistory(entries: TournamentPayload[], token?: string) {
+  const res = await fetch(`${API_BASE}/tournament_history/update_all`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    headers: authHeaders(token),
+    body: JSON.stringify({ entries }),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`POST /tournament_history ${res.status}: ${text || res.statusText}`);
+    throw new Error(`POST /tournament_history/update_all ${res.status}: ${text || res.statusText}`);
   }
   return res.json();
 }

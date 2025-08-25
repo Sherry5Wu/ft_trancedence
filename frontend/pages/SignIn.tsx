@@ -29,7 +29,47 @@ const SignInPage: React.FC = () => {
     !usernameField.error &&
     !passwordField.error;
 
-return (
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // prevent full page reload
+
+    if (!formFilled) return;
+
+    const newUser: LoginData = {
+      identifier: usernameField.value,
+      password: passwordField.value,
+    };
+
+    const signInData = await signInUser(newUser);
+
+    if (signInData) {
+      alert('Signed in successfully!');
+
+      const enabledTwoFA = signInData.data.TwoFAStatus;
+      setUser({
+        username: signInData.data.user.username,
+        id: signInData.data.user.id,
+        email: signInData.data.user.email,
+        profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
+        score: signInData.stats.score,
+        rank: signInData.stats.score,
+        rivals: signInData.rivals,
+        accessToken: signInData.data.accessToken,
+        expiry: Date.now() + 15 * 60 * 1000,
+        twoFA: enabledTwoFA,
+        googleUser: signInData.data.registerFromGoogle,
+      });
+
+    if (enabledTwoFA) {
+      navigate('/verify2fa');
+    } else {
+      navigate(`/user/${usernameField.value}`);
+    }
+  } else {
+    alert(t('common.alerts.failure.signIn'));
+  }
+};
+
+  return (
       <main
         className="pageLayout"
         role="main"
@@ -46,59 +86,36 @@ return (
           {t('pages.signIn.title')}
         </h2>
 
-        <GenericInput
-          type="text"
-          placeholder={t('common.placeholders.username')}
-          aria-label={t('common.aria.inputs.username')}
-          value={usernameField.value}
-          onFilled={usernameField.onFilled}
-          onBlur={usernameField.onBlur}
-          errorMessage={usernameField.error}
-        />
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <GenericInput
+            type="text"
+            placeholder={t('common.placeholders.username')}
+            aria-label={t('common.aria.inputs.username')}
+            value={usernameField.value}
+            onFilled={usernameField.onFilled}
+            onBlur={usernameField.onBlur}
+            errorMessage={usernameField.error}
+          />
 
-        <GenericInput
-          type="password"
-          placeholder={t('common.placeholders.password')}
-          aria-label={t('common.aria.inputs.password')}
-          value={passwordField.value}
-          onFilled={passwordField.onFilled}
-          onBlur={passwordField.onBlur}
-          errorMessage={passwordField.error}
-          allowVisibility
-        />
+          <GenericInput
+            type="password"
+            placeholder={t('common.placeholders.password')}
+            aria-label={t('common.aria.inputs.password')}
+            value={passwordField.value}
+            onFilled={passwordField.onFilled}
+            onBlur={passwordField.onBlur}
+            errorMessage={passwordField.error}
+            allowVisibility
+          />
 
-        <GenericButton
-          className="generic-button m-1 -translate-y-1"
-          text={t('common.buttons.logIn')}
-          aria-label={t('common.aria.buttons.logIn')}
-          disabled={!formFilled}
-          onClick={async () => {
-            const newUser: LoginData = {
-              identifier: usernameField.value,
-              password: passwordField.value,
-            };
-            const signInData = await signInUser(newUser);
-            if (signInData) {
-              alert('Signed in successfully!');
-              setUser({
-                username: signInData.data.user.username,
-                id: signInData.data.user.id,
-                email: signInData.data.user.email,
-                profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
-                score: signInData.stats.score,
-                rank: signInData.stats.score,
-                rivals: signInData.rivals,
-                accessToken: signInData.data.accessToken,
-                // refreshToken: signInData.data.refreshToken,
-                expiry: Date.now() + 15 * 60 * 1000,
-                twoFA: signInData.data.twoFA,
-              });
-              navigate(`/user/${usernameField.value}`)
-            }
-            else
-              alert('Sign in failed. Please, check your username and password, and try again.');
-        }}
-      />
+          <GenericButton
+            className="generic-button m-1 -translate-y-1"
+            text={t('common.buttons.logIn')}
+            aria-label={t('common.aria.buttons.logIn')}
+            disabled={!formFilled}
+            type="submit"
+          />
+        </form>
 
         {/* Google Sign-In */}
         <CustomGoogleLoginButton

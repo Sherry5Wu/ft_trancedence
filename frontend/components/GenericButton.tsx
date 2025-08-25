@@ -6,7 +6,8 @@ interface GenericButtonProps {
   className?: string;
   hoverLabel?: string;
   disabled?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
 }
 
 export const GenericButton: React.FC<GenericButtonProps> = ({
@@ -15,12 +16,13 @@ export const GenericButton: React.FC<GenericButtonProps> = ({
   className = "",
   hoverLabel,
   onClick,
-  disabled = false
+  disabled = false,
+  type = "button", // default is "button"
 }) => {
   return (
     <div className="button-wrapper">
       <button
-        type="button"
+        type={type}
         className={`${className} ${disabled ? 'disabled-button' : ''}`}
         onClick={onClick}
         disabled={disabled}
