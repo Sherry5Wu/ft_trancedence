@@ -171,7 +171,7 @@ const SignUpPage = () => {
 			{t('pages.signUp.alreadyHaveAccount')}{' '}
 			<Link
 				to="/signin"
-				className="underline"
+				className="underline hover:bg-black hover:text-white rounded-xl px-1 py-0.5 hover:no-underline"
 				aria-label={t('pages.signUp.aria.signInLink')}
 			>
 				{t('pages.signUp.signInLink')}

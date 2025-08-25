@@ -27,7 +27,7 @@ const UserPage = () => {
 	const showStats = () => setStats(!stats);
 	const showHistory = () => setHistory(!history);
 	const requestNewToken = useRequestNewToken();
-	let token: string | null;
+	let token = user?.accessToken;
 
 	useEffect(() => {
 		if (!user)
@@ -60,11 +60,11 @@ const UserPage = () => {
 	}, [user, param.username]);
 
 	useEffect(() => {
-		if (!user)
-			return ;
 		const loadProfilePicURL = async () => {
 			try {
         		token = await requestNewToken();
+				if (!token)
+					return ;
 				const allUsers = await fetchUsers(token);
 				if (!allUsers)
 					return ;

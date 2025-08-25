@@ -107,7 +107,7 @@ export default function GamePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
   const [bindings, setBindings] = useState<KeyBindings>(() => loadBindings());
-  const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle, resetPlayers } = usePlayersContext();
+  const { players: rawPlayers, totalPlayers, isTournament, tournamentTitle, resetPlayers, setIsTournament } = usePlayersContext();
   const [mapKey, setMapKey] = useState<MapKey>('default');
 
   // Options
@@ -298,7 +298,7 @@ export default function GamePage() {
         // Regular match: post history from player 1 perspective
         if (!isTournament) {
           const payloadP1 = buildPayload(p1, p2, s1, s2, durationStr, played_at_iso);
-          await postMatchHistory(payloadP1, user?.accessToken);
+          await postMatchHistory(payloadP1, user?.accessToken ?? undefined);
         }
       
         // Tournament: Accumulate entries to push at the end
@@ -413,7 +413,7 @@ export default function GamePage() {
                           checked={draftSpeedPreset === opt}
                           onChange={() => setDraftSpeedPreset(opt)}
                         />
-                        <span>{t(`game.speed.${opt}`)}</span>
+                        <span>{t(`game.options.ballSpeed.speed.${opt}`)}</span>
                       </label>
                     ))}
                   </div>
@@ -464,7 +464,7 @@ export default function GamePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
                 <div className="text-sm opacity-70 mb-2">
-                  {t('game.tournament.round')} {roundNum} {t('game.tournament.match')} {matchIdx + 1} / {pairs.length}
+                  {t('game.tournament.round')} {roundNum} • {t('game.tournament.match')} {matchIdx + 1} / {pairs.length}
                 </div>
                 <h2 className="text-2xl font-bold mb-6">{t('game.tournament.nextMatch')}</h2>
                 <div className="text-xl font-semibold mb-6">
@@ -473,7 +473,7 @@ export default function GamePage() {
 
                 {upcomingPair && (
                   <div className="text-xs opacity-70 mb-6">
-                    {t('game.tournament.upNext')} {upcomingPair[0].username} {t('game.tournament.vs')} {upcomingPair[1].username}
+                    {t('game.tournament.upNext')}: {upcomingPair[0].username} {t('game.tournament.vs')} {upcomingPair[1].username}
                   </div>
                 )}
 
@@ -546,9 +546,9 @@ export default function GamePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
                 <h2 className="text-2xl font-bold mb-2">{t('game.match.end')}</h2>
-                <div className="text-lg mb-1">{t('game.match.winner')} <span className="font-semibold">{postResult.winner}</span></div>
+                <div className="text-lg mb-1">{t('game.match.winner')}: <span className="font-semibold">{postResult.winner}</span></div>
                 <div className="text-sm opacity-80 mb-6">
-                  {t('game.match.finalScore')} {postResult.s1} – {postResult.s2}
+                  {t('game.match.finalScore')}: {postResult.s1} – {postResult.s2}
                 </div>
                 <button
                   onClick={handlePlayAgain}
@@ -593,9 +593,10 @@ export default function GamePage() {
                   <button
                     onClick={() => {
                       resetPlayers();
+                      setIsTournament(false);
                       navigate('/tournaments');
                     }}
-                    className="px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700"
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                     aria-label="Exit to tournaments"
                   >
                     {t('game.exit')}
@@ -613,7 +614,7 @@ export default function GamePage() {
               <div className="font-medium mb-1">{p1Name}</div>
               <ul className="space-y-1">
                 <li>
-                  {t('game.controls.move')}&nbsp;
+                  {t('game.controls.move')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p1.up)}
                   </kbd>
@@ -623,7 +624,7 @@ export default function GamePage() {
                   </kbd>
                 </li>
                 <li>
-                  {t('game.controls.boost')}&nbsp;
+                  {t('game.controls.boost')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p1.boost)}
                   </kbd>
@@ -635,7 +636,7 @@ export default function GamePage() {
               <div className="font-medium mb-1">{p2Name}</div>
               <ul className="space-y-1">
                 <li>
-                  {t('game.controls.move')}&nbsp;
+                  {t('game.controls.move')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p2.up)}
                   </kbd>
@@ -645,7 +646,7 @@ export default function GamePage() {
                   </kbd>
                 </li>
                 <li>
-                  {t('game.controls.boost')}&nbsp;
+                  {t('game.controls.boost')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p2.boost)}
                   </kbd>

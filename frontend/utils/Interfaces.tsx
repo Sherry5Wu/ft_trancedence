@@ -111,7 +111,7 @@ export interface User {
     score: number;
     rank: number;
     rivals: RivalData[];
-    accessToken: string;
+    accessToken: string | null;
     expiry: number;
     // refreshToken: string;
     twoFA: boolean;
@@ -122,6 +122,7 @@ export interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
     refresh: () => Promise<string | null>;
+	logOut: () => void;
 }
 
 export interface Players {
@@ -159,6 +160,7 @@ export interface GoogleCompleteResponse {
     avatarUrl: string;
   };
   TwoFAStatus: boolean;
+  registerFromGoogle: boolean;
 }
 
 export interface VerifyPinResponse {

@@ -24,7 +24,7 @@ import { fetchUsers } from '../utils/Fetch';
 import { FetchedUserData } from '../utils/Interfaces';
 
 export const Navbar = () => {  
-    const { user, setUser } = useUserContext();
+    const { user, setUser, logOut } = useUserContext();
     const { largeText, setLargeText} = useAccessibilityContext();
     const { t, i18n } = useTranslation();
     const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
@@ -62,7 +62,7 @@ export const Navbar = () => {
     } 
 
     const handleLogOut = () => {
-        setUser(null);
+        logOut();
     }
 
     const languageMenuItems = [
@@ -77,6 +77,9 @@ export const Navbar = () => {
             user ? navigate('/settings') : navigate('/signin')}},
         {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/signin')}}
     ]
+
+	// console.log('user = ' + user);
+	// console.log(user);
 
     if (!user)
         return (
