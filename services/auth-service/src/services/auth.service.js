@@ -14,7 +14,7 @@ import { Op } from 'sequelize';
 
 import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
-import { generateAccessToken, generateRefreshToken , storeRefreshToken } from '../utils/jwt.js';
+import { generateAccessToken, generateRefreshToken , storeRefreshTokenHash} from '../utils/jwt.js';
 import { ConflictError, InvalidCredentialsError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { normalizeAndValidateEmail, normalizeEmail, validatePassword, validateUsername, validatePincode } from '../utils/validators.js';
 
@@ -120,7 +120,7 @@ async function authenticateUser(identifier, password, opts= {}) {
   const accessToken = generateAccessToken(accessTokenPayload);
   const refreshToken = generateRefreshToken(refreshTokenPayload);
 
-  await storeRefreshToken(refreshToken, user.id, ip, userAgent);
+  await storeRefreshTokenHash(refreshToken, user.id, ip, userAgent);
 
   // return the only asked data
   const publicUser = {

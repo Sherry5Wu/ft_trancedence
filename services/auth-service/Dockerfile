@@ -7,7 +7,8 @@
 FROM node:20-alpine AS dev
 
 # Install curl
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl \
+    && apk add --no-cache sqlite
 
 WORKDIR /app
 

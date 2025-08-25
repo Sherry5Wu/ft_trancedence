@@ -7,13 +7,19 @@ import crypto from 'crypto';
 import { scryptSync, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 import {
   InvalidCredentialsError,
-  NotFoundError,
 } from '../utils/errors.js';
 
 const SALT_ROUNDS = 12;
 
 const hashPassword = (password) => bcrypt.hash(password, SALT_ROUNDS);
 const comparePassword = (password, hash) => bcrypt.compare(password, hash);
+
+// HASH for refresh tokens (SHA-256)
+function hashToken(token) {
+  if (!token) throw new InvalidCredentialsError('Missing token for hashing');
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
 
 /**
  * AES-256-GCM encryption / decryption for TOTP secret
@@ -63,4 +69,5 @@ export {
   comparePassword,
   encryptSecret,
   decryptSecret,
+  hashToken,
 };

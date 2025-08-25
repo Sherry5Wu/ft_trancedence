@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 
 import { googleUserLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
-import { generateAccessToken, storeRefreshToken } from '../utils/jwt.js';
+import { generateAccessToken, storeRefreshTokenHash } from '../utils/jwt.js';
 import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
