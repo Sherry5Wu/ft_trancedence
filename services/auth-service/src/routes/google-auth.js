@@ -75,7 +75,7 @@ export default fp(async (fastify) => {
         console.log('existingUer-again:', user); // for testing only
         // return to frontend
 
-        setRefreshTokenCookie(refreshToken);
+        setRefreshTokenCookie(reply, refreshToken);
         return reply.code(200).send({ accessToken, user, });
       }
 

@@ -110,7 +110,7 @@ export default fp(async (fastify) => {
         req.body.password
       );
 
-      setRefreshTokenCookie(reply, refreshToken, false); // refreshToken cookie
+      setRefreshTokenCookie(reply, refreshToken); // refreshToken cookie
       reply.send({ success: true,accessToken, user});
       // return { accessToken, refreshToken, user, TwoFAStatus };
     } catch (err) {
@@ -151,11 +151,9 @@ export default fp(async (fastify) => {
         { ipAddress: req.ip, userAgent: req.headers['user-agent'] }
       );
 
-      // Set cookies for both tokens
-      setAuthCookie(reply, accessToken, true);
-      setAuthCookie(reply, newRefreshToken, false);
+      setRefreshTokenCookie(reply, newRefreshToken);
 
-      return reply.send({ success: true });
+      return reply.send({ success: true, accessToken });
     } catch (err) {
       // rotateTokens should throw for invalid/expired refresh token
       return sendError(reply, 401, 'Unauthorized', err.message);
