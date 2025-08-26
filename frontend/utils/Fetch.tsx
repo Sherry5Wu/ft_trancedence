@@ -456,6 +456,12 @@ export const updateUserPin = async (
       return true;
     }
 
+    if (response.status === 200) {
+      const body = await response.json();
+      if (body.success) return true;
+      throw new Error(body.message || "Failed to update PIN");
+    }
+
     // If backend returns 400/401, throw so caller can handle
     const errorBody = await response.json();
     throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
@@ -484,7 +490,13 @@ export const updateUserPassword = async (
       return true;
     }
 
-    // If backend sends 400/401 with JSON body
+	if (response.status === 200) {
+      const body = await response.json();
+      if (body.success) return true;
+      throw new Error(body.message || "Failed to update password");
+    }
+
+    // If backend sends 400/401/404 with JSON body
     const errorBody = await response.json();
     throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
   } catch (error) {

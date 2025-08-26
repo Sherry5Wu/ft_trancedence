@@ -125,9 +125,9 @@ const SettingsPage = () => {
             text={t('pages.changePassword.title')}
             aria-label={t('pages.userSettings.aria.changePassword')}
             onClick={() => navigate('/change-password')}
-			disabled={!user?.googleUser}
+			disabled={user?.googleUser}
           />
-		  {!user?.googleUser && (
+		  {user?.googleUser && (
 			<p className="max-w-sm text-center p-4">
 				{t('pages.userSettings.security.googlePasswordNotice')}
 			</p>
