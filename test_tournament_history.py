@@ -113,3 +113,48 @@ def test_update_all_bulk_insert():
     assert response.status_code == 200
     assert "inserted" in response.json()
     assert response.json()["inserted"] == 2
+
+def test_match_history_update_all_bulk_insert():
+    setup_test_user()
+    # Huom: käytä samoja kenttiä kuin matchHistory.js vaatii!
+    matches = [
+        {
+            "player_username": "Alice",
+            "opponent_username": "Bob",
+            "played_at": "2025-08-26T12:00:00Z",
+            "duration": 300,
+            "player_score": 3,
+            "opponent_score": 2,
+            "opponent_id": "uuid-bob",
+            "player_id": "uuid-alice",
+            "player_name": "Alice",
+            "opponent_name": "Bob",
+            "result": "win",
+            "is_guest_opponent": 0
+        },
+        {
+            "player_username": "Charlie",
+            "opponent_username": "Dave",
+            "played_at": "2025-08-26T12:10:00Z",
+            "duration": 250,
+            "player_score": 1,
+            "opponent_score": 3,
+            "opponent_id": "uuid-dave",
+            "player_id": "uuid-charlie",
+            "player_name": "Charlie",
+            "opponent_name": "Dave",
+            "result": "loss",
+            "is_guest_opponent": 0
+        }
+    ]
+    headers = get_auth_headers()
+    url = "https://localhost:8443/stats/match_history/update_all"
+    response = requests.post(url, json={"matches": matches}, headers=headers, verify=VERIFY)
+    print("Status code:", response.status_code)
+    try:
+        print("Response:", response.json())
+    except Exception:
+        print("Response is not JSON:", response.text)
+    assert response.status_code == 200
+    assert "inserted" in response.json()
+    assert response.json()["inserted"] == 2
