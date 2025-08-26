@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Texture, Vector3, Ray, Color3, AbstractMesh } from '@babylonjs/core';
+import { Texture, Vector3, Ray, Color3, AbstractMesh, Sound } from '@babylonjs/core';
 import { explodeBall, gatherBall, spawnFlash, flashPaddle, createFireTrail, updateFireTrail, resetFireTrail } from './effects';
 import { createScene } from './sceneSetup';
 import { createObjects } from './objects';
@@ -58,6 +58,20 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     const flareTexture = new Texture("../assets/game/flare.png", scene);
     const flameTexture = new Texture("../assets/game/fire.jpg", scene);
 
+    // Bounce sound effect
+    const bounceSound = new Sound("bounceSound", "../assets/game/stone.mp3", scene, null, {
+      autoplay: false,
+      volume: 0.6,
+    });
+    let lastHitTime = 0;
+    function playSound() {
+      const now = performance.now();
+      if (now - lastHitTime < 35) return; // ~1–2 frames at 60fps
+      lastHitTime = now;
+      if (bounceSound.isPlaying) bounceSound.stop();
+      bounceSound.play();
+    }
+
     createFireTrail(ball, scene, flameTexture);
     updateFireTrail(0);
     let score1 = 0, score2 = 0;
@@ -67,7 +81,6 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     let acceptingInput = true;
     let boostLevel = 0;
     let ended = false;
-    let matchEndFired = false;
     const boostPressed = new Set<'paddle1' | 'paddle2'>();
     const shieldPressed = new Set<'paddle1' | 'paddle2'>();
     const keysPressed = new Set<string>();
@@ -268,6 +281,8 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
           const V = new Vector3(vx, 0, vz);
           const dot = Vector3.Dot(V, N);
           const R = V.subtract(N.scale(2 * dot));
+
+          playSound();
     
           // --- Shield damage logic
           if (pick.pickedMesh === objects.shield1 && objects.shield1?.isVisible) {
@@ -378,6 +393,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       scene.onBeforeRenderObservable.clear();
       try { scene.dispose(); } catch {}
       try { engine.dispose(); } catch {}
+      try { bounceSound.dispose(); } catch {}
     };
 
   }, [canvasRef, p1Name, p2Name, isTournament, baseSpeed, winMode, winTarget, onMatchEnd, mapKey]);

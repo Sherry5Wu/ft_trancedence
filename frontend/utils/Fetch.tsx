@@ -1,13 +1,13 @@
-import { 
-	MatchData, 
-	ScoreHistory, 
-	UserStats, 
-	UserProfileData, 
-	LoginData, 
-	RivalData, 
-	FetchedUserData, 
+import {
+	MatchData,
+	ScoreHistory,
+	UserStats,
+	UserProfileData,
+	LoginData,
+	RivalData,
+	FetchedUserData,
 	UserGoogleProfileData,
-	GoogleCompleteResponse, 
+	GoogleCompleteResponse,
 	VerifyPinResponse,
 	RegisteredPlayerData,
 	Players
@@ -23,14 +23,14 @@ export const createUser = async (player: UserProfileData): Promise<UserProfileDa
 		},
 			body: JSON.stringify(player)
 		});
-		
+
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
-		
+
 		return await response.json();
-	} 
-	
+	}
+
 	catch (error) {
 		console.error('Error:', error);
 		return null;
@@ -66,7 +66,7 @@ export const signInUser = async (player: LoginData) => {
 			},
 			body: JSON.stringify(player)
 		});
-		
+
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
@@ -80,11 +80,11 @@ export const signInUser = async (player: LoginData) => {
 				'Content-Type': 'application/json',
 			},
 		});
-		
+
 		if (!statResponse.ok) {
 		throw new Error(`HTTP error! Status: ${statResponse.status}`);
 		}
-		
+
 		const stats = await statResponse.json();
 
 		// fetch for user rivals
@@ -94,11 +94,11 @@ export const signInUser = async (player: LoginData) => {
 			'Content-Type': 'application/json',
 			},
 		});
-		
+
 		if (!rivalResponse.ok) {
 			throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
 		}
-		
+
 		const rivals = await rivalResponse.json();
 
 		return {data, stats, rivals};
@@ -152,8 +152,8 @@ export const signInGoogleUser = async (idToken: string) => {
 		const rivals = await rivalResponse.json();
 
 		return { data, stats, rivals };
-	} 
-	
+	}
+
 	catch (error) {
 		console.error("Error during Google sign-in:", error);
 		return null;
@@ -172,7 +172,7 @@ export const updateProfilePic = async (file: File, token: string | null) => {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${token}`,
-			}, 
+			},
 			body: formData,
 		})
 
@@ -349,7 +349,7 @@ export const fetchMatchData = async (username: string): Promise<MatchData [] | n
 // 				"Authorization": `Bearer ${token}`,
 // 			},
 // 		});
-		
+
 // 		if (!response.ok) {
 // 			throw new Error(`HTTP error! Status: ${response.status}`);
 // 		}
@@ -378,7 +378,7 @@ export const fetchUsers = async (token: string | null) => {
 				"Authorization": `Bearer ${token}`,
 			},
 		});
-		
+
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
@@ -397,7 +397,7 @@ export const fetchUsers = async (token: string | null) => {
 
 export const verify2FA = async (tokenCode: string, accessToken: string) => {
   try {
-    const response = await fetch("https://localhost:8443/as/auth/2fa/verify", {
+    const response = await fetch("https://localhost:8443/as/2fa/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -422,7 +422,7 @@ export const disable2FA = async (accessToken: string): Promise<boolean> => {
   if (!accessToken) return false;
 
   try {
-    const response = await fetch('https://localhost:8443/as/auth/2fa', {
+    const response = await fetch('https://localhost:8443/as/2fa', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -456,6 +456,12 @@ export const updateUserPin = async (
       return true;
     }
 
+    if (response.status === 200) {
+      const body = await response.json();
+      if (body.success) return true;
+      throw new Error(body.message || "Failed to update PIN");
+    }
+
     // If backend returns 400/401, throw so caller can handle
     const errorBody = await response.json();
     throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
@@ -484,7 +490,13 @@ export const updateUserPassword = async (
       return true;
     }
 
-    // If backend sends 400/401 with JSON body
+	if (response.status === 200) {
+      const body = await response.json();
+      if (body.success) return true;
+      throw new Error(body.message || "Failed to update password");
+    }
+
+    // If backend sends 400/401/404 with JSON body
     const errorBody = await response.json();
     throw new Error(errorBody?.message || `HTTP error! Status: ${response.status}`);
   } catch (error) {
@@ -527,7 +539,7 @@ export const fetchUserProfile = async (
   if (!accessToken) {
     throw new Error("Access token required to fetch user profile");
   }
-  
+
   try {
     const response = await fetch(`https://localhost:8443/as/users/profile/${username}`, {
       method: "GET",

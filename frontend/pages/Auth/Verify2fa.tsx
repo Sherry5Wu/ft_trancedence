@@ -22,7 +22,7 @@ const Verify2faPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('https://localhost:8443/as/auth/2fa/verify', {
+      const response = await fetch('https://localhost:8443/as/2fa/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -86,11 +86,11 @@ const Verify2faPage: React.FC = () => {
           // are displayed and linked with aria-describedby or aria-invalid attributes.
         />
 
-        {isVerifying && 
+        {isVerifying &&
           <p>
             {t('pages.twoFactorAuth.verify.checking')}
           </p>}
-        
+
         {error &&
           <p className="text-red-600">
             {error}

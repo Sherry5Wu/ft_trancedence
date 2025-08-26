@@ -32,7 +32,7 @@ async function generateTwoFASetup(userId) {
   }
 
   // Generate TOTP secret object
-  const secretObj = speakeasy.generateSecret({ name: `ft_transcendence (${user.email})`, length: 20 });
+  const secretObj = speakeasy.generateSecret({ name: `ft_transcendence (${user.email})`, length: 10 });
   const otpauthUrl = secretObj.otpauth_url;
   const base32Secret = secretObj.base32; // the raw secret used for totp
 

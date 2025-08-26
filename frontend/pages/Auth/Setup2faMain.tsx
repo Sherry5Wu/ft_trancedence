@@ -18,24 +18,9 @@ const Setup2faMainPage: React.FC = () => {
   const [code, setCode] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [setupKey, setSetupKey] = useState<string | null>(null);
+  const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [showManualSetup, setShowManualSetup] = useState(false);
   const formFilled = /^\d{6}$/.test(code);
-
-  // // Simulate fetching QR code URL and setup key together
-  // useEffect(() => {
-  //   const fetch2FAData = async () => {
-  //     try {
-  //       setTimeout(() => {
-  //         setQrCodeUrl('https://www.example.com/2fa');
-  //         setSetupKey('ABCD EFGH IJKL MNOP');
-  //       }, 2000); // Simulated delay
-  //     } catch (error) {
-  //       console.error('Failed to fetch 2FA data:', error);
-  //     }
-  //   };
-
-  //   fetch2FAData();
-  // }, []);
   
   const accessToken = user?.accessToken;
   console.log("Access token:", accessToken);
@@ -46,10 +31,9 @@ const Setup2faMainPage: React.FC = () => {
 
     const fetch2FAData = async () => {
       try {
-        const response = await fetch('https://localhost:8443/as/auth/2fa/setup', {
+        const response = await fetch('https://localhost:8443/as/2fa/setup', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
         });
@@ -57,11 +41,10 @@ const Setup2faMainPage: React.FC = () => {
         if (!response.ok) throw new Error('Failed to setup 2FA');
 
         const data = await response.json();
-        setQrCodeUrl(data.qrCode);
+        // setQrCodeUrl(data.qrCode); // already a ready-made PNG image (base64), must be use as <img src={qrCodeUrl} alt="2FA QR Code" />
+        setQrCodeUrl(data.otpauthUrl); // generate the QR code dynamically
         setSetupKey(data.secret);
-
-        // store backup codes temporarily
-        localStorage.setItem('backupCodes', JSON.stringify(data.backupCodes));
+        setBackupCodes(data.backupCodes); // store backup codes
       } catch (err) {
         console.error(err);
       }
@@ -79,8 +62,13 @@ const Setup2faMainPage: React.FC = () => {
     }
 
     const result = await verify2FA(code, accessToken);
+
+
+console.log("2FA verification result:", result);
+
     if (result?.verified) {
-      navigate('/setup2fa-backup');
+      // navigate('/setup2fa-backup');
+      navigate('/setup2fa-backup', { state: { backupCodes } }); // navigate to /setup2fa-backup and pass the codes in memory (via React Router state), best security.
     } else {
       alert(t('pages.twoFactorAuth.setup.invalidCode'));
     }
@@ -117,13 +105,13 @@ const Setup2faMainPage: React.FC = () => {
         </p>
       </section>
 
-        <div className='inline-block border-2 border-black rounded-3xl p-6'>
+        <div className='inline-block border-2 border-black rounded-3xl p-2'>
         {qrCodeUrl ? (
           <QRCodeGenerator
-            value={qrCodeUrl} // Pass the fetched URL to the QRCodeGenerator
+            value={qrCodeUrl} // Pass the fetched URL (the otpauth://... string) to the QRCodeGenerator
             size={256}
             fgColor='#000000'
-            bgColor='#FFFFFF'
+            bgColor='#FFCC00'
           />
         ) : (
           <p>{t('pages.twoFactorAuth.setup.loadingQr')}</p>

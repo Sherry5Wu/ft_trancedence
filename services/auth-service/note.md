@@ -109,3 +109,33 @@ curl -i http://localhost:3000/users/all
 ```
 -i → Includes the HTTP response headers in the output, not just the body.
 
+
+
+Git Oprations:
+Delete a branch
+```sh
+# delete local
+git branch -d feature/old      # safe delete (refuses if not merged)
+git branch -D feature/old      # force delete
+
+# delete remote
+git push origin --delete feature/old
+```
+
+Create a new branch
+1. Create & switch to a new branch from your current branch (integration):
+```sh
+git switch -c feature/new
+# or (older git)
+git checkout -b feature/new
+```
+2. Create a branch explicitly from integration (even if you’re not on it):
+```sh
+git switch -c feature/new integration
+# or
+git checkout -b feature/new integration
+```
+Push and set upstream:
+```sh
+git push -u origin feature/new
+```
