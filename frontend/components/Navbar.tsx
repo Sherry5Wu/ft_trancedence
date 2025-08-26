@@ -22,6 +22,7 @@ import { useRequestNewToken, useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
 import { fetchUsers } from '../utils/Fetch';
 import { FetchedUserData } from '../utils/Interfaces';
+import { usePlayersContext } from '../context/PlayersContext';
 
 export const Navbar = () => {  
     const { user, setUser, logOut } = useUserContext();
@@ -31,6 +32,7 @@ export const Navbar = () => {
     const [rivalData, setRivalData] = useState<FetchedUserData[]>([]);
     const navigate = useNavigate();
     const requestNewToken = useRequestNewToken();
+    const { setIsTournament, resetPlayers } = usePlayersContext();
     
     // fetch users from search bar
     useEffect(() => {
@@ -55,10 +57,13 @@ export const Navbar = () => {
     //go to title
     const handleTitleClick = () => {
         console.log('Going to title/profile page');
-        if (user)
+        if (user) {
+            setIsTournament(false);
+            resetPlayers();
             navigate(`/user/${user?.username}`);
-        else
+        } else {
             navigate('/')
+        }
     } 
 
     const handleLogOut = () => {

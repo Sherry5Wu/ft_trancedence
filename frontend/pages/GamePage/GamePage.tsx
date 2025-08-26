@@ -87,17 +87,20 @@ function buildPayload(
 ) {
   const meName = me?.username ?? 'Player';
   const oppName = opp?.username ?? 'Opponent';
+  const oppIdStr = opp?.id !== undefined ? String(opp.id) : undefined;
+  const isGuestOpp = !oppIdStr || oppIdStr.toLowerCase() === 'guest';
   return {
     player_id: me?.id ? String(me.id) : 'guest',
     player_username: meName,
     player_name: meName,
-    opponent_id: opp?.id ? String(opp.id) : 'guest',
+    opponent_id: oppIdStr ?? 'guest',
     opponent_username: oppName,
     opponent_name: oppName,
     player_score: myScore,
     opponent_score: theirScore,
     duration: durationStr,
     result: myScore > theirScore ? 'win' : myScore < theirScore ? 'loss' : 'draw',
+    is_guest_opponent: isGuestOpp ? 1 : 0,
     played_at: played_at_iso,
   } as const;
 }
