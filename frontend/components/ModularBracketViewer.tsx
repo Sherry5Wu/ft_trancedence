@@ -11,8 +11,8 @@ const MatchCard: React.FC<{
 
   return (
     <div className="w-52 p-2 rounded-2xl">
-      <div className={`p-2 rounded-3xl border-2 text-center ${p1Border}`}>{player1 ?? 'TBD'}</div>
-      <div className={`p-2 rounded-3xl border-2 text-center mt-2 ${p2Border}`}>{player2 ?? 'TBD'}</div>
+      <div className={`p-2 rounded-3xl border-3 text-center ${p1Border}`}>{player1 ?? 'TBD'}</div>
+      <div className={`p-2 rounded-3xl border-3 text-center mt-2 ${p2Border}`}>{player2 ?? 'TBD'}</div>
     </div>
   );
 };
@@ -138,13 +138,13 @@ const ModularBracketViewer: React.FC<ModularBracketViewerProps> = ({
   }
 
   return (
-    <div className="w-full flex justify-center items-center p-6 bg-[#FFEE8C] rounded-xl">
-      <div className="relative flex justify-center items-center">
-        <div className="relative z-10 flex items-center" style={{ gap: `${roundGap}px` }}>
+    <div className="w-202 flex justify-center items-center bg-[#FFEE8C] rounded-xl -translate-x-5">
+      <div className="relative flex justify-center items-center scale-80">
+        <div className="relative z-10 flex items-center gap-8" >
           {rounds.map((round, roundIndex) => (
-            <div key={roundIndex} className="flex flex-col items-center" style={{ gap: `${matchGap}px` }}>
+            <div key={roundIndex} className="flex flex-col items-center gap-6">
               <div className="mb-2 font-semibold">
-                {rounds.length - roundIndex === 1 ? 'Final' : `Round ${rounds.length - roundIndex}`}
+                {rounds.length - roundIndex === 1 ? 'Final' : `Round ${roundIndex + 1}`}
               </div>
               {round.map((match, matchIdx) => {
                 const winner = match.result === 'draw' ? null : match.result === 'win' ? 'player1' : 'player2';
@@ -161,7 +161,7 @@ const ModularBracketViewer: React.FC<ModularBracketViewerProps> = ({
             <div className="mb-2 font-semibold">Winner</div>
             <div
               ref={(el) => matchRefs.current.set('winner-column', el)}
-              className={`w-50 p-2  rounded-3xl border-2 ${
+              className={`w-50 p-2 rounded-3xl border-3 ${
                 tournamentWinner === 'TBD' ? 'border-gray-400' : 'border-[#2E6F40]'
               } text-center font-bold`}
             >
@@ -169,11 +169,11 @@ const ModularBracketViewer: React.FC<ModularBracketViewerProps> = ({
             </div>
           </div>
         </div>
-        <svg ref={svgRef} className="absolute inset-0 w-full h-full pointer-events-none z-0">
+        {/* <svg ref={svgRef} className="absolute inset-0 w-full h-full pointer-events-none z-0">
           {paths.map((p) => (
             <path key={p.key} d={p.d} stroke="#444" strokeWidth={2.2} fill="none" strokeLinecap="round" />
           ))}
-        </svg>
+        </svg> */}
       </div>
     </div>
   );

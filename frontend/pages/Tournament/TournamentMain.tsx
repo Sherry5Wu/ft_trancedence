@@ -111,7 +111,7 @@ export default function TournamentsPage() {
         {t('pages.tournament.list.title')}
       </h1>
 
-      <div role="table" aria-label={t('pages.tournament.list.aria.table')} className="w-full p-4 justify-center text-center">
+      <div role="table" aria-label={t('pages.tournament.list.aria.table')} className="w-full p-4 justify-center text-center max-w-200 min-w-200">
         <div role="row" className="grid grid-cols-9 mb-1 text-center font-semibold">
           <span className='col-span-2' role="columnheader" aria-label={t('pages.tournament.list.aria.columnTitle')}>
             {t('pages.tournament.list.columnHeaders.title')}
@@ -134,11 +134,12 @@ export default function TournamentsPage() {
             return (
               <React.Fragment key={tournament.id}>
                 <li
-                  role="row"
-                  aria-label={t('pages.tournament.list.aria.tournamentRow', { id: tournament.id })}
-                  className={`grid grid-cols-9 text-center items-center rounded-xl h-12 mt-2 transition-transform 
-                    ${isExpanded ? 'bg-[#FDFBD4] scale-105' : 'bg-[#FFEE8C]'} 
-                    hover:scale-105 ease-in-out duration-300`}
+					role="row"
+					aria-label={t('pages.tournament.list.aria.tournamentRow', { id: tournament.id })}
+					className={`grid grid-cols-9 text-center items-center rounded-xl h-12 mt-2 transition-transform 
+						${isExpanded ? 'bg-[#FDFBD4] scale-105' : 'bg-[#FFEE8C]'} 
+						hover:scale-105 ease-in-out duration-300 hover:cursor-pointer`}
+					onClick={() => setExpandedId(isExpanded ? null : tournament.id)}
                 >
                   <span className='col-span-2' role="cell">{tournament.id}</span>
                   <span className='col-span-2' role="cell">{tournament.date}</span>
