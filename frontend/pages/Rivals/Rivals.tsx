@@ -2,10 +2,10 @@
 
 import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import { useState, useEffect } from 'react';
-import { RivalData, FetchedUserData } from '../../utils/Interfaces';
+import { RivalData } from '../../utils/Interfaces';
 import { useUserContext } from '../../context/UserContext';
 import { useTranslation } from 'react-i18next';
-import { fetchRivalData, fetchUsers, fetchSpecificUser } from '../../utils/Fetch';
+import { fetchRivalData } from '../../utils/Fetch';
 import { useRequestNewToken } from '../../utils/Hooks';
 import { RivalRow } from '../../components/RivalRow';
 

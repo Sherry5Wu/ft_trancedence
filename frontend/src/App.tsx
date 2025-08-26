@@ -32,52 +32,52 @@ import ProtectedRoute from '../components/ProtectedRoute';
 
 const App = () => {
 
-  return (
-    <div className='bg-[#FFCC00] scale-[1.0]'>
-      <Router>
-        <div className="flex flex-col min-h-screen">
-          <header className='sticky top-0 z-50'>
-            <Navbar />
-          </header>
-        <main className="flex-grow p-4">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/signin" element={<SignInPage />} />
-            <Route path="/signup" element={<SignUpPage />} />
-            <Route path="/signup/complete-profile" element={<CompleteProfilePage />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path='/user/:username' element={<UserPage />} />
-                <Route path="/setup2fa" element={<Setup2faMainPage />} />
-                <Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
-                <Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
-                <Route path="/verify2fa" element={<Verify2faPage />} />
-                <Route path="/choose-players" element={<ChoosePlayersPage />} />
-                <Route path="/login-player" element={<LogInPlayerPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/change-password" element={<ChangePasswordPage />} />
-                <Route path="/change-pin" element={<ChangePINPage />} />
-                <Route path="/tournaments" element={<TournamentsPage />} />
-                <Route path="/tournaments/new" element={<NewTournamentPage />} />
-                <Route path="/tournaments/new/players" element={<TournamentPlayers />} />
-                <Route path="/game" element={<GamePage />} />
-                <Route path="/leaderboard" element={<LeaderboardPage />} />
-                <Route path="/rivals" element={<RivalsPage />} />
-              </Route>
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            {/* 404 Catch-all route */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </main>
+	return (
+		<div className='bg-[#FFCC00] scale-[1.0]'>
+		<Router>
+			<div className="flex flex-col min-h-screen">
+			<header className='sticky top-0 z-50'>
+				<Navbar />
+			</header>
+			<main className="flex-grow p-4">
+			<Routes>
+				<Route path="/" element={<HomePage />} />
+				<Route path="/signin" element={<SignInPage />} />
+				<Route path="/signup" element={<SignUpPage />} />
+				<Route path="/signup/complete-profile" element={<CompleteProfilePage />} />
+				<Route element={<ProtectedRoute />}>
+					<Route path='/user/:username' element={<UserPage />} />
+					<Route path="/setup2fa" element={<Setup2faMainPage />} />
+					<Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
+					<Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
+					<Route path="/verify2fa" element={<Verify2faPage />} />
+					<Route path="/choose-players" element={<ChoosePlayersPage />} />
+					<Route path="/login-player" element={<LogInPlayerPage />} />
+					<Route path="/settings" element={<SettingsPage />} />
+					<Route path="/change-password" element={<ChangePasswordPage />} />
+					<Route path="/change-pin" element={<ChangePINPage />} />
+					<Route path="/tournaments" element={<TournamentsPage />} />
+					<Route path="/tournaments/new" element={<NewTournamentPage />} />
+					<Route path="/tournaments/new/players" element={<TournamentPlayers />} />
+					<Route path="/game" element={<GamePage />} />
+					<Route path="/leaderboard" element={<LeaderboardPage />} />
+					<Route path="/rivals" element={<RivalsPage />} />
+				</Route>
+				<Route path="/about" element={<AboutPage />} />
+				<Route path="/contact" element={<ContactPage />} />
+				<Route path="/privacy" element={<PrivacyPage />} />
+				{/* 404 Catch-all route */}
+				<Route path="*" element={<NotFoundPage />} />
+			</Routes>
+			</main>
 
-          <footer>
-            <Footer />
-          </footer>
-        </div>
-      </Router>
-    </div>
-  );
+			<footer>
+				<Footer />
+			</footer>
+			</div>
+		</Router>
+		</div>
+	);
 };
 
 export default App;

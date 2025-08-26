@@ -1,10 +1,9 @@
-import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RivalData, FetchedUserData } from '../utils/Interfaces';
 import { useUserContext } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
-import { fetchRivalData, fetchUsers, fetchSpecificUser } from '../utils/Fetch';
+import { fetchUsers } from '../utils/Fetch';
 import { useRequestNewToken } from '../utils/Hooks';
 import { DEFAULT_AVATAR } from '../utils/constants';
 

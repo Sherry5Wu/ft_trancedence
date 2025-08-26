@@ -1,6 +1,6 @@
 import { useState, createContext, useContext, useRef, ReactNode, useEffect } from 'react';
 import { UserContextType, User } from '../utils/Interfaces';
-import { data } from 'autoprefixer';
+import { useNavigate } from 'react-router-dom';
 
 export const userContext = createContext<UserContextType | undefined>(undefined);
 
@@ -20,22 +20,59 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 method: 'POST',
                 credentials: 'include'
             });
+
             if (!response.ok)
             {
                 setUser(null);
                 return null;
             }
+
             const data = await response.json();
             const newExpiration = Date.now() + 15 * 60 * 1000; //replace with something from backend?
 			console.log("REFRESH OK");
 
+			// fetch for user stats
+			const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+			
+			if (!statResponse.ok) {
+				setUser(null);
+                return null;
+			}
+			
+			const stats = await statResponse.json();
+
+			// fetch for user rivals
+			const rivalResponse = await fetch (`https://localhost:8443/stats/rivals/${data.user.id}`, {
+				method: 'GET',
+				headers: {
+				'Content-Type': 'application/json',
+				},
+			});
+		
+			if (!rivalResponse.ok) {
+				setUser(null);
+                return null;
+			}
+			
+			const rivals = await rivalResponse.json();
+
             setUser({
-                ...data.user,
+                username: data.user.username,
+				id: data.user.id,
+				profilePic: data.user.avatarUrl,
+				score: stats.score,
+				rank: stats.rank,
+				rivals: rivals,
                 expiry: newExpiration,
                 accessToken: data.accessToken,
+				twoFA: data.user.twoFA,
+				googleUser: data.user.googleUser,
             });
-
-            console.log(data);
 
             return data.accessToken;
 		}
@@ -67,7 +104,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 	useEffect(() => {
 		refresh();
-		
 	}, []);
 
     return (
