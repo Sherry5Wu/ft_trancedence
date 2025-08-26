@@ -116,7 +116,7 @@ export default fp(async (fastify) => {
    * @desc    Get other user's profile by ID: userId, username and avatarUrl
    */
   fastify.get('/users/profile/:username', {
-    preHandler: [fastify.authenticate],
+    // preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
       summary: 'Get another user profile by username',
