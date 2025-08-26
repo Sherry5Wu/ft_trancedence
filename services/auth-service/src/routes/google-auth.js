@@ -6,6 +6,7 @@ import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
 import { setRefreshTokenCookie } from '../utils/authCookie.js';
+import { normalizeAndValidateEmail } from '../utils/validators.js';
 
 const { User } = models;
 
@@ -52,7 +53,8 @@ export default fp(async (fastify) => {
         return reply.code(400).send({ message: 'Google email is not verified' });
       }
       const googleId = payload.sub;
-      const email = payload.email.toLowerCase();
+      // const email = payload.email.toLowerCase();
+      const email = normalizeAndValidateEmail(payload.email);
 
       // 3. Is googldId already in DB?
       const existingUser = await User.findOne({ where: { googleId } });
