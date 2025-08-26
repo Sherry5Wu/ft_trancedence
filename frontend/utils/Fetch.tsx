@@ -337,6 +337,35 @@ export const fetchMatchData = async (username: string): Promise<MatchData [] | n
     }
 };
 
+// export const fetchSpecificUser = async (username: string, token: string | null) => {
+// 	if (!token)
+// 		return ;
+
+// 	try {
+// 		const response = await fetch(`https://localhost:8443/as/users/${username}`, {
+// 			method: 'GET',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 				"Authorization": `Bearer ${token}`,
+// 			},
+// 		});
+		
+// 		if (!response.ok) {
+// 			throw new Error(`HTTP error! Status: ${response.status}`);
+// 		}
+
+// 		const userDataArray = await response.json();
+// 		return userDataArray.users.sort((a: any, b: any) => {
+// 			a.username.localeCompare(b.username);
+// 		}) ;
+// 	}
+
+// 	catch (error) {
+// 		console.error('Error:', error);
+// 		return [];
+// 	}
+// };
+
 export const fetchUsers = async (token: string | null) => {
 	if (!token)
 		return ;
@@ -368,7 +397,7 @@ export const fetchUsers = async (token: string | null) => {
 
 export const verify2FA = async (tokenCode: string, accessToken: string) => {
   try {
-    const response = await fetch("https://localhost:8443/as/auth/2fa/verify", {
+    const response = await fetch("https://localhost:8443/as/2fa/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -393,7 +422,7 @@ export const disable2FA = async (accessToken: string): Promise<boolean> => {
   if (!accessToken) return false;
 
   try {
-    const response = await fetch('https://localhost:8443/as/auth/2fa', {
+    const response = await fetch('https://localhost:8443/as/2fa', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -494,6 +523,7 @@ export const fetchUserProfile = async (
   username: string,
   accessToken: string
 ): Promise<Players | null> => {
+
   if (!accessToken) {
     throw new Error("Access token required to fetch user profile");
   }
@@ -513,10 +543,13 @@ export const fetchUserProfile = async (
     }
 
     const data = await response.json();
+
+	console.log('DATA: ', data);
+
     return {
-      id: data.id,
-      username: data.username,
-      photo: data.avatarUrl,
+      id: data.data.id,
+      username: data.data.username,
+      photo: data.data.avatarUrl,
     };
   } catch (err) {
     console.error("Error fetching user profile:", err);

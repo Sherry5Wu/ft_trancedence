@@ -107,7 +107,7 @@ export interface User {
     username: string;
     id: string;
     profilePic: string;
-    email: string;
+    // email: string;
     score: number;
     rank: number;
     rivals: RivalData[];

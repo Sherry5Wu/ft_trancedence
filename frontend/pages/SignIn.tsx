@@ -48,7 +48,7 @@ const SignInPage: React.FC = () => {
       setUser({
         username: signInData.data.user.username,
         id: signInData.data.user.id,
-        email: signInData.data.user.email,
+        //email: signInData.data.user.email,
         profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
         score: signInData.stats.score,
         rank: signInData.stats.score,

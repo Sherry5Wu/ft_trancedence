@@ -98,7 +98,7 @@ const SettingsPage = () => {
       </div>
            
       <div className="flex flex-col items-center text-center w-full mx-auto">
-        <div className="">
+        {/* <div className="">
           <h3 className="text-lg font-semibold mb-4">
             {t('pages.userSettings.accountSettings.title')}
           </h3>
@@ -118,7 +118,7 @@ const SettingsPage = () => {
             onFilled={() => {}}
             disabled
           /> */}
-        </div>
+        {/* </div> */}
 
         <div className="p-4">
           <h3 className="text-lg font-semibold mb-4">
