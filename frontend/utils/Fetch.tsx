@@ -523,6 +523,7 @@ export const fetchUserProfile = async (
   username: string,
   accessToken: string
 ): Promise<Players | null> => {
+
   if (!accessToken) {
     throw new Error("Access token required to fetch user profile");
   }
@@ -542,10 +543,13 @@ export const fetchUserProfile = async (
     }
 
     const data = await response.json();
+
+	console.log('DATA: ', data);
+
     return {
-      id: data.id,
-      username: data.username,
-      photo: data.avatarUrl,
+      id: data.data.id,
+      username: data.data.username,
+      photo: data.data.avatarUrl,
     };
   } catch (err) {
     console.error("Error fetching user profile:", err);
