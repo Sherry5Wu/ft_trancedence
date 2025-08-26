@@ -1,0 +1,59 @@
+# How to do the protection
+
+## What is SQL injection and XSS attacks
+
+👉 In short:
+SQL Injection = attacking the database.<br>
+XSS = attacking the users’ browsers.<br>
+
+### SQL injection
+SQL Injection is a type of attack where an attacker tricks your application into running malicious SQL queries by inserting special input into fields like forms, URLs, or API parameters.<br>
+
+### XSS (Cross-Site Scripting) attacks
+XSS is a web security vulnerability where an attacker injects malicious JavaScript into a website, so that it runs in another user’s browser.<br>
+This usually happens when user input is shown on a webpage without proper escaping.
+For example, if someone types:<br>
+```html
+<script>alert("Hacked!");</script>
+```
+
+## In Node.js: concrete ways to protect against SQL injection
+1. Always use parameterized queries / prepared statements (never string-concatenate user input into SQL).<br>
+**what we did**: use model methods (User.findOne({ where: { email } })) or parameter binding — avoid building SQL strings.<br>
+**Safer way to query:**<br>
+```js
+const inputEmail = foo@example.com' OR '1'='1;
+// Using Sequelize model methods
+const user = await User.findOne({
+  where: { email: inputEmail }
+});
+```
+**Not safe way to query:**<br>
+```js
+// Dangerous - direct string concatenation
+const inputEmail = foo@example.com' OR '1'='1;
+const query = `SELECT * FROM users WHERE email = '${inputEmail}'`;
+
+const [results] = await sequelize.query(query);
+```
+**Why the first way it safer??**<br>
+example:
+```js
+const email = foo@example.com' OR '1'='1;
+```
+Still with same the input email value, for the safer way it will replace like this:
+```js
+const user = await User.findOne({
+  where: { email: "foo@example.com' OR '1'='1" }
+});
+```
+And the real SQL script is:
+```sql
+SELECT * FROM users WHERE email = 'foo@example.com'' OR ''1''=''1';
+```
+the email passes as a whole string.<br>
+But if we use the not safe way, the SQL script will be:
+```sql
+SELECT * FROM users WHERE email = 'foo@example.com' OR '1'='1'
+```
+The "OR '1'='1'" will be recognaized as a script and executed. Then it will return all users (that is the  classic SQL injection). <br>
