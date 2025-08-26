@@ -61,10 +61,6 @@ export default fp(async (fastify) => {
           description: 'User profile retrieved successfully',
           allOf: [ // capital 'O'
             { $ref: 'publicUser#' },
-            // {
-            //   type: 'object',
-            //   properties: { is2FAEnabled: { type: 'boolean' } }
-            // }
           ],
         },
         401: {
@@ -112,46 +108,74 @@ export default fp(async (fastify) => {
   });
 
   /**
+   * Get other user's profile (id, username and avatarUrl) by username
    * @route   GET /users/profile/:username
    * @desc    Get other user's profile by ID: userId, username and avatarUrl
    */
   fastify.get('/users/profile/:username', {
-    preHandler: [fastify.authenticate],
-    schema: {
-      tags: ['User'],
-      summary: 'Get another user profile by username',
-      description: 'Returns public information of a user specified by username.',
-      params: {
+  schema: {
+    tags: ['User'],
+    summary: 'Get another user profile by username',
+    description: 'Returns public information of a user specified by username.',
+    params: {
+      type: 'object',
+      required: ['username'],
+      properties: {
+        username: { type: 'string', description: 'username' }
+      }
+    },
+    response: {
+      200: {
+        description: 'user profile retrieved successfully',
         type: 'object',
-        required: ['username'],
+        additionalProperties: false,
+        required: ['success', 'code', 'data'],
         properties: {
-          id: { type: 'string', description: 'username' }
+          success: { type: 'boolean' },
+          code: { type: 'string' },
+          data: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['id', 'username'],
+            properties: {
+              id: { type: 'string' },
+              username: { type: 'string' },
+              avatarUrl: { type: ['string', 'null'], format: 'uri' }
+            }
+          }
         }
       },
-      response: {
-        200: {
-          description: 'user profile retrieved successfully',
-          $ref: 'publicUser#',
-        },
-        404: {
-          description: 'User not found',
-          type: 'object',
-          properties: {
-            error: { type: 'string' },
-            message: { type: 'string' },
-          },
-        },
-      }
+      404: { description: 'User not found', $ref: 'errorResponse#'},
     }
+  }
   }, async (req, reply) => {
-    const user = await getUserByUsername(req.params.username);
-    if (!user) {
-      return reply.code(404).send({
-        error: 'User not found',
-        message: `User with id ${req.params.id} does not exist`
+    try {
+      const user = await getUserByUsername(req.params.username);
+
+      if (!user) {
+        // use your sendError helper (status, title, message)
+        return sendError(
+          reply,
+          404,
+          'User not found',
+          `User with username ${req.params.username} does not exist`
+        );
+      }
+
+      // return shape that matches the 200 schema
+      return reply.send({
+        success: true,
+        code: 'USER_PROFILE_RETRIEVED',
+        data: {
+          id: user.id,
+          username: user.username,
+          avatarUrl: user.avatarUrl || null
+        }
       });
+    } catch (err) {
+      // If sendError also handles logging/formatting for 500, use it:
+      return sendError(reply, 500, 'Internal Server Error', err.message || 'Unexpected error');
     }
-    return user;
   });
 
   /**
