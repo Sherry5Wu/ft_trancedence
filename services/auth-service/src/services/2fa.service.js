@@ -35,6 +35,9 @@ async function generateTwoFASetup(userId) {
   const secretObj = speakeasy.generateSecret({ name: `ft_transcendence (${user.email})`, length: 10 });
   const otpauthUrl = secretObj.otpauth_url;
   const base32Secret = secretObj.base32; // the raw secret used for totp
+  if (typeof base32Secret !== 'string' || base32Secret.length === 0) {
+    throw new Error('Generated 2FA secret is invalid');
+  }
 
   // Create backup codes (plaintext, presented once to user)
   // each backup code is 8 hex characters

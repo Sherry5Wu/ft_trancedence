@@ -17,9 +17,13 @@ For example, if someone types:<br>
 <script>alert("Hacked!");</script>
 ```
 
-## In Node.js: concrete ways to protect against SQL injection
-1. Always use parameterized queries / prepared statements (never string-concatenate user input into SQL).<br>
-**what we did**: use model methods (User.findOne({ where: { email } })) or parameter binding — avoid building SQL strings.<br>
+## Concrete ways to protect against SQL injection (Node.js / Express / Sequelize / MySQL/Postgres)
+
+### Backend
+The backend is where SQL injection really happens, so this is the **most critical layer.**<br>
+**a.** Always use parameterized queries / prepared statements (never string-concatenate user input into SQL).<br>
+**what we did**
+use model methods (User.findOne({ where: { email } })) or parameter binding — avoid building SQL strings.<br>
 **Safer way to query:**<br>
 ```js
 const inputEmail = foo@example.com' OR '1'='1;
@@ -27,6 +31,15 @@ const inputEmail = foo@example.com' OR '1'='1;
 const user = await User.findOne({
   where: { email: inputEmail }
 });
+
+// Also safe with raw query binding
+const [results] = await sequelize.query(
+  'SELECT * FROM users WHERE email = :email',
+  {
+    replacements: { email: inputEmail },
+    type: sequelize.QueryTypes.SELECT
+  }
+);
 ```
 **Not safe way to query:**<br>
 ```js
@@ -57,3 +70,19 @@ But if we use the not safe way, the SQL script will be:
 SELECT * FROM users WHERE email = 'foo@example.com' OR '1'='1'
 ```
 The "OR '1'='1'" will be recognaized as a script and executed. Then it will return all users (that is the  classic SQL injection). <br>
+
+**b.** Validate and sanitize inputs
+  - Check type, length, format before hitting the database.<br>
+  - Example using validator.js:<br>
+  ```js
+  const validator = require('validator');
+  if (!validator.isEmail(req.body.email)) {
+    return res.status(400).send('Invalid email');
+  }
+  ```
+  **What we did**
+  Limited each column length in DB level.
+
+
+**c** Limit database permissions
+Use a DB user with least privilege — e.g., no DROP or DELETE if not needed.<br>
