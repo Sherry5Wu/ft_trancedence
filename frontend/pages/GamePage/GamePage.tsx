@@ -537,12 +537,6 @@ export default function GamePage() {
               {t('game.pauseMenu.start')}
             </div>
             <div
-              id="scoreBoard"
-              className="absolute top-9 left-1/2 transform -translate-x-1/2 font-mono text-xl text-green-700 z-10 pointer-events-none"
-            >
-              {p1Name}: 0 | {p2Name}: 0
-            </div>
-            <div
                id="endOverlay"
                className="absolute inset-0 pointer-events-none"
              />

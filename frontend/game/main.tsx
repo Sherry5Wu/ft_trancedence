@@ -4,7 +4,7 @@ import { explodeBall, gatherBall, spawnFlash, flashPaddle, createFireTrail, upda
 import { createScene } from './sceneSetup';
 import { createObjects } from './objects';
 import { createMaterials } from './materials';
-import { updatePauseOverlay, updateStartPrompt, updateScore } from './uiHelpers';
+import { updatePauseOverlay, updateStartPrompt } from './uiHelpers';
 import { applyMap, getMapTuning } from './maps';
 
 type WinMode = 'bo5' | 'bo9' | 'bo19';
@@ -46,6 +46,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     const { ball, paddle1, paddle2, wallTop, wallBottom, limits } = objects;
     const undoMap = applyMap(mapKey, scene, materials, objects);
     const { mapSpeedMultiplier = 1 } = getMapTuning(mapKey);
+    const updateScore = objects.setScore;
 
     type ShieldSide = 'paddle1' | 'paddle2';
     type ShieldState = { hp: number; broken: boolean };
@@ -86,7 +87,6 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
     const keysPressed = new Set<string>();
     const pauseOverlay = document.getElementById("pauseOverlay")!;
     const startPrompt = document.getElementById("startPrompt") as HTMLElement;
-    const scoreBoard = document.getElementById("scoreBoard") as HTMLElement;
 
     function setInitialVelocity() {
       const nx = 0.07, nz = 0.04;
@@ -341,7 +341,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
         resetFireTrail();
         if (ball.position.x > objects.paddleDistance + 1.5) score2++;
         else score1++;
-        updateScore(scoreBoard, score1, score2, p1Name, p2Name);
+        updateScore?.(score1, score2);
         const lastVx = vx, lastVz = vz;
         ball.isVisible = false;
         explodeBall(scene, ball, ballMaterial, lastVx, lastVz);
@@ -382,7 +382,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
 
     engine.runRenderLoop(() => scene.render());
     window.addEventListener("resize", () => engine.resize());
-    updateScore(scoreBoard, score1, score2, p1Name, p2Name);
+    updateScore?.(0, 0);
     resetBall();
 
     // Clean up everything after match end
