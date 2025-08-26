@@ -397,7 +397,7 @@ export const fetchUsers = async (token: string | null) => {
 
 export const verify2FA = async (tokenCode: string, accessToken: string) => {
   try {
-    const response = await fetch("https://localhost:8443/as/auth/2fa/verify", {
+    const response = await fetch("https://localhost:8443/as/2fa/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -422,7 +422,7 @@ export const disable2FA = async (accessToken: string): Promise<boolean> => {
   if (!accessToken) return false;
 
   try {
-    const response = await fetch('https://localhost:8443/as/auth/2fa', {
+    const response = await fetch('https://localhost:8443/as/2fa', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
