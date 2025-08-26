@@ -169,3 +169,54 @@ export interface VerifyPinResponse {
   message: string;
   data?: { userId: string };
 }
+
+export type Result = 'win' | 'loss' | 'draw';
+
+export interface TournamentHistoryRow {
+  tournament_id: string;
+  stage_number: number;
+  match_number: number;
+  player_name: string;
+  opponent_name: string;
+  result: Result;
+  played_at: string;
+}
+
+export type UITournament = {
+  id: string;
+  date: string;
+  totalPlayers: number;
+  winner?: string | null;
+  matches: TournamentHistoryRow[];
+};
+
+export interface DropDownButtonProps {
+	label: string;
+	options: string[];
+	onSelect: (value: string) => void;
+	className?: string;
+	disabled?: boolean;
+	selected?: string;
+	onToggle?: (value: boolean) => void;
+}
+
+export interface AliasField {
+	value: string;
+	error: string;
+	touched: boolean;
+}
+
+export interface TournamentHistoryRow {
+  stage_number: number; // 1 = final, 2 = semifinal, 3 = quarterfinal...
+  match_number: number;
+  player_name: string | null;
+  opponent_name: string | null;
+  result: Result;
+}
+
+export interface ModularBracketViewerProps {
+  matches: TournamentHistoryRow[];
+  totalPlayers?: number;
+  roundGap?: number;
+  matchGap?: number;
+}
