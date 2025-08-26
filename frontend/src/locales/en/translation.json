@@ -78,7 +78,7 @@
       }
     },
     "errors": {
-      "unauthorized": "unauthorized",
+      "unauthorized": "Unauthorized.",
       "invalidUsername": "Username must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include: letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
       "invalidAlias": "Alias must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
       "invalidEmail": "Email must be in a valid format: \n • Example: name@domain.com",

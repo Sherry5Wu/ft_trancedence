@@ -10,10 +10,13 @@ import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 import { usePlayersContext } from '../../context/PlayersContext';
 import { loginRegisteredPlayer } from '../../utils/Fetch';
+import { fetchUserProfile } from '../../utils/Fetch';
+import { useUserContext } from '../../context/UserContext';
 
 const LogInPlayerPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useUserContext();
   const {
     players,
     addPlayer,
@@ -36,6 +39,8 @@ const LogInPlayerPage: React.FC = () => {
     !usernameField.error &&
     !pinField.error &&
     !usernameTaken;
+  
+  const accessToken = user?.accessToken;
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -59,10 +64,17 @@ const LogInPlayerPage: React.FC = () => {
         return;
       }
 
-      const player = {
+      if (!user?.accessToken) {
+        alert(t("common.errors.unauthorized"));
+        return;
+      }
+
+      const playerProfile = await fetchUserProfile(usernameField.value, user.accessToken);
+
+      const player = playerProfile ?? {
         id: response.data?.userId || Date.now().toString(),
         username: usernameField.value,
-        photo: `https://api.dicebear.com/6.x/initials/svg?seed=${usernameField.value}`, // update to player's picture
+        photo: `https://api.dicebear.com/6.x/initials/svg?seed=XX`, 
       };
 
       if (players.length > playerIndex) {
