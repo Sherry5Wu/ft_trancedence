@@ -61,9 +61,6 @@ export const RivalRow = ({ rivalData }: { rivalData: RivalData }) => {
 				<span className='col-span-3'>{rivalData.wins_against_rival} / {rivalData.loss_against_rival}</span>
 				<span className='col-span-2'>{rivalData.games_played_against_rival}</span>
 			</div>
-			{/* <div className='size-8 -translate-y-1 translate-x-2'>
-				< TrashIcon />
-			</div> */}
 			<div className='flex justify-end mt-2'>
 				{/* <button className='flex items-center h-8 w-55 bg-[#FFEE8C] rounded-full border-2 border-transparent 
 								hover:border-black transition ease-in-out duration-300  hover:cursor-pointer'> */}

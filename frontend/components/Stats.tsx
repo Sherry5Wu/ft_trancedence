@@ -17,7 +17,9 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
     const { user } = useUserContext();
 	const requestNewToken = useRequestNewToken();
 
-    if (!userStats || !scoreHistory)
+	console.log('userStats: ', userStats);
+
+    if (!userStats || !scoreHistory || userStats.games_played === 0 || scoreHistory.length == 0)
         return <div className='flex justify-center my-5'>{t('components.stats.noData')}</div>
 
     useEffect(() => {
@@ -47,8 +49,6 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
                     setWorstRivalPic(rivalPicURL);
                 else
                     setWorstRivalPic(DEFAULT_AVATAR);
-                // console.log('rivalName = ' + rivalName);
-                // console.log('rivalPicUrl = ' + rivalPicURL);
             }
 
         }

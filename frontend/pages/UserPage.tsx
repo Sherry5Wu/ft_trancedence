@@ -207,7 +207,6 @@ const UserPage = () => {
 				</div>
 				</button>
 			</div>
-
 			{stats && (<Stats userStats={userStats} scoreHistory={scoreHistory} />)}
 			</div>
 
@@ -220,8 +219,8 @@ const UserPage = () => {
 					</div>
 				</button>
 				</div>
-				<div className={`transition-all ease-in-out duration-300 ${history ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
-				{history && <MatchHistory player={param.username} />}
+					<div className={`transition-all ease-in-out duration-300 ${history ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'}`}>
+						{history && <MatchHistory player={param.username} />}
 				</div>
 			</div>
 			</div>)

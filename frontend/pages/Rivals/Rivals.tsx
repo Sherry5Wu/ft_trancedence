@@ -10,6 +10,21 @@ import { useRequestNewToken } from '../../utils/Hooks';
 import { RivalRow } from '../../components/RivalRow';
 
 const RivalsPage = () => {
+	const { t } = useTranslation();
+
+	return (
+		<div className='pageLayout'>
+			<div className='flex justify-center items-center gap-3 mb-5'>
+				<RivalIcon className='size-20' />
+				<h2 className='h1 font-semibold text-center'>{t('pages.rival.title')}</h2>
+				<RivalIcon className='size-20' />
+			</div>
+			< RivalsMain />
+		</div>
+	);
+}
+
+export const RivalsMain = () => {
     const { t } = useTranslation();
 	const { user } = useUserContext();
 	const [loading, setLoading] = useState(true);
@@ -40,30 +55,23 @@ const RivalsPage = () => {
 		return <div className='flex justify-center'>{t('components.rivalRows.noRivals')}</div>;
 
     return (
-    	<div className='pageLayout'>
-			<div className='flex justify-center items-center gap-3 mb-5'>
-				<RivalIcon className='size-20' />
-				<h2 className='h1 font-semibold text-center'>{t('pages.rival.title')}</h2>
-				<RivalIcon className='size-20' />
+		<div aria-label='rivals data' className=''>
+			<div aria-label='rivals data categories' className='grid grid-cols-12 mb-3 text-center font-semibold'>
+				<span className=''></span>
+				<span className='col-span-2'>{t('components.rivalRows.name')}</span>
+				<span className='col-span-2'>{t('components.rivalRows.score')}</span>
+				<span className='col-span-2'>{t('components.rivalRows.winRatio')}</span>
+				<span className='col-span-3'>{t('components.rivalRows.userRivalWinsLosses')}</span>
+				<span className='col-span-2'>{t('components.rivalRows.matchesPlayed')}</span>
 			</div>
-			<div aria-label='rivals data' className=''>
-				<div aria-label='rivals data categories' className='grid grid-cols-12 mb-3 text-center font-semibold'>
-					<span className=''></span>
-					<span className='col-span-2'>{t('components.rivalRows.name')}</span>
-					<span className='col-span-2'>{t('components.rivalRows.score')}</span>
-					<span className='col-span-2'>{t('components.rivalRows.winRatio')}</span>
-					<span className='col-span-3'>{t('components.rivalRows.userRivalWinsLosses')}</span>
-					<span className='col-span-2'>{t('components.rivalRows.matchesPlayed')}</span>
-				</div>
-				<ul>
-					{rivalData.map((rival, index: number) => (
-						<li key={index}> 
-							<RivalRow rivalData={rival} /> 
-						</li>
-					))}
-				</ul>
-			</div>
-      </div>
+			<ul>
+				{rivalData.map((rival, index: number) => (
+					<li key={index}> 
+						<RivalRow rivalData={rival} /> 
+					</li>
+				))}
+			</ul>
+		</div>
     );
   };
   
