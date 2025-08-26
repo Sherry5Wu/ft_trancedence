@@ -16,7 +16,7 @@ const Setup2faSuccessPage: React.FC = () => {
 
   const handle2faConfirmation = async () => {
     try {
-      const res = await fetch('https://localhost:8443/as/auth/2fa/status', {
+      const res = await fetch('https://localhost:8443/as/2fa/status', {
         method: 'GET',
         credentials: 'include',
       });

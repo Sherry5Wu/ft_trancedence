@@ -9,6 +9,9 @@ import {
 } from '../services/2fa.service.js';
 import { ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
+import { models } from '../db/index.js';
+
+const { User } = models;
 
 export default fp(async (fastify) => {
   /**
