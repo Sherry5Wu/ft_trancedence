@@ -336,6 +336,35 @@ export const fetchMatchData = async (username: string): Promise<MatchData [] | n
     }
 };
 
+// export const fetchSpecificUser = async (username: string, token: string | null) => {
+// 	if (!token)
+// 		return ;
+
+// 	try {
+// 		const response = await fetch(`https://localhost:8443/as/users/${username}`, {
+// 			method: 'GET',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 				"Authorization": `Bearer ${token}`,
+// 			},
+// 		});
+		
+// 		if (!response.ok) {
+// 			throw new Error(`HTTP error! Status: ${response.status}`);
+// 		}
+
+// 		const userDataArray = await response.json();
+// 		return userDataArray.users.sort((a: any, b: any) => {
+// 			a.username.localeCompare(b.username);
+// 		}) ;
+// 	}
+
+// 	catch (error) {
+// 		console.error('Error:', error);
+// 		return [];
+// 	}
+// };
+
 export const fetchUsers = async (token: string | null) => {
 	if (!token)
 		return ;
