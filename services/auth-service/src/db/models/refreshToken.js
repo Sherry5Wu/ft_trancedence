@@ -8,7 +8,7 @@ export default (sequelize) => {
       primaryKey: true,
     },
     tokenHash: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(64),
       allowNull: false,
     },
     userId: {
@@ -24,15 +24,15 @@ export default (sequelize) => {
        allowNull: true,
     },
     replacedByTokenHash: {
-      type: DataTypes.STRING, // Useful for token rotation tracking
+      type: DataTypes.STRING(64), // Useful for token rotation tracking
        allowNull: true,
     },
     ipAddress: {
-      type: DataTypes.STRING, // track IP for security/audit
+      type: DataTypes.STRING(45), // track IP for security/audit, IPv6 max 45 chars
        allowNull: true,
     },
     userAgent: {
-      type: DataTypes.STRING, // track device/browser info
+      type: DataTypes.STRING(1024), // track device/browser info, Practical limit: 512–1024 chars
        allowNull: true,
     },
   }, {
