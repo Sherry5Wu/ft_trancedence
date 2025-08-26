@@ -2,7 +2,7 @@ import React, { useRef, useState, Suspense, useMemo, useEffect } from 'react';
 import { usePlayersContext } from '../../context/PlayersContext'
 import { useUserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { postMatchHistory, postTournamentHistory, formatHMS, TournamentPayload } from './postresulttest';
+import { postMatchHistoryBulk, postTournamentHistory, formatHMS, TournamentPayload, StatsPayload } from './postresulttest';
 import KeyBindingsPanel, { KeyBindings, loadBindings, labelForCode } from './KeyBindings';
 import { useTranslation } from 'react-i18next';
 
@@ -82,13 +82,14 @@ function buildPayload(
   opp: { id?: string; username?: string },
   myScore: number,
   theirScore: number,
-  durationStr: string,
+  durationSec: number,
   played_at_iso: string
-) {
+): StatsPayload {
   const meName = me?.username ?? 'Player';
   const oppName = opp?.username ?? 'Opponent';
   const oppIdStr = opp?.id !== undefined ? String(opp.id) : undefined;
   const isGuestOpp = !oppIdStr || oppIdStr.toLowerCase() === 'guest';
+
   return {
     player_id: me?.id ? String(me.id) : 'guest',
     player_username: meName,
@@ -98,11 +99,11 @@ function buildPayload(
     opponent_name: oppName,
     player_score: myScore,
     opponent_score: theirScore,
-    duration: durationStr,
+    duration: Math.max(0, Math.round(durationSec)),
     result: myScore > theirScore ? 'win' : myScore < theirScore ? 'loss' : 'draw',
     is_guest_opponent: isGuestOpp ? 1 : 0,
     played_at: played_at_iso,
-  } as const;
+  };
 }
 
 // Flow of the page Options -> Game -> Post-match screen -> ...
@@ -130,6 +131,7 @@ export default function GamePage() {
   const matchSnapshot = useRef<{ p1: Player; p2: Player; startedAt: Date } | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const pendingTournamentEntries = useRef<TournamentPayload[]>([]);
+  const pendingMatchHistory = useRef<StatsPayload[]>([]);
 
   const { t } = useTranslation();
 
@@ -255,6 +257,7 @@ export default function GamePage() {
     const ended = new Date();
     const durationMs = ended.getTime() - started.getTime();
     const durationStr = formatHMS(durationMs);
+    const durationSec = Math.max(0, Math.round(durationMs / 1000));
     const played_at_iso = started.toISOString();
 
     function afterSubmitUI() {
@@ -298,19 +301,25 @@ export default function GamePage() {
       if (submitted) { afterSubmitUI(); return; }
 
       try {
-        // Regular match: post history from player 1 perspective
+        const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso);
+        pendingMatchHistory.current.push(payloadPlayer1);
+
+        const token = user?.accessToken;
+        // Regular match
         if (!isTournament) {
-          const payloadP1 = buildPayload(p1, p2, s1, s2, durationStr, played_at_iso);
-          await postMatchHistory(payloadP1, user?.accessToken ?? undefined);
+          if (token) {
+            await postMatchHistoryBulk(pendingMatchHistory.current, token);
+          } else {
+            console.warn('No access token — match_history bulk skipped.');
+          }
+          pendingMatchHistory.current = [];
         }
-      
         // Tournament: Accumulate entries to push at the end
-        if (isTournament) {
+        else {
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
             const stage_number = stageForPosting(roundNum, bracketSize || entrants.length || 2);
             const resultP1: 'win' | 'loss' | 'draw' = s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
-
             const entry: TournamentPayload = {
               tournament_id,
               stage_number,
@@ -319,18 +328,23 @@ export default function GamePage() {
               opponent_name: p2.username,
               result: resultP1,
             };
-
             pendingTournamentEntries.current.push(entry);
-            const token = user?.accessToken;
-            if (token) {
-              await postTournamentHistory(pendingTournamentEntries.current, token);
-              pendingTournamentEntries.current = [];
-            } else {
-              console.warn('No access token available — bulk tournament post skipped.');
-            }
           }
+          if (token) {
+            await Promise.all([
+              pendingTournamentEntries.current.length
+                ? postTournamentHistory(pendingTournamentEntries.current, token)
+                : Promise.resolve(null),
+              pendingMatchHistory.current.length
+                ? postMatchHistoryBulk(pendingMatchHistory.current, token)
+                : Promise.resolve(null),
+            ]);
+          } else {
+            console.warn('No access token — tournament+match_history bulks skipped.');
+          }
+          pendingTournamentEntries.current = [];
+          pendingMatchHistory.current = [];
         }
-      
         setSubmitted(true);
         afterSubmitUI();
       } catch (err) {
@@ -344,7 +358,7 @@ export default function GamePage() {
       }
     }
     await submitAll();
-  }
+  };
 
   const handlePlayAgain = () => {
     // Return to options and remove the game from the background for a clean start option
