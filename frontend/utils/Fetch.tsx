@@ -9,7 +9,8 @@ import {
 	UserGoogleProfileData,
 	GoogleCompleteResponse, 
 	VerifyPinResponse,
-	RegisteredPlayerData
+	RegisteredPlayerData,
+	Players
 	} from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
@@ -515,5 +516,39 @@ export const loginRegisteredPlayer = async ( player: RegisteredPlayerData ): Pro
       code: "PIN_NOT_MATCH",
       message: "Unexpected error occurred",
     };
+  }
+};
+
+export const fetchUserProfile = async (
+  username: string,
+  accessToken: string
+): Promise<Players | null> => {
+  if (!accessToken) {
+    throw new Error("Access token required to fetch user profile");
+  }
+  
+  try {
+    const response = await fetch(`https://localhost:8443/as/users/profile/${username}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch profile:", response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    return {
+      id: data.id,
+      username: data.username,
+      photo: data.avatarUrl,
+    };
+  } catch (err) {
+    console.error("Error fetching user profile:", err);
+    return null;
   }
 };
