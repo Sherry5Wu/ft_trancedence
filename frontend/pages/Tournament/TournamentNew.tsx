@@ -35,7 +35,7 @@ const NewTournamentPage: React.FC = () => {
     // Load logged-in user as player[0] if not already set
     if (user?.username && !players[0]) {
       const profilePic =
-        user.profilePic?.props?.src ??
+        user.profilePic ??
         `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
 
       setPlayer(0, {
@@ -54,7 +54,7 @@ const NewTournamentPage: React.FC = () => {
     // Set player[0] again
     if (user?.username) {
       const profilePic =
-        user.profilePic?.props?.src ??
+        user.profilePic ??
         `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
       setPlayer(0, {
         id: user.username,
