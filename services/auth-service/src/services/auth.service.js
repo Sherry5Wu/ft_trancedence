@@ -65,7 +65,7 @@ async function registerUser(email, username, password, pinCode) {
     const userData = user.toJSON();
     delete userData.passwordHash;
     delete userData.pinCodeHash;
-    
+
     return userData;
 }
 
@@ -126,7 +126,7 @@ async function authenticateUser(identifier, password, opts= {}) {
   const publicUser = {
     id: user.id,
     username: user.username,
-    avatarUrl: user.avatarUrl || null, // include only if you support it
+    avatarUrl: user.avatarUrl || null,
     TwoFAStatus: user.is2FAEnabled && user.is2FAConfirmed,
     registerFromGoogle: !!user.googleId,
   };

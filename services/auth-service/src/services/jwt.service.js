@@ -14,16 +14,18 @@ import {
   verifyAccessToken,
   verifyRefreshToken,
   decodeToken,
+  storeRefreshTokenHash,
 } from '../utils/jwt.js';
 
 import {
   TokenExpiredError,
   TokenRevokedError,
   NotFoundError,
+  InvalidCredentialsError,
 } from '../utils/errors.js';
 import { hashToken, compareToken } from '../utils/crypto.js';
 
-const { RefreshToken } = models;
+const { User, RefreshToken } = models;
 
 /**
  * Create and return new access & refresh tokens, and persist refresh token.
@@ -107,48 +109,91 @@ async function validateRefreshToken(token) {
 }
 
 /**
- * Rotate refresh token: revoke old, issue new pair, persist new.
+ * Rotate refresh token: revoke old, issue new pair, persist new refresh token into DB.
  * @param {string} token - old refresh token
  * @param {object} meta - optional metadata for new token
- * @returns {Promise<{ accessToken: string, refreshToken: string }>}
+ * @returns {Promise<{ accessToken: string, refreshToken: string, user: JSON }>}
  */
-async function rotateTokens(token, meta = {}) {
+async function rotateTokens(token, opts = {}) {
+  // ensure token it a non-empty string
+  if (typeof token !== 'string' || !token.trim()) throw new InvalidCredentialsError('The request must contain: token');
+
+  token = token.trim();
+
+  // const { ip = null, userAgent = null } = opts;
+    // Accept either { ip } or { ipAddress } from callers
+  const { ip = null, ipAddress = null, userAgent = null } = opts;
+  const ipToStore = ip || ipAddress || null;
+
   // validate old
   const decoded = await validateRefreshToken(token);
+  console.log('decoded id:', decoded.id);//for testing only
+    // find the user
+  const existingUser = await User.findByPk(decoded.id);
+  if (!existingUser) throw new NotFoundError('User not found');
+  console.log('User id:', existingUser.id); //for testing only
 
   // revoke old
-  const oldHash = hashToken(token);
-  await RefreshToken.update(
-    { revokedAt: new Date(), replacedByToken: 'rotating' },
-    { where: { tokenHash: oldHash } }
-  );
+  // const oldHash = hashToken(token);
+  // await RefreshToken.update(
+  //   { revokedAt: new Date(), replacedByToken: 'rotating' },
+  //   { where: { tokenHash: oldHash } }
+  // );
 
-  // issue new tokens
-  const payload = {
-    id: decoded.id,
-    username: decoded.username,
-    is2FAEnabled: decoded.is2FAEnabled,
+
+
+  //generate the payloads
+  const accessTokenPayload = {
+    id: existingUser.id,
+    email: existingUser.email,
+    username: existingUser.username,
+    is2FAEnabled: !!existingUser.twoFASecret,
   };
-  const { accessToken, refreshToken } = await createTokens(payload, meta);
+  const refreshTokenPayload = { id: existingUser.id };
 
-  // save new refresh token (hashed)
-  const newHash = hashToken(refreshToken);
-  await RefreshToken.create({
-    userId: decoded.id,
-    tokenHash: newHash,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // example: 7 days
-    createdByIp: meta.ipAddress || null,
-    userAgent: meta.userAgent || null,
-    replacedByToken: null,
-  });
+  // generate new tokens
+  const accessToken = generateAccessToken(accessTokenPayload);
+  const newRefreshToken = generateRefreshToken(refreshTokenPayload);
 
-  // update replacedBy reference for old one
-  await RefreshToken.update(
-    { replacedByToken: newHash },
-    { where: { tokenHash: oldHash } }
-  );
+  const oldHash = hashToken(token);
+  const newHash = hashToken(newRefreshToken);
 
-  return { accessToken, refreshToken };
+    // Use a transaction: revoke old and insert new atomically (Sequelize example)
+  // If you don't use Sequelize or don't want a transaction, at least update replacedByToken after store
+  const sequelize = RefreshToken.sequelize || User.sequelize; // adjust for your setup
+  if (!sequelize) {
+    // fallback: do operations sequentially but still set replacedByToken to newHash after storing
+    await storeRefreshTokenHash(newRefreshToken, existingUser.id, ipToStore, userAgent);
+    await RefreshToken.update(
+      { revokedAt: new Date(), replacedByToken: newHash },
+      { where: { tokenHash: oldHash } }
+    );
+  } else {
+    await sequelize.transaction(async (tx) => {
+      // store new token
+      await storeRefreshTokenHash(newRefreshToken, existingUser.id, ipToStore, userAgent, { transaction: tx });
+
+      // revoke old and set replacedByToken to new token hash
+      await RefreshToken.update(
+        { revokedAt: new Date(), replacedByToken: newHash },
+        { where: { tokenHash: oldHash }, transaction: tx }
+      );
+    });
+  }
+  // store the new refreshToken into DB
+  // await storeRefreshTokenHash(refreshToken, existingUser.id, ip, userAgent);
+
+  // generate user data for return
+  const publicUser = {
+    id: existingUser.id,
+    username: existingUser.username,
+    avatarUrl: existingUser.avatarUrl || null,
+    TwoFAStatus: existingUser.is2FAEnabled && existingUser.is2FAConfirmed,
+    registerFromGoogle: !!existingUser.googleId,
+  };
+
+  console.log('User infos:', publicUser); // for testing only
+  return { accessToken, newRefreshToken, user: publicUser };
 }
 
 /**

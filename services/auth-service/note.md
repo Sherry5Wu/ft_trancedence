@@ -29,6 +29,9 @@ await fastify.register(import('@fastify/rate-limit'), {
 6. hash the refreshToken
 7. google sign in error
 8. how to import different export funcitons.
+ 9. add user info to auth/refresh API
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM2Nzg2ZWJmLTlmNGItNDlkOS1hMTBmLTJjNDFkYmFlZWYyYiIsImlhdCI6MTc1NjE4OTE2NCwiZXhwIjoxNzU2NzkzOTY0fQ.mvcb3HYIkljLxqGqvKlyO1rymofz91C3U1YYPPcmtrk
 
 
 Build and run docker

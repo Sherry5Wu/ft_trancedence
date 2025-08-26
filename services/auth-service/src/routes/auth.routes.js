@@ -134,13 +134,50 @@ export default fp(async (fastify) => {
         200: {
           description: 'New tokens set in cookies',
           type: 'object',
-          properties: { success: { type: 'boolean' } }
+          properties: {
+            success: { type: 'boolean' },
+            accessToken: { type: 'string' },
+            user: { type: 'object', $ref: 'publicUser#' },
+          }
         },
         401: { $ref: 'errorResponse#' },
         500: { $ref: 'errorResponse#' }
       }
     }
   }, async (req, reply) => {
+
+// for testing only
+  // small helper to redact large sensitive values
+  const redact = (v, keep = 8) => {
+    if (typeof v !== 'string') return v;
+    if (v.length <= keep) return '◻'.repeat(v.length);
+    return `${v.slice(0, keep)}…(redacted, len=${v.length})`;
+  };
+
+  // Structured debug log: safe cookie info, headers, ip, url
+  req.log.info({
+    url: req.raw.url,
+    method: req.routerPath || req.raw.url,
+    ip: req.ip,
+    headers: {
+      host: req.headers.host,
+      'user-agent': req.headers['user-agent'],
+      // don't log authorization headers in full
+      authorization: req.headers.authorization ? '[present]' : '[missing]'
+    },
+    cookies: {
+      '__Host-refreshToken': req.cookies?.['__Host-refreshToken']
+        ? redact(req.cookies['__Host-refreshToken'])
+        : '[missing]'
+    },
+    bodyType: Array.isArray(req.body) ? 'array' : typeof req.body,
+  }, 'refresh token request received');
+
+
+
+
+
+
     try {
       // Read refresh token from cookie
       const refreshToken = req.cookies?.['__Host-refreshToken'] || null;
@@ -150,14 +187,14 @@ export default fp(async (fastify) => {
 
       // rotateTokens must validate the refresh token, rotate (issue new access + refresh)
       // and return { accessToken, refreshToken: newRefreshToken }
-      const { accessToken, refreshToken: newRefreshToken } = await rotateTokens(
+      const { accessToken, newRefreshToken, user } = await rotateTokens(
         refreshToken,
         { ipAddress: req.ip, userAgent: req.headers['user-agent'] }
       );
 
       setRefreshTokenCookie(reply, newRefreshToken);
 
-      return reply.send({ success: true, accessToken });
+      return reply.send({ success: true, accessToken, user });
     } catch (err) {
       // rotateTokens should throw for invalid/expired refresh token
       return sendError(reply, 401, 'Unauthorized', err.message);
