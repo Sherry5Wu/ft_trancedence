@@ -38,7 +38,7 @@ export function updateRivalsDataTable(player_username, rival_username, games_pla
       SET games_played_against_rival = ?,
           wins_against_rival = ?,
           loss_against_rival = ?,
-          rival_elo_score = ?,
+          rival_elo_score = ?
       WHERE player_username = ? AND rival_username = ?
     `);
     updateStmt.run(games_played_against_rival, wins_against_rival, loss_against_rival, rival_elo_score, player_username, rival_username);
