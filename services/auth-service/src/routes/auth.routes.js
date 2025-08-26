@@ -145,40 +145,7 @@ export default fp(async (fastify) => {
       }
     }
   }, async (req, reply) => {
-
-// for testing only
-  // small helper to redact large sensitive values
-  const redact = (v, keep = 8) => {
-    if (typeof v !== 'string') return v;
-    if (v.length <= keep) return '◻'.repeat(v.length);
-    return `${v.slice(0, keep)}…(redacted, len=${v.length})`;
-  };
-
-  // Structured debug log: safe cookie info, headers, ip, url
-  req.log.info({
-    url: req.raw.url,
-    method: req.routerPath || req.raw.url,
-    ip: req.ip,
-    headers: {
-      host: req.headers.host,
-      'user-agent': req.headers['user-agent'],
-      // don't log authorization headers in full
-      authorization: req.headers.authorization ? '[present]' : '[missing]'
-    },
-    cookies: {
-      '__Host-refreshToken': req.cookies?.['__Host-refreshToken']
-        ? redact(req.cookies['__Host-refreshToken'])
-        : '[missing]'
-    },
-    bodyType: Array.isArray(req.body) ? 'array' : typeof req.body,
-  }, 'refresh token request received');
-
-
-
-
-
-
-    try {
+  try {
       // Read refresh token from cookie
       const refreshToken = req.cookies?.['__Host-refreshToken'] || null;
       if (!refreshToken) {

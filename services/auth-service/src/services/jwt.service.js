@@ -127,20 +127,9 @@ async function rotateTokens(token, opts = {}) {
 
   // validate old
   const decoded = await validateRefreshToken(token);
-  console.log('decoded id:', decoded.id);//for testing only
     // find the user
   const existingUser = await User.findByPk(decoded.id);
   if (!existingUser) throw new NotFoundError('User not found');
-  console.log('User id:', existingUser.id); //for testing only
-
-  // revoke old
-  // const oldHash = hashToken(token);
-  // await RefreshToken.update(
-  //   { revokedAt: new Date(), replacedByToken: 'rotating' },
-  //   { where: { tokenHash: oldHash } }
-  // );
-
-
 
   //generate the payloads
   const accessTokenPayload = {
@@ -192,7 +181,6 @@ async function rotateTokens(token, opts = {}) {
     registerFromGoogle: !!existingUser.googleId,
   };
 
-  console.log('User infos:', publicUser); // for testing only
   return { accessToken, newRefreshToken, user: publicUser };
 }
 
