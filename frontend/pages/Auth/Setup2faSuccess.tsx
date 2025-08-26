@@ -15,20 +15,20 @@ const Setup2faSuccessPage: React.FC = () => {
   const { user } = useUserContext();
 
   const handle2faConfirmation = async () => {
-    try {
-      const res = await fetch('https://localhost:8443/as/2fa/status', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (data.enabled) {
-        navigate(`/user/${user?.username}`);
-      } else {
-        alert('2FA setup not complete, please retry.');
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    // try {
+    //   const res = await fetch('https://localhost:8443/as/2fa/status', {
+    //     method: 'GET',
+    //     credentials: 'include',
+    //   });
+    //   const data = await res.json();
+    //   if (data.enabled) {
+    //     navigate(`/user/${user?.username}`);
+    //   } else {
+    //     alert('2FA setup not complete, please retry.');
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 
   return (

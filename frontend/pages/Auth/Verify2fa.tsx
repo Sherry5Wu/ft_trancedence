@@ -7,48 +7,37 @@ import { AccessiblePageDescription } from '../../components/AccessiblePageDescri
 import { GenericButton } from '../../components/GenericButton';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
 import { useUserContext } from '../../context/UserContext';
+import { verify2FA } from '../../utils/Fetch';
 
 const Verify2faPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useUserContext();
 
+  const [code, setCode] = useState('');
+  const formFilled = /^\d{6}$/.test(code);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isValid, setIsValid] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCodeComplete = async (enteredCode: string) => {
-    setIsVerifying(true);
-    setError(null);
+  const accessToken = user?.accessToken;
 
-    try {
-      const response = await fetch('https://localhost:8443/as/2fa/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ token: enteredCode }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.verified) {
-        setIsValid(true);
-      } else {
-        setIsValid(false);
-        setError(t('pages.twoFactorAuth.verify.invalidCode'));
+    // Verify 6-digit TOTP code
+    const handleVerify = async () => {
+      if (!accessToken) {
+        alert(t("common.errors.unauthorized"));
+        navigate("/signin");
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      setIsValid(false);
-      setError(t('pages.twoFactorAuth.verify.errorMessage'));
-    } finally {
-      setIsVerifying(false);
-    }
-  };
+  
+      const result = await verify2FA(code, accessToken);
+  
+      if (result?.verified) {
+        navigate(`/user/${user?.username}`);
+      } else {
+        alert(t('pages.twoFactorAuth.setup.invalidCode'));
+      }
+    };
 
-  const handleVerifyClick = () => {
-    navigate(`/user/${user?.username}`);
-  };
 
   return (
     <main
@@ -80,10 +69,8 @@ const Verify2faPage: React.FC = () => {
         </h2>
 
         <VerificationCodeInput
-          onComplete={handleCodeComplete}
+          onComplete={setCode}
           aria-label={t('pages.twoFactorAuth.verify.aria.codeInput')}
-          // Error handling: If user input fails validation, ensure accessible error messages
-          // are displayed and linked with aria-describedby or aria-invalid attributes.
         />
 
         {isVerifying &&
@@ -100,8 +87,8 @@ const Verify2faPage: React.FC = () => {
           <GenericButton
             className="generic-button"
             text={t('common.buttons.verify')}
-            disabled={!isValid || isVerifying}
-            onClick={handleVerifyClick}
+            disabled={!formFilled || isVerifying}
+            onClick={handleVerify}
           />
         </div>
 

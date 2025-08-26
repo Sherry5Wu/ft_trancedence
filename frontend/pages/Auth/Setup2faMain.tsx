@@ -23,7 +23,6 @@ const Setup2faMainPage: React.FC = () => {
   const formFilled = /^\d{6}$/.test(code);
   
   const accessToken = user?.accessToken;
-  console.log("Access token:", accessToken);
 
   // Fetch QR code, secret, and backup codes
   useEffect(() => {
@@ -62,9 +61,6 @@ const Setup2faMainPage: React.FC = () => {
     }
 
     const result = await verify2FA(code, accessToken);
-
-
-console.log("2FA verification result:", result);
 
     if (result?.verified) {
       // navigate('/setup2fa-backup');
@@ -163,9 +159,6 @@ console.log("2FA verification result:", result);
           className="generic-button"
           text={t('common.buttons.next')}
           disabled={!formFilled}
-          // onClick={() =>
-          //   navigate('/setup2fa-backup')
-          // }
           onClick={handleVerify}
           aria-label={t('common.aria.buttons.next')}
         />
