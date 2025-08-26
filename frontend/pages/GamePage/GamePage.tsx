@@ -486,13 +486,6 @@ export default function GamePage() {
                 >
                   {t('game.startMatch')}
                 </button>
-
-                <button
-                  onClick={openOptions}
-                  className="w-full px-4 py-3 rounded-xl bg-neutral-800 hover:bg-neutral-700"
-                >
-                  {t('game.optionsButton')}
-                </button>
               </div>
             </div>
           </div>
