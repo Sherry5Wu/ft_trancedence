@@ -1,13 +1,10 @@
-// Ladataan paketit
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
 import Database from 'better-sqlite3';
 dotenv.config();
 
-// Luodaan Fastify-instanssi
 const fastify = Fastify({ logger: true });
 
-// Avataan SQLite-tietokanta (tiedoston polku .env:stä tai oletus)
 const dbPath = process.env.DATABASE_URL || './data/tournament.db';
 let db;
 
@@ -17,7 +14,6 @@ try {
 } catch (err) {
   fastify.log.error('Error when opening the database: ' + err.message);
 }
-// Luodaan taulu, jos sitä ei ole
 
 db.prepare(`
   CREATE TABLE IF NOT EXISTS tournament_history (
@@ -32,8 +28,6 @@ db.prepare(`
   )
 `).run();
 
-// ✅ JULKINEN REITTI - ei vaadi JWT:tä
-// Yksinkertainen reitti, joka palauttaa kaikki turnaushistoriat
 fastify.get('/tournament_history', (request, reply) => {
   try {
     const rows = db.prepare('SELECT * FROM tournament_history').all();
@@ -43,8 +37,6 @@ fastify.get('/tournament_history', (request, reply) => {
   }
 });
 
-// ✅ JULKINEN REITTI - ei vaadi JWT:tä  
-// Hakee tietyn turnauksen kaikki matsit
 fastify.get('/tournament_history/:tournament_id', (request, reply) => {
   const { tournament_id } = request.params;
   try {
@@ -98,16 +90,13 @@ const requireAuth = async (request, reply) => {
     }
 };
 
-// ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!
-// Lisää useita rivejä kerralla tournament_history-tauluun
+
 fastify.post('/tournament_history/update_all', { preHandler: requireAuth }, (request, reply) => {
-  // TODO: Lisää autentikaatiotarkistus tähän jos käytössä (esim. JWT)
   const { entries } = request.body ?? {};
   if (!Array.isArray(entries) || entries.length === 0) {
     return reply.status(400).send({ error: 'entries (array) required' });
   }
 
-  // Validoi jokainen rivi
   const validResults = ['win', 'loss', 'draw'];
   const errors = [];
   const insertData = [];
@@ -155,8 +144,6 @@ fastify.post('/tournament_history/update_all', { preHandler: requireAuth }, (req
   }
 });
 
-// Reitti uuden matchin lisäämiseen (POST JSON-bodyllä)
-// ⚠️ VAIN AUTENTIKOIDUT KÄYTTÄJÄT!
 fastify.post('/tournament_history', { preHandler: requireAuth }, (request, reply) => {
   const { tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body ?? {};
 
@@ -189,8 +176,6 @@ fastify.post('/tournament_history', { preHandler: requireAuth }, (request, reply
   }
 });
 
-
-// Käynnistetään palvelin portissa 3001 (yhtenäisyys muiden kanssa)
 const port = process.env.PORT || 3001;
 fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {
   if (err) {
