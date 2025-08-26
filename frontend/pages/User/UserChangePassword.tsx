@@ -90,6 +90,7 @@ const ChangePasswordPage: React.FC = () => {
         {t('pages.changePassword.title')}
       </h2>
 
+      <form onSubmit={handleSubmit} className="flex flex-col">
       <GenericInput
         type="password"
         placeholder={t('common.placeholders.password')}
@@ -132,6 +133,7 @@ const ChangePasswordPage: React.FC = () => {
         aria-label={t('common.aria.buttons.save')}
         disabled={!formFilled}
       />
+      </form>
       </div>
     </main>
   );

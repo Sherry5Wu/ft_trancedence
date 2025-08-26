@@ -8,26 +8,7 @@ import { GenericButton } from '../../components/GenericButton';
 import DownArrow from '../../assets/noun-down-arrow-down-1144832.svg?react';
 import ModularBracketViewer from '../../components/ModularBracketViewer';
 import { useUserContext } from '../../context/UserContext';
-
-type Result = 'win' | 'loss' | 'draw';
-
-interface TournamentHistoryRow {
-  tournament_id: string;
-  stage_number: number;
-  match_number: number;
-  player_name: string;
-  opponent_name: string;
-  result: Result;
-  played_at: string;
-}
-
-type UITournament = {
-  id: string;
-  date: string;
-  totalPlayers: number;
-  winner?: string | null;
-  matches: TournamentHistoryRow[];
-};
+import { Result, TournamentHistoryRow, UITournament } from '../../utils/Interfaces';
 
 const API_BASE = 'https://localhost:8443';
 
@@ -112,6 +93,8 @@ export default function TournamentsPage() {
     return tb - ta;
   });
 
+  //if no tournaments, return without category names
+
   return (
     <main
       className="pageLayout"
@@ -124,22 +107,22 @@ export default function TournamentsPage() {
         text={t('pages.tournament.list.aria.description')}
       />
 
-      <h1 id="pageTitle" className="font-semibold text-center text-xl">
+      <h1 id="pageTitle" className="font-semibold text-center text-4xl translate-x-2">
         {t('pages.tournament.list.title')}
       </h1>
 
-      <div role="table" aria-label={t('pages.tournament.list.aria.table')} className="w-full p-4">
-        <div role="row" className="grid grid-cols-5 mb-1 text-center font-semibold">
-          <span role="columnheader" aria-label={t('pages.tournament.list.aria.columnTitle')}>
+      <div role="table" aria-label={t('pages.tournament.list.aria.table')} className="w-full p-4 justify-center text-center">
+        <div role="row" className="grid grid-cols-9 mb-1 text-center font-semibold">
+          <span className='col-span-2' role="columnheader" aria-label={t('pages.tournament.list.aria.columnTitle')}>
             {t('pages.tournament.list.columnHeaders.title')}
           </span>
-          <span role="columnheader" aria-label={t('pages.tournament.list.aria.columnDate')}>
+          <span className='col-span-2' role="columnheader" aria-label={t('pages.tournament.list.aria.columnDate')}>
             {t('pages.tournament.list.columnHeaders.date')}
           </span>
-          <span role="columnheader" aria-label={t('pages.tournament.list.aria.columnPlayers')}>
+          <span className='col-span-2' role="columnheader" aria-label={t('pages.tournament.list.aria.columnPlayers')}>
             {t('pages.tournament.list.columnHeaders.players')}
           </span>
-          <span role="columnheader" aria-label={t('pages.tournament.list.aria.columnWinner')}>
+          <span className='col-span-2' role="columnheader" aria-label={t('pages.tournament.list.aria.columnWinner')}>
             {t('pages.tournament.list.columnHeaders.winner')}
           </span>
           <span aria-hidden="true"></span>
@@ -153,14 +136,14 @@ export default function TournamentsPage() {
                 <li
                   role="row"
                   aria-label={t('pages.tournament.list.aria.tournamentRow', { id: tournament.id })}
-                  className={`grid grid-cols-5 text-center items-center rounded-xl h-12 mt-2 transition-transform 
+                  className={`grid grid-cols-9 text-center items-center rounded-xl h-12 mt-2 transition-transform 
                     ${isExpanded ? 'bg-[#FDFBD4] scale-105' : 'bg-[#FFEE8C]'} 
                     hover:scale-105 ease-in-out duration-300`}
                 >
-                  <span role="cell">{tournament.id}</span>
-                  <span role="cell">{tournament.date}</span>
-                  <span role="cell">{tournament.totalPlayers}</span>
-                  <span role="cell">{tournament.winner ?? '-'}</span>
+                  <span className='col-span-2' role="cell">{tournament.id}</span>
+                  <span className='col-span-2' role="cell">{tournament.date}</span>
+                  <span className='col-span-2' role="cell">{tournament.totalPlayers}</span>
+                  <span className='col-span-2' role="cell">{tournament.winner ?? '-'}</span>
                   <span role="cell">
                     <button
                       onClick={() => setExpandedId(isExpanded ? null : tournament.id)}

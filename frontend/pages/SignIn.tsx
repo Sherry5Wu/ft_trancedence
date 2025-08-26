@@ -44,7 +44,7 @@ const SignInPage: React.FC = () => {
     if (signInData) {
       alert('Signed in successfully!');
 
-      const enabledTwoFA = signInData.data.TwoFAStatus;
+      const enabledTwoFA = signInData.data.user.TwoFAStatus;
       setUser({
         username: signInData.data.user.username,
         id: signInData.data.user.id,
@@ -56,7 +56,7 @@ const SignInPage: React.FC = () => {
         accessToken: signInData.data.accessToken,
         expiry: Date.now() + 15 * 60 * 1000,
         twoFA: enabledTwoFA,
-        googleUser: signInData.data.registerFromGoogle,
+        googleUser: signInData.data.user.registerFromGoogle,
       });
 
     if (enabledTwoFA) {

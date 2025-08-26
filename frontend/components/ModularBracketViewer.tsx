@@ -1,21 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-
-type Result = 'win' | 'loss' | 'draw';
-
-interface TournamentHistoryRow {
-  stage_number: number; // 1 = final, 2 = semifinal, 3 = quarterfinal...
-  match_number: number;
-  player_name: string | null;
-  opponent_name: string | null;
-  result: Result;
-}
-
-interface ModularBracketViewerProps {
-  matches: TournamentHistoryRow[];
-  totalPlayers?: number;
-  roundGap?: number;
-  matchGap?: number;
-}
+import { Result, TournamentHistoryRow, ModularBracketViewerProps} from '../utils/Interfaces';
 
 const MatchCard: React.FC<{
   player1: string | null;

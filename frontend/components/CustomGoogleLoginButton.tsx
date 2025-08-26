@@ -54,7 +54,8 @@ const CustomGoogleLoginButton: React.FC = () => {
         rivals: signInData.rivals,
         accessToken: signInData.data.accessToken,
         refreshToken: signInData.data.refreshToken,
-        twoFA: signInData.data.TwoFAStatus,
+        twoFA: signInData.data.user.TwoFAStatus,
+        googleUser: signInData.data.user.registerFromGoogle,
       });
 
       navigate(`/user/${signInData.data.user.username}`);

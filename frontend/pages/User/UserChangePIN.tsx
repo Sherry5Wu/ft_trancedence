@@ -90,7 +90,7 @@ const ChangePINPage: React.FC = () => {
         {t('pages.changePIN.title')}
       </h2>
 
-          <form onSubmit={handleSubmit} className="flex flex-col">
+      <form onSubmit={handleSubmit} className="flex flex-col">
       <GenericInput
         type="password"
         placeholder={t('common.placeholders.pin')}

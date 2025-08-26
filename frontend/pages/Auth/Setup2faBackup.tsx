@@ -1,6 +1,7 @@
 // /src/pages/Auth/Setup2faBackup.tsx
 
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
@@ -11,48 +12,17 @@ const Setup2faBackupPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [hasDownloaded, setHasDownloaded] = useState(false);
-  const [backupCodes, setBackupCodes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const backupCodes = location.state?.backupCodes || [];
+  const [loading, setLoading] = useState(backupCodes.length === 0);
 
   useEffect(() => {
-    const storedCodes = localStorage.getItem('backupCodes');
-    if (storedCodes) {
-      setBackupCodes(JSON.parse(storedCodes));
+    if (backupCodes.length > 0) {
       setLoading(false);
     } else {
-      setLoading(false);
-      console.error('No backup codes found');
+      console.error('No backup codes passed via state');
     }
-  }, []);
-
-  // // Simulate fetching backup codes from backend
-  // useEffect(() => {
-  //   const fetchBackupCodes = async () => {
-  //     try {
-  //       setTimeout(() => {
-  //         // This array should come from the backend
-  //         setBackupCodes([
-  //           'ABCD-1234',
-  //           'EFGH-5678',
-  //           'IJKL-9101',
-  //           'MNOP-1122',
-  //           'QRST-3344',
-  //           'UVWX-5566',
-  //           'YZAB-7788',
-  //           'CDEF-9900',
-  //           'GHIJ-1111',
-  //           'KLMN-2222',
-  //         ]);
-  //         setLoading(false);
-  //       }, 1000); // Simulated delay
-  //     } catch (error) {
-  //       console.error('Failed to fetch backup codes:', error);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchBackupCodes();
-  // }, []);
+  }, [backupCodes]);
 
   // Download file directly on the frontend a text file
   // 1. Convert the array of backup codes into a string, with each code on a new line.
@@ -108,7 +78,6 @@ const Setup2faBackupPage: React.FC = () => {
           {t('pages.twoFactorAuth.backup.backupInstructions')}
         </p>
 
-        {/* Recovery codes fetch from backend */}
         <div className="border-2 border-black rounded-3xl p-4 space-y-2">
           {loading ? (
             <p>{t('pages.twoFactorAuth.backup.loadingCodes')}</p>
