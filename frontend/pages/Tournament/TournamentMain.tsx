@@ -172,7 +172,7 @@ export default function TournamentsPage() {
       </div>
 
       {visibleTournamentsCount < tournaments.length && (
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center transition-all ease-in-out">
           <button
             onClick={() => setVisibleTournamentsCount((prev) => prev + 5)}
             aria-label={t('pages.tournament.list.aria.loadMoreButton')}

@@ -30,12 +30,14 @@ const LeaderboardPage = () => {
 				const leaderboard: (LeaderboardStats | null)[] = await Promise.all (
 					users.map(async u => {
 						const userStats = await fetchUserStats(u.username);
-						if (userStats)
+						console.log('userstats: ', userStats);
+						if (userStats?.games_played && userStats?.games_played > 0)
 						{
 							const leaderboardEntry: LeaderboardStats = {
 								userInfo: u,
 								stats: userStats,
 							}
+							console.log("LEADERBOARD ENTRY: ", leaderboardEntry);
 							return leaderboardEntry;
 						}
 						else
@@ -62,7 +64,8 @@ const LeaderboardPage = () => {
 			<>
 				<h1 id="pageTitle" className="h1 font-semibold text-center">{t('pages.leaderboard.title')}</h1>
 				<div className='flex justify-center translate-y-10'>{t('pages.leaderboard.empty')}</div>
-			</>);
+			</>
+		);
 
   	leaderboardData.sort((a, b) => b.stats.elo_score - a.stats.elo_score) // sort by score descending
     	.slice(0, 10); // limit to top 10
