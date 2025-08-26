@@ -18,6 +18,7 @@ const Setup2faMainPage: React.FC = () => {
   const [code, setCode] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [setupKey, setSetupKey] = useState<string | null>(null);
+  const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [showManualSetup, setShowManualSetup] = useState(false);
   const formFilled = /^\d{6}$/.test(code);
   
@@ -43,7 +44,7 @@ const Setup2faMainPage: React.FC = () => {
         // setQrCodeUrl(data.qrCode); // already a ready-made PNG image (base64), must be use as <img src={qrCodeUrl} alt="2FA QR Code" />
         setQrCodeUrl(data.otpauthUrl); // generate the QR code dynamically
         setSetupKey(data.secret);
-
+        setBackupCodes(data.backupCodes); // store backup codes
       } catch (err) {
         console.error(err);
       }
@@ -61,9 +62,13 @@ const Setup2faMainPage: React.FC = () => {
     }
 
     const result = await verify2FA(code, accessToken);
+
+
+console.log("2FA verification result:", result);
+
     if (result?.verified) {
       // navigate('/setup2fa-backup');
-      navigate('/setup2fa-backup', { state: { backupCodes: result.backupCodes } }); // navigate to /setup2fa-backup and pass the codes in memory (via React Router state), best security.
+      navigate('/setup2fa-backup', { state: { backupCodes } }); // navigate to /setup2fa-backup and pass the codes in memory (via React Router state), best security.
     } else {
       alert(t('pages.twoFactorAuth.setup.invalidCode'));
     }

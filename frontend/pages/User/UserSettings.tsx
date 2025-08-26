@@ -21,14 +21,6 @@ const SettingsPage = () => {
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
-	useEffect(() => {
-		if (!user) navigate('/signin');
-		// if (user) {
-		//   setFirstName(user?.firstname ?? '');
-		//   setLastName(user?.lastname ?? '');
-		// }
-	}, [user]);
-
 	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
@@ -45,12 +37,14 @@ const SettingsPage = () => {
 						profilePic: avatarUrl});
 				}
 				else
-					alert('Updating avatar failed, please try another picture.');
+					alert(t('common.alerts.failure.updatePicture'));
 			}
 			catch(error) {
 				console.error('Avatar upload failed', error);
 		}}
 	};
+
+	console.log(user);
 
 	return (
 		<main
