@@ -200,7 +200,7 @@ export default fp(async (fastify) => {
   });
 
   // Disable 2FA
-  fastify.delete('/2fa', {
+  fastify.delete('/2fa/disable', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['TwoFactorAuth'],
