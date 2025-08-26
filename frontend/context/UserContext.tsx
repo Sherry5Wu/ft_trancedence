@@ -1,6 +1,5 @@
 import { useState, createContext, useContext, useRef, ReactNode, useEffect } from 'react';
 import { UserContextType, User } from '../utils/Interfaces';
-import { useNavigate } from 'react-router-dom';
 
 export const userContext = createContext<UserContextType | undefined>(undefined);
 
@@ -13,6 +12,8 @@ export const useUserContext = () => {
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+	const [refreshDone, setRefreshDone] = useState(false);
+	const [tokenReceived, setTokenReceived] = useState(false);
 
     const refresh = async () => {
         try {
@@ -23,6 +24,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
             if (!response.ok)
             {
+				setRefreshDone(true);
                 setUser(null);
                 return null;
             }
@@ -30,6 +32,22 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             const data = await response.json();
             const newExpiration = Date.now() + 15 * 60 * 1000; //replace with something from backend?
 			console.log("REFRESH OK");
+
+			setRefreshDone(true);
+			setTokenReceived(true);
+
+			setUser({
+                username: data.user.username,
+				id: data.user.id,
+				profilePic: data.user.avatarUrl,
+				score: 0,
+				rank: 0,
+				rivals: [],
+                expiry: newExpiration,
+                accessToken: data.accessToken,
+				twoFA: data.user.twoFA,
+				googleUser: data.user.googleUser,
+            });
 
 			// fetch for user stats
 			const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
@@ -41,6 +59,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 			
 			if (!statResponse.ok) {
 				setUser(null);
+				setRefreshDone(true);
                 return null;
 			}
 			
@@ -56,6 +75,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 		
 			if (!rivalResponse.ok) {
 				setUser(null);
+				setRefreshDone(true);
                 return null;
 			}
 			
@@ -78,6 +98,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 		}
         catch {
             setUser(null);
+			setRefreshDone(true);
             return null;
         }
     };
@@ -98,7 +119,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 		}
 		finally {
 			setUser(null);
-			console.log('LOGGING OUT');
+			setRefreshDone(true);
 		}
 	}
 
@@ -107,7 +128,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 	}, []);
 
     return (
-        <userContext.Provider value={{ user, setUser, refresh, logOut }}>
+        <userContext.Provider value={{ user, setUser, refresh, logOut, tokenReceived, refreshDone, setTokenReceived }}>
             {children}
         </userContext.Provider>
     )

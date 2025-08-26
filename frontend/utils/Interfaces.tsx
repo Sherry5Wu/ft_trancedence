@@ -107,13 +107,11 @@ export interface User {
     username: string;
     id: string;
     profilePic: string;
-    // email: string;
     score: number;
     rank: number;
     rivals: RivalData[];
     accessToken: string | null;
     expiry: number;
-    // refreshToken: string;
     twoFA: boolean;
     googleUser: boolean;
 }
@@ -123,6 +121,9 @@ export interface UserContextType {
     setUser: (user: User | null) => void;
     refresh: () => Promise<string | null>;
 	logOut: () => void;
+	refreshDone: boolean;
+	tokenReceived: boolean;
+	setTokenReceived: ((value: boolean) => void);
 }
 
 export interface Players {
