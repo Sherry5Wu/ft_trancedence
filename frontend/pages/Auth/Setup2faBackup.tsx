@@ -1,6 +1,7 @@
 // /src/pages/Auth/Setup2faBackup.tsx
 
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
@@ -11,19 +12,34 @@ const Setup2faBackupPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [hasDownloaded, setHasDownloaded] = useState(false);
-  const [backupCodes, setBackupCodes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [backupCodes, setBackupCodes] = useState<string[]>([]);
+  // const [loading, setLoading] = useState(true);
+
+  // const location = useLocation();
+  // const backupCodes = location.state?.backupCodes || [];
+
+  // useEffect(() => {
+  //   const storedCodes = localStorage.getItem('backupCodes');
+  //   if (storedCodes) {
+  //     setBackupCodes(JSON.parse(storedCodes));
+  //     setLoading(false);
+  //   } else {
+  //     setLoading(false);
+  //     console.error('No backup codes found');
+  //   }
+  // }, []);
+  const location = useLocation();
+  const backupCodes = location.state?.backupCodes || [];
+  const [loading, setLoading] = useState(backupCodes.length === 0);
 
   useEffect(() => {
-    const storedCodes = localStorage.getItem('backupCodes');
-    if (storedCodes) {
-      setBackupCodes(JSON.parse(storedCodes));
+    if (backupCodes.length > 0) {
       setLoading(false);
     } else {
-      setLoading(false);
-      console.error('No backup codes found');
+      console.error('No backup codes passed via state');
     }
-  }, []);
+  }, [backupCodes]);
+
 
   // // Simulate fetching backup codes from backend
   // useEffect(() => {

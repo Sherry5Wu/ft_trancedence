@@ -226,6 +226,7 @@
         "manualSetupInstructions": "Please enter this key manually in your authentication app to set up your account.",
         "downloadAppInfo": "Don’t have the app? Google Authenticator is a free 2FA app.",
         "verifyCodeTitle": "Verify the code from the app",
+        "invalidCode": "Incorrect code. Please check and try again.",
         "aria": {
           "label": "Two-factor Authentication Setup Page",
           "description": "This page helps users set up two-factor authentication (2FA) for their account. The user needs to scan a QR code with the Google Authenticator app and verify the code from the app to complete the setup.",

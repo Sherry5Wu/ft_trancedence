@@ -44,8 +44,6 @@ const Setup2faMainPage: React.FC = () => {
         setQrCodeUrl(data.otpauthUrl); // generate the QR code dynamically
         setSetupKey(data.secret);
 
-        // store backup codes temporarily
-        localStorage.setItem('backupCodes', JSON.stringify(data.backupCodes));
       } catch (err) {
         console.error(err);
       }
@@ -64,7 +62,8 @@ const Setup2faMainPage: React.FC = () => {
 
     const result = await verify2FA(code, accessToken);
     if (result?.verified) {
-      navigate('/setup2fa-backup');
+      // navigate('/setup2fa-backup');
+      navigate('/setup2fa-backup', { state: { backupCodes: result.backupCodes } }); // navigate to /setup2fa-backup and pass the codes in memory (via React Router state), best security.
     } else {
       alert(t('pages.twoFactorAuth.setup.invalidCode'));
     }
@@ -101,13 +100,13 @@ const Setup2faMainPage: React.FC = () => {
         </p>
       </section>
 
-        <div className='inline-block border-2 border-black rounded-3xl p-6'>
+        <div className='inline-block border-2 border-black rounded-3xl p-2'>
         {qrCodeUrl ? (
           <QRCodeGenerator
             value={qrCodeUrl} // Pass the fetched URL (the otpauth://... string) to the QRCodeGenerator
             size={256}
             fgColor='#000000'
-            bgColor='#FFFFFF'
+            bgColor='#FFCC00'
           />
         ) : (
           <p>{t('pages.twoFactorAuth.setup.loadingQr')}</p>
