@@ -82,10 +82,10 @@ const Verify2faBackupCodePage: React.FC = () => {
                 value={code}
                 onFilled={(val: string) => {
                     setCode(val);
-                    if (error) setError(null); // clears the error <p> as well
+                    if (error) setError(null);
                 }}
                 onFocus={() => {
-                    if (error) setError(null); // clears the error <p> as well
+                    if (error) setError(null);
                 }}
                 //   errorMessage={error || undefined}
             />

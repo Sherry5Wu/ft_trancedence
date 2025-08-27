@@ -52,7 +52,7 @@ const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({ onComplet
 
   return (
     <div
-      className="flex gap-4 justify-center"
+      className="flex gap-4 justify-center mb-4"
       role="group"
       aria-label="Verification code input"
     >

@@ -81,9 +81,7 @@ const Verify2faPage: React.FC = () => {
         />
 
         {isVerifying &&
-          <p>
-            {t('pages.twoFactorAuth.verify.checking')}
-          </p>}
+          <p>{t('pages.twoFactorAuth.verify.checking')}</p>}
 
         {error &&
           <p className="text-red-600">
