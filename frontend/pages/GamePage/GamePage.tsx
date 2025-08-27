@@ -4,6 +4,7 @@ import { useUserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { postMatchHistoryBulk, postTournamentHistory, TournamentPayload, StatsPayload } from './postresulttest';
 import KeyBindingsPanel, { KeyBindings, loadBindings, labelForCode } from './KeyBindings';
+import { useTournamentBracket, type Player } from './Tournament';
 import { useTranslation } from 'react-i18next';
 
 const GameCanvas = React.lazy(() => import('../../game/main'));
@@ -18,90 +19,65 @@ const SPEED_MAP: Record<SpeedPreset, number> = {
   fast: 0.22,
 };
 
-type Player = { id: string; username: string; elo: number };
-type Pair = [Player, Player];
 type MapKey = 'default' | 'large' | 'obstacles';
-
-// Stage helpers
-function nextPow2(n: number) {
-  if (n < 2) return 2;
-  return 1 << Math.ceil(Math.log2(n));
-}
-function roundsFor(size: number) {
-  return Math.max(1, Math.log2(size) | 0);
-}
-function stageForPosting(currentRoundNum: number, bracketSize: number) {
-  const totalRounds = roundsFor(bracketSize);
-  return totalRounds - (currentRoundNum - 1);
-}
 
 function normalizePlayers(
   ps: ({ id?: string; username: string; elo?: number } | Player)[] = []
 ): Player[] {
   return ps
-    .filter(p => !!p?.username && !!p?.id)
+    .filter(p => !!p?.username)
     .map((p: any) => ({
-      id: p.id,
+      id: toIdOrGuest(p.id),
       username: p.username,
       elo: p.elo ?? 1000,
     }));
 }
 
-// Sort players by their ranking, highest vs lowest in a tournament
-function seedHighVsLow(players: Player[]): { pairs: Pair[]; carry: Player[] } {
-  const sorted = [...players].sort((a, b) => b.elo - a.elo);
-  const pairs: Pair[] = [];
-  const carry: Player[] = [];
+const GUEST_RE = /^guest(?:-|$)/i;
 
-  let left = 0;
-  let right = sorted.length - 1;
-
-  while (left < right) {
-    pairs.push([sorted[left], sorted[right]]);
-    left++;
-    right--;
-  }
-  // Handle odd, though there shouldn't be odd numbers in our system
-  if (left === right) carry.push(sorted[left]);
-  return { pairs, carry };
+function isGuestId(id: unknown): boolean {
+  return GUEST_RE.test(String(id ?? ''));
 }
 
-// Pair winners of the initial rounds
-function pairSequential(ps: Player[]): { pairs: Pair[]; carry: Player[] } {
-  const pairs: Pair[] = [];
-  const carry: Player[] = [];
-  for (let i = 0; i < ps.length; i += 2) {
-    if (i + 1 < ps.length) pairs.push([ps[i], ps[i + 1]]);
-    else carry.push(ps[i]);
-  }
-  return { pairs, carry };
+// Helper to handle guest id for posting
+function toIdOrGuest(id: unknown): string {
+  const s = String(id ?? '').trim();
+  if (!s) return 'guest';
+  const lower = s.toLowerCase();
+  if (isGuestId(s) || lower === 'null' || lower === 'undefined') return 'guest';
+  return s;
 }
 
 function buildPayload(
-  me: { id?: string; username?: string },
-  opp: { id?: string; username?: string },
+  me: { id?: string | null; username?: string },
+  opp: { id?: string | null; username?: string },
   myScore: number,
   theirScore: number,
   durationSec: number,
   played_at_iso: string
 ): StatsPayload {
-  const meName = me?.username ?? 'Player';
+  const meName  = me?.username  ?? 'Player';
   const oppName = opp?.username ?? 'Opponent';
-  const oppIdStr = opp?.id !== undefined ? String(opp.id) : undefined;
-  const isGuestOpp = !oppIdStr || oppIdStr.toLowerCase() === 'guest';
+
+  const playerId   = toIdOrGuest(me?.id);
+  const opponentId = toIdOrGuest(opp?.id);
+
+  const guestOpp =
+    opponentId.toLowerCase() === 'guest' ||
+    GUEST_RE.test(String(opp?.username ?? ''));
 
   return {
-    player_id: me?.id ? String(me.id) : 'guest',
+    player_id: playerId,
     player_username: meName,
     player_name: meName,
-    opponent_id: oppIdStr ?? 'guest',
+    opponent_id: opponentId,
     opponent_username: oppName,
     opponent_name: oppName,
     player_score: myScore,
     opponent_score: theirScore,
     duration: Math.max(0, Math.round(durationSec)),
     result: myScore > theirScore ? 'win' : myScore < theirScore ? 'loss' : 'draw',
-    is_guest_opponent: isGuestOpp ? 1 : 0,
+    is_guest_opponent: guestOpp ? 1 : 0,
     played_at: played_at_iso,
   };
 }
@@ -191,6 +167,11 @@ export default function GamePage() {
     }
   }, [navigate, resetPlayers, setIsTournament, user?.username]);
 
+  // Reset champion if new tournament
+  useEffect(() => {
+    if (isTournament) setChampion(null);
+  }, [isTournament]);
+
   // Initialise options phase
   useEffect(() => {
     if (phase === 'options') {
@@ -251,52 +232,29 @@ export default function GamePage() {
         : ([{ username: 'Player 1' }, { username: 'Player 2' }] as any);
       return normalizePlayers(base);
     }
-
     // Tournament: take exactly the selected amount from context
     const size = totalPlayers ?? rawPlayers?.length ?? 0;
     const list = (rawPlayers ?? []).slice(0, size);
-
-    // If setup is incomplete, return empty and let the init effect handle it.
+    // If setup is incomplete, return empty and let the init effect handle it
     if (list.length < 2) return [];
 
     return normalizePlayers(list as any);
   }, [isTournament, rawPlayers, totalPlayers]);
 
-  const bracketSize = useMemo(() => {
-    if (!isTournament) return 0;
-    const n = totalPlayers ?? entrants.length;
-    return nextPow2(Math.max(2, n));
-  }, [isTournament, totalPlayers, entrants.length]);
+  // Set up tournament variables from the imported file
+  const {
+    pairsCount,
+    currentPair,
+    upcomingPair,
+    roundNum,
+    matchIdx,
+    advanceByName,
+    stageForPosting: stageForPost,
+  } = useTournamentBracket(entrants, isTournament);
 
-  const [roundNum, setRoundNum] = useState(1);
-  const [pairs, setPairs] = useState<Pair[]>([]);
-  const [matchIdx, setMatchIdx] = useState(0);
-  const [winnersThisRound, setWinnersThisRound] = useState<Player[]>([]);
-  const [carryToNextRound, setCarryToNextRound] = useState<Player[]>([]);
-  const currentPair = pairs[matchIdx];
-  const upcomingPair = pairs[matchIdx + 1];
-
-  // Initialize tournament
-  useEffect(() => {
-    if (!isTournament) return;
-    if (entrants.length < 2) return;
-    const { pairs: p, carry } = seedHighVsLow(entrants);
-    setPairs(p);
-    setCarryToNextRound(carry);
-    setWinnersThisRound([]);
-    setMatchIdx(0);
-    setRoundNum(1);
-    setPhase('prematch');
-    pendingTournamentEntries.current = [];
-  }, [isTournament, entrants]);
-
-  const p1Name = isTournament
-    ? currentPair?.[0]?.username ?? '—'
-    : (rawPlayers?.[0]?.username ?? 'Player 1');
-
-  const p2Name = isTournament
-    ? currentPair?.[1]?.username ?? '—'
-    : (rawPlayers?.[1]?.username ?? 'Player 2');
+  const p1Name = isTournament ? currentPair?.[0]?.username ?? '—' : (rawPlayers?.[0]?.username ?? 'Player 1');
+  const p2Name = isTournament ? currentPair?.[1]?.username ?? '—' : (rawPlayers?.[1]?.username ?? 'Player 2');
+  const [champion, setChampion] = useState<Player | null>(null);
 
   const handleStart = () => {
     const now = new Date();
@@ -333,39 +291,18 @@ export default function GamePage() {
         setPhase('post');
         return;
       }
-      // Advance bracket
-      const winner =
-        currentPair[0].username === winnerName ? currentPair[0] :
-        currentPair[1].username === winnerName ? currentPair[1] :
-        currentPair[0];
-
-      const newWinners = [...winnersThisRound, winner];
-      if (matchIdx + 1 < pairs.length) {
-        setWinnersThisRound(newWinners);
-        setMatchIdx(matchIdx + 1);
-        setPhase('prematch');
-        return;
-      }
-      const allAdvancing = [...carryToNextRound, ...newWinners];
-      if (allAdvancing.length === 1) {
-        setCarryToNextRound(allAdvancing);
-        setWinnersThisRound([]);
-        setPairs([]);
-        setMatchIdx(0);
+      const { completed, champion: champ } = advanceByName(winnerName);
+      if (completed) {
+        setChampion(champ ?? null);
         setPhase('champion');
-        return;
+      } else {
+        setPhase('prematch');
       }
-      const { pairs: nextPairs, carry: nextCarry } = pairSequential(allAdvancing);
-      setPairs(nextPairs);
-      setCarryToNextRound(nextCarry);
-      setWinnersThisRound([]);
-      setMatchIdx(0);
-      setRoundNum(r => r + 1);
-      setPhase('prematch');
     }
 
     async function submitAll() {
       if (submitted) { afterSubmitUI(); return; }
+      setSubmitted(true);
 
       try {
         const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso);
@@ -385,7 +322,7 @@ export default function GamePage() {
         else {
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
-            const stage_number = stageForPosting(roundNum, bracketSize || entrants.length || 2);
+            const stage_number = stageForPost();
             const resultP1: 'win' | 'loss' | 'draw' = s1 > s2 ? 'win' : s1 < s2 ? 'loss' : 'draw';
             const entry: TournamentPayload = {
               tournament_id,
@@ -412,11 +349,11 @@ export default function GamePage() {
           pendingTournamentEntries.current = [];
           pendingMatchHistory.current = [];
         }
-        setSubmitted(true);
         afterSubmitUI();
       } catch (err) {
         console.error(err);
         if (!isTournament) {
+          setSubmitted(false);
           setPostResult({ winner: winnerName, s1, s2 });
           setPhase('post');
         }
@@ -548,7 +485,7 @@ export default function GamePage() {
             <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
               <div className="w-full max-w-md p-6 text-center">
                 <div className="text-sm opacity-70 mb-2">
-                  {t('game.tournament.round')} {roundNum} • {t('game.tournament.match')} {matchIdx + 1} / {pairs.length}
+                  {t('game.tournament.round')} {roundNum} • {t('game.tournament.match')} {matchIdx + 1} / {pairsCount}
                 </div>
                 <h2 className="text-2xl font-bold mb-6">{t('game.tournament.nextMatch')}</h2>
                 <div className="text-xl font-semibold mb-6">
@@ -702,7 +639,7 @@ export default function GamePage() {
                 <div className="text-lg opacity-80 mb-6">
                   {t('game.tournament.champion')}&nbsp;
                   <span className="font-semibold">
-                    {[...carryToNextRound, ...winnersThisRound][0]?.username || '—'}
+                    {champion?.username || '—'}
                   </span>
                 </div>
 
