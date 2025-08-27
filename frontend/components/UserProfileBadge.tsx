@@ -7,7 +7,7 @@
 // Static ProfileIcon
 
 import React from 'react';
-// import ProfileIcon from '../assets/noun-profile-7808629.svg';
+import ProfileIcon from '../assets/icons/profile-icon.svg';
 import PlusIcon from '../assets/icons/symbols/plus-rounded.svg';
 import CheckIcon from '../assets/icons/symbols/check-rounded.svg';
 import { DEFAULT_AVATAR } from '../utils/constants';
@@ -31,7 +31,7 @@ export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
     ? user.photo
     : user?.username
       ? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user.username)}&backgroundColor=ffee8c,ffcc00,fdfbd4,2e6f40,cd1c18,272757,b5c7eb,4682b4&textColor=000000`
-      : <img src={DEFAULT_AVATAR} className='profilePicBig'/>;
+      : ProfileIcon;
   
   const sizeClasses = {
     sm: {
