@@ -22,6 +22,8 @@ const Setup2faMainPage: React.FC = () => {
   const [setupKey, setSetupKey] = useState<string | null>(null);
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [showManualSetup, setShowManualSetup] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const formFilled = /^\d{6}$/.test(code);
   
   const accessToken = user?.accessToken;
@@ -55,23 +57,30 @@ const Setup2faMainPage: React.FC = () => {
   }, [accessToken]);
 
   // Verify 6-digit TOTP code
-  const handleVerify = async () => {
+  const handleVerify = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
     if (!accessToken) {
       alert(t("common.errors.unauthorized"));
       navigate("/signin");
       return;
     }
 
+    setIsVerifying(true);
+    setError(null);
+
     // const result = await verify2FA(code, accessToken);
     // /2fa/confirmation
     const result = await confirm2FA(code, accessToken);
+    
+    setIsVerifying(false);
 
     if (result?.verified) {
       // navigate('/setup2fa-backup');
       navigate('/setup2fa-backup', { state: { backupCodes } }); // navigate to /setup2fa-backup and pass the codes in memory (via React Router state), best security.
     } else {
-      alert(t('pages.twoFactorAuth.setup.invalidCode'));
-
+      // alert(t('pages.twoFactorAuth.setup.invalidCode'));
+      setError(t('pages.twoFactorAuth.setup.invalidCode'));
     }
   };
 
@@ -125,7 +134,7 @@ const Setup2faMainPage: React.FC = () => {
           {t('pages.twoFactorAuth.setup.scanQrInstructions')}
         </p>
       </section>
-
+ 
         <div className='inline-block border-2 border-black rounded-3xl p-2'>
         {qrCodeUrl ? (
           <QRCodeGenerator
@@ -162,14 +171,22 @@ const Setup2faMainPage: React.FC = () => {
           {t('pages.twoFactorAuth.setup.verifyCodeTitle')}
         </h2>
 
+      <form onSubmit={handleVerify} className="flex flex-col">
         <VerificationCodeInput
           onComplete={setCode}
           aria-label={t('pages.twoFactorAuth.setup.aria.verifyInput')}
           // Error handling: If user input fails validation, ensure accessible error messages
         />
-      </section>
 
-      <div className="flex flex-wrap justify-center gap-6">
+        {isVerifying &&
+          <p>{t('pages.twoFactorAuth.verify.checking')}</p>}
+
+        {error &&
+          <p className="text-red-600">
+            {error}
+          </p>}
+
+      <div className="flex flex-wrap justify-center gap-6  mt-6">
         <GenericButton
           className="generic-button"
           text={t('common.buttons.cancel')}
@@ -178,13 +195,16 @@ const Setup2faMainPage: React.FC = () => {
           aria-label={t('common.aria.buttons.cancel')}
         />
         <GenericButton
+          type="submit"
           className="generic-button"
           text={t('common.buttons.next')}
-          disabled={!formFilled}
-          onClick={handleVerify}
+          disabled={!formFilled || isVerifying}
+          // onClick={handleVerify}
           aria-label={t('common.aria.buttons.next')}
         />
-      </div>
+        </div>
+        </form>
+      </section>  
       
       {showManualSetup && (
         <div

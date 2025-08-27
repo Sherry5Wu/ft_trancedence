@@ -29,9 +29,6 @@ const CustomGoogleLoginButton: React.FC = () => {
       return;
     }
 
-    // Save in sessionStorage so CompleteProfile page can access it
-    // sessionStorage.setItem("googleIdToken", idToken);
-
     const signInData = await signInGoogleUser(idToken);
 
       if (!signInData) {
