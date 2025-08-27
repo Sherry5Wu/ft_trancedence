@@ -44,7 +44,7 @@ const Setup2faMainPage: React.FC = () => {
         setQrCodeUrl(data.otpauthUrl); // generate the QR code dynamically
         setSetupKey(data.secret);
         setBackupCodes(data.backupCodes); // store backup codes
-      } catch (err) {
+      } catch (err) { 
         console.error(err);
       }
     };

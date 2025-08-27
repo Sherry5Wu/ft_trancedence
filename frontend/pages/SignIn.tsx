@@ -39,25 +39,29 @@ const SignInPage: React.FC = () => {
       password: passwordField.value,
     };
 
+    //if 2fa or not
+    //if not, do this
     const signInData = await signInUser(newUser);
 
     if (signInData) {
-		alert('Signed in successfully!');
-		setTokenReceived(true);
-		const enabledTwoFA = signInData.data.user.TwoFAStatus;
-		setUser({
-			username: signInData.data.user.username,
-			id: signInData.data.user.id,
-			profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
-			score: signInData.stats.score,
-			rank: signInData.stats.score,
-			rivals: signInData.rivals,
-			accessToken: signInData.data.accessToken,
-			expiry: Date.now() + 15 * 60 * 1000,
-			twoFA: enabledTwoFA,
-			googleUser: signInData.data.user.registerFromGoogle,
+      alert('Signed in successfully!');
+      setTokenReceived(true);
+      const enabledTwoFA = signInData.data.user.TwoFAStatus;
+      setUser({
+        username: signInData.data.user.username,
+        id: signInData.data.user.id,
+        profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
+        score: signInData.stats.score,
+        rank: signInData.stats.score,
+        rivals: signInData.rivals,
+        accessToken: signInData.data.accessToken,
+        expiry: Date.now() + 15 * 60 * 1000,
+        twoFA: enabledTwoFA,
+        googleUser: signInData.data.user.registerFromGoogle,
 	});
+  
 
+  //if 2fa
     if (enabledTwoFA) {
       navigate('/verify2fa');
     } else {

@@ -68,6 +68,7 @@ const Verify2faPage: React.FC = () => {
           {t('pages.twoFactorAuth.verify.verifyCodeTitle')}
         </h2>
 
+      <form onSubmit={handleVerify} className="flex flex-col">
         <VerificationCodeInput
           onComplete={setCode}
           aria-label={t('pages.twoFactorAuth.verify.aria.codeInput')}
@@ -85,12 +86,14 @@ const Verify2faPage: React.FC = () => {
 
         <div className="flex justify-center mt-6">
           <GenericButton
+            type="submit"
             className="generic-button"
             text={t('common.buttons.verify')}
             disabled={!formFilled || isVerifying}
-            onClick={handleVerify}
+            // onClick={handleVerify}
           />
         </div>
+        </form>
 
         <p className="text-sm mt-6">
           {t('pages.twoFactorAuth.verify.backupPrompt')}{' '}

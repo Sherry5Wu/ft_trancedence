@@ -10,8 +10,9 @@ import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
 import { updateProfilePic } from '../../utils/Fetch';
-import { disable2FA } from '../../utils/Fetch';
+import { fetchProfileMe, disable2FA } from '../../utils/Fetch';
 import { useRequestNewToken } from '../../utils/Hooks';
+import { ProfileMeResponse } from '../../utils/Interfaces';
 
 const SettingsPage = () => {
 	const { t } = useTranslation();
@@ -44,6 +45,33 @@ const SettingsPage = () => {
 		}}
 	};
 
+	const handle2fa = async () => {
+		if (!user?.accessToken) {
+			alert(t("common.errors.unauthorized"));
+			navigate("/signin");
+			return;
+		}
+
+		if (user.twoFA) {
+			// setUser({ ...user, twoFA: false });
+			const success = await disable2FA(user.accessToken);
+			if (success) {
+				const profile: ProfileMeResponse | null = await fetchProfileMe(user.accessToken);
+				if (profile) {
+					setUser({
+						...user,
+						twoFA: profile.TwoFAStatus,
+					});
+					alert(t("pages.userSettings.twoFactor.disabled"));
+				}
+			} else {
+				alert(t("pages.userSettings.twoFactor.disableFailed"));
+			}
+		} else {
+			navigate("/setup2fa");
+		}
+	};
+
 	console.log(user);
 
 	return (
@@ -66,10 +94,7 @@ const SettingsPage = () => {
 			size="lg"
 			user={{
 				username: user?.username,
-				// photo: (user?.profilePic as React.ReactElement)?.props?.src,
 				photo: user?.profilePic
-				// (user?.profilePic as React.ReactElement)?.props?.src // extract the image URL from JSX
-				// photo: user?.profilePic ? user.profilePic.props?.src : undefined // if user.profilePic isn't present yet 
 			}}
 			onClick={() => fileInputRef.current?.click()}
 			alwaysShowPlus
@@ -153,19 +178,7 @@ const SettingsPage = () => {
 				labelOff={t('pages.userSettings.twoFactor.labelOff')}
 				aria-label={t('pages.userSettings.aria.2faToggle')}
 				checked={!!user?.twoFA} 
-				onClick={async () => {
-				if (user?.twoFA) {
-					const success = await disable2FA(user.accessToken);
-					if (success) {
-						setUser({ ...user, twoFA: false });
-						alert(t('pages.userSettings.twoFactor.disabled'));
-					} else {
-						alert(t('pages.userSettings.twoFactor.disableFailed'));
-					}
-				} else {
-					navigate('/setup2fa');
-				}
-				}}
+				onClick={handle2fa}
 			/>
 			</div>
 			</div>
