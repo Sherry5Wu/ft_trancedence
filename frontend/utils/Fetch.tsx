@@ -10,7 +10,8 @@ import {
 	GoogleCompleteResponse,
 	VerifyPinResponse,
 	RegisteredPlayerData,
-	Players
+	Players,
+	ProfileMeResponse,
 	} from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
@@ -418,19 +419,18 @@ export const verify2FA = async (tokenCode: string, accessToken: string) => {
   }
 };
 
-export const disable2FA = async (accessToken: string): Promise<boolean> => {
+export const disable2FA = async (accessToken: string | null): Promise<boolean> => {
   if (!accessToken) return false;
 
   try {
-    const response = await fetch('https://localhost:8443/as/2fa', {
+    const res = await fetch(`https://localhost:8443/as/2fa/disable`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${accessToken}`,
       },
     });
 
-    return response.ok;
+    return res.status === 204;
   } catch (err) {
     console.error('Error disabling 2FA:', err);
     return false;
@@ -545,7 +545,6 @@ export const fetchUserProfile = async (
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${accessToken}`,
       },
     });
 
@@ -556,8 +555,6 @@ export const fetchUserProfile = async (
 
     const data = await response.json();
 
-	console.log('DATA: ', data);
-
     return {
       id: data.data.id,
       username: data.data.username,
@@ -565,6 +562,31 @@ export const fetchUserProfile = async (
     };
   } catch (err) {
     console.error("Error fetching user profile:", err);
+    return null;
+  }
+};
+
+export const fetchProfileMe = async (
+  token: string
+): Promise<ProfileMeResponse | null> => {
+  try {
+    const res = await fetch(`https://localhost:8443/as/users/profile/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.error('Failed to fetch /users/profile/me:', res.statusText);
+      return null;
+    }
+
+    const data: ProfileMeResponse = await res.json();
+    return data;
+  } catch (err) {
+    console.error('Error fetching /users/profile/me:', err);
     return null;
   }
 };
