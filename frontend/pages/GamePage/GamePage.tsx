@@ -146,6 +146,42 @@ export default function GamePage() {
   const initialPhase: Phase = isTournament ? 'prematch' : 'home';
   const [phase, setPhase] = useState<Phase>(initialPhase);
 
+  useEffect(() => {
+    const onLeave = () => {
+      try { resetPlayers(); } catch {}
+      sessionStorage.setItem('lastPathBeforeUnload', window.location.pathname);
+    };
+    window.addEventListener('beforeunload', onLeave);
+    window.addEventListener('pagehide', onLeave);
+    return () => {
+      window.removeEventListener('beforeunload', onLeave);
+      window.removeEventListener('pagehide', onLeave);
+    };
+  }, [resetPlayers]);
+
+  useEffect(() => {
+    const ran = (window as any).__gp_reloadGate ?? false;
+    if (ran) return;
+    (window as any).__gp_reloadGate = true;
+
+    const nav = performance.getEntriesByType?.('navigation') as PerformanceNavigationTiming[];
+    const reloaded =
+      (nav && nav[0]?.type === 'reload') ||
+      ((performance as any).navigation && (performance as any).navigation.type === 1);
+
+    const lastPath = sessionStorage.getItem('lastPathBeforeUnload');
+    const sameRoute = lastPath === window.location.pathname;
+
+    if (reloaded && sameRoute) {
+      sessionStorage.removeItem('lastPathBeforeUnload');
+      try { resetPlayers(); } catch {}
+      const dest = user?.username
+        ? `/user/${encodeURIComponent(user.username)}`
+        : '/signin';
+      navigate(dest, { replace: true });
+    }
+  }, [navigate, resetPlayers, user?.username]);
+
   // Initialise options phase
   useEffect(() => {
     if (phase === 'options') {
