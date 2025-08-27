@@ -69,8 +69,8 @@ const CompleteProfilePage: React.FC = () => {
       accessToken: newUser.accessToken,
       refreshToken: newUser.refreshToken,
       expiry: Date.now() + 15 * 60 * 1000,
-      twoFA: newUser.TwoFAStatus,
-      googleUser: newUser.registerFromGoogle,
+      twoFA: newUser.user.TwoFAStatus,
+      googleUser: newUser.user.registerFromGoogle,
     };
 
     setUser(userData);

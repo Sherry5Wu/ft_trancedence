@@ -103,7 +103,7 @@ body, html {
 
 /* Default button */
 .generic-button {
-  @apply flex mx-auto items-center justify-center gap-2 px-4 h-10
+  @apply flex mx-auto items-center justify-center gap-2 px-4 h-10 mb-4
          max-w-[300px] bg-black text-white border-3 border-transparent 
          rounded-full cursor-pointer select-none shadow-md
          transition-colors duration-300 ease-in-out;

@@ -53,7 +53,6 @@ const SettingsPage = () => {
 		}
 
 		if (user.twoFA) {
-
 			const success = await disable2FA(user.accessToken);
 			if (success) {
 				const profile: ProfileMeResponse | null = await fetchProfileMe(user.accessToken);
@@ -144,7 +143,6 @@ const SettingsPage = () => {
             {t('pages.userSettings.security.title')}
           </h3>
           
-		  {/** Password change only enable if your are not Google registered */}
           <GenericButton
             className="generic-button"
             text={t('pages.changePassword.title')}
@@ -153,7 +151,7 @@ const SettingsPage = () => {
 			disabled={user?.googleUser}
           />
 		  {user?.googleUser && (
-			<p className="max-w-sm text-center p-4">
+			<p className="max-w-sm text-center mb-4">
 				{t('pages.userSettings.security.googlePasswordNotice')}
 			</p>
 			)}

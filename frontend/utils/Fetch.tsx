@@ -390,6 +390,38 @@ export const verify2FA = async (tokenCode: string, accessToken: string) => {
   }
 };
 
+
+// confirm the 6-digit code for setup 2fa
+export const confirm2FA = async (tokenCode: string, accessToken: string) => {
+  try {
+    const response = await fetch("https://localhost:8443/as/2fa/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ token: tokenCode }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      return { verified: false, ...errorBody };
+    }
+
+    return await response.json();
+  } catch (err) {
+    console.error(err);
+    return { verified: false };
+  }
+};
+
+// /2fa/verification
+// verify the 6-digit code after sign in, if 2fa is enable
+
+
+
+
+
 export const disable2FA = async (accessToken: string | null): Promise<boolean> => {
   if (!accessToken) return false;
 

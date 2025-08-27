@@ -9,12 +9,14 @@ import ProgressBar from '../../components/ProgressBar';
 import VerificationCodeInput from '../../components/VerificationCodeInput';
 import QRCodeGenerator from '../../components/QRCodeGenerator';
 import { useUserContext } from '../../context/UserContext';
-import { verify2FA } from '../../utils/Fetch';
+import { confirm2FA } from '../../utils/Fetch';
+import { fetchProfileMe, disable2FA } from '../../utils/Fetch';
+import { ProfileMeResponse } from '../../utils/Interfaces';
 
 const Setup2faMainPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useUserContext();
+  const { user, setUser } = useUserContext();
   const [code, setCode] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [setupKey, setSetupKey] = useState<string | null>(null);
@@ -60,7 +62,9 @@ const Setup2faMainPage: React.FC = () => {
       return;
     }
 
-    const result = await verify2FA(code, accessToken);
+    // const result = await verify2FA(code, accessToken);
+    // /2fa/confirmation
+    const result = await confirm2FA(code, accessToken);
 
     if (result?.verified) {
       // navigate('/setup2fa-backup');
@@ -70,6 +74,26 @@ const Setup2faMainPage: React.FC = () => {
 
     }
   };
+
+  const handleCancel = async () => {
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    const success = await disable2FA(user.accessToken);
+    if (success) {
+      const profile: ProfileMeResponse | null = await fetchProfileMe(accessToken);
+      if (profile) {
+        setUser({
+          ...user,
+          twoFA: profile.TwoFAStatus,
+        });
+        navigate('/settings');
+      }
+    }
+  }
 
   return (
     <main
@@ -149,9 +173,8 @@ const Setup2faMainPage: React.FC = () => {
         <GenericButton
           className="generic-button"
           text={t('common.buttons.cancel')}
-          onClick={() =>
-            navigate('/settings')
-          }
+          // onClick={() => navigate('/settings')}
+          onClick={handleCancel}
           aria-label={t('common.aria.buttons.cancel')}
         />
         <GenericButton

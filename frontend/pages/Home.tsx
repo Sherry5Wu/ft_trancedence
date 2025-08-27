@@ -28,17 +28,17 @@ const HomePage: React.FC = () => {
       text={t('pages.home.aria.description')}
     />
 
-      <div className="text-center mt-6">
+      <div className="text-center mt-6 mb-10">
         <h1 id="pageTitle" className="h1">
           P | N G - P · N G
         </h1>
 
-        <p id="home-description" className="text-lg mb-6">
+        {/* <p id="home-description" className="text-lg mb-6">
           {t('pages.home.welcome')}
-        </p>
+        </p> */}
       </div>
 
-      <div className="flex flex-wrap justify-center gap-6 mb-6">
+      <div className="flex flex-wrap justify-center gap-6 mb-10">
         <GenericButton
           className="generic-button"
           text={t('common.buttons.signIn')}

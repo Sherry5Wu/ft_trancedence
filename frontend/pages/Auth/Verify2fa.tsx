@@ -35,6 +35,9 @@ const Verify2faPage: React.FC = () => {
     setError(null);
 
     const result = await verify2FA(code, accessToken);
+  
+    // /2fa/verfication
+    
 
     setIsVerifying(false);
 
