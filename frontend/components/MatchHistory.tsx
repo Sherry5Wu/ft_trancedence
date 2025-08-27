@@ -15,8 +15,10 @@ const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]})
             const player1 = users.find((u: FetchedUserData) => u.username === match.player_username);
             player1 && player1.avatarUrl ? setAvatar1(player1.avatarUrl) : setAvatar1(DEFAULT_AVATAR);
 
-            const player2 = users.find((u: FetchedUserData) => u.username === match.opponent_username);
-            player2 && player2.avatarUrl ? setAvatar2(player2.avatarUrl) : setAvatar2(DEFAULT_AVATAR);
+
+			const player2 = users.find((u: FetchedUserData) => u.username === match.opponent_username);
+			player2 && player2.avatarUrl && match.is_guest_opponent === 0 ? setAvatar2(player2.avatarUrl) : setAvatar2(DEFAULT_AVATAR);
+			
         }    
         loadAvatarURL();
     }, [match, users]);
@@ -39,7 +41,7 @@ const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]})
 				<img src={avatar1} className={`profilePicSmall !border-4 flex-shrink-0 ${match.result === 'win' ? 'border-[#2E6F40]' : match.result === 'loss' ? 'border-[#CD1C18]' : 'border-black'}`} />
 				<span className=''>vs</span>
 				<img src={avatar2} className={`profilePicSmall !border-4 flex-shrink-0 ${match.result === 'loss' ? 'border-[#2E6F40]' : match.result === 'win' ? 'border-[#CD1C18]' : 'border-black'}`} />
-				<span className={`max-w-24 truncate ${match.opponent_id.includes('guest-') === true ? 'italic' : 'normal'}`}>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
+				<span className={`max-w-24 truncate ${match.is_guest_opponent === 1 ? 'italic' : 'normal'}`}>{match.opponent_username ? match.opponent_username : match.opponent_name}</span>
 			</span>
             <span className=''>{match.player_score} - {match.opponent_score}</span>
             <span className=''>{match.duration}</span>

@@ -63,8 +63,8 @@ body, html {
 }
 
 .round-icon-button {
-  @apply flex items-center justify-center mx-auto w-[100px] h-[100px] border-4 border-transparent rounded-full bg-black text-white shadow-md cursor-pointer transition ease-in-out duration-200
-    hover:border-white active:bg-[#4682B4]
+  @apply flex items-center justify-center mx-auto w-[100px] h-[100px] border-4 border-transparent rounded-full bg-black text-white shadow-md cursor-pointer 
+  transition ease-in-out duration-200 hover:border-white active:bg-[#4682B4]
 }
 
 .transparent-round-icon-button {
@@ -74,12 +74,12 @@ body, html {
 
 .round-icon-button img,
 .round-icon-button svg {
-  @apply w-[80px] h-[80px] invert pointer-events-none;
+  @apply w-[60px] h-[60px] invert pointer-events-none;
 }
 
 .transparent-round-icon-button img,
 .transparent-round-icon-button svg {
-  @apply w-[80px] h-[80px] pointer-events-none;
+  @apply w-[60px] h-[60px] pointer-events-none;
 }
 
 .hover-label {
@@ -88,20 +88,20 @@ body, html {
 }
 
 .profilePic {
-  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C] border-1 items-center
+  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C] border-2 items-center
   active:border-[#4682B4] transition ease-in-out duration-200
 }
 
 .profilePicBig { 
-  @apply size-32 -translate-y-0.5 rounded-full bg-[#FFEE8C] border-1 object-cover
+  @apply size-32 -translate-y-0.5 rounded-full bg-[#FFEE8C] border-2 object-cover
 }
 
 .profilePicSmall {
-  @apply h-11 w-11 inline mx-2 border-1 rounded-full object-cover bg-[#FFEE8C] items-center
+  @apply h-11 w-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C] items-center
 }
 
 .profilePicMini {
-  @apply h-6 w-6 inline mx-2 border-1 rounded-full object-cover bg-[#FFEE8C] items-center -translate-x-1
+  @apply h-6 w-6 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C] items-center -translate-x-1
 }
 
 /* Default button */

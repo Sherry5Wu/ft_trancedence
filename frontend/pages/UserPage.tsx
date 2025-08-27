@@ -7,10 +7,10 @@ import { Stats } from '../components/Stats';
 import { fetchUserStats, fetchScoreHistory, addRival, removeRival, fetchUsers } from '../utils/Fetch';
 import { UserStats, ScoreHistory, FetchedUserData } from '../utils/Interfaces';
 import { useRequestNewToken } from '../utils/Hooks';
-import PlayIcon from '../assets/noun-ping-pong-7327427.svg';
-import TournamentIcon from '../assets/noun-tournament-7157459.svg';
-import RivalsIcon from '../assets/noun-battle-7526810.svg';
-import LeaderboardIcon from '../assets/noun-leaderboard-7940150.svg';
+import PlayIcon from '../assets/icons/ping-pong-icon.svg';
+import TournamentIcon from '../assets/icons/tournament-icon.svg';
+import RivalsIcon from '../assets/icons/rivals-icon.svg';
+import LeaderboardIcon from '../assets/icons/leaderboard-icon-v2.svg';
 import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
 import { DEFAULT_AVATAR } from '../utils/constants';
 
@@ -22,6 +22,7 @@ const UserPage = () => {
 	const [scoreHistory, setScoreHistory] = useState<ScoreHistory[] | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [profilePicURL, setProfilePicURL] = useState('');
+	const [noSuchUser, setNoSuchUser] = useState(false);
 	const param = useParams();
 	const navigate = useNavigate();
 	const showStats = () => setStats(!stats);
@@ -32,6 +33,33 @@ const UserPage = () => {
 	useEffect(() => {
 		if (!user)
 			navigate('/signin');
+
+		const loadProfilePicURL = async () => {
+			try {
+        		token = await requestNewToken();
+				if (!token)
+					return ;
+				const allUsers = await fetchUsers(token);
+				if (!allUsers)
+					return ;
+				const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
+				if (pageOwner)
+				{
+					setNoSuchUser(false);
+					setProfilePicURL(pageOwner.avatarUrl ?? '');
+				}
+				else
+					setNoSuchUser(true);
+			}
+			catch(error) {
+				console.error('Error: ' + error);
+				return null;
+			}
+		}
+		loadProfilePicURL();
+	}, [param.username, user?.profilePic, user])
+
+	useEffect(() => {
 		const loadStats = async () => {
 			try {
 				if (!param.username)
@@ -59,44 +87,13 @@ const UserPage = () => {
 		loadStats();
 	}, [user, param.username]);
 
-	useEffect(() => {
-		const loadProfilePicURL = async () => {
-			try {
-        		token = await requestNewToken();
-				if (!token)
-					return ;
-				const allUsers = await fetchUsers(token);
-				if (!allUsers)
-					return ;
-				const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
-				if (pageOwner)
-					setProfilePicURL(pageOwner.avatarUrl ?? '');
-			}
-			catch(error) {
-				console.error('Error: ' + error);
-				return null;
-			}
-		}
-		loadProfilePicURL();
-	}, [param.username, user?.profilePic, user])
-
 	if (loading)
 		return <div className='flex justify-center'>Loading page...</div>;
 
+	if (noSuchUser)
+		return <div className='flex justify-center h4'>No user {param.username} exists</div>;
+
 	const isRival = user?.rivals.some(r => r.rival_username === param.username);
-
-	// console.log("ACCESS TOKEN");
-	// console.log(user?.accessToken);
-	// console.log("RIVALS in user page");
-	// console.log(user?.rivals);
-	// console.log('isRival = ' + isRival);
-	// if (userStats)
-	// {
-	// 	console.log("RANK");
-	// 	console.log(userStats.rank);
-	// }
-
-	// console.log('param username = ' + param.username);
 
 	return (
 		<div className='pageLayout'>
@@ -118,7 +115,7 @@ const UserPage = () => {
 				</div>
 				<div className='flex justify-between'>
 					<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
-					<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
+					<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
 				</div>
 			</>)}
 		</div>

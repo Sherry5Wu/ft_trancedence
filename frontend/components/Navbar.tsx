@@ -1,20 +1,15 @@
 /// <reference types="vite-plugin-svgr/client" />
 
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from './Menu';
-import { OptionToggle } from './OptionToggle';
 import { useUserContext } from '../context/UserContext';
-import { useAccessibilityContext } from '../context/AccessibilityContext';
-import FrenchIcon from '../assets/noun-france-6661055.svg?react';
-import EnglishIcon from '../assets/noun-uk-6661102.svg?react';
-import PortugueseIcon from '../assets/noun-brazil-6661040.svg?react';
-import LangIcon from '../assets/noun-globe-7929553.svg?react';
-import AccessIcon from '../assets/noun-accessibility-4682113.svg?react';
-import SunIcon from '../assets/noun-sun-7956354.svg?react';
-import MoonIcon from '../assets/noun-moon-5258339.svg?react';
-import SettingsIcon from '../assets/noun-setting-2060937.svg?react';
-import LogOutIcon from '../assets/noun-log-out-7682766.svg?react';
+import FrenchIcon from '../assets/icons/multi-language/flag-france.svg?react';
+import EnglishIcon from '../assets/icons/multi-language/flag-uk.svg?react';
+import PortugueseIcon from '../assets/icons/multi-language/flag-brazil.svg?react';
+import LangIcon from '../assets/icons/multi-language/globe-icon-v2.svg?react';
+import SettingsIcon from '../assets/icons/setting-icon-v2.svg?react';
+import LogOutIcon from '../assets/icons/log-out-icon.svg?react';
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '../assets/noun-search-7526678.svg?react';
 import { SearchBar } from '../components/SearchBar';
@@ -26,7 +21,6 @@ import { usePlayersContext } from '../context/PlayersContext';
 
 export const Navbar = () => {  
     const { user, setUser, logOut } = useUserContext();
-    const { largeText, setLargeText} = useAccessibilityContext();
     const { t, i18n } = useTranslation();
     const searchField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
     const [rivalData, setRivalData] = useState<FetchedUserData[]>([]);
@@ -42,8 +36,6 @@ export const Navbar = () => {
 				return ;
             const data = await fetchUsers(token);
             setRivalData(data);
-            // console.log("DATA FROM SEARCH");
-            // console.log(data);
         };
         fetchOtherUsers();
     }, [user])
@@ -71,20 +63,17 @@ export const Navbar = () => {
     }
 
     const languageMenuItems = [
-        {label: 'EN', Icon: <EnglishIcon />, onClick: () => changeLanguage('en')},
-        {label: 'FR', Icon: <FrenchIcon />, onClick: () => changeLanguage('fr')},
-        {label: 'PT', Icon: <PortugueseIcon />, onClick: () => changeLanguage('pt')},
+        {label: 'EN', Icon: <EnglishIcon className='scale-90'/>, onClick: () => changeLanguage('en')},
+        {label: 'FR', Icon: <FrenchIcon className='scale-90'/>, onClick: () => changeLanguage('fr')},
+        {label: 'PT', Icon: <PortugueseIcon className='scale-90'/>, onClick: () => changeLanguage('pt')},
     ]
 
     const profileMenuItems = [
-        {Icon: <SettingsIcon className='menuIcon'/>, onClick: () => {
+        {Icon: <SettingsIcon className='menuIcon scale-90'/>, onClick: () => {
             console.log('Go to Settings'), 
             user ? navigate('/settings') : navigate('/signin')}},
-        {Icon: <LogOutIcon className='menuIcon'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/signin')}}
+        {Icon: <LogOutIcon className='menuIcon scale-85 translate-x-1'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/signin')}}
     ]
-
-	// console.log('user = ' + user);
-	// console.log(user);
 
     if (!user)
         return (
@@ -102,7 +91,7 @@ export const Navbar = () => {
     return (
         <nav className='flex items-center bg-[#FFCC00]'>
             <div className='flex flex-1 justify-start gap-5'>
-                <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
+                <Menu aria-label='language options' Icon={<LangIcon className='scale-80'/>} elements={languageMenuItems} className='menuIcon' />
             </div>
             <div className='flex flex-1 justify-center items-center' >
                 <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>

@@ -53,6 +53,7 @@ export interface MatchData {
     opponent_score: number,
     result: string,
     duration: number,
+	is_guest_opponent: number,
 }
 
 export interface RivalData {
@@ -61,7 +62,6 @@ export interface RivalData {
 	games_played_against_rival?: number,
 	wins_against_rival?: number, 
 	loss_against_rival?: number,
-	picture?: string,
 }
 
 export interface FetchedUserData {
