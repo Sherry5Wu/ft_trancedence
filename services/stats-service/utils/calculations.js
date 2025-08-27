@@ -161,11 +161,20 @@ export function checkIfRivals(player_username, rival_username) {
 }
 
 export function calculateWinsAgainstRival(player_username, rival_username) {
-  return getMatchHistoryForAgainstRival(player_username, rival_username).filter(row => row.result === 'win').length;
+  return getMatchHistoryForAgainstRival(player_username, rival_username)
+    .filter(row =>
+      (row.player_username === player_username && row.result === 'win') ||
+      (row.opponent_username === player_username && row.result === 'loss')
+    ).length;
 }
 
+
 export function calculateLossAgainstRival(player_username, rival_username) {
-  return getMatchHistoryForAgainstRival(player_username, rival_username).filter(row => row.result === 'loss').length;
+  return getMatchHistoryForAgainstRival(player_username, rival_username)
+    .filter(row =>
+      (row.player_username === player_username && row.result === 'loss') ||
+      (row.opponent_username === player_username && row.result === 'win')
+    ).length;
 }
 
 export function calculateGamesPlayedAgainstRival(player_username, rival_username) {

@@ -69,7 +69,9 @@ function handleSingleMatch(match, request) {
         updateScoreHistoryTable(opponent_id, eloChanges.player2.new, played_at, opponent_username);
     }
 
+    console.log("Updating rivals.. checkIfRivals was false");
     if (checkIfRivals(player_username, opponent_username) && !is_guest_opponent) {
+        console.log("Updating rivals.. checkIfRivals was true");
         const playedagainstRival1 = calculateGamesPlayedAgainstRival(player_username, opponent_username);
         const gamesWonRival1 = calculateWinsAgainstRival(player_username, opponent_username);
         const gamesLostRival1 = calculateLossAgainstRival(player_username, opponent_username);

@@ -467,3 +467,66 @@ def test_get_user_match_data_by_username():
     assert response.status_code == 200
     assert 'rank' in user_data
     assert isinstance(user_data['rank'], int)
+
+def test_post_match_history_with_rivals():
+    """Test POST /match_history where player and opponent are rivals, and check rivals stats update"""
+    test_setup_users()
+    headers = get_auth_headers(ACCESS_TOKEN)
+    headers2 = get_auth_headers(ACCESS_TOKEN_USER2)
+
+    # Varmistetaan että käyttäjät ovat toistensa rivals
+    data_rival1 = {"rival_username": "testuser2"}
+    resp1 = requests.post(f"{STATS_URL}/rivals/", json=data_rival1, headers=headers, verify=False)
+    assert resp1.status_code == 200 or resp1.status_code == 409
+
+    data_rival2 = {"rival_username": "testuser123"}
+    resp2 = requests.post(f"{STATS_URL}/rivals/", json=data_rival2, headers=headers2, verify=False)
+    assert resp2.status_code == 200 or resp2.status_code == 409
+
+    # Lisätään match history -rivi (testuser123 voittaa testuser2:n)
+    data = {
+        "player_score": 21,
+        "opponent_score": 19,
+        "duration": "00:05:00",
+        "opponent_id": "testuser2-id",
+        "player_id": "testuser123-id",
+        "player_name": "testuser123",
+        "opponent_name": "testuser2",
+        "result": "win",
+        "opponent_username": "testuser2",
+        "player_username": "testuser123",
+        "played_at": f"{DATETIME}"
+    }
+    response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
+    print("Match history response:", response.json())
+    assert response.status_code == 200
+    assert "message" in response.json()
+    assert response.json()["message"] == "Match added to history successfully"
+
+    # Haetaan rivals-tiedot molemmille käyttäjille
+    # Haetaan ensin käyttäjien id:t
+    user1_info = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False).json()
+    user2_info = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers2, verify=False).json()
+    user1_id = user1_info["id"]
+    user2_id = user2_info["id"]
+
+    # Haetaan rival-listat
+    rivals1 = requests.get(f"{STATS_URL}/rivals/{user1_id}", headers=headers, verify=False).json()
+    rivals2 = requests.get(f"{STATS_URL}/rivals/{user2_id}", headers=headers2, verify=False).json()
+
+    # Etsitään oikeat rivat
+    rival1 = next((r for r in rivals1 if r["rival_username"] == "testuser2"), None)
+    rival2 = next((r for r in rivals2 if r["rival_username"] == "testuser123"), None)
+
+    print("User1 rivals:", rivals1)
+    print("User2 rivals:", rivals2)
+
+    # Tarkistetaan että voitot/häviöt päivittyivät oikein
+    assert rival1 is not None
+    assert rival2 is not None
+    assert rival1["wins_against_rival"] == 1
+    assert rival1["loss_against_rival"] == 0
+    assert rival2["wins_against_rival"] == 0
+    assert rival2["loss_against_rival"] == 1
+
+    print("✅ Rival stats updated correctly after match")
