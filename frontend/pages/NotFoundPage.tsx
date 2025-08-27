@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
-import NotFoundIcon from '../assets/noun-404-error-7412843.svg?react';
+import NotFoundIcon from '../assets/icons/404-error.svg?react';
 
 const NotFoundPage = () => {
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 // pages/Rivals/Rivals.tsx
 
-import RivalIcon from '../../assets/noun-battle-7526810.svg?react';
+import RivalIcon from '../../assets/icons/rivals-icon.svg?react';
 import { useState, useEffect } from 'react';
 import { RivalData } from '../../utils/Interfaces';
 import { useUserContext } from '../../context/UserContext';
@@ -15,9 +15,9 @@ const RivalsPage = () => {
 	return (
 		<div className='pageLayout'>
 			<div className='flex justify-center items-center gap-3 mb-5'>
-				<RivalIcon className='size-20' />
+				<RivalIcon className='size-16' />
 				<h2 className='h1 font-semibold text-center'>{t('pages.rival.title')}</h2>
-				<RivalIcon className='size-20' />
+				<RivalIcon className='size-16' />
 			</div>
 			< RivalsMain />
 		</div>

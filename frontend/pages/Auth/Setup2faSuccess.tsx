@@ -6,7 +6,8 @@ import { AccessiblePageDescription } from '../../components/AccessiblePageDescri
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
-import SecurityIcon from '../../assets/noun-security-6758282.svg?react';
+// import SecurityIcon from '../../assets/noun-security-6758282.svg?react';
+import SecurityIcon from '../../assets/icons/security-icon.svg?react';
 import { useUserContext } from '../../context/UserContext';
 
 const Setup2faSuccessPage: React.FC = () => {

@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../components/GenericButton';
-import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
+// import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
+import DownArrow from '../assets/icons/symbols/arrow-down-icon.svg?react';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
