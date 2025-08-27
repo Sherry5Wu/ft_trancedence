@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
 
   return (
     <main
-      className="pageLayout"
+      className="pageLayout translate-x-3"
       role="main"
       aria-labelledby="pageTitle"
       aria-describedby="pageDescription"

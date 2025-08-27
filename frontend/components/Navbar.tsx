@@ -81,7 +81,7 @@ export const Navbar = () => {
                 <div className='flex flex-1 justify-start gap-5'>
                     <Menu aria-label='language options' Icon={<LangIcon className='scale-80'/>} elements={languageMenuItems} className='menuIcon' />
                 </div>
-                <div className='flex flex-1 justify-center mb-5 translate-x-2.5 translate-y-2.5' >
+                <div className='flex flex-1 justify-center mb-5 -translate-x-0.5 translate-y-2.75' >
                     <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
                 </div>
                 <div className='flex flex-1 justify-end scale-110 mr-7'></div>
@@ -93,7 +93,7 @@ export const Navbar = () => {
             <div className='flex flex-1 justify-start gap-5'>
                 <Menu aria-label='language options' Icon={<LangIcon className='scale-80'/>} elements={languageMenuItems} className='menuIcon' />
             </div>
-            <div className='flex flex-1 justify-center items-center' >
+            <div className='flex flex-1 justify-center items-center -translate-x-3' >
                 <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
             </div>
             <div className='flex flex-1 justify-end items-center mr-2'>
