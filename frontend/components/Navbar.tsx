@@ -10,8 +10,8 @@ import PortugueseIcon from '../assets/icons/multi-language/flag-brazil.svg?react
 import LangIcon from '../assets/icons/multi-language/globe-icon-v2.svg?react';
 import SettingsIcon from '../assets/icons/setting-icon-v2.svg?react';
 import LogOutIcon from '../assets/icons/log-out-icon.svg?react';
+import SearchIcon from '../assets/icons/search-icon.svg?react';
 import { useTranslation } from 'react-i18next';
-import SearchIcon from '../assets/noun-search-7526678.svg?react';
 import { SearchBar } from '../components/SearchBar';
 import { useRequestNewToken, useValidationField } from '../utils/Hooks';
 import { isValidUsername } from '../utils/Validation';
@@ -98,7 +98,7 @@ export const Navbar = () => {
             </div>
             <div className='flex flex-1 justify-end items-center mr-2'>
                 <div aria-label='rival search bar' className='flex relative z-10 mt-3 justify-start items-center group -translate-x-2'>
-                    <SearchIcon className='size-10 translate-x-11 -translate-y-0.5 z-10 transition ease-in-out duration-30
+                    <SearchIcon className='size-6 translate-x-9 -translate-y-1 z-10 transition ease-in-out duration-30
                                         group-focus-within:opacity-50'/>
                     <div className=''>
                         <SearchBar

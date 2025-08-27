@@ -1,5 +1,5 @@
 import React from "react";
-import InfoIcon from "../assets/symbols/noun-information-5970249.svg?react"
+import InfoIcon from "../assets/icons/symbols/alert-rounded.svg?react"
 
 type TooltipProps = {
   text: string;
@@ -9,7 +9,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ text }) => {
   return (
     <div className="flex items-center group ">
 
-      <InfoIcon className="w-6 h-6 cursor-pointer" />
+      <InfoIcon className="size-4 -translate-y-2 cursor-pointer" />
 
       <div
         className={`

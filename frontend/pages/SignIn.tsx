@@ -10,7 +10,7 @@ import { useUserContext } from '../context/UserContext';
 import { GenericButton } from '../components/GenericButton';
 import { GenericInput} from "../components/GenericInput";
 import { useValidationField } from '../utils/Hooks';
-import { isValidUsername, isValidEmail, isValidPassword } from '../utils/Validation';
+import { isValidUsername, isValidPassword } from '../utils/Validation';
 import { LoginData } from '../utils/Interfaces';
 import { signInUser } from '../utils/Fetch';
 import { DEFAULT_AVATAR } from '../utils/constants';

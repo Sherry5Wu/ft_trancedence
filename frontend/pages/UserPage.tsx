@@ -11,7 +11,8 @@ import PlayIcon from '../assets/icons/ping-pong-icon.svg';
 import TournamentIcon from '../assets/icons/tournament-icon.svg';
 import RivalsIcon from '../assets/icons/rivals-icon.svg';
 import LeaderboardIcon from '../assets/icons/leaderboard-icon-v2.svg';
-import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
+// import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
+import DownArrow from '../assets/icons/symbols/arrow-down-icon.svg?react';
 import { DEFAULT_AVATAR } from '../utils/constants';
 
 const UserPage = () => {
@@ -202,7 +203,7 @@ const UserPage = () => {
 			<div className='flex justify-center items-center ml-5'>
 				<button onClick={showStats} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
 				<h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>STATS</h3>
-				<div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${stats ? '-rotate-180' : 'rotate-0'}`}>
+				<div className={`size-6 translate-y-6 translate-x-2 transition ease-in-out duration-300 ${stats ? '-rotate-180' : 'rotate-0'}`}>
 					<DownArrow className='' />
 				</div>
 				</button>
@@ -214,7 +215,7 @@ const UserPage = () => {
 				<div className='flex justify-center items-center ml-5 mb-5'>
 				<button onClick={showHistory} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
 					<h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>MATCH HISTORY</h3>
-					<div className={`size-12 translate-y-[12px] transition ease-in-out duration-300 ${history ? '-rotate-180' : 'rotate-0'}`}>
+					<div className={`size-6 translate-y-6 translate-x-2 transition ease-in-out duration-300 ${history ? '-rotate-180' : 'rotate-0'}`}>
 					<DownArrow className='' />
 					</div>
 				</button>
