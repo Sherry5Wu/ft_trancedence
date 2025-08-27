@@ -2,7 +2,7 @@ import React, { useRef, useState, Suspense, useMemo, useEffect } from 'react';
 import { usePlayersContext } from '../../context/PlayersContext'
 import { useUserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { postMatchHistoryBulk, postTournamentHistory, formatHMS, TournamentPayload, StatsPayload } from './postresulttest';
+import { postMatchHistoryBulk, postTournamentHistory, TournamentPayload, StatsPayload } from './postresulttest';
 import KeyBindingsPanel, { KeyBindings, loadBindings, labelForCode } from './KeyBindings';
 import { useTranslation } from 'react-i18next';
 
@@ -138,6 +138,7 @@ export default function GamePage() {
   type Phase =
     | 'home' 
     | 'options'
+    | 't_options'
     | 'prematch'
     | 'playing'
     | 'post'
@@ -146,9 +147,13 @@ export default function GamePage() {
   const initialPhase: Phase = isTournament ? 'prematch' : 'home';
   const [phase, setPhase] = useState<Phase>(initialPhase);
 
+  // Listen for a case where the page is being left and reset variables if so
   useEffect(() => {
     const onLeave = () => {
-      try { resetPlayers(); } catch {}
+      try {
+        resetPlayers();
+        setIsTournament(false);
+       } catch {}
       sessionStorage.setItem('lastPathBeforeUnload', window.location.pathname);
     };
     window.addEventListener('beforeunload', onLeave);
@@ -157,8 +162,9 @@ export default function GamePage() {
       window.removeEventListener('beforeunload', onLeave);
       window.removeEventListener('pagehide', onLeave);
     };
-  }, [resetPlayers]);
+  }, [resetPlayers, setIsTournament]);
 
+  // If page refresh, redirect to user page or sign in
   useEffect(() => {
     const ran = (window as any).__gp_reloadGate ?? false;
     if (ran) return;
@@ -174,13 +180,16 @@ export default function GamePage() {
 
     if (reloaded && sameRoute) {
       sessionStorage.removeItem('lastPathBeforeUnload');
-      try { resetPlayers(); } catch {}
+      try {
+        resetPlayers();
+        setIsTournament(false);
+      } catch {}
       const dest = user?.username
         ? `/user/${encodeURIComponent(user.username)}`
         : '/signin';
       navigate(dest, { replace: true });
     }
-  }, [navigate, resetPlayers, user?.username]);
+  }, [navigate, resetPlayers, setIsTournament, user?.username]);
 
   // Initialise options phase
   useEffect(() => {
@@ -192,6 +201,7 @@ export default function GamePage() {
     }
   }, [phase, bindings, speedPreset, winMode, mapKey]);
 
+  // Regular match options
   const openOptions = () => setPhase('options');
 
   const cancelOptions = () => {
@@ -206,6 +216,28 @@ export default function GamePage() {
     setWinMode(draftWinMode);
     setMapKey(draftMapKey);
     setPhase('home');
+  };
+
+  // Initialise tournament pre-match options phase
+  useEffect(() => {
+    if (phase === 't_options') {
+      setDraftBindings(bindings);
+    }
+  }, [phase, bindings]);
+
+  // Tournament pre-match options
+  const openTournamentOptions = () => setPhase('t_options');
+
+  const cancelTournamentOptions = () => {
+    // Discard changes
+    setDraftBindings(bindings);
+    setPhase('prematch');
+  };
+
+  const confirmTournamentOptions = () => {
+    // Persist changes
+    setBindings(draftBindings);
+    setPhase('prematch');
   };
 
   // Non‑tournament post screen
@@ -292,7 +324,6 @@ export default function GamePage() {
     const started = snap?.startedAt ?? startAt ?? new Date();
     const ended = new Date();
     const durationMs = ended.getTime() - started.getTime();
-    const durationStr = formatHMS(durationMs);
     const durationSec = Math.max(0, Math.round(durationMs / 1000));
     const played_at_iso = started.toISOString();
 
@@ -415,13 +446,13 @@ export default function GamePage() {
                 <h2 className="text-2xl font-bold mb-2">{t('game.title')}</h2>
                 <button
                   onClick={handleStart}
-                  className="w-full px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500"
+                  className="block mx-auto px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                 >
                   {t('game.startMatch')}
                 </button>
                 <button
                   onClick={openOptions}
-                  className="w-full px-4 py-3 rounded-xl bg-neutral-800 hover:bg-neutral-700"
+                  className="block mx-auto px-4 py-3 rounded-xl bg-neutral-800 hover:bg-neutral-700"
                 >
                   {t('game.optionsButton')}
                 </button>
@@ -532,10 +563,50 @@ export default function GamePage() {
 
                 <button
                   onClick={handleStart}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
+                  className="block mx-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500"
                 >
                   {t('game.startMatch')}
                 </button>
+
+                <button
+                  onClick={openTournamentOptions}
+                  className="block mx-auto px-4 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700"
+                >
+                  {t('game.optionsButton')}
+                </button>                
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tournament pre-match options */}
+        {isTournament && phase === 't_options' && (
+          <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/90 text-neutral-100">
+              <div className="w-full max-w-md p-6">
+
+                <div className="flex items-center justify-between mb-4">
+                  <button
+                    onClick={cancelTournamentOptions}
+                    className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm"
+                  >
+                    {t('game.cancel')}
+                  </button>
+                  <h2 className="text-xl font-semibold">{t('game.options.title')}</h2>
+                  <button
+                    onClick={confirmTournamentOptions}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm"
+                  >
+                    {t('game.confirm')}
+                  </button>
+                </div>
+
+                {/* Controls */}
+                <KeyBindingsPanel
+                  playerNames={[p1Name, p2Name]}
+                  value={draftBindings}
+                  onChange={setDraftBindings}
+                />
               </div>
             </div>
           </div>

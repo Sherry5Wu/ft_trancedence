@@ -56,12 +56,3 @@ export async function postTournamentHistory(entries: TournamentPayload[], token?
   }
   return res.json();
 }
-
-export function formatHMS(totalMs: number) {
-  const totalSec = Math.max(0, Math.floor(totalMs / 1000));
-  const h = Math.floor(totalSec / 3600);
-  const m = Math.floor((totalSec % 3600) / 60);
-  const s = totalSec % 60;
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  return `${pad(h)}:${pad(m)}:${pad(s)}`;
-}

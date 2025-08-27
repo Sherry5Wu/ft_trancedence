@@ -148,7 +148,7 @@ export default function KeyBindingsPanel({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Player 1 */}
         <div className="rounded-lg bg-neutral-800 p-3">
-          <div className="font-semibold mb-2">{p1Name} (Player 1)</div>
+          <div className="font-semibold mb-2">{p1Name}</div>
           {(['up','down','boost','shield'] as Action[]).map(act => (
             <Row key={`p1-${act}`} pid="p1" act={act} />
           ))}
@@ -158,7 +158,7 @@ export default function KeyBindingsPanel({
         </div>
         {/* Player 2 */}
         <div className="rounded-lg bg-neutral-800 p-3">
-          <div className="font-semibold mb-2">{p2Name} (Player 2)</div>
+          <div className="font-semibold mb-2">{p2Name}</div>
           {(['up','down','boost','shield'] as Action[]).map(act => (
             <Row key={`p2-${act}`} pid="p2" act={act} />
           ))}
