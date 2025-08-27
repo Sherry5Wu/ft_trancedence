@@ -158,13 +158,13 @@ export default fp(async (fastify) => {
         refreshToken,
         { ipAddress: req.ip, userAgent: req.headers['user-agent'] }
       );
-
       setRefreshTokenCookie(reply, newRefreshToken);
-
       return reply.send({ success: true, accessToken, user });
     } catch (err) {
+      if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad Request', err.message);
+      if (err instanceof NotFoundError) sendError(reply, 404, 'Not Found', err.message);
       // rotateTokens should throw for invalid/expired refresh token
-      return sendError(reply, 401, 'Unauthorized', err.message);
+      return sendError(reply, reply.statusCode || 500, 'Internal Server Error', err.message);
     }
   });
 
@@ -188,6 +188,8 @@ export default fp(async (fastify) => {
     // If present, revoke it server-side (rotate/blacklist DB, etc.)
     if (refreshToken) {
       await revokeRefreshToken(refreshToken);
+    } else {
+      return sendError(reply, 400, 'Bad Request', 'There is no refreshToken');
     }
 
     // Clear both access and refresh cookies

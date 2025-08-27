@@ -98,6 +98,7 @@ export default fp(async (fastify) => {
           message: 'User with id $(req.user.id) does not exist',
         });
       }
+      
       return user; // return user id, username, avatarUrl and is2FAEnabled
     } catch (err) {
       return reply.status(500). send({

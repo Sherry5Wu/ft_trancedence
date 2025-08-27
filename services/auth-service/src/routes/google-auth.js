@@ -7,6 +7,7 @@ import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
 import { setRefreshTokenCookie } from '../utils/authCookie.js';
 import { normalizeAndValidateEmail } from '../utils/validators.js';
+import { sendError } from '../utils/sendError.js';
 
 const { User } = models;
 
@@ -29,12 +30,17 @@ export default fp(async (fastify) => {
           properties: {
             needCompleteProfile: { type: 'boolean' },
             accessToken: { type: 'string' },
-            refreshToken: { type: 'string' },
+            // refreshToken: { type: 'string' },
             user: { $ref: 'publicUser#' },
-            message: { type: 'string' } // for error-like responses
+            // message: { type: 'string' } // for error-like responses
           },
-          additionalProperties: true  // <-- optional, but helpful during dev
-        }
+          // additionalProperties: true  // <-- optional, but helpful during dev
+        },
+        400: { description: 'Bad Request', $ref: 'errorResponse#' },
+        401: { description: 'Unauthorized', $ref: 'errorResponse#' },
+        409: { description: 'Conflict', $ref: 'errorResponse#' },
+        500: { description: 'Inernal Server Error', $ref: 'errorResponse#' },
+        503: { description: 'Service Unavailable', $ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
@@ -46,11 +52,13 @@ export default fp(async (fastify) => {
       // 2. verify idToken and basic claims
       const payload = await verifyGoogleIdToken(idToken);
       if (!payload || !payload.sub) {
-        return reply.code(401).send({ message: 'Invalid idToken payload' });
+        // return reply.code(401).send({ message: 'Invalid idToken payload' });
+        return sendError(reply, 401, 'Unauthorized', 'Invalid idToken payload');
       }
 
       if (!payload.email_verified) {
-        return reply.code(400).send({ message: 'Google email is not verified' });
+        // return reply.code(400).send({ message: 'Google email is not verified' });
+        return sendError(reply, 400, 'Bad Request', 'Google email is not verified');
       }
       const googleId = payload.sub;
       // const email = payload.email.toLowerCase();
@@ -63,22 +71,18 @@ export default fp(async (fastify) => {
         // Generate tokens and user information
         const { accessToken, refreshToken, user } = await googleUserLogin(existingUser);
 
-        console.log('existingUer-again:', user); // for testing only
-
         // Store the refreshToken into DB
         try {
           await storeRefreshTokenHash(refreshToken, existingUser.id, ip, userAgent);
         } catch (err) {
           // Treat persistence failure as a server error (do not continue)
-          console.err('Falied to persist refresh token:', err);
-          return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
+         fastify.log.error(err);
+          // return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
+          return sendError(reply, 503, 'Service Unavailable', 'Service temporarily unavailable. Please try again later.');
         }
 
-        console.log('existingUer-again:', user); // for testing only
-        // return to frontend
-
         setRefreshTokenCookie(reply, refreshToken);
-        return reply.code(200).send({ accessToken, user, });
+        return reply.code(200).send({ accessToken, user});
       }
 
       // 4b. Not registered by gogole -> check if email already exists
@@ -137,6 +141,7 @@ export default fp(async (fastify) => {
       if (err instanceof InvalidCredentialsError) {
         return reply.code(401).send({ message: err.message });
       }
+      fastify.log.error(err);
       return reply.code(500).send({ message: err.message });
     }
   });

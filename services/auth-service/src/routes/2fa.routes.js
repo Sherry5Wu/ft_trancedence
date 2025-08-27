@@ -21,7 +21,11 @@ export default fp(async (fastify) => {
    *   description: Endpoints for Two-Factor Authentication (2FA) setup and management
    */
 
-  // Setup 2FA
+  /**
+  * @route   POST /2fa/setup
+  * @desc    Enable the 2FA for user. Generate qrCode, secret, otpauthUrl, backupCodes
+  * storing in DB.
+  */
   fastify.post('/2fa/setup', {
     preHandler: [fastify.authenticate],
     schema: {
@@ -88,7 +92,10 @@ export default fp(async (fastify) => {
     }
   });
 
-  // Verify TOTP code
+  /**
+  * @route   POST /2fa/verify
+  * @desc    Verify TOTP code.
+  */
   fastify.post('/2fa/verify', {
     preHandler: [fastify.authenticate],
     schema: {
@@ -146,7 +153,10 @@ export default fp(async (fastify) => {
     }
   });
 
-  // Consume backup code
+  /**
+  * @route   POST /2fa/backup
+  * @desc    Consume backup code
+  */
   fastify.post('/2fa/backup', {
     preHandler: [fastify.authenticate],
     schema: {
@@ -199,7 +209,10 @@ export default fp(async (fastify) => {
     }
   });
 
-  // Disable 2FA
+  /**
+  * @route   POST /2fa/disable
+  * @desc    Disable 2FA, delele secret, backupCodes from DB
+  */
   fastify.delete('/2fa/disable', {
     preHandler: [fastify.authenticate],
     schema: {
