@@ -280,6 +280,20 @@
           "codeInput": "Enter your 6-digit two-factor authentication code",
           "backupLink": "Use a backup code instead"
         }
+      },
+      "verifyBackupCode": {
+        "title": "Two-factor Authentication",
+        "subtitle": "Verify your account",
+        "instructions": "You have 2FA enabled on this account. Please enter the backup verification code from your account to complete the login process.",
+        "verifyCodeTitle": "Verify with recovery codes",
+        "placeholder": "Enter a backup code",
+        "invalidCode": "Invalid verification code. Please try again.",
+        "errorMessage": "Something went wrong. Please try again.",
+        "aria": {
+          "label": "Verify two-factor authentication code to complete login.",
+          "description": "Enter the recovery verification code from your account.",
+          "codeInput": "Enter your backup code for the two-factor authentication."
+        }
       }
     },
 

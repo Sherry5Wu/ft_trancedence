@@ -408,6 +408,29 @@ export const disable2FA = async (accessToken: string | null): Promise<boolean> =
   }
 };
 
+export const verifyBackupCode = async (backupCode: string, accessToken: string) => {
+  try {
+    const response = await fetch("https://localhost:8443/as/2fa/backup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ code: backupCode }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      return { used: false, ...errorBody };
+    }
+
+    return await response.json();
+  } catch (err) {
+    console.error(err);
+    return { used: false };
+  }
+};
+
 export const updateUserPin = async (
   oldPinCode: string,
   newPinCode: string,

@@ -41,7 +41,7 @@ const Verify2faPage: React.FC = () => {
     if (result?.verified) {
       navigate(`/user/${user?.username}`);
     } else {
-      setError(t('pages.twoFactorAuth.setup.invalidCode')); // ✅ show error inline
+      setError(t('pages.twoFactorAuth.setup.invalidCode'));
     }
   };
 
@@ -104,7 +104,7 @@ const Verify2faPage: React.FC = () => {
         <p className="text-sm mt-6">
           {t('pages.twoFactorAuth.verify.backupPrompt')}{' '}
           <Link
-            to="/404"
+            to="/verify2fa/recovery"
             className="underline"
             aria-label={t('pages.twoFactorAuth.verify.aria.backupLink')}
           >
