@@ -44,7 +44,7 @@ const Setup2faMainPage: React.FC = () => {
         setQrCodeUrl(data.otpauthUrl); // generate the QR code dynamically
         setSetupKey(data.secret);
         setBackupCodes(data.backupCodes); // store backup codes
-      } catch (err) { 
+      } catch (err) {
         console.error(err);
       }
     };
@@ -67,6 +67,7 @@ const Setup2faMainPage: React.FC = () => {
       navigate('/setup2fa-backup', { state: { backupCodes } }); // navigate to /setup2fa-backup and pass the codes in memory (via React Router state), best security.
     } else {
       alert(t('pages.twoFactorAuth.setup.invalidCode'));
+
     }
   };
 
@@ -141,8 +142,6 @@ const Setup2faMainPage: React.FC = () => {
           onComplete={setCode}
           aria-label={t('pages.twoFactorAuth.setup.aria.verifyInput')}
           // Error handling: If user input fails validation, ensure accessible error messages
-          // are displayed and linked with aria-describedby or aria-invalid attributes.
-          // Check this when backend is connected to frontend
         />
       </section>
 

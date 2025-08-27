@@ -21,23 +21,29 @@ const Verify2faPage: React.FC = () => {
 
   const accessToken = user?.accessToken;
 
-    // Verify 6-digit TOTP code
-    const handleVerify = async () => {
-      if (!accessToken) {
-        alert(t("common.errors.unauthorized"));
-        navigate("/signin");
-        return;
-      }
-  
-      const result = await verify2FA(code, accessToken);
-  
-      if (result?.verified) {
-        navigate(`/user/${user?.username}`);
-      } else {
-        alert(t('pages.twoFactorAuth.setup.invalidCode'));
-      }
-    };
+  // Verify 6-digit TOTP code
+  const handleVerify = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
 
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    setIsVerifying(true);
+    setError(null);
+
+    const result = await verify2FA(code, accessToken);
+
+    setIsVerifying(false);
+
+    if (result?.verified) {
+      navigate(`/user/${user?.username}`);
+    } else {
+      setError(t('pages.twoFactorAuth.setup.invalidCode')); // ✅ show error inline
+    }
+  };
 
   return (
     <main

@@ -53,7 +53,7 @@ const SettingsPage = () => {
 		}
 
 		if (user.twoFA) {
-			// setUser({ ...user, twoFA: false });
+
 			const success = await disable2FA(user.accessToken);
 			if (success) {
 				const profile: ProfileMeResponse | null = await fetchProfileMe(user.accessToken);

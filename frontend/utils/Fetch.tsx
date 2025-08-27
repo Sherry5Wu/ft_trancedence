@@ -554,8 +554,8 @@ export const fetchProfileMe = async (
       return null;
     }
 
-    const data: ProfileMeResponse = await res.json();
-    return data;
+    const json = await res.json();
+    return json.data as ProfileMeResponse;
   } catch (err) {
     console.error('Error fetching /users/profile/me:', err);
     return null;
