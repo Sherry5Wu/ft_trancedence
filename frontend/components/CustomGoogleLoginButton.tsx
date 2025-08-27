@@ -9,7 +9,7 @@ import { signInGoogleUser } from '../utils/Fetch';
 const CustomGoogleLoginButton: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setUser } = useUserContext();
+  const { setUser, setTokenReceived } = useUserContext();
 
   useEffect(() => {
     // global google
@@ -57,6 +57,8 @@ const CustomGoogleLoginButton: React.FC = () => {
         twoFA: signInData.data.user.TwoFAStatus,
         googleUser: signInData.data.user.registerFromGoogle,
       });
+
+	setTokenReceived(true);
 
       navigate(`/user/${signInData.data.user.username}`);
     };
