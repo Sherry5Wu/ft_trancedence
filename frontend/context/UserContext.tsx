@@ -103,7 +103,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-
 	const logOut = async () => {
 		try {
 			const response = await fetch('https://localhost:8443/as/auth/logout', {
@@ -120,6 +119,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 		finally {
 			setUser(null);
 			setRefreshDone(true);
+			setTokenReceived(false);
 		}
 	}
 
