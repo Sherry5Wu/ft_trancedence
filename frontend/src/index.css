@@ -17,9 +17,6 @@
 
 body, html {
     /* font-size: 20px; */
-    /* transform: scale(1.2); */
-    /* transform-origin: top left; */
-    /* width: 83.3333%; */
 }
 
 .pageLayout {
@@ -86,11 +83,8 @@ body, html {
 }
 
 .hover-label {
-  @apply mt-3 text-black opacity-0 -translate-y-3 transition duration-200 ease-in-out;
-}
-
-.button-wrapper:hover .hover-label {
-  @apply opacity-100 translate-y-0;
+  @apply mt-3 text-black opacity-0 -translate-y-3 transition duration-200 ease-in-out
+  peer-hover:opacity-100 peer-hover:translate-y-0
 }
 
 .profilePic {

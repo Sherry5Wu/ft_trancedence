@@ -124,7 +124,7 @@ const NewTournamentPage: React.FC = () => {
 					errorMessage={titleField.error}
 					aria-label={t('pages.tournament.new.aria.inputTitle')}
 				/>
-				<div className={`transition-all ease-in-out ${isOpen ? 'mb-25' : ''}`} onClick={() =>  console.log('OPEN: ', isOpen)} >
+				<div className={`transition-all ease-in-out duration-50 ${isOpen ? 'mb-25' : ''}`} onClick={() =>  console.log('OPEN: ', isOpen)} >
 					<DropDownButton
 						label={t('pages.tournament.new.placeholders.totalPlayers')}
 						options={['4', '8']}

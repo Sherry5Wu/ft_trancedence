@@ -1,7 +1,7 @@
 const API_BASE = 'https://localhost:8443';
 
-type StatsPayload = {
-  player_id: string;
+export type StatsPayload = {
+  player_id?: string | null;
   player_username: string;
   player_name: string;
   opponent_id?: string | null;
@@ -9,10 +9,10 @@ type StatsPayload = {
   opponent_name: string;
   player_score: number;
   opponent_score: number;
-  duration: string;
+  duration: number;
   result: 'win' | 'loss' | 'draw';
   is_guest_opponent: 0 | 1;
-  played_at?: string;
+  played_at: string;
 };
 
 export type TournamentPayload = {
@@ -31,16 +31,15 @@ function authHeaders(token?: string) {
   return base;
 }
 
-export async function postMatchHistory(payload: StatsPayload, token?: string) {
-  const res = await fetch(`${API_BASE}/stats/match_history`, {
+export async function postMatchHistoryBulk(matches: StatsPayload[], token?: string) {
+  const res = await fetch(`${API_BASE}/stats/match_history/update_all`, {
     method: 'POST',
     headers: authHeaders(token),
-    body: JSON.stringify(payload),
-    // in browser you cannot bypass TLS warnings, accept the cert in the UI
+    body: JSON.stringify({ matches }),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`POST /stats/match_history ${res.status}: ${text || res.statusText}`);
+    throw new Error(`POST /stats/match_history/update_all ${res.status}: ${text || res.statusText}`);
   }
   return res.json();
 }

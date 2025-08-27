@@ -18,7 +18,7 @@ import { DEFAULT_AVATAR } from '../utils/constants';
 const SignInPage: React.FC = () => {
   const { t } = useTranslation(); 
   const navigate = useNavigate();
-  const { user, setUser } = useUserContext();
+  const { user, setUser, setTokenReceived } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const passwordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
@@ -42,22 +42,21 @@ const SignInPage: React.FC = () => {
     const signInData = await signInUser(newUser);
 
     if (signInData) {
-      alert('Signed in successfully!');
-
-      const enabledTwoFA = signInData.data.user.TwoFAStatus;
-      setUser({
-        username: signInData.data.user.username,
-        id: signInData.data.user.id,
-        //email: signInData.data.user.email,
-        profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
-        score: signInData.stats.score,
-        rank: signInData.stats.score,
-        rivals: signInData.rivals,
-        accessToken: signInData.data.accessToken,
-        expiry: Date.now() + 15 * 60 * 1000,
-        twoFA: enabledTwoFA,
-        googleUser: signInData.data.user.registerFromGoogle,
-      });
+		alert('Signed in successfully!');
+		setTokenReceived(true);
+		const enabledTwoFA = signInData.data.user.TwoFAStatus;
+		setUser({
+			username: signInData.data.user.username,
+			id: signInData.data.user.id,
+			profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
+			score: signInData.stats.score,
+			rank: signInData.stats.score,
+			rivals: signInData.rivals,
+			accessToken: signInData.data.accessToken,
+			expiry: Date.now() + 15 * 60 * 1000,
+			twoFA: enabledTwoFA,
+			googleUser: signInData.data.user.registerFromGoogle,
+	});
 
     if (enabledTwoFA) {
       navigate('/verify2fa');

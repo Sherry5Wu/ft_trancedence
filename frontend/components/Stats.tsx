@@ -9,15 +9,15 @@ import { DEFAULT_AVATAR } from '../utils/constants';
 import { fetchUsers } from '../utils/Fetch';
 import { useRequestNewToken } from '../utils/Hooks';
 import { FetchedUserData } from '../utils/Interfaces';
+import { useParams } from 'react-router-dom';
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
     const { t } = useTranslation();
     const [worstRivalPic, setWorstRivalPic] = useState('');
     const [worstRivalName, setWorstRivalName] = useState('');
+    const param = useParams();
     const { user } = useUserContext();
 	const requestNewToken = useRequestNewToken();
-
-	console.log('userStats: ', userStats);
 
     if (!userStats || !scoreHistory || userStats.games_played === 0 || scoreHistory.length == 0)
         return <div className='flex justify-center my-5'>{t('components.stats.noData')}</div>
@@ -30,6 +30,7 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
 			const token = await requestNewToken();
 			if (!user || !token)
 				return ;
+            const rivalData = await fetchRivalData
             if (user && user.rivals.length !== 0)
             {
                 for (const rival of user.rivals)
@@ -38,7 +39,6 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
                     {
                         mostMatches = rival.games_played_against_rival!;
                         rivalName = rival.rival_username;
-                        // rivalPicURL = rival.picture;
                     }
                 }
                 const users = await fetchUsers(token);
@@ -82,7 +82,8 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
             <h4 className='h4 my-2 font-semibold'>{t('components.stats.playedGames')}</h4>
           </div>
 
-          <div className='flex flex-col items-center'>
+        {user?.username === param.username ? 
+            <div className='flex flex-col items-center'>
             <button className='group relative flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center}'>
               <div className='absolute text-2xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 translate-y-2
                               group-hover:opacity-100 group-hover:translate-y-1 transition ease-in-out duration-300'>{worstRivalName}</div>
@@ -90,6 +91,11 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
             </button>
             <h4 className='h4 my-2 font-semibold'>{t('components.stats.worstRival')}</h4>
           </div>
+            :
+            <div>
+
+            </div> 
+        }
 
           <div className='flex flex-col items-center translate-y-[30px]'>
             <div className='flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center'>

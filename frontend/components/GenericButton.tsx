@@ -23,7 +23,7 @@ export const GenericButton: React.FC<GenericButtonProps> = ({
     <div className="button-wrapper">
       <button
         type={type}
-        className={`${className} ${disabled ? 'disabled-button' : ''}`}
+        className={`${className} peer ${disabled ? 'disabled-button' : ''}`}
         onClick={onClick}
         disabled={disabled}
       >

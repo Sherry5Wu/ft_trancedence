@@ -47,6 +47,12 @@ function applyLargeBase(scene: Scene, materials: SceneMaterials, objects: Object
   const prevName1X = namePlate1 ? namePlate1.position.x : undefined;
   const prevName2X = namePlate2 ? namePlate2.position.x : undefined;
 
+  const prevMidlinePos = objects.midline ? objects.midline.position.clone() : undefined;
+  const prevMidlineScaling = objects.midline ? objects.midline.scaling.clone() : undefined;
+
+  const prevScore1Z = objects.scorePlate1 ? objects.scorePlate1.position.z : undefined;
+  const prevScore2Z = objects.scorePlate2 ? objects.scorePlate2.position.z : undefined;
+
   // scale multiplier
   const SCALE = 2;
 
@@ -81,6 +87,24 @@ function applyLargeBase(scene: Scene, materials: SceneMaterials, objects: Object
   limits.upperLimitZ = wallTop.position.z    - wallHalfZTop - paddleHalfZ;
   limits.lowerLimitZ = wallBottom.position.z + wallHalfZBot + paddleHalfZ;
 
+  if (objects.midline) {
+    const oldSpanZ = Math.max(0, prevLimits.upperLimitZ - prevLimits.lowerLimitZ);
+    const newSpanZ = Math.max(0, limits.upperLimitZ     - limits.lowerLimitZ);
+    const ratio = oldSpanZ > 0 ? (newSpanZ / oldSpanZ) : 1;
+
+    objects.midline.scaling.z *= ratio;
+
+    const centerZ = (limits.lowerLimitZ + limits.upperLimitZ) * 0.5;
+    objects.midline.position.z = centerZ;
+  }
+
+  if (objects.scorePlate1) {
+    objects.scorePlate1.position.z = wallBottom.position.z + wallHalfZBot + SCALE;
+  }
+  if (objects.scorePlate2) {
+    objects.scorePlate2.position.z = wallBottom.position.z + wallHalfZBot + SCALE;
+  }
+
   return () => {
     if (cam && prevCamPos) cam.position.copyFrom(prevCamPos);
 
@@ -98,6 +122,17 @@ function applyLargeBase(scene: Scene, materials: SceneMaterials, objects: Object
 
     limits.upperLimitZ = prevLimits.upperLimitZ;
     limits.lowerLimitZ = prevLimits.lowerLimitZ;
+
+    if (objects.midline && prevMidlineScaling && prevMidlinePos) {
+      objects.midline.scaling.copyFrom(prevMidlineScaling);
+      objects.midline.position.copyFrom(prevMidlinePos);
+    }
+    if (objects.scorePlate1 && prevScore1Z !== undefined) {
+      objects.scorePlate1.position.z = prevScore1Z;
+    }
+    if (objects.scorePlate2 && prevScore2Z !== undefined) {
+      objects.scorePlate2.position.z = prevScore2Z;
+    }
   };
 }
 

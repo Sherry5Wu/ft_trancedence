@@ -9,9 +9,3 @@ export function updateStartPrompt(startPrompt: HTMLElement, awaitingStart: boole
     startPrompt.style.visibility = awaitingStart ? "visible" : "hidden";
   }
 }
-
-export function updateScore(scoreBoard: HTMLElement, score1: number, score2: number, p1Name: string, p2Name: string) {
-  if (scoreBoard) {
-    scoreBoard.textContent = `${p1Name}: ${score1} | ${p2Name}: ${score2}`;
-  }
-}
