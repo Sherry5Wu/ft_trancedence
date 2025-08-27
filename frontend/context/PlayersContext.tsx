@@ -47,7 +47,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
       prevPlayers.map((player) => {
         if (player.id === id) {
           const updatedPhoto = player.photo?.includes('dicebear.com')
-            ? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(newUsername)}`
+            ? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(newUsername)}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`
             : player.photo;
   
           return {

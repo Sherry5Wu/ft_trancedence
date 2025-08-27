@@ -88,18 +88,21 @@ body, html {
 }
 
 .profilePic {
-  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C] border-2 items-center
+  @apply w-full h-full rounded-full object-cover bg-[#FFEE8C] border-1 items-center
   active:border-[#4682B4] transition ease-in-out duration-200
 }
 
 .profilePicBig { 
-  @apply size-32 -translate-y-0.5 rounded-full bg-[#FFEE8C] border-2 object-cover
+  @apply size-32 -translate-y-0.5 rounded-full bg-[#FFEE8C] border-1 object-cover
 }
 
 .profilePicSmall {
-  @apply h-11 w-11 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C] items-center
+  @apply h-11 w-11 inline mx-2 border-1 rounded-full object-cover bg-[#FFEE8C] items-center
 }
 
+.profilePicMini {
+  @apply h-6 w-6 inline mx-2 border-1 rounded-full object-cover bg-[#FFEE8C] items-center -translate-x-1
+}
 
 /* Default button */
 .generic-button {
@@ -175,10 +178,6 @@ body, html {
 /* Disabled input */
 .generic-input:disabled {
   @apply bg-[#FFEE8C]  text-[#999] cursor-not-allowed;
-}
-
-.profilePicMini {
-  @apply h-6 w-6 inline mx-2 border-2 rounded-full object-cover bg-[#FFEE8C] items-center -translate-x-1
 }
 
 .h1 {

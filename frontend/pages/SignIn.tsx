@@ -42,7 +42,7 @@ const SignInPage: React.FC = () => {
     const signInData = await signInUser(newUser);
 
     if (signInData) {
-		alert('Signed in successfully!');
+		// alert('Signed in successfully!');
 		setTokenReceived(true);
 		const enabledTwoFA = signInData.data.user.TwoFAStatus;
 		setUser({

@@ -37,7 +37,7 @@ const NewTournamentPage: React.FC = () => {
 		if (user?.username && !players[0]) {
 		const profilePic =
 			user.profilePic ??
-			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
+			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 
 		setPlayer(0, {
 			id: user.username,
@@ -56,7 +56,7 @@ const NewTournamentPage: React.FC = () => {
 		if (user?.username) {
 		const profilePic =
 			user.profilePic ??
-			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
+			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 		setPlayer(0, {
 			id: user.username,
 			username: user.username,

@@ -110,14 +110,17 @@ const UserPage = () => {
 
 		<div className='w-56 truncate mb-12'>
 			<h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{param.username} </h2>
-			<div className='flex justify-between'>
-				<h4 className='h4 ml-2 scale-dynamic'>Score</h4>
-				<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{userStats ? userStats.elo_score : 0}</h4>
-			</div>
-			<div className='flex justify-between'>
-				<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
-				<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
-			</div>
+			{userStats && userStats.games_played > 0 && (
+			<>
+				<div className='flex justify-between'>
+					<h4 className='h4 ml-2 scale-dynamic'>Score</h4>
+					<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{userStats ? userStats.elo_score : 0}</h4>
+				</div>
+				<div className='flex justify-between'>
+					<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
+					<h4 className='h4 mr-2 scale-dynamic ext-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
+				</div>
+			</>)}
 		</div>
 
 		{/* Buttons */}

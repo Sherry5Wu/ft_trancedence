@@ -34,7 +34,7 @@ const ChoosePlayersPage: React.FC = () => {
 // Player 1 from logged-in user
 useEffect(() => {
   if (user?.username && players.length === 0) {
-    const photo = user.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
+    const photo = user.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
     const player = {
       id: user.username,
       username: user.username,
@@ -66,7 +66,7 @@ useEffect(() => {
     const updated = {
       id: user?.username ?? 'player1',
       username: trimmed,
-      photo: user?.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`,
+      photo: user?.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}&backgroundColor=ffee8c&textColor=000000fontFamily=Jost`,
     };
 
     if (players.length === 0) {
@@ -88,8 +88,8 @@ useEffect(() => {
     : trimmed;
 
   const photo = player2Type === 'guest'
-    ? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`
-    : players[1]?.photo ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`;
+    ? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`
+    : players[1]?.photo ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 
   const updated = { id, username: trimmed, photo };
 

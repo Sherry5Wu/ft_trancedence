@@ -75,7 +75,7 @@ const LogInPlayerPage: React.FC = () => {
       const player = playerProfile ?? {
         id: response.data?.userId || Date.now().toString(),
         username: usernameField.value,
-        photo: `https://api.dicebear.com/6.x/initials/svg?seed=XX`, 
+        photo: `https://api.dicebear.com/6.x/initials/svg?seed=XX&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`, 
       };
 
       if (players.length > playerIndex) {
