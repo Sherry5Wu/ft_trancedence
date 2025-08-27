@@ -131,11 +131,14 @@ const LeaderboardPage = () => {
               >
                 <span className="relative flex justify-center items-center w-8 h-8 mx-auto col-span-1">
 					{(idx === 0 || idx === 1 || idx === 2) && (
-						<MedalIcon className={`absolute w-10 h-10 translate-y-1 rounded-full
-							${idx === 0 ? 'bg-[#EFBF04]' : ''}
-							${idx === 1 ? 'bg-[#C4C4C4]' : ''}
-							${idx === 2 ? 'bg-[#CE8946]' : ''}`} 
-							aria-hidden="true" />
+						<>
+						<MedalIcon className={`absolute w-10 h-12 translate-y-1 z-10`} aria-hidden="true" />
+						<span className={`h-10 w-10 z-0 absolute rounded-full scale-75
+							${idx=== 0 ? 'bg-[#EFBF04]' : ''}
+							${idx=== 1 ? 'bg-[#C4C4C4]' : ''}
+							${idx=== 2 ? 'bg-[#CE8946]' : ''}`}>
+							</span>
+						</>
 					)}
 					<span className="z-10">{idx + 1}</span>
                 </span>
