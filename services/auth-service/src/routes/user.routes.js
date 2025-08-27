@@ -47,10 +47,10 @@ export default fp(async (fastify) => {
   });
 
   /**
-   * @route   GET /users/me
-   * @desc    Get current user profile:id, username, is2FAEnabled, avatarUrl.
+   * @route   GET /users/profile/me
+   * @desc    Get current user profile:id, username, avatarUrl, TwoFAStatus and registerFromGoogle.
    */
-  fastify.get('/users/profile/me', {
+ fastify.get('/users/profile/me', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],
@@ -59,9 +59,10 @@ export default fp(async (fastify) => {
       response: {
         200: {
           description: 'User profile retrieved successfully',
-          allOf: [ // capital 'O'
-            { $ref: 'publicUser#' },
-          ],
+          required: ['data'],
+          properties: {
+            data: { $ref: 'publicUser#' },
+          }
         },
         401: {
           description: 'Unauthorized - invalid or missing token',
@@ -95,11 +96,17 @@ export default fp(async (fastify) => {
       if (!user) {
         return reply.status(404).send({
           error: 'User not found',
-          message: 'User with id $(req.user.id) does not exist',
+          message: `User with id $(req.user.id) does not exist`,
         });
       }
-      
-      return user; // return user id, username, avatarUrl and is2FAEnabled
+      const publicUser = {
+        id: user.id,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+        TwoFAStatus: user.is2FAEnabled && user.is2FAConfirmed,
+        registerFromGoogle: !!user.googleId,
+      };
+      return reply.code(200).send({ data: publicUser }); // return user id, username, avatarUrl and is2FAEnabled
     } catch (err) {
       return reply.status(500). send({
         error: 'Internal Server Error',
