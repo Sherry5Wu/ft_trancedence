@@ -1,6 +1,7 @@
 // /src/pages/CompleteProfile.tsx
 
 import React, { useState } from 'react';
+import { useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +34,12 @@ const CompleteProfilePage: React.FC = () => {
     !pinField.error &&
     !pinMismatch;
 
-  const idToken = sessionStorage.getItem("googleIdToken");
+  const location = useLocation();
+  let idToken = location.state?.googleIdToken; // read from router state
+
+  if (!idToken) {
+    idToken = sessionStorage.getItem("googleIdToken_fallback") || null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,8 +62,8 @@ const CompleteProfilePage: React.FC = () => {
       return;
     }
 
-    sessionStorage.removeItem("googleIdToken");
-
+    sessionStorage.removeItem("googleIdToken_fallback");
+    
     const userData = {
       username: newUser.user.username,
       id: newUser.user.id,
@@ -69,8 +75,8 @@ const CompleteProfilePage: React.FC = () => {
       accessToken: newUser.accessToken,
       refreshToken: newUser.refreshToken,
       expiry: Date.now() + 15 * 60 * 1000,
-      twoFA: newUser.user.TwoFAStatus,
-      googleUser: newUser.user.registerFromGoogle,
+      twoFA: newUser.TwoFAStatus,
+      googleUser: newUser.registerFromGoogle,
     };
 
     setUser(userData);

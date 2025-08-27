@@ -30,7 +30,7 @@ const CustomGoogleLoginButton: React.FC = () => {
     }
 
     // Save in sessionStorage so CompleteProfile page can access it
-    sessionStorage.setItem("googleIdToken", idToken);
+    // sessionStorage.setItem("googleIdToken", idToken);
 
     const signInData = await signInGoogleUser(idToken);
 
@@ -40,20 +40,22 @@ const CustomGoogleLoginButton: React.FC = () => {
       }
 
       if (signInData.needCompleteProfile) {
-        navigate("/signup/complete-profile");
+        navigate("/signup/complete-profile", { state: { googleIdToken: idToken } });
+
+        // sessionStorage only for page refresh recovery
+        sessionStorage.setItem("googleIdToken_fallback", idToken);
         return;
       }
 
       setUser({
         username: signInData.data.user.username,
         id: signInData.data.user.id,
-        email: "", // Not provided by backend yet
         profilePic: signInData.data.user.avatarUrl || "../assets/noun-profile-7808629.svg",
         score: signInData.stats.score,
         rank: signInData.stats.score,
         rivals: signInData.rivals,
         accessToken: signInData.data.accessToken,
-        refreshToken: signInData.data.refreshToken,
+        expiry: Date.now() + 15 * 60 * 1000,
         twoFA: signInData.data.user.TwoFAStatus,
         googleUser: signInData.data.user.registerFromGoogle,
       });
