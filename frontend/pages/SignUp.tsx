@@ -132,20 +132,20 @@ const SignUpPage = () => {
 			allowVisibility
 			/>
 
-			<div className="relative inline-flex items-center">
-			<GenericInput 
-				type="password"
-				placeholder={t('common.placeholders.pin')}
-				aria-label={t('common.aria.inputs.pin')}
-				value={pinField.value}
-				onFilled={pinField.onFilled}
-				onBlur={pinField.onBlur}
-				errorMessage={pinField.error}
-				allowVisibility
-			/> 
-			<div className="absolute right-[-30px]">
-				<Tooltip text={t('common.tooltips.PINcode')} />
-			</div>
+			<div className="flex items-start relative">
+                <GenericInput 
+                    type="password"
+                    placeholder={t('common.placeholders.pin')}
+                    aria-label={t('common.aria.inputs.pin')}
+                    value={pinField.value}
+                    onFilled={pinField.onFilled}
+                    onBlur={pinField.onBlur}
+                    errorMessage={pinField.error}
+                    allowVisibility
+                /> 
+                <div className="absolute -right-7 translate-y-5">
+                    <Tooltip text={t('common.tooltips.PINcode')} />
+                </div>
 			</div>
 
 			<GenericInput

@@ -79,7 +79,7 @@ export const Navbar = () => {
         return (
             <nav className='flex items-center bg-[#FFCC00]'>
                 <div className='flex flex-1 justify-start gap-5'>
-                    <Menu aria-label='language options' Icon={<LangIcon />} elements={languageMenuItems} className='menuIcon' />
+                    <Menu aria-label='language options' Icon={<LangIcon className='scale-80'/>} elements={languageMenuItems} className='menuIcon' />
                 </div>
                 <div className='flex flex-1 justify-center mb-5 translate-x-2.5 translate-y-2.5' >
                     <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>

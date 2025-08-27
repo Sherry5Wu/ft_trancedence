@@ -50,7 +50,10 @@ const UserPage = () => {
 					setProfilePicURL(pageOwner.avatarUrl ?? '');
 				}
 				else
+                {
 					setNoSuchUser(true);
+                    navigate('./notfound');
+                }
 			}
 			catch(error) {
 				console.error('Error: ' + error);

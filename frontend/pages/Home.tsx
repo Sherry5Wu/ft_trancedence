@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
               showText ? 'rotate-180' : 'rotate-0'
             }`}
           >
-            <DownArrow className="w-12 h-12" />
+            <DownArrow className="size-8" />
           </div>
         </button>
       </div>
