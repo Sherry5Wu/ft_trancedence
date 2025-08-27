@@ -10,6 +10,10 @@ import {
 import { ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
+import { authenticateUser, getUserById } from '../services/auth.service.js';
+import refreshToken from '../db/models/refreshToken.js';
+import { userLogin, } from '../services/google-auth.service.js';
+import { storeRefreshTokenHash } from '../utils/jwt.js';
 
 const { User } = models;
 
@@ -93,15 +97,15 @@ export default fp(async (fastify) => {
   });
 
   /**
-  * @route   POST /2fa/verify
-  * @desc    Verify TOTP code.
+  * @route   POST /2fa/confirmaiton
+  * @desc    In the 2fa setup flow, to confirm the 2fa works properly.
   */
-  fastify.post('/2fa/verify', {
+  fastify.post('/2fa/confirmation', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['TwoFactorAuth'],
-      summary: 'Verify 2FA TOTP',
-      description: 'Verifies a 6-digit TOTP code and enables 2FA for the user.',
+      summary: 'Confirm 2FA TOTP',
+      description: 'Verifies a 6-digit TOTP code and enables 2FA for the user. For 2FA setup flow',
       body: {
         type: 'object',
         required: ['token'],
@@ -154,10 +158,95 @@ export default fp(async (fastify) => {
   });
 
   /**
+  * @route   POST /2fa/verification
+  * @desc    For login flow, to verify the 2fa if the user enables it.
+  * @return  If success, return accessToken and user information
+  */
+  fastify.post('/2fa/verification', {
+    preHandler: [fastify.authenticate],
+    schema: {
+      tags: ['TwoFactorAuth'],
+      summary: 'Verify 2FA TOTP',
+      description: 'Verifies a 6-digit TOTP code and enables 2FA for the user, for login flow.',
+      body: {
+        type: 'object',
+        required: ['token'],
+        properties: {
+          token: { type: 'string', pattern: '^[0-9]{6}$', description: '6-digit TOTP code' }
+        }
+      },
+      response: {
+        200: {
+          description: 'Verification result',
+          type: 'object',
+          required: ['success', 'code', 'accessToken', 'user'],
+          properties: {
+            success: { type: 'boolean' },
+            code: { type: 'string' },
+            accessToken: { type: 'string' },
+            user: { type: 'object', $ref: 'publicUser#' }
+          },
+        },
+        400: { description: 'Bad Request', $ref: 'errorResponse#' },
+        401: { description: 'Unauthorized', $ref: 'errorResponse#' },
+        404: { description: 'Not Found', $ref: 'errorResponse#' },
+        500: { description: 'Internal Server Error', $ref: 'errorResponse#' },
+      }
+    }
+  }, async (req, reply) => {
+    const ip = req.ip || null;
+    const userAgent = req.headers['user-agent'] || null;
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
+      }
+
+      const ok = await verifyTwoFAToken(userId, req.body.token);
+      if (!ok) {
+        throw new ValidationError('Invalid 2FA token');
+      }
+
+      // Set is2FAConfirmed Flag to true
+      await User.update(
+        { is2FAConfirmed: true },
+        { where: { id: userId } },
+      );
+
+      const existingUser = await getUserById(userId);
+      if (!existingUser) return sendError(reply, 404, 'Not Found', 'User not found');
+
+      const { accessToken, refreshToken, user } = await userLogin(existingUser);
+
+      try {
+        await storeRefreshTokenHash(refreshToken, existingUser.id, ip, userAgent);
+      } catch (err) {
+        // Treat persistence failure as a server error (do not continue)
+        fastify.log.error(err);
+        // return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
+        return sendError(reply, 503, 'Service Unavailable', 'Service temporarily unavailable. Please try again later.');
+      }
+
+      setRefreshTokenCookie(reply, refreshToken);
+      return reply.code(200).send({ success: true, code: '2FA_MATCH', accessToken, user });
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return sendError(reply, 404, 'Not Found', err.message);
+      }
+      if (err instanceof ValidationError) {
+        return sendError(reply, 400, 'Bad Request', err.message);
+      }
+      fastify.log.error(err);
+      return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
+    }
+  });
+
+
+  /**
   * @route   POST /2fa/backup
   * @desc    Consume backup code
   */
-  fastify.post('/2fa/backup', {
+  fastify.post('/2fa/backupcode', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['TwoFactorAuth'],

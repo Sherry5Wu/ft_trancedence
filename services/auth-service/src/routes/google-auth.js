@@ -1,13 +1,12 @@
 import fp from 'fastify-plugin';
 
-import { googleUserLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
+import { userLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
 import { generateAccessToken, storeRefreshTokenHash } from '../utils/jwt.js';
 import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
 import { setRefreshTokenCookie } from '../utils/authCookie.js';
 import { normalizeAndValidateEmail } from '../utils/validators.js';
-import { sendError } from '../utils/sendError.js';
 
 const { User } = models;
 
@@ -29,12 +28,10 @@ export default fp(async (fastify) => {
           type: 'object',
           properties: {
             needCompleteProfile: { type: 'boolean' },
+            TwoFAStatus: { type: 'boolean' },
             accessToken: { type: 'string' },
-            // refreshToken: { type: 'string' },
             user: { $ref: 'publicUser#' },
-            // message: { type: 'string' } // for error-like responses
           },
-          // additionalProperties: true  // <-- optional, but helpful during dev
         },
         400: { description: 'Bad Request', $ref: 'errorResponse#' },
         401: { description: 'Unauthorized', $ref: 'errorResponse#' },
@@ -68,8 +65,12 @@ export default fp(async (fastify) => {
       const existingUser = await User.findOne({ where: { googleId } });
       // 4a. Already registered -> sign in
       if (existingUser) {
-        // Generate tokens and user information
-        const { accessToken, refreshToken, user } = await googleUserLogin(existingUser);
+        // get 2fa status
+        const TwoFAStatus = existingUser.is2FAEnabled && existingUser.is2FAConfirmed
+
+        // 2fa is disable, then normal login
+        if (TwoFAStatus === false) {
+           const { accessToken, refreshToken, user } = await userLogin(existingUser);
 
         // Store the refreshToken into DB
         try {
@@ -82,7 +83,10 @@ export default fp(async (fastify) => {
         }
 
         setRefreshTokenCookie(reply, refreshToken);
-        return reply.code(200).send({ accessToken, user});
+        return reply.code(200).send({ TwoFAStatus: false, accessToken, user});
+        } else {
+          return reply.code(200).send({ TwoFAStatus: true });
+        }
       }
 
       // 4b. Not registered by gogole -> check if email already exists
@@ -91,10 +95,6 @@ export default fp(async (fastify) => {
       if (existingByEmail) {
         return reply.code(409).send({ message: 'Email is already registered' });
       }
-
-      // for testing only
-      // console.log("==> Sending needCompleteProfile response");
-      // console.dir({ needCompleteProfile: true }, { depth: null });
 
       // 5. Otherwise tell client profile completion is required (no DB row created)
       return reply.code(200).send({

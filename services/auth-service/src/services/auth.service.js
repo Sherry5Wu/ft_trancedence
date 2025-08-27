@@ -73,14 +73,14 @@ async function registerUser(email, username, password, pinCode) {
  * Authenticate user with email/username and password.
  * @param {string} identifier - User email or username
  * @param {string} password - Plaintext password
- * @returns {Promise<{ accessToken: string, refreshToken: string, user: object }>}
+ * @returns {Promise<{ matched: boolean, TwoFAStatus: boolean }>}
  */
-async function authenticateUser(identifier, password, opts= {}) {
+async function authenticateUser(identifier, password) {
    if (!identifier?.trim() || !password.trim()) {
     throw new InvalidCredentialsError('The request must contain: email and password');
   }
 
-  const { ip = null, userAgent = null } = opts;
+  // const { ip = null, userAgent = null } = opts;
 
   // Find user by email or username, including secrets
   const user = await User.scope('withSecrets').findOne({
@@ -101,37 +101,23 @@ async function authenticateUser(identifier, password, opts= {}) {
   // }
 
   const isMatch = await comparePassword(password, user.passwordHash);
-  console.log('isMatch:', isMatch); // for testing only
   if (!isMatch){
-    console.log('Error message: password does not match'); // for testing only
-    throw new InvalidCredentialsError('Incorrect password');
+    const matched = false;
+    const TwoFA =false
+
+    // for testing only
+    console.log('matched', matched);
+    console.log('TwoFA', TwoFA);
+    return { matched, TwoFA, existingUser: user };
+    // throw new InvalidCredentialsError('Incorrect password');
   }
-
-  // Generate JWT tokens
-  const accessTokenPayload = {
-    id: user.id,
-    email: user.email,
-    username: user.username,
-    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
-  };
-  // keep the refreshTokenPayload be minimal
-  const refreshTokenPayload = { id: user.id };
-
-  const accessToken = generateAccessToken(accessTokenPayload);
-  const refreshToken = generateRefreshToken(refreshTokenPayload);
-
-  await storeRefreshTokenHash(refreshToken, user.id, ip, userAgent);
-
-  // return the only asked data
-  const publicUser = {
-    id: user.id,
-    username: user.username,
-    avatarUrl: user.avatarUrl || null,
-    TwoFAStatus: user.is2FAEnabled && user.is2FAConfirmed,
-    registerFromGoogle: !!user.googleId,
-  };
-
-  return { accessToken, refreshToken, user: publicUser };
+  else {
+    const TwoFA = user.is2FAEnabled && user.is2FAConfirmed;
+    const matched = true;
+      console.log('matched', matched);
+      console.log('TwoFA', TwoFA);
+    return { matched: true, TwoFA, existingUser: user };
+  }
 }
 
 /**
