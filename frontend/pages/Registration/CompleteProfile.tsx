@@ -14,7 +14,7 @@ import { createUserFromGoogle } from "../../utils/Fetch";
 const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, setUser } = useUserContext();
+  const { user, setUser, setTokenReceived } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
@@ -68,11 +68,13 @@ const CompleteProfilePage: React.FC = () => {
       rivals: [],
       accessToken: newUser.accessToken,
       refreshToken: newUser.refreshToken,
+      expiry: Date.now() + 15 * 60 * 1000,
       twoFA: newUser.TwoFAStatus,
       googleUser: newUser.registerFromGoogle,
     };
 
     setUser(userData);
+    setTokenReceived(true);
     navigate(`/user/${userData.username}`);
   };
 
