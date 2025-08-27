@@ -135,7 +135,7 @@ body, html {
 }
 
 .generic-button.unclicked-button:active {
-  @apply bg-[#e0e0e0];
+  @apply bg-[#4682B4];
 }
 
 /* Make icons normal color in unclicked state */

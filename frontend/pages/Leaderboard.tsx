@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../components/AccessiblePageDescription';
 import { useUserContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import MedalIcon from '../assets/noun-medal-6680492.svg?react';
-import { UserStats, LeaderboardStats, FetchedUserData } from '../utils/Interfaces';
+import MedalIcon from '../assets/icons/medal-icon-empty.svg?react';
+import { LeaderboardStats, FetchedUserData } from '../utils/Interfaces';
 import { fetchUsers, fetchUserStats } from '../utils/Fetch';
 import { DEFAULT_AVATAR } from '../utils/constants';
 import { useRequestNewToken } from '../utils/Hooks';
@@ -124,14 +124,18 @@ const LeaderboardPage = () => {
               <li
                 key={player.userInfo.username}
                 onClick={() => navigate(`/user/${player.userInfo.username}`)}
-                className={`grid grid-cols-8 gap-x-2 min-w-md items-center text-center rounded-xl h-12 mb-2 ${
-                  isCurrentUser ? 'bg-[#FDFBD4] border-2' : 'bg-[#FFEE8C]'
+                className={`grid grid-cols-8 gap-x-2 min-w-md items-center text-center rounded-xl h-12 mb-2 
+					${isCurrentUser ? 'bg-[#FDFBD4] ring-2' : 'bg-[#FFEE8C]'
                 } hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
                 aria-label={`Player ${player.userInfo.username} at position ${idx + 1}`}
               >
                 <span className="relative flex justify-center items-center w-8 h-8 mx-auto col-span-1">
 					{(idx === 0 || idx === 1 || idx === 2) && (
-						<MedalIcon className="absolute w-12 h-12" aria-hidden="true" />
+						<MedalIcon className={`absolute w-10 h-10 translate-y-1 rounded-full
+							${idx === 0 ? 'bg-[#EFBF04]' : ''}
+							${idx === 1 ? 'bg-[#C4C4C4]' : ''}
+							${idx === 2 ? 'bg-[#CE8946]' : ''}`} 
+							aria-hidden="true" />
 					)}
 					<span className="z-10">{idx + 1}</span>
                 </span>
