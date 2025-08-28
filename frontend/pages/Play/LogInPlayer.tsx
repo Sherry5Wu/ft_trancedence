@@ -21,6 +21,7 @@ const LogInPlayerPage: React.FC = () => {
     players,
     addPlayer,
     removePlayer,
+    resetPlayers,
   } = usePlayersContext();
 
   const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
@@ -69,12 +70,13 @@ const LogInPlayerPage: React.FC = () => {
         return;
       }
 
-      const playerProfile = await fetchUserProfile(usernameField.value, user.accessToken);
-		console.log('PLAYER PROFILE: ', playerProfile);
+      const profile = await fetchUserProfile(usernameField.value, user.accessToken);
+      console.log('PLAYER PROFILE: ', profile);
 
-      const player = playerProfile ?? {
-        id: response.data?.userId || Date.now().toString(),
-        username: usernameField.value,
+      const player = {
+        id: profile?.id ?? response.data?.userId ?? Date.now().toString(),
+        username: profile?.username ?? usernameField.value,
+        playername: profile?.playername ?? profile?.username ?? usernameField.value,
         photo: `https://api.dicebear.com/6.x/initials/svg?seed=XX&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`, 
       };
 
@@ -127,13 +129,27 @@ const LogInPlayerPage: React.FC = () => {
         allowVisibility
       />
 
-      <GenericButton
-        type="submit"
-        className="generic-button"
-        text={t('common.buttons.ok')}
-        aria-label={t('common.aria.buttons.ok')}
-        disabled={!formFilled}
-      />
+      <div className="flex flex-wrap justify-center gap-6 mt-6">
+        <GenericButton
+          type="button"
+          className="generic-button"
+          text={t('common.buttons.cancel')}
+          aria-label={t('common.aria.buttons.cancel')}
+          onClick={() => {
+            resetPlayers();
+            navigate('/choose-players');
+          }}
+        />
+
+        <GenericButton
+          type="submit"
+          className="generic-button"
+          text={t('common.buttons.ok')}
+          aria-label={t('common.aria.buttons.ok')}
+          disabled={!formFilled}
+        />
+      </div>
+
       </form>
     </main>
   );

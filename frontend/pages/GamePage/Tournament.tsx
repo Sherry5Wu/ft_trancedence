@@ -15,19 +15,31 @@ function stageForPosting(currentRoundNum: number, bracketSize: number) {
   const totalRounds = roundsFor(bracketSize);
   return totalRounds - (currentRoundNum - 1);
 }
+const normalizeElo = (elo: unknown): number => {
+  const n = Number(elo);
+  return Number.isFinite(n) && n > 0 ? n : 1000; // base elo
+};
 
 // Sort players by their ranking, highest vs lowest in a tournament
-function seedHighVsLow(players: Player[]): { pairs: Pair[]; carry: Player[] } {
-  const sorted = [...players].sort((a, b) => b.elo - a.elo);
+function seedHighVsLow(players: Player[], bracketSize?: number): { pairs: Pair[]; carry: Player[] } {
+  const normalized = players.map(p => ({ ...p, elo: normalizeElo(p.elo) }));
+  const sorted = [...normalized].sort((a, b) => {
+    const d = b.elo - a.elo;
+    if (d !== 0) return d;
+    const u = a.username.localeCompare(b.username);
+    if (u !== 0) return u;
+    return a.id.localeCompare(b.id);
+  });
+  const targetSize = bracketSize ?? nextPow2(sorted.length);
+  const byes = Math.max(0, targetSize - sorted.length);
+  const carry: Player[] = sorted.slice(0, byes);
+  const pool = sorted.slice(byes);
   const pairs: Pair[] = [];
-  const carry: Player[] = [];
-  let l = 0, r = sorted.length - 1;
-  while (l < r) {
-    pairs.push([sorted[l], sorted[r]]);
-    l++; r--;
+  for (let l = 0, r = pool.length - 1; l < r; l++, r--) {
+    pairs.push([pool[l], pool[r]]);
   }
-  // Handle odd, though there shouldn't be odd numbers in our system
-  if (l === r) carry.push(sorted[l]);
+  if (pool.length % 2 === 1)
+    carry.push(pool[(pool.length - 1) / 2]);
   return { pairs, carry };
 }
 
@@ -73,9 +85,9 @@ export function useTournamentBracket(entrants: Player[], enabled: boolean) {
       setState({ roundNum: 1, pairs: [], matchIdx: 0, winnersThisRound: [], carryToNextRound: [] });
       return;
     }
-    const { pairs, carry } = seedHighVsLow(entrants);
+    const { pairs, carry } = seedHighVsLow(entrants, bracketSize);
     setState({ roundNum: 1, pairs, matchIdx: 0, winnersThisRound: [], carryToNextRound: carry });
-  }, [enabled, entrants]);
+  }, [enabled, entrants, bracketSize]);
 
   const currentPair = state.pairs[state.matchIdx];
   const upcomingPair = state.pairs[state.matchIdx + 1];
