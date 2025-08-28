@@ -154,6 +154,7 @@ console.log('>>> entered /auth/login handler matched= true and TwoFA=false');
       // TwoFAStatus enables, need verify the 2FA before normal login
       if (matched === true && TwoFA === true) {
 console.log('>>> entered /auth/login handler matched= true and TwoFA=true');
+console.log('existingUser.id', existingUser.id);
         return reply.code(200).send({
           success: true,
           code: 'PASSWORD_MATCH_2FA-ENABLE',
