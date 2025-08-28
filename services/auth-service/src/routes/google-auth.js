@@ -27,8 +27,10 @@ export default fp(async (fastify) => {
           description: 'Login success or profile incomplete',
           type: 'object',
           properties: {
+            success: { type: 'boolean' },
+            code: { type: 'string' },
             needCompleteProfile: { type: 'boolean' },
-            TwoFAStatus: { type: 'boolean' },
+            TwoFA: { type: 'boolean' },
             accessToken: { type: 'string' },
             user: { $ref: 'publicUser#' },
           },
@@ -66,10 +68,10 @@ export default fp(async (fastify) => {
       // 4a. Already registered -> sign in
       if (existingUser) {
         // get 2fa status
-        const TwoFAStatus = existingUser.is2FAEnabled && existingUser.is2FAConfirmed
+        const TwoFA = !!(existingUser.is2FAEnabled && existingUser.is2FAConfirmed);
 
         // 2fa is disable, then normal login
-        if (TwoFAStatus === false) {
+        if (TwoFA === false) {
            const { accessToken, refreshToken, user } = await userLogin(existingUser);
 
         // Store the refreshToken into DB
@@ -83,9 +85,9 @@ export default fp(async (fastify) => {
         }
 
         setRefreshTokenCookie(reply, refreshToken);
-        return reply.code(200).send({ TwoFAStatus: false, accessToken, user});
+        return reply.code(200).send({ success: ture, code: 'TWOFA_DISABLE', TwoFA, accessToken, user});
         } else {
-          return reply.code(200).send({ TwoFAStatus: true });
+          return reply.code(200).send({ success: ture, code: 'TWOFA_ENABLE', TwoFA });
         }
       }
 
@@ -98,6 +100,8 @@ export default fp(async (fastify) => {
 
       // 5. Otherwise tell client profile completion is required (no DB row created)
       return reply.code(200).send({
+        success: true,
+        code: 'NEED_COMPLETE_PROFILE',
         needCompleteProfile: true
       });
     } catch (err) {

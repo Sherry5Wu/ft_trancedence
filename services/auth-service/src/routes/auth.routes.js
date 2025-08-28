@@ -103,7 +103,7 @@ export default fp(async (fastify) => {
             matched: { type: 'string' }, // does the username/email matches with password
             TwoFA: { type: 'boolean' },
             accessToken: { type: 'string' },
-            username: { type: 'string' },
+            userId: { type: 'string' },
             user: { $ref: 'publicUser#' },
           }
         },
