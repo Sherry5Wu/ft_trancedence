@@ -22,11 +22,11 @@
       "logIn": "LOGIN",
       "play": "JOGAR",
       "start": "INICIAR",
-      "tournament": "Torneio",
-      "rivals": "Rivais",
-      "leaderboard": "Classificação",
-      "download": "Baixar",
-      "verify": "Verificar"
+      "tournament": "TORNEIO",
+      "rivals": "RIVAIS",
+      "leaderboard": "CLASSIFICAÇÃO",
+      "download": "BAIXAR",
+      "verify": "VERIFICAR"
     },
     "placeholders": {
       "username": "Digite seu nome de usuário",
@@ -149,8 +149,13 @@
       "labels": {
         "score": "Pontuação",
         "rank": "Ranking",
-        "stats": "Estatísticas",
-        "matchHistory": "Histórico de partidas"
+        "stats": "ESTATÍSTICAS",
+        "matchHistory": "HISTÓRICO DE PARTIDAS",
+		"date/time": "Data/Hora",
+		"players": "Jogadores",
+		"duration": "Duração",
+		"addToRivals": "ADICIONAR AOS RIVAIS",
+		"removeFromRivals": "REMOVER DOS RIVAIS"
       },
       "aria": {
         "label": "Página inicial do usuário",

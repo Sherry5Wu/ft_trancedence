@@ -22,17 +22,17 @@
       "logIn": "CONNEXION",
       "play": "JOUER",
       "start": "DÉMARRER",
-      "tournament": "Tournoi",
-      "rivals": "Rivaux",
-      "leaderboard": "Classement",
-      "download": "Télécharger",
-      "verify": "Vérifier"
+      "tournament": "TOURNOI",
+      "rivals": "RIVAUX",
+      "leaderboard": "CLASSEMENT",
+      "download": "TÉLÉCHARGER",
+      "verify": "VÉRIFIER"
     },
     "placeholders": {
       "username": "Entrez votre nom d'utilisateur",
       "email": "Entrez votre adresse e-mail",
       "password": "Entrez votre mot de passe",
-      "confirmPassword": "Confirmez votre mot de passe",
+      "confirmPassword": "Confirmez votre mot PLAYde passe",
       "pin": "Entrez votre code PIN joueur",
       "confirmPin": "Confirmez votre code PIN joueur",
       "player1": "Joueur 1",
@@ -149,8 +149,13 @@
       "labels": {
         "score": "Score",
         "rank": "Rang",
-        "stats": "Statistiques",
-        "matchHistory": "Historique des matchs"
+        "stats": "STATISTIQUES",
+        "matchHistory": "HISTORIQUE DES MATCHS",
+		"date/time": "Date/Heure",
+		"players": "Joueurs",
+		"duration": "Durée",
+		"addToRivals": "AJOUTER AUX RIVAUX",
+		"removeFromRivals": "RETIRER DES RIVAUX"
       },
       "aria": {
         "label": "Page d'accueil utilisateur",

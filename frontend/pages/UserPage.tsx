@@ -13,6 +13,7 @@ import RivalsIcon from '../assets/icons/rivals-icon.svg';
 import LeaderboardIcon from '../assets/icons/leaderboard-icon-v2.svg';
 import DownArrow from '../assets/icons/symbols/arrow-down-icon.svg?react';
 import { DEFAULT_AVATAR } from '../utils/constants';
+import { useTranslation } from 'react-i18next';
 
 const UserPage = () => {
 	const { user, setUser } = useUserContext();
@@ -28,6 +29,7 @@ const UserPage = () => {
 	const showStats = () => setStats(!stats);
 	const showHistory = () => setHistory(!history);
 	const requestNewToken = useRequestNewToken();
+	const { t } = useTranslation();
 	let token = user?.accessToken;
 
 	useEffect(() => {
@@ -114,11 +116,11 @@ const UserPage = () => {
 		{userStats && userStats.games_played > 0 && (
 			<div className='w-50 mb-12'>
 				<div className='flex justify-between'>
-					<h4 className='h4 ml-2 scale-dynamic'>Score</h4>
+					<h4 className='h4 ml-2 scale-dynamic'>{t('pages.homeUser.labels.score')}</h4>
 					<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{userStats ? userStats.elo_score : 0}</h4>
 				</div>
 				<div className='flex justify-between'>
-					<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
+					<h4 className='h4 ml-2 scale-dynamic'>{t('pages.homeUser.labels.rank')}</h4>
 					<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
 				</div>
 			</div>)}
@@ -132,7 +134,7 @@ const UserPage = () => {
 			className="round-icon-button"
 			text={undefined}
 			icon={<img src={PlayIcon} alt="Play icon" />}
-			hoverLabel="PLAY"
+			hoverLabel={t('common.buttons.play')}
 			onClick={() => 
 				navigate('/choose-players')}
 			/>
@@ -140,7 +142,7 @@ const UserPage = () => {
 			className="round-icon-button"
 			text={undefined}
 			icon={<img src={TournamentIcon} alt="Tournament icon" />}
-			hoverLabel="TOURNAMENT"
+			hoverLabel={t('common.buttons.tournament')}
 			onClick={() => 
 				navigate('/tournaments')}
 			/>
@@ -148,7 +150,7 @@ const UserPage = () => {
 			className="round-icon-button"
 			text={undefined}
 			icon={<img src={RivalsIcon} alt="Rivals icon" />}
-			hoverLabel="RIVALS"
+			hoverLabel={t('common.buttons.rivals')}
 			onClick={() => 
 				navigate('/rivals')}
 			/>
@@ -156,7 +158,7 @@ const UserPage = () => {
 			className="round-icon-button"
 			text={undefined}
 			icon={<img src={LeaderboardIcon} alt="Leaderboard icon" />}
-			hoverLabel="LEADERBOARD"
+			hoverLabel={t('common.buttons.leaderboard')}
 			onClick={() => 
 				navigate('/leaderboard')}
 			/>
@@ -170,7 +172,7 @@ const UserPage = () => {
 		className="round-icon-button"
 		text={undefined}
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
-		hoverLabel='REMOVE FROM RIVALS'
+		hoverLabel={t('pages.homeUser.labels.removeFromRivals')}
 		onClick={() => {
 			if (user && param.username)
 			{
@@ -186,7 +188,7 @@ const UserPage = () => {
 		className="transparent-round-icon-button"
 		text={undefined}
 		icon={<img src={RivalsIcon} alt="Rivals icon" />}
-		hoverLabel='ADD TO RIVALS'
+		hoverLabel={t('pages.homeUser.labels.addToRivals')}
 		onClick={() => {
 			if (user && param.username)
 			{
@@ -204,7 +206,7 @@ const UserPage = () => {
 			<div aria-label='statistics' className='w-200'>
 			<div className='flex justify-center items-center ml-5'>
 				<button onClick={showStats} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
-				<h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>STATS</h3>
+				<h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>{t('pages.homeUser.labels.stats')}</h3>
 				<div className={`size-6 translate-y-6 translate-x-2 transition ease-in-out duration-300 ${stats ? '-rotate-180' : 'rotate-0'}`}>
 					<DownArrow className='' />
 				</div>
@@ -216,7 +218,7 @@ const UserPage = () => {
 			<div aria-label='match history' className=''>
 				<div className='flex justify-center items-center ml-5 mb-5'>
 				<button onClick={showHistory} className='flex scale-90 group hover:cursor-pointer transition-all ease-in-out hover:scale-93'>
-					<h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>MATCH HISTORY</h3>
+					<h3 className='h3 border-b-3 border-transparent pt-5 text-center font-semibold group-hover:border-black transition ease-in-out duration-100'>{t('pages.homeUser.labels.matchHistory')}</h3>
 					<div className={`size-6 translate-y-6 translate-x-2 transition ease-in-out duration-300 ${history ? '-rotate-180' : 'rotate-0'}`}>
 					<DownArrow className='' />
 					</div>

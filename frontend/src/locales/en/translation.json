@@ -22,11 +22,11 @@
       "logIn": "LOG IN",
       "play": "PLAY",
       "start": "START",
-      "tournament": "Tournament",
-      "rivals": "Rivals",
-      "leaderboard": "Leaderboard",
-      "download": "Download",
-      "verify": "Verify"
+      "tournament": "TOURNAMENT",
+      "rivals": "RIVALS",
+      "leaderboard": "LEADERBOARD",
+      "download": "DOWNLOAD",
+      "verify": "VERIFY"
     },
     "placeholders": {
       "username": "Enter your username",
@@ -149,8 +149,13 @@
       "labels": {
         "score": "Score",
         "rank": "Rank",
-        "stats": "Stats",
-        "matchHistory": "Match History"
+        "stats": "STATS",
+        "matchHistory": "MATCH HISTORY", 
+		"date/time": "Date/Time",
+		"players": "Players",
+		"duration": "Duration",
+		"addToRivals": "ADD TO RIVALS",
+		"removeFromRivals": "REMOVE FROM RIVALS"
       },
       "aria": {
         "label": "User home page",

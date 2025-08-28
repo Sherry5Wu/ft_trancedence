@@ -1,10 +1,10 @@
 import { useEffect, useState, ReactElement } from 'react';
-import RivalIcon from '../assets/noun-battle-7526810.svg?react'
 import { useUserContext } from '../context/UserContext';
 import { fetchMatchData, fetchUsers } from '../utils/Fetch';
 import { MatchData, FetchedUserData, User } from '../utils/Interfaces';
 import { DEFAULT_AVATAR } from '../utils/constants';
 import { useRequestNewToken } from '../utils/Hooks';
+import { useTranslation } from 'react-i18next';
 
 const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]}) => {
     const [avatar1, setAvatar1] = useState('');
@@ -22,10 +22,6 @@ const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]})
         }    
         loadAvatarURL();
     }, [match, users]);
-
-    // console.log("AVATARS:");
-    // console.log(avatar1);
-    // console.log(avatar2);
 
     const localTime = new Date(match.played_at).toLocaleString('en-GB', {
         dateStyle: 'short',
@@ -55,6 +51,7 @@ export const MatchHistory = ({ player }: { player: string }) => {
     const [loading, setLoading] = useState(true);
     const { user, refresh } = useUserContext();
 	const requestNewToken = useRequestNewToken();
+	const { t } = useTranslation();
 
     useEffect(() => {
         if (!user) 
@@ -95,10 +92,10 @@ export const MatchHistory = ({ player }: { player: string }) => {
     return (
         <div aria-label='match history' className=''>
             <div aria-label='match history categories' className='grid grid-cols-5 mb-1 text-center'>
-                <span className=''>Date/Time</span>
-                <span className='col-span-2'>Players</span>
-                <span className=''>Score</span>
-                <span className=''>Duration</span>
+                <span className=''>{t('pages.homeUser.labels.date/time')}</span>
+                <span className='col-span-2'>{t('pages.homeUser.labels.players')}</span>
+                <span className=''>{t('pages.homeUser.labels.score')}</span>
+                <span className=''>{t('pages.homeUser.labels.duration')}</span>
              </div>
 
             <ul aria-label='match history rows' className=''>
