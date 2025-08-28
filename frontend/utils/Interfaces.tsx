@@ -222,3 +222,11 @@ export interface ModularBracketViewerProps {
   roundGap?: number;
   matchGap?: number;
 }
+
+export interface ProfileMeResponse {
+  id: string;
+  username: string;
+  avatarUrl: string;
+  TwoFAStatus: boolean;
+  registerFromGoogle: boolean;
+}

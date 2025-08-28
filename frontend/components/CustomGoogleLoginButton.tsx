@@ -1,15 +1,16 @@
 // CustomGoogleLoginButton.tsx
+
 import React, { useEffect } from 'react';
-// import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/UserContext';
 import { useTranslation } from 'react-i18next';
 import { signInGoogleUser } from '../utils/Fetch';
+import { DEFAULT_AVATAR } from '../utils/constants';
 
 const CustomGoogleLoginButton: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setUser, setTokenReceived } = useUserContext();
+  const { user, setUser, setTokenReceived } = useUserContext();
 
   useEffect(() => {
     // global google
@@ -29,44 +30,55 @@ const CustomGoogleLoginButton: React.FC = () => {
       return;
     }
 
-    // Save in sessionStorage so CompleteProfile page can access it
-    sessionStorage.setItem("googleIdToken", idToken);
+    const result = await signInGoogleUser(idToken);
 
-    const signInData = await signInGoogleUser(idToken);
+    if (!result || result.type === "ERROR") {
+      alert("Login failed, please try again.");
+      return;
+    }
 
-      if (!signInData) {
-        alert("Login failed, please try again.");
+    switch (result.type) {
+
+      // 1: Profile incomplete
+      case "NEED_COMPLETE_PROFILE":
+        navigate("/signup/complete-profile", { state: { googleIdToken: idToken } });
+        sessionStorage.setItem("googleIdToken_fallback", idToken);
         return;
-      }
 
-      if (signInData.needCompleteProfile) {
-        navigate("/signup/complete-profile");
+      // 2: 2FA required
+      case "TWOFA_REQUIRED":
+        sessionStorage.setItem("pending2FAUserId", result.userId);
+        navigate("/verify2fa", { state: { userId: result.userId } });
         return;
-      }
 
-      setUser({
-        username: signInData.data.user.username,
-        id: signInData.data.user.id,
-        email: "", // Not provided by backend yet
-        profilePic: signInData.data.user.avatarUrl || "../assets/noun-profile-7808629.svg",
-        score: signInData.stats.score,
-        rank: signInData.stats.score,
-        rivals: signInData.rivals,
-        accessToken: signInData.data.accessToken,
-        refreshToken: signInData.data.refreshToken,
-        twoFA: signInData.data.user.TwoFAStatus,
-        googleUser: signInData.data.user.registerFromGoogle,
-      });
+      // 3: Normal login flow
+      case "SUCCESS":
+        setUser({
+          username: result.data.user.username,
+          id: result.data.user.id,
+          profilePic: result.data.user.avatarUrl || DEFAULT_AVATAR,
+          score: result.stats.score,
+          rank: result.stats.rank,
+          rivals: result.rivals,
+          accessToken: result.data.accessToken,
+          expiry: Date.now() + 15 * 60 * 1000,
+          twoFA: result.data.user.TwoFAStatus,
+          googleUser: result.data.user.registerFromGoogle,
+        });
+        setTokenReceived(true);
+        navigate(`/user/${result.data.user.username}`);
+        return;
 
-	setTokenReceived(true);
-
-      navigate(`/user/${signInData.data.user.username}`);
-    };
+      default:
+        alert("Unexpected login result. Please try again.");
+    }
+  };
 
   const handleClick = () => {
-    if (!window.google) return alert("Google script not loaded yet");
+    if (!window.google)
+      return alert("Google script not loaded yet");
     // Open the popup flow (works cross-browser)
-    google.accounts.id.prompt(); 
+    google.accounts.id.prompt();
   };
 
   return (

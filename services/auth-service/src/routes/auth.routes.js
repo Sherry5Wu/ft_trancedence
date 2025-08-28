@@ -13,6 +13,7 @@ import {
 import { InvalidCredentialsError, ValidationError, ConflictError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { setRefreshTokenCookie, clearRefreshTokenCookie } from '../utils/authCookie.js';
+import { userLogin } from '../services/google-auth.service.js';
 
 export default fp(async (fastify) => {
   /**
@@ -98,29 +99,66 @@ export default fp(async (fastify) => {
           type: 'object',
           properties: {
             success: { type: 'boolean' },
+            code: { type: 'string' },
+            matched: { type: 'string' }, // does the username/email matches with password
+            TwoFA: { type: 'boolean' },
             accessToken: { type: 'string' },
+            userId: { type: 'string' },
             user: { $ref: 'publicUser#' },
           }
         },
         400: { description:'Bad Request', $ref: 'errorResponse#' },
         404: { description: 'Not found', $ref: 'errorResponse#' },
-        500: { description:'Server Internal Error',$ref: 'errorResponse#' },
+        // 500: { description:'Server Internal Error',$ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
     try {
-      const { accessToken, refreshToken, user } = await authenticateUser(
-        req.body.identifier,
-        req.body.password
-      );
+      const { matched, TwoFA, existingUser } = await authenticateUser(req.body.identifier, req.body.password);
+      // return the doesn't match information
+      if (matched === false) {
+        return reply.code(200).send({ success: true, code: 'PASSWORD_NOT_MATCH' });
+      }
+      // TwoFAStatus disable, normal login, return accessToken and publicUser information
+      if (matched === true && TwoFA === false) {
+        const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
 
-      setRefreshTokenCookie(reply, refreshToken); // refreshToken cookie
-      reply.send({ success: true,  accessToken, user});
-      // return { accessToken, refreshToken, user, TwoFAStatus };
+        const user = {
+          id: publicUser.id,
+          username: publicUser.username,
+          avatarUrl: publicUser.avatarUrl || null,
+          TwoFAStatus: !!(publicUser.is2FAEnabled && publicUser.is2FAConfirmed),
+          registerFromGoogle: !!publicUser.googleId,
+        };
+
+        // Set refreshToken cookie  uncomment it
+        setRefreshTokenCookie(reply, refreshToken);
+        return reply.code(200).send({
+          success: true,
+          code: 'PASSWORD_MATCH_2FA_DISABLE',
+          matched,
+          TwoFA,
+          accessToken,
+          user,
+        });
+      }
+
+      // TwoFAStatus enables, need verify the 2FA before normal login
+      if (matched === true && TwoFA === true) {
+        return reply.code(200).send({
+          success: true,
+          code: 'PASSWORD_MATCH_2FA-ENABLE',
+          matched,
+          TwoFA,
+          userId: existingUser.id,
+        });
+      }
+
     } catch (err) {
       if (err instanceof InvalidCredentialsError) return sendError(reply, 400, 'Bad request', err.message);
       if (err instanceof NotFoundError) return sendError(reply, 404, 'Not found', err.message);
-      return sendError(reply, err.statusCode || 500, err.name || 'Internal Server Error', err.message);
+      fastify.log.error(err);
+      return sendError(reply, 500, err.name || 'Internal Server Error', err.message);
     }
   });
 
@@ -158,13 +196,13 @@ export default fp(async (fastify) => {
         refreshToken,
         { ipAddress: req.ip, userAgent: req.headers['user-agent'] }
       );
-
       setRefreshTokenCookie(reply, newRefreshToken);
-
       return reply.send({ success: true, accessToken, user });
     } catch (err) {
+      if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad Request', err.message);
+      if (err instanceof NotFoundError) sendError(reply, 404, 'Not Found', err.message);
       // rotateTokens should throw for invalid/expired refresh token
-      return sendError(reply, 401, 'Unauthorized', err.message);
+      return sendError(reply, reply.statusCode || 500, 'Internal Server Error', err.message);
     }
   });
 
@@ -188,6 +226,8 @@ export default fp(async (fastify) => {
     // If present, revoke it server-side (rotate/blacklist DB, etc.)
     if (refreshToken) {
       await revokeRefreshToken(refreshToken);
+    } else {
+      return sendError(reply, 400, 'Bad Request', 'There is no refreshToken');
     }
 
     // Clear both access and refresh cookies

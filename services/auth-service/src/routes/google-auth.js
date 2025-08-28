@@ -1,11 +1,12 @@
 import fp from 'fastify-plugin';
 
-import { googleUserLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
+import { userLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
 import { generateAccessToken, storeRefreshTokenHash } from '../utils/jwt.js';
 import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
 import { setRefreshTokenCookie } from '../utils/authCookie.js';
+import { normalizeAndValidateEmail } from '../utils/validators.js';
 
 const { User } = models;
 
@@ -26,14 +27,20 @@ export default fp(async (fastify) => {
           description: 'Login success or profile incomplete',
           type: 'object',
           properties: {
+            success: { type: 'boolean' },
+            code: { type: 'string' },
             needCompleteProfile: { type: 'boolean' },
+            TwoFA: { type: 'boolean' },
+            userId: { type: 'string'},
             accessToken: { type: 'string' },
-            refreshToken: { type: 'string' },
             user: { $ref: 'publicUser#' },
-            message: { type: 'string' } // for error-like responses
           },
-          additionalProperties: true  // <-- optional, but helpful during dev
-        }
+        },
+        400: { description: 'Bad Request', $ref: 'errorResponse#' },
+        401: { description: 'Unauthorized', $ref: 'errorResponse#' },
+        409: { description: 'Conflict', $ref: 'errorResponse#' },
+        500: { description: 'Inernal Server Error', $ref: 'errorResponse#' },
+        503: { description: 'Service Unavailable', $ref: 'errorResponse#' },
       }
     }
   }, async (req, reply) => {
@@ -45,38 +52,51 @@ export default fp(async (fastify) => {
       // 2. verify idToken and basic claims
       const payload = await verifyGoogleIdToken(idToken);
       if (!payload || !payload.sub) {
-        return reply.code(401).send({ message: 'Invalid idToken payload' });
+        // return reply.code(401).send({ message: 'Invalid idToken payload' });
+        return sendError(reply, 401, 'Unauthorized', 'Invalid idToken payload');
       }
 
       if (!payload.email_verified) {
-        return reply.code(400).send({ message: 'Google email is not verified' });
+        // return reply.code(400).send({ message: 'Google email is not verified' });
+        return sendError(reply, 400, 'Bad Request', 'Google email is not verified');
       }
       const googleId = payload.sub;
-      const email = payload.email.toLowerCase();
+      // const email = payload.email.toLowerCase();
+      const email = normalizeAndValidateEmail(payload.email);
 
       // 3. Is googldId already in DB?
       const existingUser = await User.findOne({ where: { googleId } });
       // 4a. Already registered -> sign in
       if (existingUser) {
-        // Generate tokens and user information
-        const { accessToken, refreshToken, user } = await googleUserLogin(existingUser);
 
-        console.log('existingUer-again:', user); // for testing only
+        console.log('existingUser.username', existingUser.username);// for testing only
+        console.log('existingUser.twoFASecret', existingUser.twoFASecret); // for testing only
+        console.log('existingUser.is2FAEnabled', existingUser.is2FAEnabled);// for testing only
+        console.log('existingUser.is2FAConfirmed', existingUser.is2FAConfirmed);// for testing only
+        // get 2fa status
+        // const TwoFA = !!(existingUser.is2FAEnabled && existingUser.is2FAConfirmed);
+        const TwoFA = existingUser.is2FAConfirmed;
+        // 2fa is disable, then normal login
+        if (TwoFA === false) {
+           const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
 
         // Store the refreshToken into DB
         try {
           await storeRefreshTokenHash(refreshToken, existingUser.id, ip, userAgent);
         } catch (err) {
           // Treat persistence failure as a server error (do not continue)
-          console.err('Falied to persist refresh token:', err);
-          return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
+         fastify.log.error(err);
+          // return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
+          return sendError(reply, 503, 'Service Unavailable', 'Service temporarily unavailable. Please try again later.');
         }
-
-        console.log('existingUer-again:', user); // for testing only
-        // return to frontend
-
+        // for testing only
+          console.log('return public user:', publicUser);
+           console.log('TwoFA:', TwoFA);
         setRefreshTokenCookie(reply, refreshToken);
-        return reply.code(200).send({ accessToken, user, });
+        return reply.code(200).send({ success: true, code: 'TWOFA_DISABLE', TwoFA, accessToken, user: publicUser});
+        } else {
+          return reply.code(200).send({ success: true, code: 'TWOFA_ENABLE', TwoFA, userId: existingUser.id });
+        }
       }
 
       // 4b. Not registered by gogole -> check if email already exists
@@ -86,12 +106,10 @@ export default fp(async (fastify) => {
         return reply.code(409).send({ message: 'Email is already registered' });
       }
 
-      // for testing only
-      // console.log("==> Sending needCompleteProfile response");
-      // console.dir({ needCompleteProfile: true }, { depth: null });
-
       // 5. Otherwise tell client profile completion is required (no DB row created)
       return reply.code(200).send({
+        success: true,
+        code: 'NEED_COMPLETE_PROFILE',
         needCompleteProfile: true
       });
     } catch (err) {
@@ -135,6 +153,7 @@ export default fp(async (fastify) => {
       if (err instanceof InvalidCredentialsError) {
         return reply.code(401).send({ message: err.message });
       }
+      fastify.log.error(err);
       return reply.code(500).send({ message: err.message });
     }
   });

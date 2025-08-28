@@ -7,15 +7,21 @@ import { AccessiblePageDescription } from '../../components/AccessiblePageDescri
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
 import ProgressBar from '../../components/ProgressBar';
+import { useUserContext } from '../../context/UserContext';
+import { fetchProfileMe, disable2FA } from '../../utils/Fetch';
+import { ProfileMeResponse } from '../../utils/Interfaces';
 
 const Setup2faBackupPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user, setUser } = useUserContext();
   const [hasDownloaded, setHasDownloaded] = useState(false);
   const location = useLocation();
   const backupCodes = location.state?.backupCodes || [];
   const [loading, setLoading] = useState(backupCodes.length === 0);
 
+  const accessToken = user?.accessToken;
+  
   useEffect(() => {
     if (backupCodes.length > 0) {
       setLoading(false);
@@ -47,6 +53,25 @@ const Setup2faBackupPage: React.FC = () => {
     setHasDownloaded(true);
   };
 
+  const handleCancel = async () => {
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    const success = await disable2FA(user.accessToken);
+    if (success) {
+      const profile: ProfileMeResponse | null = await fetchProfileMe(accessToken);
+      if (profile) {
+        setUser({
+          ...user,
+          twoFA: profile.TwoFAStatus,
+        });
+        navigate('/settings');
+      }
+    }
+  }
 
   return (
     <main
@@ -115,9 +140,8 @@ const Setup2faBackupPage: React.FC = () => {
         <GenericButton
           className="generic-button"
           text={t('common.buttons.cancel')}
-          onClick={() =>
-            navigate('/settings')
-          }
+          // onClick={() => navigate('/settings')}
+          onClick={handleCancel}
           aria-label={t('common.aria.buttons.cancel')}
         />
 

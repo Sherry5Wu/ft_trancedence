@@ -41,32 +41,47 @@ const SignInPage: React.FC = () => {
 
     const signInData = await signInUser(newUser);
 
-    if (signInData) {
-		// alert('Signed in successfully!');
-		setTokenReceived(true);
-		const enabledTwoFA = signInData.data.user.TwoFAStatus;
-		setUser({
-			username: signInData.data.user.username,
-			id: signInData.data.user.id,
-			profilePic: signInData.data.user.avatarUrl || DEFAULT_AVATAR,
-			score: signInData.stats.score,
-			rank: signInData.stats.score,
-			rivals: signInData.rivals,
-			accessToken: signInData.data.accessToken,
-			expiry: Date.now() + 15 * 60 * 1000,
-			twoFA: enabledTwoFA,
-			googleUser: signInData.data.user.registerFromGoogle,
-	});
+    console.log(signInData);
 
-    if (enabledTwoFA) {
-      navigate('/verify2fa');
-    } else {
-      navigate(`/user/${usernameField.value}`);
+    switch (signInData.type) {
+
+      // 1: Wrong password
+      case 'PASSWORD_NOT_MATCH':
+        alert(t('common.alerts.failure.invalidPassword'));
+        break;
+
+		  // 2: 2FA required
+      case '2FA_REQUIRED':
+        sessionStorage.setItem("pending2FAUserId", signInData.userId);
+            console.log('receive data');
+        navigate('/verify2fa', { state: { userId: signInData.userId }});
+        break;
+
+		  // 3: Password matched + 2FA disabled
+      case 'LOGIN_SUCCESS':
+        setTokenReceived(true);
+
+        const { data, stats, rivals } = signInData;
+        setUser({
+          username: data.user.username,
+          id: data.user.id,
+          profilePic: data.user.avatarUrl || DEFAULT_AVATAR,
+          score: stats.score,
+          rank: stats.score,
+          rivals,
+          accessToken: data.accessToken,
+          expiry: Date.now() + 15 * 60 * 1000,
+          twoFA: data.user.TwoFAStatus,
+          googleUser: data.user.registerFromGoogle,
+        });
+
+        navigate(`/user/${data.user.username}`);
+        break;
+
+      default:
+        alert(t('common.alerts.failure.signIn'));
     }
-  } else {
-    alert(t('common.alerts.failure.signIn'));
-  }
-};
+  };
 
   return (
       <main

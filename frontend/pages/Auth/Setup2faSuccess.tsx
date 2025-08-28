@@ -9,27 +9,33 @@ import ProgressBar from '../../components/ProgressBar';
 // import SecurityIcon from '../../assets/noun-security-6758282.svg?react';
 import SecurityIcon from '../../assets/icons/security-icon.svg?react';
 import { useUserContext } from '../../context/UserContext';
+import { fetchProfileMe } from '../../utils/Fetch';
+import { ProfileMeResponse } from '../../utils/Interfaces';
 
 const Setup2faSuccessPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useUserContext();
+  const { user, setUser } = useUserContext();
 
-  const handle2faConfirmation = async () => {
-    // try {
-    //   const res = await fetch('https://localhost:8443/as/2fa/status', {
-    //     method: 'GET',
-    //     credentials: 'include',
-    //   });
-    //   const data = await res.json();
-    //   if (data.enabled) {
-    //     navigate(`/user/${user?.username}`);
-    //   } else {
-    //     alert('2FA setup not complete, please retry.');
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    // }
+  const accessToken = user?.accessToken;
+
+  const update2faStatus = async () => {
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    const profile: ProfileMeResponse | null = await fetchProfileMe(accessToken);
+
+    if (profile) {
+      setUser({
+        ...user,
+        twoFA: profile.TwoFAStatus, // update only 2FA status
+      });
+    }
+    
+    navigate(`/settings`);
   };
 
   return (
@@ -78,10 +84,8 @@ const Setup2faSuccessPage: React.FC = () => {
         <GenericButton
           className="generic-button"
           text={t('common.buttons.done')}
-          // onClick={() => navigate(`/user/${user?.username}`)}
-          onClick={handle2faConfirmation}
+          onClick={update2faStatus}
           aria-label={t('common.aria.buttons.done')}
-          // send to backend auth as {true}
         />
       </div>
     </main>

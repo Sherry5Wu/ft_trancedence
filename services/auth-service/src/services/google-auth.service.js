@@ -152,13 +152,13 @@ async function verifyGoogleIdToken(idToken) {
 }
 
 /**
- * googleUserLogin(idToken)
+ * userLogin(idToken)
  * - If googleId already registered -> login (issue tokens and persist refresh token)
  * - If not registered -> ensure email not taken -> return { profile_complete: false, ... }
  *
  * Note: this function does NOT create a DB row when profile incomplete (Q2 = B).
  */
-async function googleUserLogin(user) {
+async function userLogin(user) {
   // minimal payloads
   const accessPayload = {
     id: user.id,
@@ -176,11 +176,11 @@ async function googleUserLogin(user) {
     id: user.id,
     username: user.username,
     avatarUrl: user.avatarUrl || null, // include only if you support it
-    TwoFAStatus: user.is2FAEnabled && user.is2FAConfirmed,
+    TwoFAStatus: !!(user.is2FAEnabled && user.is2FAConfirmed),
     registerFromGoogle: !!user.googleId,
   };
 
-  return { accessToken, refreshToken, user: publicUser };
+  return { accessToken, refreshToken, publicUser };
 }
 
 /**
@@ -273,9 +273,9 @@ async function googleCompleteRegistration(idToken, username, pinCode, ip = null,
     const publicUser = {
       id: newUser.id,
       username: newUser.username,
-      avatarUrl: newUser.avatarUrl || null,
-      is2FAEnabled: !!newUser.twoFASecret,
-      is2FAConfirmed: newUser.is2FAConfirmed || false,
+      avatarUrl: newUser.avatarUrl || null, // include only if you support it
+      TwoFAStatus: !!(newUser.is2FAEnabled && newUser.is2FAConfirmed),
+      registerFromGoogle: !!newUser.googleId,
     };
 
     return {
@@ -294,6 +294,6 @@ async function googleCompleteRegistration(idToken, username, pinCode, ip = null,
 
 export {
   verifyGoogleIdToken,
-  googleUserLogin,
+  userLogin,
   googleCompleteRegistration,
 }

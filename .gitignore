@@ -8,3 +8,4 @@ services/tournament-service/data/
 frontend/.vite/
 .backend_build
 .frontend_build
+./test-project

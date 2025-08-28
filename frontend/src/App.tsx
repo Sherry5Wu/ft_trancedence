@@ -13,6 +13,7 @@ import Setup2faMainPage from '../pages/Auth/Setup2faMain';
 import Setup2faBackupPage from '../pages/Auth/Setup2faBackup';
 import Setup2faSuccessPage from '../pages/Auth/Setup2faSuccess';
 import Verify2faPage from '../pages/Auth/Verify2fa';
+import Verify2faBackupCodePage from '../pages/Auth/Verify2faBackup';
 import ChoosePlayersPage from '../pages/Play/ChoosePlayers';
 import LogInPlayerPage from '../pages/Play/LogInPlayer';
 import SettingsPage from '../pages/User/UserSettings';
@@ -43,6 +44,8 @@ const App = () => {
 			<Routes>
 				<Route path="/" element={<HomePage />} />
 				<Route path="/signin" element={<SignInPage />} />
+				<Route path="/verify2fa" element={<Verify2faPage />} />
+				<Route path="/verify2fa/recovery" element={<Verify2faBackupCodePage />} />
 				<Route path="/signup" element={<SignUpPage />} />
 				<Route path="/signup/complete-profile" element={<CompleteProfilePage />} />
 				<Route element={<ProtectedRoute />}>
@@ -50,7 +53,6 @@ const App = () => {
 					<Route path="/setup2fa" element={<Setup2faMainPage />} />
 					<Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
 					<Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
-					<Route path="/verify2fa" element={<Verify2faPage />} />
 					<Route path="/choose-players" element={<ChoosePlayersPage />} />
 					<Route path="/login-player" element={<LogInPlayerPage />} />
 					<Route path="/settings" element={<SettingsPage />} />

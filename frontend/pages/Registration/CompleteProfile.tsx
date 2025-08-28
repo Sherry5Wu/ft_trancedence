@@ -1,6 +1,7 @@
 // /src/pages/CompleteProfile.tsx
 
 import React, { useState } from 'react';
+import { useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
@@ -10,11 +11,12 @@ import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 import { useUserContext } from '../../context/UserContext';
 import { createUserFromGoogle } from "../../utils/Fetch";
+import { DEFAULT_AVATAR } from '../../utils/constants';
 
 const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, setUser } = useUserContext();
+  const { user, setUser, setTokenReceived } = useUserContext();
 
   const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const pinField = useValidationField('', isValidPin, t('common.errors.invalidPIN'));
@@ -33,7 +35,13 @@ const CompleteProfilePage: React.FC = () => {
     !pinField.error &&
     !pinMismatch;
 
-  const idToken = sessionStorage.getItem("googleIdToken");
+  // read from router state
+  const location = useLocation();
+  let idToken = location.state?.googleIdToken; 
+
+  if (!idToken) {
+    idToken = sessionStorage.getItem("googleIdToken_fallback") || null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,23 +64,24 @@ const CompleteProfilePage: React.FC = () => {
       return;
     }
 
-    sessionStorage.removeItem("googleIdToken");
-
+    sessionStorage.removeItem("googleIdToken_fallback");
+    
     const userData = {
       username: newUser.user.username,
       id: newUser.user.id,
-      email: "", 
-      profilePic: newUser.user.avatarUrl || "../assets/noun-profile-7808629.svg",
+      profilePic: newUser.user.avatarUrl || DEFAULT_AVATAR,
       score: 0,
       rank: 0,
       rivals: [],
       accessToken: newUser.accessToken,
       refreshToken: newUser.refreshToken,
+      expiry: Date.now() + 15 * 60 * 1000,
       twoFA: newUser.TwoFAStatus,
       googleUser: newUser.registerFromGoogle,
     };
 
     setUser(userData);
+    setTokenReceived(true);
     navigate(`/user/${userData.username}`);
   };
 
