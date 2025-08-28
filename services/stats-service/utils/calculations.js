@@ -78,10 +78,10 @@ function getMatchHistoryForPlayer(identifier)
     try {
         const stmt = db.prepare(`
             SELECT * FROM match_history
-            WHERE player_id = ? OR opponent_id = ? OR player_username = ? OR opponent_username = ?
+            WHERE player_id = ? OR player_username = ?
             ORDER BY played_at DESC
           `);
-        return stmt.all(identifier, identifier, identifier, identifier);
+        return stmt.all(identifier, identifier);
     }
     catch (err)
     {
