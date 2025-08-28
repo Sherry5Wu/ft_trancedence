@@ -134,53 +134,51 @@ export const signInUser = async (player: LoginData) => {
 };
 
 export const signInGoogleUser = async (idToken: string) => {
-	try {
-		const response = await fetch("https://localhost:8443/as/auth/google-login", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ idToken }),
-		});
+  try {
+    const response = await fetch("https://localhost:8443/as/auth/google-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken }),
+    });
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
-		const data = await response.json();
+    const data = await response.json();
 
-		// If profile is incomplete, just return result so caller can redirect
-		if (data.needCompleteProfile) {
-			return { needCompleteProfile: true };
-		}
+    // 1: Profile incomplete
+    if (data.needCompleteProfile) {
+      return { type: "NEED_COMPLETE_PROFILE", idToken };
+    }
 
-		const statResponse = await fetch("https://localhost:8443/stats/user_match_data/", {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-		});
+    // 2: 2FA required
+    if (data.TwoFA === true && data.code === "TWOFA_ENABLE") {
+      return { type: "TWOFA_REQUIRED", userId: data.userId };
+    }
 
-		if (!statResponse.ok) {
-			throw new Error(`HTTP error! Status: ${statResponse.status}`);
-		}
+    // 3: Normal login flow
+    if (data.success && data.code === "TWOFA_DISABLE") {
+      const statResponse = await fetch("https://localhost:8443/stats/user_match_data/", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const stats = await statResponse.json();
 
-		const stats = await statResponse.json();
+      const rivalResponse = await fetch(`https://localhost:8443/stats/rivals/${data.user.id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const rivals = await rivalResponse.json();
 
-		const rivalResponse = await fetch(`https://localhost:8443/stats/rivals/${data.user.id}`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-		});
+      return { type: "SUCCESS", data, stats, rivals };
+    }
 
-		if (!rivalResponse.ok) {
-			throw new Error(`HTTP error! Status: ${rivalResponse.status}`);
-		}
-
-		const rivals = await rivalResponse.json();
-
-		return { data, stats, rivals };
-	}
-
-	catch (error) {
-		console.error("Error during Google sign-in:", error);
-		return null;
-	}
+    return { type: "UNKNOWN" };
+  } catch (error) {
+    console.error("Error during Google sign-in:", error);
+    return { type: "ERROR" };
+  }
 };
 
 export const updateProfilePic = async (file: File, token: string | null) => {
