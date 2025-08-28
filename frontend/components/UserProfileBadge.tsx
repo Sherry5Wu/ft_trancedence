@@ -30,7 +30,7 @@ export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
   const avatarSrc = user?.photo
     ? user.photo
     : user?.username
-      ? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user.username)}&backgroundColor=ffee8c,ffcc00,fdfbd4,2e6f40,cd1c18,272757,b5c7eb,4682b4&textColor=000000`
+      ? `https://api.dicebear.com/6.x/initials/png?seed=${encodeURIComponent(user.username)}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`
       : ProfileIcon;
   
   const sizeClasses = {

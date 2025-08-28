@@ -511,7 +511,7 @@ export const fetchUserProfile = async (
   }
 
   const dicebearUrl = (seed: string) =>
-    `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
+  `https://api.dicebear.com/6.x/initials/png?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000`;
 
   try {
     const response = await fetch(`https://localhost:8443/as/users/profile/${username}`, {

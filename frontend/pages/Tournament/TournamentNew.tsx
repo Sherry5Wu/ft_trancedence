@@ -13,6 +13,9 @@ import { isValidTitle } from '../../utils/Validation';
 import { useUserContext } from '../../context/UserContext';
 import { usePlayersContext } from '../../context/PlayersContext';
 
+const dicebearUrl = (seed: string) =>
+  `https://api.dicebear.com/6.x/initials/png?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000`;
+
 const NewTournamentPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +40,7 @@ const NewTournamentPage: React.FC = () => {
 		if (user?.username && !players[0]) {
 		const profilePic = typeof user.profilePic === 'string'
 			? user.profilePic
-			: `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
+			: (user as any)?.profilePic?.props?.src ?? dicebearUrl(user.username);
 
 		setPlayer(0, {
 			id: user.id,
@@ -57,7 +60,7 @@ const NewTournamentPage: React.FC = () => {
 		if (user?.username) {
 		const profilePic = typeof user.profilePic === 'string'
 			? user.profilePic
-			: `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
+			: (user as any)?.profilePic?.props?.src ?? dicebearUrl(user.username);
 		setPlayer(0, {
 			id: user.id,
 			username: user.username,
@@ -91,7 +94,7 @@ const NewTournamentPage: React.FC = () => {
 	const formFilled =
 		titleField.value.trim() !== '' &&
 		!titleField.error &&
-		totalPlayers !== null &&
+		totalPlayers != null &&
 		players.length === totalPlayers &&
 		players.every((p) => p !== undefined && p !== null);
 	

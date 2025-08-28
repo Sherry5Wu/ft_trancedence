@@ -18,18 +18,28 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
   const [totalPlayers, setTotalPlayers] = useState<number | undefined>(undefined);
   const [isTournament, setIsTournament] = useState(false);
 
+  const dicebearUrl = (seed: string) =>
+  `https://api.dicebear.com/6.x/initials/png?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000`;
+
+  const safePhoto = (photo: unknown, seed: string) => {
+    return (typeof photo === 'string' && photo.trim() !== '')
+      ? photo
+      : dicebearUrl(seed);
+  };
+
+  const safeSeed = (p: Partial<Players>) =>
+    p.playername ?? p.username ?? 'Player';
+  
   const addPlayer = (newPlayer: Players) => {
     const coerced: Players = {
       ...newPlayer,
       id: newPlayer.id === 'guest' ? 'guest' : newPlayer.id,
       username: newPlayer.id === 'guest' ? 'guest' : newPlayer.username,
       playername: newPlayer.playername ?? newPlayer.username,
+      photo: safePhoto(newPlayer.photo, safeSeed(newPlayer)),
     };
-    setPlayers((prev) => [...prev, coerced]);
+    setPlayers(prev => [...prev, coerced]);
   };
-
-  const dicebearUrl = (seed: string) =>
-  `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 
   const setPlayer = (index: number, next: Players) => {
     setPlayers((prev) => {
@@ -42,10 +52,9 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
           id: next.id === 'guest' ? 'guest' : next.id,
           username: next.id === 'guest' ? 'guest' : next.username,
           playername: next.playername ?? next.username,
-          photo:
-            (typeof next.photo === 'string' && next.photo.includes('dicebear.com') && next.playername)
-              ? dicebearUrl(next.playername)
-              : next.photo,
+          photo: (typeof next.photo === 'string' && next.photo.includes('dicebear.com') && next.playername)
+            ? dicebearUrl(next.playername)
+            : safePhoto(next.photo, next.playername ?? next.username ?? 'Player'),
         };
         updated[index] = created;
         return updated;
@@ -63,7 +72,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
             photo:
               (typeof next.photo === 'string' && next.photo.includes('dicebear.com') && (next.playername ?? next.username))
                 ? dicebearUrl(next.playername ?? next.username!)
-                : (next.photo ?? old.photo),
+                : safePhoto(next.photo ?? old.photo, next.playername ?? next.username ?? old.playername ?? old.username),
           }
         : {
             ...old,
@@ -74,7 +83,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
             photo:
               (typeof old.photo === 'string' && old.photo.includes('dicebear.com') && next.playername)
                 ? dicebearUrl(next.playername)
-                : (next.photo ?? old.photo),
+                : safePhoto(next.photo ?? old.photo, next.playername ?? old.playername ?? old.username),
           };
 
       return updated;
@@ -86,12 +95,6 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
     ((prevPlayers) => prevPlayers.filter((player) => player.id !== userToRemove))
   };
 
-  // const name = (id: string, newUsername: string) => {
-  //   setPlayers((prevPlayers) => {
-  //       return prevPlayers.map((player) => {
-  //           return player.id === id ? {...player, username: newUsername} : player;
-  //       });
-  //   })};
   const setPlayername = (id: string, newAlias: string) => {
     setPlayers((prev) =>
       prev.map((p) => {
