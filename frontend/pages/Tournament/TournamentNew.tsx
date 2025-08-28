@@ -106,7 +106,7 @@ const NewTournamentPage: React.FC = () => {
 			text={t('pages.tournament.new.aria.description')}
 		/>
 
-		<h1 id="pageTitle" className="font-semibold text-center text-xl">
+		<h1 id="pageTitle" className="font-semibold text-center h1">
 			{t('pages.tournament.new.title')}
 		</h1>
 		
