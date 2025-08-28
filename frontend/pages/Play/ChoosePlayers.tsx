@@ -34,7 +34,7 @@ const ChoosePlayersPage: React.FC = () => {
 // Player 1 from logged-in user
 useEffect(() => {
   if (user?.username && players.length === 0) {
-    const photo = user.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
+    const photo = user.profilePic ?? `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`;
     const player = {
       id: user.username,
       username: user.username,
@@ -66,7 +66,7 @@ useEffect(() => {
     const updated = {
       id: user?.username ?? 'player1',
       username: trimmed,
-      photo: user?.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`,
+      photo: user?.profilePic ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`,
     };
 
     if (players.length === 0) {
@@ -123,10 +123,25 @@ const formFilled =
         id="pageDescription"
         text={t('pages.choosePlayers.aria.description')}
       />
+
+      <h1 id="pageTitle" className="h1 font-semibold text-center">
+        {t('pages.choosePlayers.title')}
+      </h1>
+
       <div className="flex flex-col justify-center p-8 ">
-        <h1 id="pageTitle" className="font-semibold text-center text-xl">
-          {t('pages.choosePlayers.title')}
-        </h1>
+   
+        {/* Player 1 info */}
+        <section aria-labelledby="player1Title" className="mx-auto w-[300px] text-center">
+          <h2 id="player1Title" className="font-semibold text-lg mb-1">
+            {t('pages.choosePlayers.player1Title', 'Player 1')}
+          </h2>
+          <p className="text-sm text-black mb-2">
+            {t(
+              'pages.choosePlayers.player1Description',
+              'The user from this session is set to player 1. If the player name is not changed, the default is the username.'
+            )}
+          </p>
+        </section>
 
         <GenericInput
           type="text"
@@ -142,6 +157,19 @@ const formFilled =
           disabled={isPlayer1Loading}
           showEditIcon={true}
         />
+
+      {/* Player 2 info */}
+      <section aria-labelledby="player2Title" className="mx-auto w-[300px] text-center mt-4">
+        <h2 id="player2Title" className="font-semibold text-lg mb-1">
+          {t('pages.choosePlayers.player2Title', 'Player 2')}
+        </h2>
+        <p className="text-sm text-black mb-2">
+          {t(
+            'pages.choosePlayers.player2Description',
+            'Please choose the player 2 type as a registered or guest user. If the player is registered, the name can be changed; otherwise, the default is the username.'
+          )}
+        </p>
+      </section>
 
         <div className="flex flex-wrap justify-center gap-6 mt-4">
           <GenericButton
@@ -167,7 +195,6 @@ const formFilled =
                 setPlayer2Type("guest");
                 player2Field.setValue('');
                 removePlayer(players[1]?.id);
-                //alert(t('pages.choosePlayers.player2GuestAlert'));
               }}
             />
             <div className="absolute right-[-30px]">
@@ -176,8 +203,7 @@ const formFilled =
           </div>
         </div>
 
-        {player2Type && (
-          <div className="mt-4">
+          <div>
             <GenericInput
               type="text"
               placeholder={t('common.placeholders.player2')}
@@ -190,11 +216,11 @@ const formFilled =
                 (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
               }
               showEditIcon={true}
+              disabled={!player2Type}
             />
           </div>
-        )}
 
-        <div className="flex flex-wrap justify-center gap-6 mt-6">
+        <div className="flex flex-wrap justify-center gap-6 mt-8">
           <GenericButton
             className="generic-button"
             text={t('common.buttons.cancel')}
