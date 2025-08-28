@@ -104,7 +104,7 @@ export default async function matchHistoryRoutes(fastify) {
                 WHERE player_id = ?
                 ORDER BY played_at DESC
             `);
-            const rows = stmt.all(player_id, player_id);
+            const rows = stmt.all(player_id);
             if (rows)
             {
                 reply.send(rows);
@@ -126,7 +126,7 @@ export default async function matchHistoryRoutes(fastify) {
                 WHERE player_username = ?
                 ORDER BY played_at DESC
             `);
-            const rows = stmt.all(player_username, player_username);
+            const rows = stmt.all(player_username);
             if (rows)
             {
                 reply.send(rows);
