@@ -41,7 +41,7 @@ const Verify2faPage: React.FC = () => {
     setError(null);
 
     const result = await verifyCode2FA(userId, code);
-  
+
     setIsVerifying(false);
 
     switch (result.type) {
@@ -65,8 +65,8 @@ const Verify2faPage: React.FC = () => {
           rivals: [],
           accessToken,
           expiry: Date.now() + 15 * 60 * 1000,
-          twoFA: !!(user.is2FAEnabled && user.is2FAConfirmed),
-          googleUser: !!user.googleId,
+          twoFA: user.TwoFAStatus,///!!(user.is2FAEnabled && user.is2FAConfirmed),
+          googleUser: user.registerFromGoogle,
         });
 
         navigate(`/user/${user.username}`);
@@ -98,7 +98,7 @@ const Verify2faPage: React.FC = () => {
 
   //   // /2fa/verfication/:username
   //   const result = await verifyCode2FA();
-  
+
   //   setIsVerifying(false);
 
   //   if (result?.verified) {

@@ -273,9 +273,9 @@ async function googleCompleteRegistration(idToken, username, pinCode, ip = null,
     const publicUser = {
       id: newUser.id,
       username: newUser.username,
-      avatarUrl: newUser.avatarUrl || null,
-      is2FAEnabled: !!newUser.twoFASecret,
-      is2FAConfirmed: newUser.is2FAConfirmed || false,
+      avatarUrl: newUser.avatarUrl || null, // include only if you support it
+      TwoFAStatus: !!(newUser.is2FAEnabled && newUser.is2FAConfirmed),
+      registerFromGoogle: !!newUser.googleId,
     };
 
     return {

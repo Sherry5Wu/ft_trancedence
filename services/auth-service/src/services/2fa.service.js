@@ -26,40 +26,49 @@ const { User } = models;
 async function generateTwoFASetup(userId) {
   const user = await User.findByPk(userId);
   if (!user) throw new NotFoundError('User not found');
-
+console.log("twoFa setup function: step1"); // for testing only
   if (user.twoFASecret) {
     throw new ValidationError('2FA already enabled for this user');
   }
-
+console.log("twoFa setup function: step2"); // for testing only
   // Generate TOTP secret object
   const secretObj = speakeasy.generateSecret({ name: `ft_transcendence (${user.email})`, length: 10 });
+  console.log("twoFa setup function: step3"); // for testing only
   const otpauthUrl = secretObj.otpauth_url;
+  console.log("twoFa setup function: step4"); // for testing only
   const base32Secret = secretObj.base32; // the raw secret used for totp
+  console.log("twoFa setup function: step5"); // for testing only
   if (typeof base32Secret !== 'string' || base32Secret.length === 0) {
+    console.log("twoFa setup function: step6"); // for testing only
     throw new Error('Generated 2FA secret is invalid');
   }
-
+console.log("twoFa setup function: step7"); // for testing only
   // Create backup codes (plaintext, presented once to user)
   // each backup code is 8 hex characters
   const backupCodesPlain = Array.from({ length: 10 }, () => crypto.randomBytes(4).toString('hex'));
-
+console.log("twoFa setup function: step8"); // for testing only
   // Hash backup codes before persisting
   let backupCodesHashed;
   try {
     backupCodesHashed = await Promise.all(
     backupCodesPlain.map((code) => hashPassword(code))
     );
+    console.log("twoFa setup function: step9"); // for testing only
   } catch (err) {
+    console.log("twoFa setup function: step10"); // for testing only
     throw new Error('Failed to hash backup codes. Please try again.');
   }
 
   // Encrypt the secret and persist both encrypted secret and hashed backup codes
   const encryptedSecret = encryptSecret(base32Secret);
-
+console.log("twoFa setup function: step11"); // for testing only
   await user.update({
     twoFASecret: encryptedSecret,
     backupCodes: backupCodesHashed,
   });
+  console.log("after insert twofaSecret into DB, googleId:", user.googleId); // for testing only
+
+console.log("after insert twofaSecret into DB, then print it out:", user.twoFASecret); // for testing only
 
   // Return the plaintext secret and backup codes to the caller (frontend should display securely)
   return { secret: base32Secret, otpauthUrl, backupCodes: backupCodesPlain };
@@ -88,7 +97,8 @@ async function verifyTwoFAToken(userId, token) {
     token,
     window: 1,
   });
-
+// for testing only
+console.log('verified:', verified);
   return verified;
 }
 
@@ -155,7 +165,7 @@ async function getTwoFAStatus(userId) {
   if (!user) throw new NotFoundError('User not found');
 
   // Only consider 2FA fully active if both enabled and confirmed
-  return user.is2FAEnabled && user.is2FAConfirmed;
+  return !!(user.is2FAEnabled && user.is2FAConfirmed);
 }
 
 export {

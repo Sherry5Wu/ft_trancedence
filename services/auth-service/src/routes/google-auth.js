@@ -68,9 +68,14 @@ export default fp(async (fastify) => {
       const existingUser = await User.findOne({ where: { googleId } });
       // 4a. Already registered -> sign in
       if (existingUser) {
-        // get 2fa status
-        const TwoFA = !!(existingUser.is2FAEnabled && existingUser.is2FAConfirmed);
 
+        console.log('existingUser.username', existingUser.username);// for testing only
+        console.log('existingUser.twoFASecret', existingUser.twoFASecret); // for testing only
+        console.log('existingUser.is2FAEnabled', existingUser.is2FAEnabled);// for testing only
+        console.log('existingUser.is2FAConfirmed', existingUser.is2FAConfirmed);// for testing only
+        // get 2fa status
+        // const TwoFA = !!(existingUser.is2FAEnabled && existingUser.is2FAConfirmed);
+        const TwoFA = existingUser.is2FAConfirmed;
         // 2fa is disable, then normal login
         if (TwoFA === false) {
            const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
@@ -84,11 +89,13 @@ export default fp(async (fastify) => {
           // return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
           return sendError(reply, 503, 'Service Unavailable', 'Service temporarily unavailable. Please try again later.');
         }
-
+        // for testing only
+          console.log('return public user:', publicUser);
+           console.log('TwoFA:', TwoFA);
         setRefreshTokenCookie(reply, refreshToken);
-        return reply.code(200).send({ success: ture, code: 'TWOFA_DISABLE', TwoFA, accessToken, user: publicUser});
+        return reply.code(200).send({ success: true, code: 'TWOFA_DISABLE', TwoFA, accessToken, user: publicUser});
         } else {
-          return reply.code(200).send({ success: ture, code: 'TWOFA_ENABLE', TwoFA, userId: existingUser.id });
+          return reply.code(200).send({ success: true, code: 'TWOFA_ENABLE', TwoFA, userId: existingUser.id });
         }
       }
 

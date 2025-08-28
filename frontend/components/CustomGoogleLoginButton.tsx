@@ -10,7 +10,7 @@ import { DEFAULT_AVATAR } from '../utils/constants';
 const CustomGoogleLoginButton: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setUser, setTokenReceived } = useUserContext();
+  const { user, setUser, setTokenReceived } = useUserContext();
 
   useEffect(() => {
     // global google
@@ -50,7 +50,7 @@ const CustomGoogleLoginButton: React.FC = () => {
         sessionStorage.setItem("pending2FAUserId", result.userId);
         navigate("/verify2fa", { state: { userId: result.userId } });
         return;
-      
+
       // 3: Normal login flow
       case "SUCCESS":
         setUser({
@@ -75,10 +75,10 @@ const CustomGoogleLoginButton: React.FC = () => {
   };
 
   const handleClick = () => {
-    if (!window.google) 
+    if (!window.google)
       return alert("Google script not loaded yet");
     // Open the popup flow (works cross-browser)
-    google.accounts.id.prompt(); 
+    google.accounts.id.prompt();
   };
 
   return (

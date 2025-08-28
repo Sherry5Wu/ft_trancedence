@@ -4,7 +4,7 @@
 const errorResponseSchema = {
   $id: 'errorResponse',
   type: 'object',
-  required: ['status', 'error', 'message'],
+  required: ['error', 'message'],
   properties: {
     status: { type: 'integer', example: 400 },
     error: { type: 'string', example: 'Bad request' },
