@@ -20,13 +20,18 @@ const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser, setTokenReceived } = useUserContext();
 
-  const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
+  const isValidIdentifier = (value: string) => {
+    return isValidUsername(value) || isValidEmail(value);
+  };
+
+  // const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const passwordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
+  const identifierField = useValidationField('', () => true, '');
 
   const formFilled =
-    usernameField.value !== '' &&
+    identifierField.value !== '' &&
     passwordField.value !== '' &&
-    !usernameField.error &&
+    !identifierField.error &&
     !passwordField.error;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,7 +40,7 @@ const SignInPage: React.FC = () => {
     if (!formFilled) return;
 
     const newUser: LoginData = {
-      identifier: usernameField.value,
+      identifier: identifierField.value,
       password: passwordField.value,
     };
 
@@ -103,12 +108,12 @@ const SignInPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="flex flex-col">
           <GenericInput
             type="text"
-            placeholder={t('common.placeholders.username')}
-            aria-label={t('common.aria.inputs.username')}
-            value={usernameField.value}
-            onFilled={usernameField.onFilled}
-            onBlur={usernameField.onBlur}
-            errorMessage={usernameField.error}
+            placeholder={t('common.placeholders.usernameOrEmail')}
+            aria-label={t('common.aria.inputs.usernameOrEmail')}
+            value={identifierField.value}
+            onFilled={identifierField.onFilled}
+            onBlur={identifierField.onBlur}
+            errorMessage={identifierField.error}
           />
 
           <GenericInput

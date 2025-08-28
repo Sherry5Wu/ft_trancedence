@@ -92,7 +92,7 @@ export default fp(async (fastify) => {
     }
   }, async (req, reply) => {
     try {
-      const user = await getUserById(req.user.id);
+      const user = await getUserById(req.user.id, true);
       if (!user) {
         return reply.status(404).send({
           error: 'User not found',
@@ -404,7 +404,7 @@ export default fp(async (fastify) => {
     }, async handler(req, reply) {
       const { username, pinCode } = req.body;
 
-      const existingUser = await getUserByUsername(username);
+      const existingUser = await getUserByUsername(username, true);
       if (!existingUser) {
         return reply.code(404).send({
           success: false,
@@ -527,9 +527,6 @@ export default fp(async (fastify) => {
 
   // Build final absolute avatar URL and dedupe slashes
   const avatarUrl = `${originToUse}${normalizedUploadsPrefix}/${filename}`.replace(/([^:])\/\/+/g, '$1/');
-
-  //  for testing only  Log computed URL for debugging
-  // fastify.log.info({ avatarUrl, configuredOrigin: process.env.WEBSITE_ADDRESS, normalizedUploadsPrefix, filename }, 'Computed avatarUrl to persist');
 
   // Fetch previous avatar (non-fatal)
   let previousAvatar = null;

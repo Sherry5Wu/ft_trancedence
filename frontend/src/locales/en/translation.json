@@ -29,6 +29,7 @@
       "verify": "VERIFY"
     },
     "placeholders": {
+      "usernameOrEmail": "Enter your username/email",
       "username": "Enter your username",
       "email": "Enter your email address",
       "password": "Enter your password",
@@ -66,6 +67,7 @@
         "verify": "Verify the entered information"
       },
       "inputs": {
+        "usernameOrEmail": "Input field to enter your username or email address",
         "username": "Input field to enter your username",
         "email": "Input field to enter your email address",
         "password": "Input field to enter your password",

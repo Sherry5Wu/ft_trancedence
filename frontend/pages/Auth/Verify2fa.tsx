@@ -12,7 +12,6 @@ import { verifyCode2FA } from '../../utils/Fetch';
 import { DEFAULT_AVATAR } from '../../utils/constants';
 
 const Verify2faPage: React.FC = () => {
-  console.log('In to verify page');
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, setUser, setTokenReceived } = useUserContext();
@@ -65,7 +64,7 @@ const Verify2faPage: React.FC = () => {
           rivals: [],
           accessToken,
           expiry: Date.now() + 15 * 60 * 1000,
-          twoFA: user.TwoFAStatus,///!!(user.is2FAEnabled && user.is2FAConfirmed),
+          twoFA: user.TwoFAStatus,
           googleUser: user.registerFromGoogle,
         });
 
@@ -78,35 +77,10 @@ const Verify2faPage: React.FC = () => {
         break;
 
       default:
-        setError(t('common.alerts.failure.signIn'));
+        setError('error');  
+      //setError(t('common.alerts.failure.signIn'));
     }
   };
-  // const accessToken = user?.accessToken;
-
-  // Verify 6-digit TOTP code
-  // const handleVerify = async (e?: React.FormEvent) => {
-  //   if (e) e.preventDefault();
-
-  //   if (!accessToken) {
-  //     alert(t("common.errors.unauthorized"));
-  //     navigate("/signin");
-  //     return;
-  //   }
-
-  //   setIsVerifying(true);
-  //   setError(null);
-
-  //   // /2fa/verfication/:username
-  //   const result = await verifyCode2FA();
-
-  //   setIsVerifying(false);
-
-  //   if (result?.verified) {
-  //     navigate(`/user/${user?.username}`);
-  //   } else {
-  //     setError(t('pages.twoFactorAuth.setup.invalidCode'));
-  //   }
-  // };
 
   return (
     <main

@@ -14,11 +14,10 @@ import { Op } from 'sequelize';
 
 import { models } from '../db/index.js';
 import { hashPassword, comparePassword } from '../utils/crypto.js';
-import { generateAccessToken, generateRefreshToken , storeRefreshTokenHash} from '../utils/jwt.js';
 import { ConflictError, InvalidCredentialsError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { normalizeAndValidateEmail, normalizeEmail, validatePassword, validateUsername, validatePincode } from '../utils/validators.js';
 
-const { User, RefreshToken } = models;
+const { User } = models;
 
 /**
  * Register a new user.Email and username must be unique
@@ -80,8 +79,6 @@ async function authenticateUser(identifier, password) {
     throw new InvalidCredentialsError('The request must contain: email and password');
   }
 
-  // const { ip = null, userAgent = null } = opts;
-
   // Find user by email or username, including secrets
   const user = await User.scope('withSecrets').findOne({
     where: {
@@ -104,12 +101,7 @@ async function authenticateUser(identifier, password) {
   if (!isMatch){
     const matched = false;
     const TwoFA =false
-
-    // for testing only
-    console.log('matched', matched);
-    console.log('TwoFA', TwoFA);
     return { matched, TwoFA, existingUser: user };
-    // throw new InvalidCredentialsError('Incorrect password');
   }
   else {
     const TwoFA = user.is2FAEnabled && user.is2FAConfirmed;
@@ -248,7 +240,6 @@ async function updateAvatar(userId, newAvatarUrl) {
    throw new ValidationError('Avatar URL must use HTTPS');
  }
 
- console.log(newAvatarUrl); // for testing only
   // 4. Save to DB
   await user.update({ avatarUrl: newAvatarUrl });
 }
