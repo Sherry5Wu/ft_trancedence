@@ -9,6 +9,7 @@ import Eye from "../assets/eye.svg?react";
 import EyeOff from "../assets/eye-closed.svg?react";
 
 interface GenericInputProps {
+  id?: string;
   type?: string;
   placeholder: string;
   onFilled: (value: string) => void;
