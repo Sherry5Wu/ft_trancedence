@@ -159,35 +159,35 @@ const UserPage = () => {
 		isRival ?
 
 		<GenericButton
-		className="round-icon-button"
-		text={undefined}
-		icon={<img src={RivalsIcon} alt="Rivals icon" />}
-		hoverLabel={t('pages.homeUser.labels.removeFromRivals')}
-		onClick={() => {
-			if (user && param.username)
-			{
-				removeRival(param.username, token);
-				setUser({
-					...user, 
-					rivals: user?.rivals.filter(r => r.rival_username !== param.username)});
-			}}} />
+			className="round-icon-button"
+			text={undefined}
+			icon={<img src={RivalsIcon} alt="Rivals icon" />}
+			hoverLabel={t('pages.homeUser.labels.removeFromRivals')}
+			onClick={() => {
+				if (user && param.username)
+				{
+					removeRival(param.username, token);
+					setUser({
+						...user, 
+						rivals: user?.rivals.filter(r => r.rival_username !== param.username)});
+				}}} />
 	
 		:
 
 		<GenericButton
-		className="transparent-round-icon-button"
-		text={undefined}
-		icon={<img src={RivalsIcon} alt="Rivals icon" />}
-		hoverLabel={t('pages.homeUser.labels.addToRivals')}
-		onClick={() => {
-			if (user && param.username)
-			{
-				addRival(param.username, token);
-				setUser({
-					...user, 
-					rivals: [...user.rivals, 
-						{rival_username: param.username}]});
-			};
+			className="transparent-round-icon-button"
+			text={undefined}
+			icon={<img src={RivalsIcon} alt="Rivals icon" />}
+			hoverLabel={t('pages.homeUser.labels.addToRivals')}
+			onClick={() => {
+				if (user && param.username)
+				{
+					addRival(param.username, token);
+					setUser({
+						...user, 
+						rivals: [...user.rivals, 
+							{rival_username: param.username}]});
+				};
 		}} />
 		}
 
