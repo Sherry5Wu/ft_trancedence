@@ -22,15 +22,21 @@ const SPEED_MAP: Record<SpeedPreset, number> = {
 type MapKey = 'default' | 'large' | 'obstacles';
 
 function normalizePlayers(
-  ps: ({ id?: string; username: string; playername?: string; elo?: number } | Player)[] = []
+  ps: Array<{ id?: string; username?: string; playername?: string; elo?: unknown }> = []
 ): Player[] {
+  let guestN = 1;
   return ps
-    .filter(p => !!p?.username)
-    .map((p: any) => ({
-      id: String(p.id ?? 'guest'),
-      username: p.playername ?? p.username,
-      elo: p.elo ?? 1000,
-    }));
+    .filter(p => !!(p.username || p.playername))
+    .map(p => {
+      const id  = p.id ?? `guest-${guestN++}`;
+      const name = (p.playername ?? p.username)!;
+      const eloNum = Number(p.elo);
+      return {
+        id: String(id),
+        username: name,
+        elo: Number.isFinite(eloNum) ? eloNum : 1000,
+      };
+    });
 }
 
 function buildPayload(
@@ -301,7 +307,8 @@ export default function GamePage() {
 
       try {
         const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso, rawPlayers as any);
-        pendingMatchHistory.current.push(payloadPlayer1);
+        const payloadPlayer2 = buildPayload(p2, p1, s2, s1, durationSec, played_at_iso, rawPlayers as any);
+        pendingMatchHistory.current.push(payloadPlayer1, payloadPlayer2);
 
         const token = user?.accessToken;
         // Regular match

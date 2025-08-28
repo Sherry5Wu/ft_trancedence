@@ -15,32 +15,15 @@ function stageForPosting(currentRoundNum: number, bracketSize: number) {
   const totalRounds = roundsFor(bracketSize);
   return totalRounds - (currentRoundNum - 1);
 }
-const normalizeElo = (elo: unknown): number => {
-  const n = Number(elo);
-  return Number.isFinite(n) && n > 0 ? n : 1000; // base elo
-};
 
 // Sort players by their ranking, highest vs lowest in a tournament
-function seedHighVsLow(players: Player[], bracketSize?: number): { pairs: Pair[]; carry: Player[] } {
-  const normalized = players.map(p => ({ ...p, elo: normalizeElo(p.elo) }));
-  const sorted = [...normalized].sort((a, b) => {
-    const d = b.elo - a.elo;
-    if (d !== 0) return d;
-    const u = a.username.localeCompare(b.username);
-    if (u !== 0) return u;
-    return a.id.localeCompare(b.id);
-  });
-  const targetSize = bracketSize ?? nextPow2(sorted.length);
-  const byes = Math.max(0, targetSize - sorted.length);
-  const carry: Player[] = sorted.slice(0, byes);
-  const pool = sorted.slice(byes);
+function seedHighVsLow(players: Player[]): Pair[] {
+  const sorted = [...players].sort((a, b) => b.elo - a.elo);
   const pairs: Pair[] = [];
-  for (let l = 0, r = pool.length - 1; l < r; l++, r--) {
-    pairs.push([pool[l], pool[r]]);
+  for (let i = 0, j = sorted.length - 1; i < j; i++, j--) {
+    pairs.push([sorted[i], sorted[j]]);
   }
-  if (pool.length % 2 === 1)
-    carry.push(pool[(pool.length - 1) / 2]);
-  return { pairs, carry };
+  return pairs;
 }
 
 // Pair winners of the initial rounds
@@ -85,9 +68,10 @@ export function useTournamentBracket(entrants: Player[], enabled: boolean) {
       setState({ roundNum: 1, pairs: [], matchIdx: 0, winnersThisRound: [], carryToNextRound: [] });
       return;
     }
-    const { pairs, carry } = seedHighVsLow(entrants, bracketSize);
-    setState({ roundNum: 1, pairs, matchIdx: 0, winnersThisRound: [], carryToNextRound: carry });
-  }, [enabled, entrants, bracketSize]);
+    // simple: 4 or 8 entrants only
+    const pairs = seedHighVsLow(entrants);
+    setState({ roundNum: 1, pairs, matchIdx: 0, winnersThisRound: [], carryToNextRound: [] });
+  }, [enabled, entrants]);
 
   const currentPair = state.pairs[state.matchIdx];
   const upcomingPair = state.pairs[state.matchIdx + 1];

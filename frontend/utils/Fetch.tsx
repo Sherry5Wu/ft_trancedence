@@ -628,6 +628,9 @@ export const fetchUserProfile = async (
     }
 
     const data = await response.json();
+	const u = data?.data;
+	if (!u?.id || !u?.username)
+		return null;
 
     return {
       id: u.id,
