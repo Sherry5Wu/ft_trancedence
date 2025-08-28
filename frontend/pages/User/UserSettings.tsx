@@ -61,10 +61,10 @@ const SettingsPage = () => {
 						...user,
 						twoFA: profile.TwoFAStatus,
 					});
-					alert(t("pages.userSettings.twoFactor.disabled"));
+					// alert(t("pages.userSettings.twoFactor.disabled"));
 				}
 			} else {
-				alert(t("pages.userSettings.twoFactor.disableFailed"));
+				// alert(t("pages.userSettings.twoFactor.disableFailed"));
 			}
 		} else {
 			navigate("/setup2fa");
@@ -116,28 +116,6 @@ const SettingsPage = () => {
       </div>
            
       <div className="flex flex-col items-center text-center w-full mx-auto">
-        {/* <div className="">
-          <h3 className="text-lg font-semibold mb-4">
-            {t('pages.userSettings.accountSettings.title')}
-          </h3>
-          
-          <GenericInput
-            placeholder={t('common.placeholders.username')}
-            aria-label={t('common.aria.inputs.username')}
-            value={user?.username || ''}
-            onFilled={() => {}}
-            disabled
-          />
-          
-          {/* <GenericInput
-            placeholder={t('common.placeholders.email')}
-            aria-label={t('common.aria.inputs.email')}
-            value={user?.email || ''}
-            onFilled={() => {}}
-            disabled
-          /> */}
-        {/* </div> */}
-
         <div className="p-4">
           <h3 className="text-lg font-semibold mb-4">
             {t('pages.userSettings.security.title')}
@@ -168,31 +146,21 @@ const SettingsPage = () => {
 			<h3 className="text-lg font-semibold">
 				{t('pages.userSettings.twoFactor.title')}
 			</h3>
-			<div className="max-w-sm text-center p-4">
-				{t('pages.userSettings.twoFactor.description')}
-
-			<ToggleButton
-				labelOn={t('pages.userSettings.twoFactor.labelOn')}
-				labelOff={t('pages.userSettings.twoFactor.labelOff')}
-				aria-label={t('pages.userSettings.aria.2faToggle')}
-				checked={!!user?.twoFA} 
-				onClick={handle2fa}
-			/>
+				<div className="max-w-sm text-center p-4">
+					{t('pages.userSettings.twoFactor.description')}
+					<div className='flex justify-center mt-2'>
+						<ToggleButton
+							labelOn={t('pages.userSettings.twoFactor.labelOn')}
+							labelOff={t('pages.userSettings.twoFactor.labelOff')}
+							aria-label={t('pages.userSettings.aria.2faToggle')}
+							checked={!!user?.twoFA} 
+							onClick={
+								handle2fa
+							}
+						/>
+					</div>
+				</div>
 			</div>
-			</div>
-
-			<GenericButton
-			className="generic-button"
-			text={t('common.buttons.save')}
-			aria-label={t('pages.userSettings.aria.saveChanges')}
-			onClick={() => {
-				alert(t('common.alerts.success'));
-				setUser({
-				...user!,
-				});
-				navigate(`/user/${user?.username}`);
-			}}
-			/>
 		</div>
 		</main>
   	);
