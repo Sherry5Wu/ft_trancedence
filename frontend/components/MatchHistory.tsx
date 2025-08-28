@@ -7,8 +7,8 @@ import { useRequestNewToken } from '../utils/Hooks';
 import { useTranslation } from 'react-i18next';
 
 const MatchRows = ({match, users}: {match: MatchData, users: FetchedUserData[]}) => {
-    const [avatar1, setAvatar1] = useState('');
-    const [avatar2, setAvatar2] = useState('');
+    const [avatar1, setAvatar1] = useState(DEFAULT_AVATAR);
+    const [avatar2, setAvatar2] = useState(DEFAULT_AVATAR);
 
     useEffect(() => {
         const loadAvatarURL = async () => {
