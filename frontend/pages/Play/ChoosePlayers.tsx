@@ -12,6 +12,9 @@ import { useValidationField } from '../../utils/Hooks';
 import { isValidAlias } from '../../utils/Validation';
 import { Tooltip } from '../../components/Tooltip';
 
+const dicebearUrl = (seed: string) =>
+  `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
+
 const ChoosePlayersPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -34,16 +37,20 @@ const ChoosePlayersPage: React.FC = () => {
 // Player 1 from logged-in user
 useEffect(() => {
   if (user?.username && players.length === 0) {
-    const photo = user.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
+    const photo = (user as any)?.profilePic?.props?.src ?? dicebearUrl(user.username);
     const player = {
-      id: user.username,
+      id: user.id,
       username: user.username,
+      playername: user.username,
       photo,
     };
     addPlayer(player);
     player1Field.setValue(user.username);
   } else if (players.length > 0) {
-    player1Field.setValue(players[0].username);
+    const alias = players[0].playername;
+    if (alias !== player1Field.value) {
+      player1Field.setValue(alias);
+    }
   }
   setIsPlayer1Loading(false);
 }, [user, players]);
@@ -51,54 +58,72 @@ useEffect(() => {
 // sync second player field when players array changes
 useEffect(() => {
   if (players.length > 1) {
-    player2Field.setValue(players[1].username);
-    if (player2Type === null)
-      setPlayer2Type("registered");
+    const alias = players[1].playername;
+    if (alias !== player2Field.value) {
+      player2Field.setValue(alias);
+    }
+    if (player2Type === null) setPlayer2Type("registered");
   } else {
-    player2Field.setValue('');
+    if (player2Field.value !== '') player2Field.setValue('');
   }
 }, [players]);
 
 // sync player1 field with PlayersContext
 useEffect(() => {
   const trimmed = player1Field.value.trim();
-  if (!isPlayer1Loading && trimmed !== '' && !player1Field.error) {
-    const updated = {
-      id: user?.username ?? 'player1',
-      username: trimmed,
-      photo: user?.profilePic?.props?.src ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}&backgroundColor=ffee8c&textColor=000000fontFamily=Jost`,
+  if (!isPlayer1Loading && trimmed !== '' && !player1Field.error && players[0]) {
+    if (players[0].playername === trimmed)
+      return;
+    const next = {
+      ...players[0],
+      playername: trimmed,
+      photo: players[0].photo?.includes('dicebear.com')
+        ? dicebearUrl(trimmed)
+        : players[0].photo,
     };
-
-    if (players.length === 0) {
-      addPlayer(updated);
-    } else {
-      setPlayer(0, updated);
-    }
+    setPlayer(0, next);
   }
-}, [player1Field.value]);
+}, [player1Field.value, isPlayer1Loading, player1Field.error, players]);
 
 
 // sync player2 field with PlayersContext
 useEffect(() => {
   const trimmed = player2Field.value.trim();
-  if (trimmed === '' || player2Field.error) return;
-
-  const id = player2Type === 'guest'
-    ? `guest-${trimmed.toLowerCase()}`
-    : trimmed;
-
-  const photo = player2Type === 'guest'
-    ? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`
-    : players[1]?.photo ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
-
-  const updated = { id, username: trimmed, photo };
-
-  if (players.length > 1) {
-    setPlayer(1, updated);
-  } else if (players.length === 1) {
-    addPlayer(updated);
+  if (trimmed === '' || player2Field.error || !player2Type)
+    return;
+  if (player2Type === 'guest') {
+    const existing = players[1];
+    if (existing &&
+        existing.id === 'guest' &&
+        existing.username === 'guest' &&
+        existing.playername === trimmed) {
+      return;
+    }
+    const next = {
+      id: 'guest',
+      username: 'guest',
+      playername: trimmed,
+      photo: dicebearUrl(trimmed),
+    };
+    if (existing) {
+      setPlayer(1, { ...existing, ...next });
+    } else if (players.length === 1) {
+      addPlayer(next);
+    }
+  } else {
+    if (!players[1]) return;
+    if (players[1].playername === trimmed)
+      return;
+    const next = {
+      ...players[1],
+      playername: trimmed,
+      photo: players[1].photo?.includes('dicebear.com')
+        ? dicebearUrl(trimmed)
+        : players[1].photo,
+    };
+    setPlayer(1, next);
   }
-}, [player2Field.value]);
+}, [player2Field.value, player2Type, players]);
 
 
 const aliasDuplicate =
@@ -166,7 +191,8 @@ const formFilled =
               onClick={() => {
                 setPlayer2Type("guest");
                 player2Field.setValue('');
-                removePlayer(players[1]?.id);
+                if (players[1])
+                  removePlayer(players[1].id);
                 //alert(t('pages.choosePlayers.player2GuestAlert'));
               }}
             />
@@ -219,4 +245,4 @@ const formFilled =
   );
 };
 
-export default ChoosePlayersPage;  
+export default ChoosePlayersPage;

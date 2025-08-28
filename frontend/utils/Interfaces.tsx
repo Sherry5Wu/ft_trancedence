@@ -129,6 +129,7 @@ export interface UserContextType {
 export interface Players {
   id: string;
   username: string;
+  playername: string;
   photo: string;
 }
 
@@ -146,7 +147,7 @@ export interface PlayersContextType {
   addPlayer: (player: Players) => void;
   setPlayer: (index: number, player: Players) => void;
   removePlayer: (id: string) => void;
-  setPlayerUsername: (id: string, newUsername: string) => void;
+  setPlayername: (id: string, newUsername: string) => void;
 
   resetPlayers: () => void;
   resetPlayerListOnly: () => void;
@@ -210,8 +211,8 @@ export interface AliasField {
 export interface TournamentHistoryRow {
   stage_number: number; // 1 = final, 2 = semifinal, 3 = quarterfinal...
   match_number: number;
-  player_name: string | null;
-  opponent_name: string | null;
+  player_name: string;
+  opponent_name: string;
   result: Result;
 }
 
