@@ -78,6 +78,7 @@
         "toggle2FA": "Ativar ou desativar autenticação de dois fatores"
       }
     },
+	"loading": "Carregando...",
     "errors": {
       "unauthorized": "Não autorizado.",
       "invalidUsername": "O nome de usuário deve: \n • Ter entre 6–20 caracteres \n • Começar com uma letra \n • Incluir apenas: letras, números ou caracteres especiais específicos: \n   pontos (.), sublinhados (_) ou hífens (-)",
@@ -461,7 +462,8 @@
       }
     },
     "navBar": {
-      "aria": {
+	"searchBar": "Procurar outros usuários",
+    "aria": {
         "languageMenu": "Menu de seleção de idioma",
         "accessibilityMenu": "Menu de opções de acessibilidade",
         "darkModeToggle": "Alternar modo escuro",

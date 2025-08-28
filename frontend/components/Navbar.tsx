@@ -103,7 +103,7 @@ export const Navbar = () => {
                     <div className=''>
                         <SearchBar
                         type="username"
-                        placeholder="Search for other users"
+                        placeholder={t('components.navBar.searchBar')}
                         value={searchField.value}
                         options={rivalData}
                         onFilled={searchField.onFilled}

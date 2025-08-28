@@ -23,7 +23,6 @@ const UserPage = () => {
 	const [scoreHistory, setScoreHistory] = useState<ScoreHistory[] | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [profilePicURL, setProfilePicURL] = useState('');
-	const [noSuchUser, setNoSuchUser] = useState(false);
 	const param = useParams();
 	const navigate = useNavigate();
 	const showStats = () => setStats(!stats);
@@ -46,15 +45,9 @@ const UserPage = () => {
 					return ;
 				const pageOwner = allUsers.find((u: FetchedUserData) => u.username === param.username);
 				if (pageOwner)
-				{
-					setNoSuchUser(false);
 					setProfilePicURL(pageOwner.avatarUrl ?? '');
-				}
 				else
-                {
-					setNoSuchUser(true);
                     navigate('./notfound');
-                }
 			}
 			catch(error) {
 				console.error('Error: ' + error);
@@ -93,10 +86,7 @@ const UserPage = () => {
 	}, [user, param.username]);
 
 	if (loading)
-		return <div className='flex justify-center'>Loading page...</div>;
-
-	if (noSuchUser)
-		return <div className='flex justify-center h4'>No user {param.username} exists</div>;
+		return <div className='flex justify-center'>{t('common.loading')}</div>;
 
 	const isRival = user?.rivals.some(r => r.rival_username === param.username);
 

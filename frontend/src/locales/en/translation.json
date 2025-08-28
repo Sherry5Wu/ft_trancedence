@@ -78,6 +78,7 @@
         "toggle2FA": "Enable or disable two-factor authentication"
       }
     },
+	"loading": "Loading...",
     "errors": {
       "unauthorized": "Unauthorized.",
       "invalidUsername": "Username must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include: letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
@@ -461,6 +462,7 @@
       }
     },
     "navBar": {
+	"searchBar": "Search for other users",
     "aria": {
       "languageMenu": "Language selection menu",
       "accessibilityMenu": "Accessibility options menu",

@@ -95,8 +95,8 @@ const LeaderboardPage = () => {
           aria-label={t('pages.leaderboard.aria.table')}
           className="grid grid-cols-8 text-center font-medium min-w-md translate-y-2"
         >
-          <span className='col-span-1'></span>
-          <span className='col-span-1'></span>
+          <span className='col-span-1 w-19'></span>
+          <span className='col-span-1 w-10'></span>
           <span className='col-span-2' aria-label={t('pages.leaderboard.aria.columnUsername')}>
             {t('pages.leaderboard.columns.username')}
           </span>
@@ -124,7 +124,7 @@ const LeaderboardPage = () => {
               <li
                 key={player.userInfo.username}
                 onClick={() => navigate(`/user/${player.userInfo.username}`)}
-                className={`grid grid-cols-8 gap-x-2 min-w-md items-center text-center rounded-xl h-12 mb-2 
+                className={`grid grid-cols-8 min-w-md items-center text-center rounded-xl h-12 mb-2 
 					${isCurrentUser ? 'bg-[#FDFBD4] ring-2' : 'bg-[#FFEE8C]'
                 } hover:cursor-pointer hover:scale-105 transform transition ease-in-out duration-300`}
                 aria-label={`Player ${player.userInfo.username} at position ${idx + 1}`}

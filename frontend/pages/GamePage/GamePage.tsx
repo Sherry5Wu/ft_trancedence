@@ -551,7 +551,7 @@ export default function GamePage() {
 
         {/* Game Container */}
         {(phase === 'playing') && (
-          <div className="relative w-full pb-[56.25%] bg-yellow-200 p-3 rounded-3xl overflow-hidden">
+          <div className="relative w-full pb-[56.25%] bg-black p-3 rounded-3xl overflow-hidden">
             <Suspense fallback={<div className="absolute inset-0 grid place-items-center">{t('game.loading')}</div>}>
               <GameCanvas
                 canvasRef={canvasRef}

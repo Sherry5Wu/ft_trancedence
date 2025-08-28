@@ -2,7 +2,6 @@ import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useClickOutside } from "../utils/Hooks";
 import { SearchBarInputProps } from "../utils/Interfaces";
 import { useTranslation } from 'react-i18next';
-import { FetchedUserData } from "../utils/Interfaces";
 import { DEFAULT_AVATAR } from "../utils/constants";
 
 export const SearchBar = ({
@@ -21,16 +20,6 @@ export const SearchBar = ({
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
-    // const [rivalData, setRivalData] = useState<string[]>([]);
-    // const accessToken = useUserContext().user?.accessToken;
-
-    // useEffect(() => {
-    //     const fetchOtherUsers = async (accessToken) => {
-    //         const data = await fetchUsers(accessToken);
-    //         setRivalData(data);
-    //     };
-    //     fetchOtherUsers(accessToken);
-    // }, [])
 
     const handleOptionClick = (value: string) => {
         onSelect(value);
@@ -52,7 +41,7 @@ export const SearchBar = ({
                 value={value}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className={`${className} ${value ? "text-black" : ""}`}
+                className={`${className} ${value ? "text-black" : ""} placeholder:text-sm`}
             />
             {isOpen && (
                 <ul className="dropdown-menu !bg-[#FFEE8C] border-2 -translate-y-2">
