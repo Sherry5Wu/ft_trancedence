@@ -385,6 +385,7 @@ def test_unauthorized_access():
     data = {
         "player_score": 21,
         "opponent_score": 15,
+        "opponent_username": "testopponentusername",
         "duration": "00:05:30",
         "opponent_id": "test-opponent",
         "player_name": "PlayerOne",
@@ -394,7 +395,8 @@ def test_unauthorized_access():
     }
     
     response = requests.post(f"{STATS_URL}/match_history", json=data, headers=headers, verify=False)
-    assert response.status_code == 401  # Should be unauthorized
+
+    assert response.status_code == 401  # Should be unauthorized or wrong body
     print("✅ Unauthorized access test passed")
 
 # ✅ UUSI: Testaa eri duration formaatteja

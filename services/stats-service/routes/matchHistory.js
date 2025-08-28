@@ -101,7 +101,7 @@ export default async function matchHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare(`
                 SELECT * FROM match_history
-                WHERE player_id = ? OR opponent_id = ?
+                WHERE player_id = ?
                 ORDER BY played_at DESC
             `);
             const rows = stmt.all(player_id, player_id);
@@ -123,7 +123,7 @@ export default async function matchHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare(`
                 SELECT * FROM match_history
-                WHERE player_username = ? OR opponent_username = ?
+                WHERE player_username = ?
                 ORDER BY played_at DESC
             `);
             const rows = stmt.all(player_username, player_username);
@@ -141,7 +141,42 @@ export default async function matchHistoryRoutes(fastify) {
     });
 
 
-    fastify.post('/', { preHandler: requireAuth }, (request, reply) => {
+    fastify.post('/', { 
+        preHandler: requireAuth,
+        schema: {
+            tags: ['MatchHistory'],
+            summary: 'Add a match to history',
+            body: {
+                type: 'object',
+                required: [
+                    'opponent_username', 'player_score', 'opponent_score', 'duration',
+                    'player_name', 'opponent_name', 'result', 'played_at'
+                ],
+                properties: {
+                    opponent_username: { type: 'string'},
+                    opponent_id: { type: 'string' },
+                    player_score: { type: 'integer' },
+                    opponent_score: { type: 'integer'},
+                    duration: { type: 'string', pattern: '^\\d{2}:\\d{2}:\\d{2}$'},
+                    player_name: { type: 'string'},
+                    opponent_name: {type: 'string'},
+                    result: {type: 'string', enum: ['win', 'draw', 'loss']},
+                    played_at: { type: 'string' },
+                    is_guest_opponent: { type: 'integer', enum: [0, 1], default: 0}
+                }
+            },
+            response: {
+                200: {
+                    type: 'object',
+                    properties: {
+                        message: { type: 'string' }
+                    }
+                },
+                400: {type: 'object', properties: { error: {type: 'string'} } },
+                500: {type: 'object', properties: { error: {type: 'string' } } }
+            }
+        }
+     }, (request, reply) => {
         const player_id = request.id;
         const player_username = request.username;
         const { opponent_username, opponent_id, player_score, opponent_score, duration, player_name, opponent_name, result, played_at, is_guest_opponent = 0 } = request.body;  // Display name voi vaihtua
@@ -178,7 +213,62 @@ export default async function matchHistoryRoutes(fastify) {
         }
     });
 
-    fastify.post('/update_all', { preHandler: requireAuth }, (request, reply) => {
+    fastify.post('/update_all', { 
+        preHandler: requireAuth,
+        schema: {
+            tags: ['MatchHistory'],
+            summary: 'Bulk add matches to history',
+            body: {
+                type: 'object',
+                required: ['matches'],
+                properties: {
+                    matches: {
+                        type: 'array',
+                        minItems: 1,
+                        items: {
+                            type: 'object',
+                            required: [
+                                'opponent_username', 'player_score', 'opponent_score', 'duration',
+                                'player_name', 'opponent_name', 'result', 'played_at'
+                            ],
+                            properties: {
+                                opponent_username: { type: 'string'},
+                                opponent_id: { type: 'string' },
+                                player_score: { type: 'integer' },
+                                opponent_score: { type: 'integer'},
+                                duration: { type: 'string', pattern: '^\\d{2}:\\d{2}:\\d{2}$'},
+                                player_name: { type: 'string'},
+                                opponent_name: {type: 'string'},
+                                result: {type: 'string', enum: ['win', 'draw', 'loss']},
+                                played_at: { type: 'string' },
+                                is_guest_opponent: { type: 'integer', enum: [0, 1], default: 0}
+                            }
+                        }
+                    }
+                }
+            },
+            response: {
+                200: {
+                    type: 'object',
+                    properties: {
+                        inserted: {type: 'number'},
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    index: { type: 'number' },
+                                    error: { type: 'string' }
+                                }
+                            }
+                        }
+                    }
+                },
+                400: { type: 'object', properties: { error: { type: 'string' } } },
+                500: { type: 'object', properties: { error: { type: 'string' } } }
+            }
+        }
+     }, (request, reply) => {
         const { matches } = request.body ?? {};
         if (!Array.isArray(matches) || matches.length === 0) {
             return reply.status(400).send({ error: 'matches (array) required' });

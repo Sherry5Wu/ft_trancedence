@@ -84,7 +84,7 @@ def test_get_specific_tournament():
 
 def test_update_all_bulk_insert():
     setup_test_user()
-    entries = [
+    matches = [
         {
             "tournament_id": "test-tournament-1",
             "stage_number": 1,
@@ -104,7 +104,7 @@ def test_update_all_bulk_insert():
     ]
     headers = get_auth_headers()
     url = f"{BASE_URL}/tournament_history/update_all"
-    response = requests.post(url, json={"entries": entries}, headers=headers, verify=VERIFY)
+    response = requests.post(url, json={"matches": matches}, headers=headers, verify=VERIFY)
     print("Status code:", response.status_code)
     try:
         print("Response:", response.json())
@@ -122,7 +122,7 @@ def test_match_history_update_all_bulk_insert():
             "player_username": "Alice",
             "opponent_username": "Bob",
             "played_at": "2025-08-26T12:00:00Z",
-            "duration": 300,
+            "duration": "00:05:00",
             "player_score": 3,
             "opponent_score": 2,
             "opponent_id": "uuid-bob",
@@ -136,7 +136,7 @@ def test_match_history_update_all_bulk_insert():
             "player_username": "Charlie",
             "opponent_username": "Dave",
             "played_at": "2025-08-26T12:10:00Z",
-            "duration": 250,
+            "duration": "00:04:10",
             "player_score": 1,
             "opponent_score": 3,
             "opponent_id": "uuid-dave",
