@@ -1,28 +1,34 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { GenericButton } from '../../components/GenericButton';
 import { useUserContext } from '../../context/UserContext';
 import { verifyBackupCode } from '../../utils/Fetch';
 import { GenericInput } from '../../components/GenericInput';
+import { DEFAULT_AVATAR } from '../../utils/constants';
 
 const Verify2faBackupCodePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useUserContext();
+  const { user, setUser, setTokenReceived } = useUserContext();
 
   const [code, setCode] = useState('');
   const formFilled = code.trim().length > 0;
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const accessToken = user?.accessToken;
+  const location = useLocation();
+  const routeState = location.state as { userId?: string } | undefined;
+
+  // store user id via Router state, fallback to sessionStorage
+  const userId = routeState?.userId || sessionStorage.getItem("pending2FAUserId");
 
   const handleVerify = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
-    if (!accessToken) {
+    if (!userId) {
       alert(t("common.errors.unauthorized"));
       navigate("/signin");
       return;
@@ -31,17 +37,45 @@ const Verify2faBackupCodePage: React.FC = () => {
     setIsVerifying(true);
     setError(null);
 
-    const result = await verifyBackupCode(code, accessToken);
+    const result = await verifyBackupCode(userId, code);
 
     setIsVerifying(false);
 
-    if (result?.used) {
-      navigate(`/user/${user?.username}`);
-    } else {
-      setError(
-        result?.message ||
-          t('pages.twoFactorAuth.verifyBackupCode.invalidCode')
-      );
+    switch (result.type) {
+
+      case 'INVALID_CODE':
+        setError(t('pages.twoFactorAuth.setup.invalidCode'));
+        break;
+
+      case 'SUCCESS':
+        sessionStorage.removeItem("pending2FAUserId");
+
+        const { accessToken, user } = result.data;
+
+        setTokenReceived(true);
+        setUser({
+          username: user.username,
+          id: user.id,
+          profilePic: user.avatarUrl || DEFAULT_AVATAR,
+          score: 0,
+          rank: 0,
+          rivals: [],
+          accessToken,
+          expiry: Date.now() + 15 * 60 * 1000,
+          twoFA: user.TwoFAStatus,
+          googleUser: user.registerFromGoogle,
+        });
+
+        navigate(`/user/${user.username}`);
+        break;
+
+      case 'UNAUTHORIZED':
+        alert(t('common.errors.unauthorized'));
+        navigate('/signin');
+        break;
+
+      default:
+        setError(t('common.alerts.failure.signIn'));
     }
   };
 
