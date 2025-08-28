@@ -1,8 +1,8 @@
 import fp from 'fastify-plugin';
 
 import { userLogin, googleCompleteRegistration, verifyGoogleIdToken } from '../services/google-auth.service.js';
-import { generateAccessToken, storeRefreshTokenHash } from '../utils/jwt.js';
-import { InvalidCredentialsError,ValidationError, NotFoundError } from '../utils/errors.js';
+import { storeRefreshTokenHash } from '../utils/jwt.js';
+import { InvalidCredentialsError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
 import { setRefreshTokenCookie } from '../utils/authCookie.js';
@@ -68,11 +68,6 @@ export default fp(async (fastify) => {
       const existingUser = await User.findOne({ where: { googleId } });
       // 4a. Already registered -> sign in
       if (existingUser) {
-
-        console.log('existingUser.username', existingUser.username);// for testing only
-        console.log('existingUser.twoFASecret', existingUser.twoFASecret); // for testing only
-        console.log('existingUser.is2FAEnabled', existingUser.is2FAEnabled);// for testing only
-        console.log('existingUser.is2FAConfirmed', existingUser.is2FAConfirmed);// for testing only
         // get 2fa status
         // const TwoFA = !!(existingUser.is2FAEnabled && existingUser.is2FAConfirmed);
         const TwoFA = existingUser.is2FAConfirmed;
@@ -89,9 +84,6 @@ export default fp(async (fastify) => {
           // return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
           return sendError(reply, 503, 'Service Unavailable', 'Service temporarily unavailable. Please try again later.');
         }
-        // for testing only
-          console.log('return public user:', publicUser);
-           console.log('TwoFA:', TwoFA);
         setRefreshTokenCookie(reply, refreshToken);
         return reply.code(200).send({ success: true, code: 'TWOFA_DISABLE', TwoFA, accessToken, user: publicUser});
         } else {

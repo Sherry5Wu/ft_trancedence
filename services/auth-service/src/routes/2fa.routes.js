@@ -10,8 +10,7 @@ import {
 import { ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
-import { authenticateUser, getUserById } from '../services/auth.service.js';
-import refreshToken from '../db/models/refreshToken.js';
+import { getUserById } from '../services/auth.service.js';
 import { userLogin, } from '../services/google-auth.service.js';
 import { storeRefreshTokenHash } from '../utils/jwt.js';
 import { setRefreshTokenCookie } from '../utils/authCookie.js';
@@ -246,17 +245,16 @@ console.log("step 7"); // for tesing only
   * @route   POST /2fa/backup
   * @desc    Consume backup code
   */
-  fastify.post('/2fa/backupcode', {
-    preHandler: [fastify.authenticate],
+  fastify.post('/2fa/backupcode/:userId', {
     schema: {
       tags: ['TwoFactorAuth'],
       summary: 'Consume backup code',
       description: 'Consumes a backup code when the user cannot provide a TOTP code.',
       body: {
         type: 'object',
-        required: ['code'],
+        required: ['backupCode'],
         properties: {
-          code: { type: 'string', description: 'One-time backup code' }
+          backupCode: { type: 'string', description: 'One-time backup code' }
         }
       },
       response: {
@@ -266,6 +264,8 @@ console.log("step 7"); // for tesing only
           properties: {
             success: { type: 'boolean' },
             code: { type: 'string' },
+            accessToken: { type: 'string' },
+            user: { type: 'object', $ref: 'publicUser#' }
           },
         },
         400: { $ref: 'errorResponse#' },
@@ -283,11 +283,26 @@ console.log("step 7"); // for tesing only
 
       const ok = await consumeBackupCode(userId, req.body.code);
       if (!ok) {
-        // user provided wrong code
-        return reply.code(200).send({ success: true, code: 'CODE_NOT_MATCH' });
+        // BackupCode doesn't match
+        return reply.code(200).send({ success: true, code: 'BACKUP_CODE_NOT_MATCH' });
       }
 
-      return reply.code(200).send({ success: true, code: 'CODE_MATCH'});
+      // backupCode matches, return accessToken and user infor
+      const existingUser = await getUserById(requestUserId);
+      if (!existingUser) return sendError(reply, 404, 'Not Found', 'User not found');
+
+      const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
+
+      try {
+        await storeRefreshTokenHash(refreshToken, existingUser.id);
+      } catch (err) {
+        fastify.log.error(err);
+        // return reply.code(503).send({ message: 'Service temporarily unavailable. Please try again later. ' });
+        return sendError(reply, 503, 'Service Unavailable', 'Service temporarily unavailable. Please try again later.');
+      }
+
+      setRefreshTokenCookie(reply, refreshToken);
+      return reply.code(200).send({ success: true, code: 'BACKUP_CODE_MATCH', accessToken, user: publicUser });
     } catch (err) {
       if (err instanceof NotFoundError) {
         return sendError(reply, 404, 'Not Found', err.message);

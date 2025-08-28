@@ -2,15 +2,12 @@ import fp from 'fastify-plugin';
 import {
   registerUser,
   authenticateUser,
-  getUserById,
-  getUserByUsername,
-  getUserByIdentifier,
 } from '../services/auth.service.js';
 import {
   rotateTokens,
   revokeRefreshToken,
 } from '../services/jwt.service.js';
-import { InvalidCredentialsError, ValidationError, ConflictError, NotFoundError } from '../utils/errors.js';
+import { InvalidCredentialsError, ConflictError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { setRefreshTokenCookie, clearRefreshTokenCookie } from '../utils/authCookie.js';
 import { userLogin } from '../services/google-auth.service.js';

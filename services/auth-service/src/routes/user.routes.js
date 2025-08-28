@@ -528,9 +528,6 @@ export default fp(async (fastify) => {
   // Build final absolute avatar URL and dedupe slashes
   const avatarUrl = `${originToUse}${normalizedUploadsPrefix}/${filename}`.replace(/([^:])\/\/+/g, '$1/');
 
-  //  for testing only  Log computed URL for debugging
-  // fastify.log.info({ avatarUrl, configuredOrigin: process.env.WEBSITE_ADDRESS, normalizedUploadsPrefix, filename }, 'Computed avatarUrl to persist');
-
   // Fetch previous avatar (non-fatal)
   let previousAvatar = null;
   try {
