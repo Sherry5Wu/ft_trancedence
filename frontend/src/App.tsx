@@ -45,6 +45,7 @@ const App = () => {
 				<Route path="/" element={<HomePage />} />
 				<Route path="/signin" element={<SignInPage />} />
 				<Route path="/verify2fa" element={<Verify2faPage />} />
+				<Route path="/verify2fa/recovery" element={<Verify2faBackupCodePage />} />
 				<Route path="/signup" element={<SignUpPage />} />
 				<Route path="/signup/complete-profile" element={<CompleteProfilePage />} />
 				<Route element={<ProtectedRoute />}>
@@ -52,7 +53,6 @@ const App = () => {
 					<Route path="/setup2fa" element={<Setup2faMainPage />} />
 					<Route path="/setup2fa-backup" element={<Setup2faBackupPage />} />
 					<Route path="/setup2fa-success" element={<Setup2faSuccessPage />} />
-					<Route path="/verify2fa/recovery" element={<Verify2faBackupCodePage />} />
 					<Route path="/choose-players" element={<ChoosePlayersPage />} />
 					<Route path="/login-player" element={<LogInPlayerPage />} />
 					<Route path="/settings" element={<SettingsPage />} />
