@@ -99,11 +99,14 @@ async function generateTwoFAQrCode(otpauthUrl) {
  */
 async function consumeBackupCode(userId, code) {
   const user = await User.scope('withSecrets').findByPk(userId);
+  console.log('user', user); // for testing
   if (!user) throw new NotFoundError('User not found');
 
   if (!Array.isArray(user.backupCodes) || user.backupCodes.length === 0) {
     throw new ValidationError('No backup codes available');
   }
+
+  console.log('backupcode in the DB:', user.backupCodes);
 
   const hashedCodes = user.backupCodes;
   let matchedIndex = -1;
@@ -120,10 +123,15 @@ async function consumeBackupCode(userId, code) {
   }
 
   if (matchedIndex === -1) return false;
-
+  console.log('BEFORE delete the backupcode:', user.backupCodes);
   // remove and persist
   hashedCodes.splice(matchedIndex, 1);
   await user.update({ backupCodes: hashedCodes });
+    console.log('after delete the backupcode1:', user.backupCodes);
+// await user.update({ backupCodes: [...hashedCodes] }, { fields: ['backupCodes'] });
+await user.reload();
+  console.log('after delete the backupcode2:', user.backupCodes);
+
   return true;
 }
 
@@ -143,7 +151,7 @@ async function disableTwoFA(userId) {
  * @returns 2FA status: true/false
  */
 async function getTwoFAStatus(userId) {
-  const user = await User.scope('withSecret').findByPk(userId,
+  const user = await User.findByPk(userId,
     { attributes: ['is2FAEnabled', 'is2FAConfirmed'] }
   );
   if (!user) throw new NotFoundError('User not found');
