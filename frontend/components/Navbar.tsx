@@ -1,7 +1,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu } from './Menu';
 import { useUserContext } from '../context/UserContext';
 import FrenchIcon from '../assets/icons/multi-language/flag-france.svg?react';
@@ -27,6 +27,8 @@ export const Navbar = () => {
     const navigate = useNavigate();
     const requestNewToken = useRequestNewToken();
     const { setIsTournament, resetPlayers } = usePlayersContext();
+	const location = useLocation();
+	const isGame = location.pathname.includes('/game');
     
     // fetch users from search bar
     useEffect(() => {
@@ -41,7 +43,7 @@ export const Navbar = () => {
     }, [user])
 
     // change languages
-    const changeLanguage = (lang) => {
+    const changeLanguage = (lang: any) => {
         i18n.changeLanguage(lang);
         localStorage.setItem('lang', lang);
     };
@@ -91,7 +93,11 @@ export const Navbar = () => {
     return (
         <nav className='flex items-center bg-[#FFCC00]'>
             <div className='flex flex-1 justify-start gap-5'>
-                <Menu aria-label='language options' Icon={<LangIcon className='scale-80'/>} elements={languageMenuItems} className='menuIcon' />
+				{isGame ? 
+                <Menu aria-label='language options' Icon={<LangIcon className='scale-80'/>} elements={languageMenuItems} className='menuIcon pointer-events-none opacity-50 transition ease-in-out duration-300' />
+				:
+				<Menu aria-label='language options' Icon={<LangIcon className='scale-80'/>} elements={languageMenuItems} className='menuIcon' />
+				}
             </div>
             <div className='flex flex-1 justify-center items-center -translate-x-3' >
                 <button aria-label='title' onClick={handleTitleClick} className='title'>P | N G - P · N G</button>
