@@ -44,11 +44,11 @@ export async function postMatchHistoryBulk(matches: StatsPayload[], token?: stri
   return res.json();
 }
 
-export async function postTournamentHistory(entries: TournamentPayload[], token?: string) {
+export async function postTournamentHistory(matches: TournamentPayload[], token?: string) {
   const res = await fetch(`${API_BASE}/tournament_history/update_all`, {
     method: 'POST',
     headers: authHeaders(token),
-    body: JSON.stringify({ entries }),
+    body: JSON.stringify({ matches }),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
