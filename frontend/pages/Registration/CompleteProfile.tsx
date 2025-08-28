@@ -11,6 +11,7 @@ import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 import { useUserContext } from '../../context/UserContext';
 import { createUserFromGoogle } from "../../utils/Fetch";
+import { DEFAULT_AVATAR } from '../../utils/constants';
 
 const CompleteProfilePage: React.FC = () => {
   const { t } = useTranslation();
@@ -34,8 +35,9 @@ const CompleteProfilePage: React.FC = () => {
     !pinField.error &&
     !pinMismatch;
 
+  // read from router state
   const location = useLocation();
-  let idToken = location.state?.googleIdToken; // read from router state
+  let idToken = location.state?.googleIdToken; 
 
   if (!idToken) {
     idToken = sessionStorage.getItem("googleIdToken_fallback") || null;
@@ -67,8 +69,7 @@ const CompleteProfilePage: React.FC = () => {
     const userData = {
       username: newUser.user.username,
       id: newUser.user.id,
-      email: "", 
-      profilePic: newUser.user.avatarUrl || "../assets/noun-profile-7808629.svg",
+      profilePic: newUser.user.avatarUrl || DEFAULT_AVATAR,
       score: 0,
       rank: 0,
       rivals: [],
