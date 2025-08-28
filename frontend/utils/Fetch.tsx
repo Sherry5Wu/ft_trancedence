@@ -394,7 +394,7 @@ export const verify2FA = async (tokenCode: string, accessToken: string) => {
 // confirm the 6-digit code for setup 2fa
 export const confirm2FA = async (tokenCode: string, accessToken: string) => {
   try {
-    const response = await fetch("https://localhost:8443/as/2fa/verify", {
+    const response = await fetch("https://localhost:8443/as/2fa/confirmation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

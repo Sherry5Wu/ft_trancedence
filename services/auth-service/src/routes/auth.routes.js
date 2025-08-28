@@ -103,6 +103,7 @@ export default fp(async (fastify) => {
             matched: { type: 'string' }, // does the username/email matches with password
             TwoFA: { type: 'boolean' },
             accessToken: { type: 'string' },
+            username: { type: 'string' },
             user: { $ref: 'publicUser#' },
           }
         },
@@ -114,10 +115,6 @@ export default fp(async (fastify) => {
   }, async (req, reply) => {
     try {
       const { matched, TwoFA, existingUser } = await authenticateUser(req.body.identifier, req.body.password);
-       console.log('>>> after authenticaterUser');
-       console.log('matched', matched);
-       console.log('TwoFA', TwoFA);
-      //  console.log('users', existingUser);
       // return the doesn't match information
       if (matched === false) {
         console.log('>>> entered /auth/login handler matched=false');
@@ -133,9 +130,14 @@ console.log('>>> entered /auth/login handler matched= true and TwoFA=false');
           id: publicUser.id,
           username: publicUser.username,
           avatarUrl: publicUser.avatarUrl || null,
-          TwoFAStatus: publicUser.is2FAEnabled && publicUser.is2FAConfirmed,
+          TwoFAStatus: !!(publicUser.is2FAEnabled && publicUser.is2FAConfirmed),
           registerFromGoogle: !!publicUser.googleId,
         };
+
+        // for testing only
+        console.log('user:', user);
+        console.log('matched:', matched);
+        console.log('TwoFA:', TwoFA);
 
         // Set refreshToken cookie  uncomment it
         setRefreshTokenCookie(reply, refreshToken);
@@ -157,6 +159,7 @@ console.log('>>> entered /auth/login handler matched= true and TwoFA=true');
           code: 'PASSWORD_MATCH_2FA-ENABLE',
           matched,
           TwoFA,
+          username: existingUser.username,
         });
       }
 

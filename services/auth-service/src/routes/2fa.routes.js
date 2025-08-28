@@ -158,82 +158,21 @@ export default fp(async (fastify) => {
   });
 
   /**
-  * @route   POST /2fa/confirmaiton
-  * @desc    In the 2fa setup flow, to confirm the 2fa works properly.
-  */
-  fastify.post('/2fa/confirmation', {
-    preHandler: [fastify.authenticate],
-    schema: {
-      tags: ['TwoFactorAuth'],
-      summary: 'Confirm 2FA TOTP',
-      description: 'Verifies a 6-digit TOTP code and enables 2FA for the user. For 2FA setup flow',
-      body: {
-        type: 'object',
-        required: ['token'],
-        properties: {
-          token: { type: 'string', pattern: '^[0-9]{6}$', description: '6-digit TOTP code' }
-        }
-      },
-      response: {
-        200: {
-          description: 'Verification result',
-          type: 'object',
-          required: ['verified'],
-          properties: { verified: { type: 'boolean' } },
-        },
-        400: { description: 'Bad Request', $ref: 'errorResponse#' },
-        401: { description: 'Unauthorized', $ref: 'errorResponse#' },
-        404: { description: 'Not Found', $ref: 'errorResponse#' },
-        500: { description: 'Internal Server Error', $ref: 'errorResponse#' },
-      }
-    }
-  }, async (req, reply) => {
-    try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
-      }
-
-      const ok = await verifyTwoFAToken(userId, req.body.token);
-      if (!ok) {
-        throw new ValidationError('Invalid 2FA token');
-      }
-
-      // Set is2FAConfirmed Flag to true
-      await User.update(
-        { is2FAConfirmed: true },
-        { where: { id: userId } },
-      );
-
-      return { verified: true };
-    } catch (err) {
-      if (err instanceof NotFoundError) {
-        return sendError(reply, 404, 'Not Found', err.message);
-      }
-      if (err instanceof ValidationError) {
-        return sendError(reply, 400, 'Bad Request', err.message);
-      }
-      fastify.log.error(err);
-      return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
-    }
-  });
-
-  /**
   * @route   POST /2fa/verification
   * @desc    For login flow, to verify the 2fa if the user enables it.
   * @return  If success, return accessToken and user information
   */
-  fastify.post('/2fa/verification', {
-    preHandler: [fastify.authenticate],
+  fastify.post('/2fa/verification/:username', {
+    // preHandler: [fastify.authenticate],
     schema: {
       tags: ['TwoFactorAuth'],
       summary: 'Verify 2FA TOTP',
       description: 'Verifies a 6-digit TOTP code and enables 2FA for the user, for login flow.',
       body: {
         type: 'object',
-        required: ['token'],
+        required: ['username'],
         properties: {
-          token: { type: 'string', pattern: '^[0-9]{6}$', description: '6-digit TOTP code' }
+          username: { type: 'string', description: 'the user you want to verify' }
         }
       },
       response: {
