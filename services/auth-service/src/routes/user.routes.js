@@ -47,10 +47,10 @@ export default fp(async (fastify) => {
   });
 
   /**
-   * @route   GET /users/me
-   * @desc    Get current user profile:id, username, is2FAEnabled, avatarUrl.
+   * @route   GET /users/profile/me
+   * @desc    Get current user profile:id, username, avatarUrl, TwoFAStatus and registerFromGoogle.
    */
-  fastify.get('/users/profile/me', {
+ fastify.get('/users/profile/me', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['User'],

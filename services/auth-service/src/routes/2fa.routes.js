@@ -10,6 +10,10 @@ import {
 import { ValidationError, NotFoundError } from '../utils/errors.js';
 import { sendError } from '../utils/sendError.js';
 import { models } from '../db/index.js';
+import { authenticateUser, getUserById } from '../services/auth.service.js';
+import refreshToken from '../db/models/refreshToken.js';
+import { userLogin, } from '../services/google-auth.service.js';
+import { storeRefreshTokenHash } from '../utils/jwt.js';
 
 const { User } = models;
 
@@ -21,7 +25,11 @@ export default fp(async (fastify) => {
    *   description: Endpoints for Two-Factor Authentication (2FA) setup and management
    */
 
-  // Setup 2FA
+  /**
+  * @route   POST /2fa/setup
+  * @desc    Enable the 2FA for user. Generate qrCode, secret, otpauthUrl, backupCodes
+  * storing in DB.
+  */
   fastify.post('/2fa/setup', {
     preHandler: [fastify.authenticate],
     schema: {
@@ -88,13 +96,16 @@ export default fp(async (fastify) => {
     }
   });
 
-  // Verify TOTP code
-  fastify.post('/2fa/verify', {
+  /**
+  * @route   POST /2fa/confirmaiton
+  * @desc    In the 2fa setup flow, to confirm the 2fa works properly.
+  */
+  fastify.post('/2fa/confirmation', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['TwoFactorAuth'],
-      summary: 'Verify 2FA TOTP',
-      description: 'Verifies a 6-digit TOTP code and enables 2FA for the user.',
+      summary: 'Confirm 2FA TOTP',
+      description: 'Verifies a 6-digit TOTP code and enables 2FA for the user. For 2FA setup flow',
       body: {
         type: 'object',
         required: ['token'],
@@ -145,9 +156,6 @@ export default fp(async (fastify) => {
       return sendError(reply, 500, 'Internal Server Error', 'Something went wrong');
     }
   });
-
-
-////////////// on the updated 2fa.routes.js  ///////////////////////////////////////////////
 
   /**
   * @route   POST /2fa/confirmaiton
@@ -295,12 +303,11 @@ export default fp(async (fastify) => {
   });
 
 
-////////////// end of the updated 2fa.routes.js /////////////////////////////////////////
-
-
-
-  // Consume backup code
-  fastify.post('/2fa/backup', {
+  /**
+  * @route   POST /2fa/backup
+  * @desc    Consume backup code
+  */
+  fastify.post('/2fa/backupcode', {
     preHandler: [fastify.authenticate],
     schema: {
       tags: ['TwoFactorAuth'],
@@ -352,7 +359,10 @@ export default fp(async (fastify) => {
     }
   });
 
-  // Disable 2FA
+  /**
+  * @route   POST /2fa/disable
+  * @desc    Disable 2FA, delele secret, backupCodes from DB
+  */
   fastify.delete('/2fa/disable', {
     preHandler: [fastify.authenticate],
     schema: {

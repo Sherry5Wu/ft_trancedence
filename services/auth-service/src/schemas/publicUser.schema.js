@@ -5,7 +5,6 @@
 const publicUserSchema = {
   $id: 'publicUser',
   type: 'object',
-  // required: ['id', 'username', 'avatarUrl',  ],
   required: ['id', 'username', 'avatarUrl', 'registerFromGoogle', 'TwoFAStatus',],
   properties: {
     id: { type: 'string', format: 'uuid' },
