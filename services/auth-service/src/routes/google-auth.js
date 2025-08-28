@@ -73,7 +73,7 @@ export default fp(async (fastify) => {
 
         // 2fa is disable, then normal login
         if (TwoFA === false) {
-           const { accessToken, refreshToken, user } = await userLogin(existingUser);
+           const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
 
         // Store the refreshToken into DB
         try {
@@ -86,7 +86,7 @@ export default fp(async (fastify) => {
         }
 
         setRefreshTokenCookie(reply, refreshToken);
-        return reply.code(200).send({ success: ture, code: 'TWOFA_DISABLE', TwoFA, accessToken, user});
+        return reply.code(200).send({ success: ture, code: 'TWOFA_DISABLE', TwoFA, accessToken, user: publicUser});
         } else {
           return reply.code(200).send({ success: ture, code: 'TWOFA_ENABLE', TwoFA, userId: existingUser.id });
         }
