@@ -101,11 +101,11 @@ export default async function matchHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare(`
                 SELECT * FROM match_history
-                WHERE player_id = ?
+                WHERE player_id = ? OR opponent_id = ?
                 ORDER BY played_at DESC
             `);
-            const rows = stmt.all(player_id);
-            if (rows)
+            const rows = stmt.all(player_id, player_id);
+            if (rows && rows.length > 0)
             {
                 reply.send(rows);
             } 
@@ -123,17 +123,17 @@ export default async function matchHistoryRoutes(fastify) {
         try {
             const stmt = db.prepare(`
                 SELECT * FROM match_history
-                WHERE player_username = ?
+                WHERE player_username = ? OR opponent_username = ?
                 ORDER BY played_at DESC
             `);
-            const rows = stmt.all(player_username);
-            if (rows)
+            const rows = stmt.all(player_username, player_username);
+            if (rows && rows.length > 0)
             {
                 reply.send(rows);
             } 
             else 
             {
-                reply.status(404).send({ error: 'Player id was not found' });
+                reply.status(404).send({ error: 'Player username was not found' });
             }
         } catch (err) {
             reply.status(500).send({ error: err.message });
