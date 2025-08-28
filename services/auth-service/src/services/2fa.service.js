@@ -108,7 +108,7 @@ async function consumeBackupCode(userId, code) {
 
   console.log('backupcode in the DB:', user.backupCodes);
 
-  const hashedCodes = user.backupCodes;
+  const hashedCodes = [...user.backupCodes];
   let matchedIndex = -1;
 
   // compare sequentially (max 10)
@@ -129,7 +129,7 @@ async function consumeBackupCode(userId, code) {
   await user.update({ backupCodes: hashedCodes });
     console.log('after delete the backupcode1:', user.backupCodes);
 // await user.update({ backupCodes: [...hashedCodes] }, { fields: ['backupCodes'] });
-await user.reload();
+  await user.reload();
   console.log('after delete the backupcode2:', user.backupCodes);
 
   return true;
