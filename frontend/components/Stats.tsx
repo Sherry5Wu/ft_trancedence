@@ -13,7 +13,7 @@ import { useParams } from 'react-router-dom';
 
 export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, scoreHistory: ScoreHistory[]}) => {
     const { t } = useTranslation();
-    const [worstRivalPic, setWorstRivalPic] = useState('');
+    const [worstRivalPic, setWorstRivalPic] = useState(DEFAULT_AVATAR);
     const [worstRivalName, setWorstRivalName] = useState('');
     const param = useParams();
     const { user } = useUserContext();
