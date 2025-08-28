@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
 
   return (
     <main
-      className="pageLayout translate-x-3"
+      className="pageLayout"
       role="main"
       aria-labelledby="pageTitle"
       aria-describedby="pageDescription"
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
           aria-label={t('pages.home.welcome')}
         >
           <div
-            className={`transition-transform duration-300 ${
+            className={`transition-transform duration-300 cursor-pointer ${
               showText ? 'rotate-180' : 'rotate-0'
             }`}
           >
@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
 
       <section
         id="home-about-section"
-        className={`mt-4 text-center px-4 max-w-xl text-black transition-all duration-300 ${
+        className={`mt-4 text-center px-4 max-w-xl text-black transition-all duration-300 cursor-pointer ${
           showText ? 'block' : 'hidden'
         }`}
         aria-hidden={!showText}

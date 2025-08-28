@@ -47,7 +47,7 @@ const SignInPage: React.FC = () => {
 
       // 1: Wrong password
       case 'PASSWORD_NOT_MATCH':
-        alert(t('common.alerts.failure.invalidPassword'));
+        alert(t('common.alerts.failure.signIn'));
         break;
 
 		  // 2: 2FA required

@@ -67,9 +67,8 @@ const LeaderboardPage = () => {
 			</>
 		);
 
-  	leaderboardData.sort((a, b) => b.stats.elo_score - a.stats.elo_score) // sort by score descending
-    	.slice(0, 10); // limit to top 10
-
+  	const sortedLeaderboardData = leaderboardData.sort((a, b) => b.stats.elo_score - a.stats.elo_score) // sort by score descending
+    const trimmedLeaderboardData = 	sortedLeaderboardData.slice(0, 10); // limit to top 10
 
 	if (loading)
 		return <div className='flex justify-center'>{t('pages.leaderboard.loadingLeaderboard')}</div>;
@@ -110,7 +109,7 @@ const LeaderboardPage = () => {
         )}
 
         <ul aria-label={t('pages.leaderboard.aria.label')}>
-          {leaderboardData.length === 0 ? (
+          {trimmedLeaderboardData.length === 0 ? (
             <li
               className="grid items-center text-center rounded-xl h-12 mb-2 px-40 bg-[#FFEE8C]"
               aria-label={t('pages.leaderboard.empty')}
@@ -118,7 +117,7 @@ const LeaderboardPage = () => {
               <span className="col-span-8">{t('pages.leaderboard.empty')}</span>
             </li>
           ) : (
-            leaderboardData.map((player, idx) => {
+            trimmedLeaderboardData.map((player, idx) => {
               const isCurrentUser = player.userInfo.username === user?.username;
               return (
               <li
@@ -157,9 +156,10 @@ const LeaderboardPage = () => {
             })
           )}
 
-          {!leaderboardData.some((p) => p.userInfo.username === user?.username) && (() => {
+          {!trimmedLeaderboardData.some((p) => p.userInfo.username === user?.username) && (() => {
             const currentUser = leaderboardData.find((p) => p.userInfo.username === user?.username);
-            if (!currentUser) return null;
+            if (!currentUser)
+				return null;
             const currentUserIndex = leaderboardData
               .sort((a, b) => b.stats.elo_score - a.stats.elo_score)
               .findIndex((p) => p.userInfo.username === user?.username);

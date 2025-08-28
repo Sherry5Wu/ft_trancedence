@@ -121,36 +121,36 @@ const UserPage = () => {
 
 		<div className="flex flex-wrap justify-center gap-6">
 			<GenericButton
-			className="round-icon-button"
-			text={undefined}
-			icon={<img src={PlayIcon} alt="Play icon" />}
-			hoverLabel={t('common.buttons.play')}
-			onClick={() => 
-				navigate('/choose-players')}
+				className="round-icon-button"
+				text={undefined}
+				icon={<img src={PlayIcon} alt="Play icon" />}
+				hoverLabel={t('common.buttons.play')}
+				onClick={() => 
+					navigate('/choose-players')}
 			/>
 			<GenericButton
-			className="round-icon-button"
-			text={undefined}
-			icon={<img src={TournamentIcon} alt="Tournament icon" />}
-			hoverLabel={t('common.buttons.tournament')}
-			onClick={() => 
-				navigate('/tournaments')}
+				className="round-icon-button"
+				text={undefined}
+				icon={<img src={TournamentIcon} alt="Tournament icon" />}
+				hoverLabel={t('common.buttons.tournament')}
+				onClick={() => 
+					navigate('/tournaments')}
 			/>
 			<GenericButton
-			className="round-icon-button"
-			text={undefined}
-			icon={<img src={RivalsIcon} alt="Rivals icon" />}
-			hoverLabel={t('common.buttons.rivals')}
-			onClick={() => 
-				navigate('/rivals')}
+				className="round-icon-button"
+				text={undefined}
+				icon={<img src={RivalsIcon} alt="Rivals icon" />}
+				hoverLabel={t('common.buttons.rivals')}
+				onClick={() => 
+					navigate('/rivals')}
 			/>
 			<GenericButton
-			className="round-icon-button"
-			text={undefined}
-			icon={<img src={LeaderboardIcon} alt="Leaderboard icon" />}
-			hoverLabel={t('common.buttons.leaderboard')}
-			onClick={() => 
-				navigate('/leaderboard')}
+				className="round-icon-button"
+				text={undefined}
+				icon={<img src={LeaderboardIcon} alt="Leaderboard icon" />}
+				hoverLabel={t('common.buttons.leaderboard')}
+				onClick={() => 
+					navigate('/leaderboard')}
 			/>
 		</div>
 

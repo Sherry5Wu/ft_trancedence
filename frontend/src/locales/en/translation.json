@@ -3,7 +3,7 @@
     "alerts": {
       "success": "Temporary success message!",
       "failure": {
-        "signIn": "Sign in failed. Please, check your username and password, and try again.",
+        "signIn": "Sign in failed. Please check your username and password, and try again.",
         "signUp": "Registration failed. Please try again.",
         "updatePicture": "Updating avatar failed, please try another picture.",
         "completeProfile": "Google sign-in is required before completing profile."
