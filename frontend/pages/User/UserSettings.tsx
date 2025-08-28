@@ -170,19 +170,6 @@ const SettingsPage = () => {
                     </div>
 			    </div>
 			</div>
-
-			<GenericButton
-			className="generic-button"
-			text={t('common.buttons.save')}
-			aria-label={t('pages.userSettings.aria.saveChanges')}
-			onClick={() => {
-				alert(t('common.alerts.success'));
-				setUser({
-				...user!,
-				});
-				navigate(`/user/${user?.username}`);
-			}}
-			/>
 		</div>
 		</main>
   	);
