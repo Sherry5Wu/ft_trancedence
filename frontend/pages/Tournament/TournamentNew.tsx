@@ -40,10 +40,11 @@ const NewTournamentPage: React.FC = () => {
 			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 
 		setPlayer(0, {
-			id: user.username,
-			username: user.username,
-			photo: profilePic,
-		});
+			id: user.id,
+		    username: user.username,
+		    playername: user.username,
+		    photo: profilePic,
+		  });
 		}
 	}, [user, players, setPlayer]);
 
@@ -58,10 +59,11 @@ const NewTournamentPage: React.FC = () => {
 			user.profilePic ??
 			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 		setPlayer(0, {
-			id: user.username,
+			id: user.id,
 			username: user.username,
+			playername: user.username,
 			photo: profilePic,
-		});
+		  });
 		}
 	};
 
@@ -150,7 +152,7 @@ const NewTournamentPage: React.FC = () => {
 					aria-label={
 						player
 						? t('pages.tournament.new.aria.playerBadge', {
-							username: player.username,
+							username: player.playername ?? player.username,
 							index: idx + 1,
 							})
 						: t('pages.tournament.new.aria.playerEmpty', {
