@@ -60,7 +60,7 @@ const Verify2faPage: React.FC = () => {
           username: user.username,
           id: user.id,
           profilePic: user.avatarUrl || DEFAULT_AVATAR,
-          score: 0, // can fetch stats after if needed
+          score: 0,
           rank: 0,
           rivals: [],
           accessToken,
