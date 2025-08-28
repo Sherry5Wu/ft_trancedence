@@ -355,9 +355,9 @@ export const fetchUsers = async (token: string | null) => {
 		}
 
 		const userDataArray = await response.json();
-		return userDataArray.users.sort((a: any, b: any) => {
-			a.username.localeCompare(b.username);
-		}) ;
+		return userDataArray.users.sort((a: any, b: any) =>
+		  a.username.localeCompare(b.username)
+		);
 	}
 
 	catch (error) {
@@ -506,17 +506,19 @@ export const fetchUserProfile = async (
   username: string,
   accessToken: string
 ): Promise<Players | null> => {
-
   if (!accessToken) {
     throw new Error("Access token required to fetch user profile");
   }
+
+  const dicebearUrl = (seed: string) =>
+    `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 
   try {
     const response = await fetch(`https://localhost:8443/as/users/profile/${username}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
@@ -526,13 +528,15 @@ export const fetchUserProfile = async (
     }
 
     const data = await response.json();
+    const u = data?.data;
 
-	console.log('DATA: ', data);
+    if (!u?.id || !u?.username) return null;
 
     return {
-      id: data.data.id,
-      username: data.data.username,
-      photo: data.data.avatarUrl,
+      id: u.id,
+      username: u.username,
+      playername: u.username,
+      photo: u.avatarUrl ?? dicebearUrl(u.username),
     };
   } catch (err) {
     console.error("Error fetching user profile:", err);

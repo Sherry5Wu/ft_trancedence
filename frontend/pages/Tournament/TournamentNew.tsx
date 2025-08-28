@@ -35,9 +35,9 @@ const NewTournamentPage: React.FC = () => {
 	useEffect(() => {
 		// Load logged-in user as player[0] if not already set
 		if (user?.username && !players[0]) {
-		const profilePic =
-			user.profilePic ??
-			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
+		const profilePic = typeof user.profilePic === 'string'
+			? user.profilePic
+			: `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 
 		setPlayer(0, {
 			id: user.id,
@@ -55,9 +55,9 @@ const NewTournamentPage: React.FC = () => {
 
 		// Set player[0] again
 		if (user?.username) {
-		const profilePic =
-			user.profilePic ??
-			`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
+		const profilePic = typeof user.profilePic === 'string'
+			? user.profilePic
+			: `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`;
 		setPlayer(0, {
 			id: user.id,
 			username: user.username,

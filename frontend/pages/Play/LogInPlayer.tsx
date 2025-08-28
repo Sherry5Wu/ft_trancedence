@@ -19,6 +19,7 @@ const LogInPlayerPage: React.FC = () => {
   const { user } = useUserContext();
   const {
     players,
+    setPlayer,
     addPlayer,
     removePlayer,
     resetPlayers,
@@ -31,7 +32,8 @@ const LogInPlayerPage: React.FC = () => {
   const playerIndex: number = location.state?.playerIndex ?? 1;
   const returnTo: string = location.state?.returnTo ?? '/';
   const usernameTaken = players.some(
-    (p) => p.username.toLowerCase() === usernameField.value.toLowerCase()
+    (p, idx) =>
+      idx !== playerIndex && p.username.toLowerCase() === usernameField.value.toLowerCase()
   );
 
   const formFilled =
@@ -77,13 +79,12 @@ const LogInPlayerPage: React.FC = () => {
         id: profile?.id ?? response.data?.userId ?? Date.now().toString(),
         username: profile?.username ?? usernameField.value,
         playername: profile?.playername ?? profile?.username ?? usernameField.value,
-        photo: `https://api.dicebear.com/6.x/initials/svg?seed=XX&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`, 
+        photo: profile?.photo ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
+          profile?.playername ?? profile?.username ?? usernameField.value
+        )}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`,
       };
 
-      if (players.length > playerIndex) {
-        removePlayer(players[playerIndex].id);
-      }
-      addPlayer(player);
+      setPlayer(playerIndex, player);
 
       navigate(returnTo);
     } catch (err) {
@@ -137,7 +138,7 @@ const LogInPlayerPage: React.FC = () => {
           aria-label={t('common.aria.buttons.cancel')}
           onClick={() => {
             resetPlayers();
-            navigate('/choose-players');
+            navigate(returnTo);
           }}
         />
 

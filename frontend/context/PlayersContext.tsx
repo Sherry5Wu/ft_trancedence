@@ -35,30 +35,48 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
     setPlayers((prev) => {
       const updated = [...prev];
       const old = updated[index];
+
       if (!old) {
         const created: Players = {
           ...next,
           id: next.id === 'guest' ? 'guest' : next.id,
           username: next.id === 'guest' ? 'guest' : next.username,
           playername: next.playername ?? next.username,
-          photo: next.photo?.includes('dicebear.com') && next.playername
-            ? dicebearUrl(next.playername)
-            : next.photo,
+          photo:
+            (typeof next.photo === 'string' && next.photo.includes('dicebear.com') && next.playername)
+              ? dicebearUrl(next.playername)
+              : next.photo,
         };
         updated[index] = created;
         return updated;
       }
-      updated[index] = {
-        ...old,
-        ...next,
-        id: old.id,
-        username: old.username,
-        playername: next.playername ?? old.playername ?? old.username,
-        photo:
-          (old.photo?.includes('dicebear.com') && next.playername)
-            ? dicebearUrl(next.playername)
-            : (next.photo ?? old.photo),
-      };
+
+      const replacing = next.id && next.id !== old.id;
+
+      updated[index] = replacing
+        ? {
+            ...old,
+            ...next,
+            id: next.id === 'guest' ? 'guest' : next.id,
+            username: next.id === 'guest' ? 'guest' : (next.username ?? old.username),
+            playername: next.playername ?? next.username ?? old.playername ?? old.username,
+            photo:
+              (typeof next.photo === 'string' && next.photo.includes('dicebear.com') && (next.playername ?? next.username))
+                ? dicebearUrl(next.playername ?? next.username!)
+                : (next.photo ?? old.photo),
+          }
+        : {
+            ...old,
+            ...next,
+            id: old.id,
+            username: old.username,
+            playername: next.playername ?? old.playername ?? old.username,
+            photo:
+              (typeof old.photo === 'string' && old.photo.includes('dicebear.com') && next.playername)
+                ? dicebearUrl(next.playername)
+                : (next.photo ?? old.photo),
+          };
+
       return updated;
     });
   };
@@ -78,7 +96,8 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
     setPlayers((prev) =>
       prev.map((p) => {
         if (p.id !== id) return p;
-        const newPhoto = p.photo?.includes('dicebear.com') ? dicebearUrl(newAlias) : p.photo;
+        const isDicebear = typeof p.photo === 'string' && p.photo.includes('dicebear.com');
+        const newPhoto = isDicebear ? dicebearUrl(newAlias) : p.photo;
         return { ...p, playername: newAlias, photo: newPhoto };
       })
     );
