@@ -91,38 +91,63 @@ const requireAuth = async (request, reply) => {
 };
 
 
-fastify.post('/tournament_history/update_all', { preHandler: requireAuth }, (request, reply) => {
-  const { entries } = request.body ?? {};
-  if (!Array.isArray(entries) || entries.length === 0) {
-    return reply.status(400).send({ error: 'entries (array) required' });
-  }
-
-  const validResults = ['win', 'loss', 'draw'];
-  const errors = [];
-  const insertData = [];
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    const hasId = typeof e.tournament_id === 'string' && e.tournament_id.trim().length > 0;
-    const hasStage = Number.isInteger(e.stage_number);
-    const hasMatch = Number.isInteger(e.match_number);
-    const hasPName = typeof e.player_name === 'string' && e.player_name.trim().length > 0;
-    const hasOName = typeof e.opponent_name === 'string' && e.opponent_name.trim().length > 0;
-    const validResult = e.result && validResults.includes(e.result);
-    if (!hasId || !hasStage || !hasMatch || !hasPName || !hasOName || !validResult) {
-      errors.push({ index: i, error: 'Invalid or missing fields' });
-    } else {
-      insertData.push([
-        e.tournament_id,
-        e.stage_number,
-        e.match_number,
-        e.player_name,
-        e.opponent_name,
-        e.result
-      ]);
+fastify.post('/tournament_history/update_all', {
+  preHandler: requireAuth,
+  schema: {
+    body: {
+      type: 'object',
+      required: ['matches'],
+      properties: {
+        matches: {
+          type: 'array',
+          minItems: 1,
+          items: {
+            type: 'object',
+            required: [
+              'tournament_id', 'stage_number', 'match_number',
+              'player_name', 'opponent_name', 'result'
+            ],
+            properties: {
+              tournament_id: { type: 'string' },
+              stage_number: { type: 'integer' },
+              match_number: { type: 'integer' },
+              player_name: { type: 'string' },
+              opponent_name: { type: 'string' },
+              result: { type: 'string', enum: ['win', 'loss', 'draw'] }
+            }
+          }
+        }
+      }
+    },
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          inserted: { type: 'number' },
+          ids: {
+            type: 'array',
+            items: { type: 'integer' }
+          },
+          errors: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                index: { type: 'number' },
+                error: { type: 'string' }
+              }
+            }
+          }
+        }
+      },
+      400: { type: 'object', properties: { error: { type: 'string' }, details: { type: 'array' } } },
+      500: { type: 'object', properties: { error: { type: 'string' } } }
     }
   }
-  if (insertData.length === 0) {
-    return reply.status(400).send({ error: 'No valid entries', details: errors });
+ }, (request, reply) => {
+  const { matches } = request.body ?? {};
+  if (!Array.isArray(matches) || matches.length === 0) {
+    return reply.status(400).send({ error: 'matches (array) required' });
   }
 
   try {
@@ -131,34 +156,68 @@ fastify.post('/tournament_history/update_all', { preHandler: requireAuth }, (req
       VALUES (?, ?, ?, ?, ?, ?)
     `);
     const results = [];
+    const errors = [];
     const insertMany = db.transaction((rows) => {
-      for (const row of rows) {
-        const res = stmt.run(...row);
-        results.push({ id: res.lastInsertRowid });
-      }
+      rows.forEach((row, idx) => {
+        try {
+          const res = stmt.run(
+            row.tournament_id,
+            row.stage_number,
+            row.match_number,
+            row.player_name,
+            row.opponent_name,
+            row.result
+          );
+          results.push({ id: res.lastInsertRowid });
+        } catch (err) {
+          errors.push({ index: idx, error: err.message });
+        }
+      });
     });
-    insertMany(insertData);
+    insertMany(matches);
     reply.send({ inserted: results.length, ids: results.map(r => r.id), errors });
   } catch (err) {
     reply.status(500).send({ error: err.message });
   }
 });
 
-fastify.post('/tournament_history', { preHandler: requireAuth }, (request, reply) => {
-  const { tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body ?? {};
-
-  const validResult = result && ['win', 'loss', 'draw'].includes(result);
-  const hasId = typeof tournament_id === 'string' && tournament_id.trim().length > 0;
-  const hasStage = Number.isInteger(stage_number);
-  const hasMatch = Number.isInteger(match_number);
-  const hasPName = typeof player_name === 'string' && player_name.trim().length > 0;
-  const hasOName = typeof opponent_name === 'string' && opponent_name.trim().length > 0;
-
-  if (!hasId || !hasStage || !hasMatch || !hasPName || !hasOName || !validResult) {
-    return reply.status(400).send({
-      error: 'tournament_id, stage_number (int), match_number (int), player_name, opponent_name and result (win/loss/draw) are required'
-    });
+fastify.post('/tournament_history', { 
+  preHandler: requireAuth,
+  schema: {
+    body: {
+      type: 'object',
+      required: [
+        'tournament_id', 'stage_number', 'match_number',
+        'player_name', 'opponent_name', 'result'
+      ],
+      properties: {
+        tournament_id: { type: 'string' },
+        stage_number: { type: 'integer' },
+        match_number: { type: 'integer' },
+        player_name: { type: 'string' },
+        opponent_name: { type: 'string' },
+        result: { type: 'string', enum: ['win', 'loss', 'draw'] }
+      }
+    },
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          tournament_id: { type: 'string' },
+          stage_number: { type: 'integer' },
+          match_number: { type: 'integer' },
+          player_name: { type: 'string' },
+          opponent_name: { type: 'string' },
+          result: { type: 'string' }
+        }
+      },
+      400: { type: 'object', properties: { error: { type: 'string' } } },
+      500: { type: 'object', properties: { error: { type: 'string' } } }
+    }
   }
+ }, (request, reply) => {
+  const { tournament_id, stage_number, match_number, player_name, opponent_name, result } = request.body ?? {};
 
   try {
     const stmt = db.prepare(`
