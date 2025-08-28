@@ -31,6 +31,7 @@ export default fp(async (fastify) => {
             code: { type: 'string' },
             needCompleteProfile: { type: 'boolean' },
             TwoFA: { type: 'boolean' },
+            userId: { type: 'string'},
             accessToken: { type: 'string' },
             user: { $ref: 'publicUser#' },
           },
@@ -87,7 +88,7 @@ export default fp(async (fastify) => {
         setRefreshTokenCookie(reply, refreshToken);
         return reply.code(200).send({ success: ture, code: 'TWOFA_DISABLE', TwoFA, accessToken, user});
         } else {
-          return reply.code(200).send({ success: ture, code: 'TWOFA_ENABLE', TwoFA });
+          return reply.code(200).send({ success: ture, code: 'TWOFA_ENABLE', TwoFA, userId: existingUser.id });
         }
       }
 
