@@ -14,6 +14,7 @@ import { authenticateUser, getUserById } from '../services/auth.service.js';
 import refreshToken from '../db/models/refreshToken.js';
 import { userLogin, } from '../services/google-auth.service.js';
 import { storeRefreshTokenHash } from '../utils/jwt.js';
+import { setRefreshTokenCookie } from '../utils/authCookie.js';
 
 const { User } = models;
 
@@ -178,7 +179,7 @@ export default fp(async (fastify) => {
         200: {
           description: 'Verification result',
           type: 'object',
-          required: ['success', 'code', 'accessToken', 'user'],
+          required: ['success', 'code'],
           properties: {
             success: { type: 'boolean' },
             code: { type: 'string' },
@@ -203,19 +204,12 @@ export default fp(async (fastify) => {
 
       const ok = await verifyTwoFAToken(requestUserId, req.body.token);
       if (!ok) {
-        throw new ValidationError('Invalid 2FA token');
+        return reply.code(200).send({ success: true, code: '2FA_NOT_MATCH' });
       }
-
-      // // Set is2FAConfirmed Flag to true
-      // await User.update(
-      //   { is2FAConfirmed: true },
-      //   { where: { id: requestUserId } },
-      // );
-
       const existingUser = await getUserById(requestUserId);
       if (!existingUser) return sendError(reply, 404, 'Not Found', 'User not found');
 
-      const { accessToken, refreshToken, user } = await userLogin(existingUser);
+      const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
 
       try {
         await storeRefreshTokenHash(refreshToken, existingUser.id, ip, userAgent);
@@ -227,7 +221,7 @@ export default fp(async (fastify) => {
       }
 
       setRefreshTokenCookie(reply, refreshToken);
-      return reply.code(200).send({ success: true, code: '2FA_MATCH', accessToken, user });
+      return reply.code(200).send({ success: true, code: '2FA_MATCH', accessToken, user: publicUser });
     } catch (err) {
       if (err instanceof NotFoundError) {
         return sendError(reply, 404, 'Not Found', err.message);

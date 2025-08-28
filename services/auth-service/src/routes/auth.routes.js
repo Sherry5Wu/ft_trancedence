@@ -117,13 +117,10 @@ export default fp(async (fastify) => {
       const { matched, TwoFA, existingUser } = await authenticateUser(req.body.identifier, req.body.password);
       // return the doesn't match information
       if (matched === false) {
-        console.log('>>> entered /auth/login handler matched=false');
         return reply.code(200).send({ success: true, code: 'PASSWORD_NOT_MATCH' });
       }
       // TwoFAStatus disable, normal login, return accessToken and publicUser information
       if (matched === true && TwoFA === false) {
-            // for testing only
-console.log('>>> entered /auth/login handler matched= true and TwoFA=false');
         const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
 
         const user = {
@@ -133,11 +130,6 @@ console.log('>>> entered /auth/login handler matched= true and TwoFA=false');
           TwoFAStatus: !!(publicUser.is2FAEnabled && publicUser.is2FAConfirmed),
           registerFromGoogle: !!publicUser.googleId,
         };
-
-        // for testing only
-        console.log('user:', user);
-        console.log('matched:', matched);
-        console.log('TwoFA:', TwoFA);
 
         // Set refreshToken cookie  uncomment it
         setRefreshTokenCookie(reply, refreshToken);
@@ -153,8 +145,6 @@ console.log('>>> entered /auth/login handler matched= true and TwoFA=false');
 
       // TwoFAStatus enables, need verify the 2FA before normal login
       if (matched === true && TwoFA === true) {
-console.log('>>> entered /auth/login handler matched= true and TwoFA=true');
-console.log('existingUser.id', existingUser.id);
         return reply.code(200).send({
           success: true,
           code: 'PASSWORD_MATCH_2FA-ENABLE',
@@ -165,7 +155,6 @@ console.log('existingUser.id', existingUser.id);
       }
 
     } catch (err) {
-console.log('>>> entered /auth/login handler unknow error');
       if (err instanceof InvalidCredentialsError) return sendError(reply, 400, 'Bad request', err.message);
       if (err instanceof NotFoundError) return sendError(reply, 404, 'Not found', err.message);
       fastify.log.error(err);
