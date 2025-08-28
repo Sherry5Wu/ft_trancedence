@@ -12,7 +12,6 @@ import { verifyCode2FA } from '../../utils/Fetch';
 import { DEFAULT_AVATAR } from '../../utils/constants';
 
 const Verify2faPage: React.FC = () => {
-  console.log('In to verify page');
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, setUser, setTokenReceived } = useUserContext();
