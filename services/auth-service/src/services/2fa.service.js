@@ -143,7 +143,7 @@ async function disableTwoFA(userId) {
  * @returns 2FA status: true/false
  */
 async function getTwoFAStatus(userId) {
-  const user = await User.findByPk(userId,
+  const user = await User.scope('withSecret').findByPk(userId,
     { attributes: ['is2FAEnabled', 'is2FAConfirmed'] }
   );
   if (!user) throw new NotFoundError('User not found');

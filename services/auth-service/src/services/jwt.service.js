@@ -136,7 +136,7 @@ async function rotateTokens(token, opts = {}) {
     id: existingUser.id,
     email: existingUser.email,
     username: existingUser.username,
-    is2FAEnabled: !!existingUser.twoFASecret,
+    // is2FAEnabled: !!existingUser.twoFASecret,
   };
   const refreshTokenPayload = { id: existingUser.id };
 

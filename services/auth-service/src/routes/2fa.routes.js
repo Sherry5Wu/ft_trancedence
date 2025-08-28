@@ -212,7 +212,7 @@ console.log("step 7"); // for tesing only
       if (!ok) {
         return reply.code(200).send({ success: true, code: '2FA_NOT_MATCH' });
       }
-      const existingUser = await getUserById(requestUserId);
+      const existingUser = await getUserById(requestUserId, true);
       if (!existingUser) return sendError(reply, 404, 'Not Found', 'User not found');
 
       const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
@@ -288,7 +288,7 @@ console.log("step 7"); // for tesing only
       }
 
       // backupCode matches, return accessToken and user infor
-      const existingUser = await getUserById(requestUserId);
+      const existingUser = await getUserById(requestUserId, true);
       if (!existingUser) return sendError(reply, 404, 'Not Found', 'User not found');
 
       const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);

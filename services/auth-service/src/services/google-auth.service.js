@@ -254,7 +254,7 @@ async function googleCompleteRegistration(idToken, username, pinCode, ip = null,
       id: newUser.id,
       email: newUser.email,
       username: newUser.username,
-      is2FAEnabled: !!newUser.twoFASecret,
+      // is2FAEnabled: !!newUser.twoFASecret,
     };
     const refreshTokenPayload = { id: newUser.id };
 

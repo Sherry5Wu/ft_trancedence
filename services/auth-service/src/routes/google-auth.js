@@ -65,12 +65,14 @@ export default fp(async (fastify) => {
       const email = normalizeAndValidateEmail(payload.email);
 
       // 3. Is googldId already in DB?
-      const existingUser = await User.findOne({ where: { googleId } });
+      const existingUser = await User.scope('withSecrets').findOne({ where: { googleId } });
+
       // 4a. Already registered -> sign in
       if (existingUser) {
+
         // get 2fa status
-        // const TwoFA = !!(existingUser.is2FAEnabled && existingUser.is2FAConfirmed);
-        const TwoFA = existingUser.is2FAConfirmed;
+        const TwoFA = !!(existingUser.is2FAEnabled && existingUser.is2FAConfirmed);
+        
         // 2fa is disable, then normal login
         if (TwoFA === false) {
            const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);

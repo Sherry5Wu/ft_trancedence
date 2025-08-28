@@ -92,7 +92,7 @@ export default fp(async (fastify) => {
     }
   }, async (req, reply) => {
     try {
-      const user = await getUserById(req.user.id);
+      const user = await getUserById(req.user.id, true);
       if (!user) {
         return reply.status(404).send({
           error: 'User not found',
@@ -404,7 +404,7 @@ export default fp(async (fastify) => {
     }, async handler(req, reply) {
       const { username, pinCode } = req.body;
 
-      const existingUser = await getUserByUsername(username);
+      const existingUser = await getUserByUsername(username, true);
       if (!existingUser) {
         return reply.code(404).send({
           success: false,
