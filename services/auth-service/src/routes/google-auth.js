@@ -86,9 +86,9 @@ export default fp(async (fastify) => {
         }
 
         setRefreshTokenCookie(reply, refreshToken);
-        return reply.code(200).send({ success: ture, code: 'TWOFA_DISABLE', TwoFA, accessToken, user: publicUser});
+        return reply.code(200).send({ success: true, code: 'TWOFA_DISABLE', TwoFA, accessToken, user: publicUser});
         } else {
-          return reply.code(200).send({ success: ture, code: 'TWOFA_ENABLE', TwoFA, userId: existingUser.id });
+          return reply.code(200).send({ success: true, code: 'TWOFA_ENABLE', TwoFA, userId: existingUser.id });
         }
       }
 
