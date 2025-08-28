@@ -17,7 +17,7 @@ const TournamentConfirm: React.FC = () => {
 	const {
 		players,
 		totalPlayers,
-		setPlayerUsername,
+		setPlayername,
 	} = usePlayersContext();
 
   const [aliasFields, setAliasFields] = useState<AliasField[]>([]);
@@ -40,57 +40,57 @@ const TournamentConfirm: React.FC = () => {
 
   	// 2. AFTER aliasFields is initialized, sync back valid usernames to context
 	useEffect(() => {
-		aliasFields.forEach((field, idx) => {
-		const player = players[idx];
-		if (
-			player &&
-			field.value &&
-			field.error === '' &&
-			player.username !== field.value
-		) {
-			setPlayerUsername(player.id, field.value);
-		}
-		});
-	}, [aliasFields, players, setPlayerUsername]);
+  	  aliasFields.forEach((field, idx) => {
+  	    const player = players[idx];
+  	    const trimmed = field.value.trim();
+  	    if (
+  	      player &&
+  	      trimmed &&
+  	      field.error === '' &&
+  	      player.playername !== trimmed
+  	    ) {
+  	      setPlayername(player.id, trimmed);
+  	    }
+  	  });
+  	}, [aliasFields, players, setPlayername]);
 
 	const validateAlias = (value: string, index: number, allAliases: string[]): string => {
-		const trimmed = value.trim();
-		if (!isValidAlias(trimmed)) return t('common.errors.invalidAlias');
+  	  const trimmed = value.trim();
+  	  if (!isValidAlias(trimmed)) return t('common.errors.invalidAlias');
 
-		const lowerValue = trimmed.toLowerCase();
-		const occurrences = allAliases.filter(
-		(v, i) => i !== index && v.trim().toLowerCase() === lowerValue
-		);
+  	  const lowerValue = trimmed.toLowerCase();
+  	  const occurrences = allAliases.filter(
+  	    (v, i) => i !== index && v.trim().toLowerCase() === lowerValue
+  	  );
 
-		if (occurrences.length > 0) return t('common.errors.duplicateAlias');
-		
-		return '';
-	};
+  	  if (occurrences.length > 0) return t('common.errors.duplicateAlias');
+  	  return '';
+  	};
 
 	const handleAliasChange = (index: number, newValue: string) => {
-		setAliasFields((prev) => {
-			const updated = [...prev];
-			updated[index].value = newValue;
-			updated[index].touched = true;
+  	  setAliasFields((prev) => {
+  	    const updated = [...prev];
+  	    updated[index].value = newValue;
+  	    updated[index].touched = true;
 
-			const allAliases = updated.map((f) => f.value);
-			updated[index].error = validateAlias(newValue, index, allAliases);
+  	    const allAliases = updated.map((f) => f.value);
+  	    updated[index].error = validateAlias(newValue, index, allAliases);
 
-			return updated;
-		});
-	};
+  	    return updated;
+  	  });
+  	};
 
 	const handleBlur = (index: number) => {
-		setAliasFields((prev) => {
-			const updated = [...prev];
-			updated[index].touched = true;
+  	  setAliasFields((prev) => {
+  	    const updated = [...prev];
+  	    updated[index].touched = true;
 
-			const allAliases = updated.map((f) => f.value);
-			updated[index].error = validateAlias(updated[index].value, index, allAliases);
-			
-			return updated;
-		});
-	};
+  	    const allAliases = updated.map((f) => f.value);
+  	    updated[index].error = validateAlias(updated[index].value, index, allAliases);
+		
+  	    return updated;
+  	  });
+  	};
 
 	const formFilled =
 		aliasFields.every((f) => f.value.trim() !== '') &&

@@ -22,30 +22,15 @@ const SPEED_MAP: Record<SpeedPreset, number> = {
 type MapKey = 'default' | 'large' | 'obstacles';
 
 function normalizePlayers(
-  ps: ({ id?: string; username: string; elo?: number } | Player)[] = []
+  ps: ({ id?: string; username: string; playername?: string; elo?: number } | Player)[] = []
 ): Player[] {
   return ps
     .filter(p => !!p?.username)
     .map((p: any) => ({
-      id: toIdOrGuest(p.id),
-      username: p.username,
+      id: String(p.id ?? 'guest'),
+      username: p.playername ?? p.username,
       elo: p.elo ?? 1000,
     }));
-}
-
-const GUEST_RE = /^guest(?:-|$)/i;
-
-function isGuestId(id: unknown): boolean {
-  return GUEST_RE.test(String(id ?? ''));
-}
-
-// Helper to handle guest id for posting
-function toIdOrGuest(id: unknown): string {
-  const s = String(id ?? '').trim();
-  if (!s) return 'guest';
-  const lower = s.toLowerCase();
-  if (isGuestId(s) || lower === 'null' || lower === 'undefined') return 'guest';
-  return s;
 }
 
 function buildPayload(
@@ -54,25 +39,30 @@ function buildPayload(
   myScore: number,
   theirScore: number,
   durationSec: number,
-  played_at_iso: string
+  played_at_iso: string,
+  rawPlayers: Array<{ id: string; username: string; playername: string }>
 ): StatsPayload {
-  const meName  = me?.username  ?? 'Player';
-  const oppName = opp?.username ?? 'Opponent';
+  const playerId   = String(me?.id ?? 'guest');
+  const opponentId = String(opp?.id ?? 'guest');
 
-  const playerId   = toIdOrGuest(me?.id);
-  const opponentId = toIdOrGuest(opp?.id);
+  const meRaw  = rawPlayers.find(p => p.id === playerId);
+  const oppRaw = rawPlayers.find(p => p.id === opponentId);
 
-  const guestOpp =
-    opponentId.toLowerCase() === 'guest' ||
-    GUEST_RE.test(String(opp?.username ?? ''));
+  const player_username   = playerId === 'guest' ? 'guest' : (meRaw?.username ?? 'guest');
+  const opponent_username = opponentId === 'guest' ? 'guest' : (oppRaw?.username ?? 'guest');
+
+  const player_name   = meRaw?.playername ?? me?.username ?? 'Player';
+  const opponent_name = oppRaw?.playername ?? opp?.username ?? 'Opponent';
+
+  const guestOpp = opponentId === 'guest';
 
   return {
     player_id: playerId,
-    player_username: meName,
-    player_name: meName,
+    player_username,
+    player_name,
     opponent_id: opponentId,
-    opponent_username: oppName,
-    opponent_name: oppName,
+    opponent_username,
+    opponent_name,
     player_score: myScore,
     opponent_score: theirScore,
     duration: Math.max(0, Math.round(durationSec)),
@@ -252,8 +242,13 @@ export default function GamePage() {
     stageForPosting: stageForPost,
   } = useTournamentBracket(entrants, isTournament);
 
-  const p1Name = isTournament ? currentPair?.[0]?.username ?? '—' : (rawPlayers?.[0]?.username ?? 'Player 1');
-  const p2Name = isTournament ? currentPair?.[1]?.username ?? '—' : (rawPlayers?.[1]?.username ?? 'Player 2');
+  const p1Name = isTournament
+    ? currentPair?.[0]?.username ?? '—'
+    : (rawPlayers?.[0]?.playername ?? 'Player 1');
+
+  const p2Name = isTournament
+    ? currentPair?.[1]?.username ?? '—'
+    : (rawPlayers?.[1]?.playername ?? 'Player 2');
   const [champion, setChampion] = useState<Player | null>(null);
 
   const handleStart = () => {
@@ -305,7 +300,7 @@ export default function GamePage() {
       setSubmitted(true);
 
       try {
-        const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso);
+        const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso, rawPlayers as any);
         pendingMatchHistory.current.push(payloadPlayer1);
 
         const token = user?.accessToken;
