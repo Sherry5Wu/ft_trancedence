@@ -39,6 +39,15 @@ function normalizePlayers(
     });
 }
 
+export function formatHMS(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  return [hours, minutes, seconds]
+    .map(unit => unit.toString().padStart(2, '0'))
+    .join(':');
+}
+
 function buildPayload(
   me: { id?: string | null; username?: string },
   opp: { id?: string | null; username?: string },
@@ -61,6 +70,7 @@ function buildPayload(
   const opponent_name = oppRaw?.playername ?? opp?.username ?? 'Opponent';
 
   const guestOpp = opponentId === 'guest';
+  const durationTotal = Math.max(0, Math.round(durationSec));
 
   return {
     player_id: playerId,
@@ -71,7 +81,7 @@ function buildPayload(
     opponent_name,
     player_score: myScore,
     opponent_score: theirScore,
-    duration: Math.max(0, Math.round(durationSec)),
+    duration: formatHMS(durationTotal),
     result: myScore > theirScore ? 'win' : myScore < theirScore ? 'loss' : 'draw',
     is_guest_opponent: guestOpp ? 1 : 0,
     played_at: played_at_iso,
@@ -307,8 +317,12 @@ export default function GamePage() {
 
       try {
         const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso, rawPlayers as any);
-        const payloadPlayer2 = buildPayload(p2, p1, s2, s1, durationSec, played_at_iso, rawPlayers as any);
-        pendingMatchHistory.current.push(payloadPlayer1, payloadPlayer2);
+        if (p2.id != 'guest') {
+          const payloadPlayer2 = buildPayload(p2, p1, s2, s1, durationSec, played_at_iso, rawPlayers as any);
+          pendingMatchHistory.current.push(payloadPlayer1, payloadPlayer2);
+        } else {
+          pendingMatchHistory.current.push(payloadPlayer1);
+        }
 
         const token = user?.accessToken;
         // Regular match

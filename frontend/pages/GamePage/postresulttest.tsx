@@ -9,7 +9,7 @@ export type StatsPayload = {
   opponent_name: string;
   player_score: number;
   opponent_score: number;
-  duration: number;
+  duration: string;
   result: 'win' | 'loss' | 'draw';
   is_guest_opponent: 0 | 1;
   played_at: string;
