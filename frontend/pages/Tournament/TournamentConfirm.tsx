@@ -26,15 +26,14 @@ const TournamentConfirm: React.FC = () => {
   // Initialize alias fields from players
 	useEffect(() => {
 		const fields = Array.from({ length: totalPlayers ?? 0 }, (_, i) => {
-		const player = players[i];
-		const name = player?.username || `Player ${i + 1}`;
-		return {
-			value: name,
-			error: '',
-			touched: false,
-		};
-		});
-
+	    const player = players[i];
+	    const name = player?.playername || `Player ${i + 1}`;
+	    return { value: name, error: '', touched: false };
+	  });
+	  const same =
+	    fields.length === aliasFields.length &&
+	    fields.every((f, i) => f.value === aliasFields[i]?.value);
+	  if (!same)
 		setAliasFields(fields);
 	}, [players, totalPlayers]);
 
