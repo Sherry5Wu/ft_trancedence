@@ -11,7 +11,6 @@ import PlayIcon from '../assets/icons/ping-pong-icon.svg';
 import TournamentIcon from '../assets/icons/tournament-icon.svg';
 import RivalsIcon from '../assets/icons/rivals-icon.svg';
 import LeaderboardIcon from '../assets/icons/leaderboard-icon-v2.svg';
-// import DownArrow from '../assets/noun-down-arrow-down-1144832.svg?react';
 import DownArrow from '../assets/icons/symbols/arrow-down-icon.svg?react';
 import { DEFAULT_AVATAR } from '../utils/constants';
 
@@ -109,10 +108,11 @@ const UserPage = () => {
 				<img src={profilePicURL} className='profilePic'/> : <img src={DEFAULT_AVATAR} className='w-full h-full object-cover'/>}
 		</div>
 
-		<div className='w-56 truncate mb-12'>
+		<div className='w-80 truncate'>
 			<h2 className='h2 text-center mb-3 font-semibold scale-dynamic'>{param.username} </h2>
-			{userStats && userStats.games_played > 0 && (
-			<>
+		</div>
+		{userStats && userStats.games_played > 0 && (
+			<div className='w-50 mb-12'>
 				<div className='flex justify-between'>
 					<h4 className='h4 ml-2 scale-dynamic'>Score</h4>
 					<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>{userStats ? userStats.elo_score : 0}</h4>
@@ -121,8 +121,7 @@ const UserPage = () => {
 					<h4 className='h4 ml-2 scale-dynamic'>Rank</h4>
 					<h4 className='h4 mr-2 scale-dynamic text-right font-semibold'>#{userStats ? userStats.rank : '-'}</h4>
 				</div>
-			</>)}
-		</div>
+			</div>)}
 
 		{/* Buttons */}
 

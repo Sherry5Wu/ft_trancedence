@@ -85,7 +85,7 @@ const SettingsPage = () => {
 			/>
 		</div>
 
-     <div className='w-56 truncate'>
+     <div className='w-80 truncate'>
         <h2 className='h2 text-center font-semibold scale-dynamic'>
           {user?.username}
         </h2>

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { GenericButton } from '../../components/GenericButton';
-import DownArrow from '../../assets/noun-down-arrow-down-1144832.svg?react';
+import DownArrow from '../../assets/icons/symbols/arrow-down-icon.svg?react';
 import ModularBracketViewer from '../../components/ModularBracketViewer';
 import { useUserContext } from '../../context/UserContext';
 import { Result, TournamentHistoryRow, UITournament } from '../../utils/Interfaces';
@@ -150,8 +150,8 @@ export default function TournamentsPage() {
                       onClick={() => setExpandedId(isExpanded ? null : tournament.id)}
                       aria-label={t('pages.tournament.list.aria.expandButton', { id: tournament.id })}
                     >
-                      <div className={`size-12 transition-transform duration-300 ${isExpanded ? '-rotate-180 opacity-25' : ''}`}>
-                        <DownArrow />
+                      <div className={`size-7 translate-y-1 transition-transform duration-300 ${isExpanded ? '-rotate-180 opacity-25' : ''}`}>
+                        <DownArrow className=''/>
                       </div>
                     </button>
                   </span>
@@ -177,7 +177,7 @@ export default function TournamentsPage() {
             onClick={() => setVisibleTournamentsCount((prev) => prev + 5)}
             aria-label={t('pages.tournament.list.aria.loadMoreButton')}
           >
-            <DownArrow className="size-20 -mb-15 hover:cursor-pointer" />
+            <DownArrow className="size-10 -mb-15 hover:cursor-pointer" />
           </button>
         </div>
       )}
@@ -188,7 +188,7 @@ export default function TournamentsPage() {
             onClick={() => setVisibleTournamentsCount(5)}
             aria-label={t('pages.tournament.list.aria.showLessButton')}
           >
-            <DownArrow className="size-20 -mb-15 scale-y-[-1] hover:cursor-pointer" />
+            <DownArrow className="size-10 -mb-15 scale-y-[-1] hover:cursor-pointer" />
           </button>
         </div>
       )}

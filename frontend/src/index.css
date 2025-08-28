@@ -1,6 +1,5 @@
 @import 'tailwindcss';
-@import 'tailwindcss/preflight'
-@tailwind utilities;
+@import 'tailwindcss/utilities';
 
 :root {
   --font-sans: 'Jost', sans-serif;
