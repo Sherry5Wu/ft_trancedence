@@ -74,6 +74,21 @@ export const signInUser = async (player: LoginData) => {
 
 		const data = await response.json();
 
+		// 1: Wrong password
+		if (data.code === 'PASSWORD_NOT_MATCH') {
+			return { type: 'PASSWORD_NOT_MATCH' };
+		}
+
+		// 2: 2FA required
+		if (data.code === 'PASSWORD_MATCH_2FA-ENABLE') {
+			return {
+				type: '2FA_REQUIRED',
+				userId: data.userId,
+			};
+		}
+
+		// 3: Password matched + 2FA disabled
+		if (data.code === 'PASSWORD_MATCH_2FA_DISABLE') {
 		// fetch for user stats
 		const statResponse = await fetch (`https://localhost:8443/stats/user_match_data/`, {
 			method: 'GET',
@@ -102,12 +117,19 @@ export const signInUser = async (player: LoginData) => {
 
 		const rivals = await rivalResponse.json();
 
-		return {data, stats, rivals};
-		}
+		return {
+			type: 'LOGIN_SUCCESS',
+			data,
+			stats,
+			rivals,
+		};
+	}
 
-	catch (error) {
+		return { type: 'UNKNOWN' };
+
+	} catch (error) {
 		console.error('Error:', error);
-		return null;
+		return { type: 'ERROR' };
 	}
 };
 
@@ -415,12 +437,38 @@ export const confirm2FA = async (tokenCode: string, accessToken: string) => {
   }
 };
 
-// /2fa/verification
+// /2fa/verification/:userid
 // verify the 6-digit code after sign in, if 2fa is enable
+export const verifyCode2FA = async (userId: string, token: string) => {
+  try {
+    const response = await fetch(`https://localhost:8443/as/2fa/verification/${userId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
 
+    if (!response.ok) {
+      if (response.status === 400) {
+        return { type: 'INVALID_CODE' };
+      }
+      if (response.status === 401) {
+        return { type: 'UNAUTHORIZED' };
+      }
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
+    const data = await response.json();
 
+    if (data.success && data.code === '2FA_MATCH') {
+      return { type: 'SUCCESS', data };
+    }
 
+    return { type: 'UNKNOWN' };
+  } catch (error) {
+    console.error("Error verifying 2FA:", error);
+    return { type: 'ERROR' };
+  }
+};
 
 export const disable2FA = async (accessToken: string | null): Promise<boolean> => {
   if (!accessToken) return false;
