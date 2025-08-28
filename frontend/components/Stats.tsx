@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useUserContext } from '../context/UserContext';
 import { DEFAULT_AVATAR } from '../utils/constants';
-import { fetchUsers } from '../utils/Fetch';
+import { fetchUsers, fetchRivalData } from '../utils/Fetch';
 import { useRequestNewToken } from '../utils/Hooks';
 import { FetchedUserData } from '../utils/Interfaces';
 import { useParams } from 'react-router-dom';
@@ -30,7 +30,7 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
 			const token = await requestNewToken();
 			if (!user || !token)
 				return ;
-            const rivalData = await fetchRivalData
+            const rivalData = await fetchRivalData(param.username!);
             if (user && user.rivals.length !== 0)
             {
                 for (const rival of user.rivals)
