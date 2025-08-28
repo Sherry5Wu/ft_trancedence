@@ -176,7 +176,7 @@ async function userLogin(user) {
     id: user.id,
     username: user.username,
     avatarUrl: user.avatarUrl || null, // include only if you support it
-    TwoFAStatus: user.is2FAEnabled && user.is2FAConfirmed,
+    TwoFAStatus: !!(user.is2FAEnabled && user.is2FAConfirmed),
     registerFromGoogle: !!user.googleId,
   };
 

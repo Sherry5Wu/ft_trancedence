@@ -159,7 +159,7 @@ console.log('>>> entered /auth/login handler matched= true and TwoFA=true');
           code: 'PASSWORD_MATCH_2FA-ENABLE',
           matched,
           TwoFA,
-          username: existingUser.username,
+          userId: existingUser.id,
         });
       }
 

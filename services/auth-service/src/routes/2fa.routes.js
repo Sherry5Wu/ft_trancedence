@@ -158,21 +158,20 @@ export default fp(async (fastify) => {
   });
 
   /**
-  * @route   POST /2fa/verification
-  * @desc    For login flow, to verify the 2fa if the user enables it.
+  * @route   POST /2fa/verification/:userid
+  * @desc    For login flow, to the passed user's 2fa TOTP if the user enables it.
   * @return  If success, return accessToken and user information
   */
-  fastify.post('/2fa/verification/:username', {
-    // preHandler: [fastify.authenticate],
+  fastify.post('/2fa/verification/:userid', {
     schema: {
       tags: ['TwoFactorAuth'],
       summary: 'Verify 2FA TOTP',
       description: 'Verifies a 6-digit TOTP code and enables 2FA for the user, for login flow.',
       body: {
         type: 'object',
-        required: ['username'],
+        required: ['token'],
         properties: {
-          username: { type: 'string', description: 'the user you want to verify' }
+          token: { type: 'string', pattern: '^[0-9]{6}$', description: '6-digit TOTP code' }
         }
       },
       response: {
@@ -197,23 +196,23 @@ export default fp(async (fastify) => {
     const ip = req.ip || null;
     const userAgent = req.headers['user-agent'] || null;
     try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
+      const requestUserId = req.params?.userid;
+      if (!requestUserId) {
+        return sendError(reply, 404, 'Bad Request', 'Missing username');
       }
 
-      const ok = await verifyTwoFAToken(userId, req.body.token);
+      const ok = await verifyTwoFAToken(requestUserId, req.body.token);
       if (!ok) {
         throw new ValidationError('Invalid 2FA token');
       }
 
-      // Set is2FAConfirmed Flag to true
-      await User.update(
-        { is2FAConfirmed: true },
-        { where: { id: userId } },
-      );
+      // // Set is2FAConfirmed Flag to true
+      // await User.update(
+      //   { is2FAConfirmed: true },
+      //   { where: { id: requestUserId } },
+      // );
 
-      const existingUser = await getUserById(userId);
+      const existingUser = await getUserById(requestUserId);
       if (!existingUser) return sendError(reply, 404, 'Not Found', 'User not found');
 
       const { accessToken, refreshToken, user } = await userLogin(existingUser);
