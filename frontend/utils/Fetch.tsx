@@ -461,6 +461,47 @@ export const verifyCode2FA = async (userId: string, token: string) => {
       return { type: 'SUCCESS', data };
     }
 
+	if (data.code === '2FA_NOT_MATCH') {
+      return { type: 'INVALID_CODE' };
+    }
+
+    return { type: 'UNKNOWN' };
+  } catch (error) {
+    console.error("Error verifying 2FA:", error);
+    return { type: 'ERROR' };
+  }
+};
+
+// /2fa/backupcode/:userid
+// verify the recovery code after sign in, if 2fa is enable
+export const verifyBackupCode = async (userId: string, token: string) => {
+  try {
+    const response = await fetch(`https://localhost:8443/as/2fa/backupcode/${userId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ backupCode: token }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        return { type: 'INVALID_CODE' };
+      }
+      if (response.status === 401) {
+        return { type: 'UNAUTHORIZED' };
+      }
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.success && data.code === 'BACKUP_CODE_MATCH') {
+      return { type: 'SUCCESS', data };
+    }
+
+    if (data.code === "BACKUP_CODE_NOT_MATCH") {
+      return { type: "INVALID_CODE" };
+    }
+
     return { type: 'UNKNOWN' };
   } catch (error) {
     console.error("Error verifying 2FA:", error);
@@ -483,29 +524,6 @@ export const disable2FA = async (accessToken: string | null): Promise<boolean> =
   } catch (err) {
     console.error('Error disabling 2FA:', err);
     return false;
-  }
-};
-
-export const verifyBackupCode = async (backupCode: string, accessToken: string) => {
-  try {
-    const response = await fetch("https://localhost:8443/as/2fa/backup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ code: backupCode }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json();
-      return { used: false, ...errorBody };
-    }
-
-    return await response.json();
-  } catch (err) {
-    console.error(err);
-    return { used: false };
   }
 };
 

@@ -276,19 +276,19 @@ console.log("step 7"); // for tesing only
     }
   }, async (req, reply) => {
     try {
-      const userId = req.user?.id;
+      const userId = req.params.userId;
       if (!userId) {
         return sendError(reply, 401, 'Unauthorized', 'Missing or invalid authentication token');
       }
 
-      const ok = await consumeBackupCode(userId, req.body.code);
+      const ok = await consumeBackupCode(userId, req.body.backupCode);
       if (!ok) {
         // BackupCode doesn't match
         return reply.code(200).send({ success: true, code: 'BACKUP_CODE_NOT_MATCH' });
       }
 
       // backupCode matches, return accessToken and user infor
-      const existingUser = await getUserById(requestUserId, true);
+      const existingUser = await getUserById(userId);
       if (!existingUser) return sendError(reply, 404, 'Not Found', 'User not found');
 
       const { accessToken, refreshToken, publicUser } = await userLogin(existingUser);
