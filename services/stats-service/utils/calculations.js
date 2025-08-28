@@ -114,16 +114,17 @@ function getMatchHistoryForAgainstRival(player_identifier, rival_identifier) {
 
 
 export function calculateLongestWinStreak(player_id) {
-  console.log("Calculating longest winstreak");
   const rows = getMatchHistoryForPlayer(player_id);
   let currentStreak = 0;
   let longestStreak = 0;
   rows.forEach((item) => {
-    if (item.result === 'win') {
+    let didWin = false;
+    if (item.player_id === player_id && item.result === 'win') didWin = true;
+    if (item.opponent_id === player_id && item.result === 'loss') didWin = true;
+    if (didWin) {
       currentStreak += 1;
       longestStreak = Math.max(longestStreak, currentStreak);
-    }
-    else {
+    } else {
       currentStreak = 0;
     }
   });
@@ -131,11 +132,13 @@ export function calculateLongestWinStreak(player_id) {
 }
 
 export function calculateCurrentWinStreak(player_id) {
-  console.log("Calculating current winstreak");
   const rows = getMatchHistoryForPlayer(player_id);
   let currentStreak = 0;
   for (const item of rows) {
-    if (item.result === 'win') {
+    let didWin = false;
+    if (item.player_id === player_id && item.result === 'win') didWin = true;
+    if (item.opponent_id === player_id && item.result === 'loss') didWin = true;
+    if (didWin) {
       currentStreak += 1;
     } else {
       break;

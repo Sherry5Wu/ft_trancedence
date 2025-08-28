@@ -294,8 +294,16 @@ def test_get_match_history_all():
 
 def test_get_match_history_by_id():
     """Test GET /match_history/:id - uses auth token to get user ID"""
-    # Decode token to get user ID, or use a known test user ID
-    response = requests.get(f"{STATS_URL}/match_history/test-user-id", verify=False)
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Hae käyttäjän id tokenilla
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    user_id = response1.json()["id"]
+
+    # Nyt käytä oikeaa id:tä
+    response = requests.get(f"{STATS_URL}/match_history/{user_id}", verify=False)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
