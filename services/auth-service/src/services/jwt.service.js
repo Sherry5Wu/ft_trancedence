@@ -169,6 +169,7 @@ async function rotateTokens(token, opts = {}) {
       );
     });
   }
+
   // store the new refreshToken into DB
   // await storeRefreshTokenHash(refreshToken, existingUser.id, ip, userAgent);
 

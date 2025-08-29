@@ -106,9 +106,7 @@ async function authenticateUser(identifier, password) {
   else {
     const TwoFA = user.is2FAEnabled && user.is2FAConfirmed;
     const matched = true;
-      console.log('matched', matched);
-      console.log('TwoFA', TwoFA);
-    return { matched: true, TwoFA, existingUser: user };
+    return { matched, TwoFA, existingUser: user };
   }
 }
 

@@ -183,6 +183,9 @@ export default fp(async (fastify) => {
   try {
       // Read refresh token from cookie
       const refreshToken = req.cookies?.['__Host-refreshToken'] || null;
+      
+      console.log("get refreshToken:", refreshToken); //f or testing only
+
       if (!refreshToken) {
         return sendError(reply, 401, 'Unauthorized', 'Missing refresh token cookie');
       }
@@ -196,8 +199,8 @@ export default fp(async (fastify) => {
       setRefreshTokenCookie(reply, newRefreshToken);
       return reply.send({ success: true, accessToken, user });
     } catch (err) {
-      if (err instanceof InvalidCredentialsError) sendError(reply, 400, 'Bad Request', err.message);
-      if (err instanceof NotFoundError) sendError(reply, 404, 'Not Found', err.message);
+      if (err instanceof InvalidCredentialsError) return sendError(reply, 400, 'Bad Request', err.message);
+      if (err instanceof NotFoundError) return sendError(reply, 404, 'Not Found', err.message);
       // rotateTokens should throw for invalid/expired refresh token
       return sendError(reply, reply.statusCode || 500, 'Internal Server Error', err.message);
     }
