@@ -182,6 +182,17 @@ const formFilled =
           showEditIcon
         />
 
+    	<section aria-labelledby="player2Title" className="mx-auto w-[300px] text-center mt-4">
+        <h2 id="player2Title" className="font-semibold text-lg mb-1">
+          {t('pages.choosePlayers.player2Title', 'Player 2')}
+        </h2>
+        <p className="text-sm text-black mb-2">
+          {t(
+            'pages.choosePlayers.player2Description',
+          )}
+        </p>
+     	</section>
+
         <div className="flex flex-wrap justify-center gap-6 mt-4">
           <GenericButton
             className={`generic-button ${player2Type === "registered" ? "" : "unclicked-button"}`}
@@ -227,7 +238,8 @@ const formFilled =
                 player2Field.error ||
                 (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
               }
-              showEditIcon
+            	showEditIcon={true}
+              	disabled={!player2Type}
             />
           </div>
 

@@ -1,5 +1,6 @@
 import { useState, createContext, useContext, useRef, ReactNode, useEffect } from 'react';
 import { UserContextType, User } from '../utils/Interfaces';
+import { DEFAULT_AVATAR } from '../utils/constants';
 
 export const userContext = createContext<UserContextType | undefined>(undefined);
 
@@ -84,7 +85,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             setUser({
                 username: data.user.username,
 				id: data.user.id,
-				profilePic: data.user.avatarUrl,
+				profilePic: data.user.avatarUrl || DEFAULT_AVATAR,
 				score: stats.score,
 				rank: stats.rank,
 				rivals: rivals,

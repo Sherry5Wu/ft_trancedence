@@ -31,9 +31,9 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
 			if (!user || !token)
 				return ;
             const rivalData = await fetchRivalData(param.username!);
-            if (user && user.rivals.length !== 0)
+            if (user && user.rivals.length > 0)
             {
-                for (const rival of user.rivals)
+                for (const rival of rivalData)
                 {
                     if (rival.games_played_against_rival! > mostMatches)
                     {
@@ -53,7 +53,7 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
 
         }
         findWorstRival();
-    }, []);
+    }, [user!.rivals]);
 
 	return (
       <div className='grid grid-cols-2 w-full scale-90 auto-rows-fr mb-10'>
@@ -82,7 +82,7 @@ export const Stats = ({ userStats, scoreHistory }: { userStats: UserStats, score
             <h4 className='h4 my-2 font-semibold'>{t('components.stats.playedGames')}</h4>
           </div>
 
-        {user?.username === param.username ? 
+        {user?.username === param.username && user?.rivals.length > 0? 
             <div className='flex flex-col items-center'>
             <button className='group relative flex size-25 rounded-full border-4 border-black bg-[#FFCC00] items-center justify-center}'>
               <div className='absolute text-2xl -top-12 left-1/2 -translate-x-1/2 text-black opacity-0 translate-y-2

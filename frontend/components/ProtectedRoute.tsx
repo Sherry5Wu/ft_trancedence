@@ -14,9 +14,6 @@ const ProtectedRoute = () => {
 		return <Outlet />;
 
 	// Redirect unauthenticated users to /signin, keeping the page they tried to access
-	console.log('NAVVING TO SIGNIN');
-	console.log('REFRESH: ', refreshDone);
-	console.log("TOKEN: ", tokenReceived);
 	return <Navigate to="/signin" state={{ from: location }} replace />;
 };
 

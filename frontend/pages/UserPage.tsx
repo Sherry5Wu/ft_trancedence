@@ -90,6 +90,8 @@ const UserPage = () => {
 
 	const isRival = user?.rivals.some(r => r.rival_username === param.username);
 
+	console.log("RIVALS", user.rivals);
+
 	return (
 		<div className='pageLayout'>
 		

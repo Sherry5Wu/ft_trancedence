@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
-import { GenericInput } from "../../components/GenericInput";
 import { GenericButton } from '../../components/GenericButton';
 import { ToggleButton } from "../../components/ToggleButton";
 import { UserProfileBadge } from '../../components/UserProfileBadge';
@@ -28,7 +27,6 @@ const SettingsPage = () => {
 			try {
 				const token = await requestNewToken();
 				const avatarUrl = await updateProfilePic(file, token);
-				console.log('avatarurl = ' + avatarUrl);
 				if (!user)
 					return ;
 				if (avatarUrl)
@@ -64,7 +62,7 @@ const SettingsPage = () => {
 					// alert(t("pages.userSettings.twoFactor.disabled"));
 				}
 			} else {
-				// alert(t("pages.userSettings.twoFactor.disableFailed"));
+				alert(t("pages.userSettings.twoFactor.disableFailed"));
 			}
 		} else {
 			navigate("/setup2fa");
