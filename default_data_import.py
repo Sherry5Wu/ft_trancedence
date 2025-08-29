@@ -106,7 +106,7 @@ def simulate_tournament_history_bulk(user_tokens):
     matches = [
         {
             "tournament_id": "demo-tournament-1",
-            "stage_number": 1,
+            "stage_number": 2,
             "match_number": 1,
             "player_name": usernames[0],
             "opponent_name": usernames[1],
@@ -114,7 +114,7 @@ def simulate_tournament_history_bulk(user_tokens):
         },
         {
             "tournament_id": "demo-tournament-1",
-            "stage_number": 1,
+            "stage_number": 2,
             "match_number": 2,
             "player_name": usernames[2],
             "opponent_name": usernames[3],
@@ -122,7 +122,7 @@ def simulate_tournament_history_bulk(user_tokens):
         },
         {
             "tournament_id": "demo-tournament-1",
-            "stage_number": 2,
+            "stage_number": 1,
             "match_number": 1,
             "player_name": usernames[0],
             "opponent_name": usernames[2],

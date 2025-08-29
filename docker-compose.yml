@@ -9,7 +9,6 @@ services:
       - trancendence-network
     restart: unless-stopped
 
-  # Tournament Service
   tournament-service:
     build:
       context: ./services/tournament-service
@@ -38,7 +37,7 @@ services:
   auth-service:
     build:
       context: ./services/auth-service
-      target: dev  # Use development stage for testing
+      target: dev
     env_file: "./services/auth-service/.env"
     networks:
       - trancendence-network
