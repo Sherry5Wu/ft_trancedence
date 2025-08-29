@@ -360,10 +360,12 @@
     },
 
     "choosePlayers": {
-      "title": "Choose players",
+      "title": "CHOOSE PLAYERS",
       "player2TypeRegistered": "Registered",
       "player2TypeGuest": "Guest",
       "player2GuestAlert": "Fill the guest player!",
+      "player1Description": "The user from this session is set to player 1. If the player name is not changed, the default is the username.",
+      "player2Description": "Please choose the player 2 type as a registered or guest user. If the player is registered, the name can be changed; otherwise, the default is the username.",
       "aria": {
         "label": "Form to choose Player 1 and Player 2, with options for Registered or Guest for Player 2",
         "description": "Enter aliases for two players. Player 2 can be a registered user or guest.",
