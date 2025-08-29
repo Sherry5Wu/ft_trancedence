@@ -1,0 +1,630 @@
+{
+  "common": {
+    "alerts": {
+      "success": "Temporary success message!",
+      "failure": {
+        "signIn": "Sign in failed. Please check your username and password, and try again.",
+        "signUp": "Registration failed. Please try again.",
+        "updatePicture": "Updating avatar failed, please try another picture.",
+        "completeProfile": "Google sign-in is required before completing profile."
+      }
+    },
+    "buttons": {
+      "cancel": "CANCEL",
+      "save": "SAVE",
+      "next": "NEXT",
+      "back": "BACK",
+      "ok": "OK",
+      "done": "DONE",
+      "new": "NEW",
+      "signIn": "SIGN IN",
+      "signUp": "SIGN UP",
+      "logIn": "LOG IN",
+      "play": "PLAY",
+      "start": "START",
+      "tournament": "TOURNAMENT",
+      "rivals": "RIVALS",
+      "leaderboard": "LEADERBOARD",
+      "download": "DOWNLOAD",
+      "verify": "VERIFY"
+    },
+    "placeholders": {
+      "usernameOrEmail": "Enter your username/email",
+      "username": "Enter your username",
+      "email": "Enter your email address",
+      "password": "Enter your password",
+      "confirmPassword": "Confirm your password",
+      "pin": "Enter your player PIN",
+      "confirmPin": "Confirm your player PIN",
+      "player1": "Player 1",
+      "player2": "Player 2",
+      "playerAlias": "Player alias",
+      "searchUsers": "Search for other users"
+    },
+    "tooltips": {
+      "PINcode": "You need your PIN code to confirm your presence when playing locally against other players",
+      "2fa": "Enhances account security by requiring a code from Google Authenticator each time you sign in",
+      "guestPlayer": "If you play against a guest, the game data won’t be saved, and the result won’t affect your score"
+    },
+    "aria": {
+      "buttons": {
+        "cancel": "Cancel the current action and discard changes",
+        "save": "Save changes",
+        "next": "Proceed to the next step in the process",
+        "back": "Go back to the previous page",
+        "ok": "Confirm and proceed with the action",
+        "done": "Mark the process as completed",
+        "new": "Create a new tournament",
+        "signIn": "Navigate to the sign in page",
+        "signUp": "Navigate to the sign up page",
+        "logIn": "Log in to your account",
+        "play": "Start a new game",
+        "start": "Start the tournament with selected players",
+        "tournament": "View tournaments list",
+        "rivals": "View your rivals",
+        "leaderboard": "View leaderboard rankings",
+        "download": "Download the file",
+        "verify": "Verify the entered information"
+      },
+      "inputs": {
+        "usernameOrEmail": "Input field to enter your username or email address",
+        "username": "Input field to enter your username",
+        "email": "Input field to enter your email address",
+        "password": "Input field to enter your password",
+        "confirmPassword": "Input field to confirm your password",
+        "pin": "Input field to enter your player PIN",
+        "confirmPin": "Input field to confirm your player PIN",
+        "playerAlias": "Input field to enter the player alias"
+      },
+      "toggles": {
+        "toggle2FA": "Enable or disable two-factor authentication"
+      }
+    },
+	"loading": "Loading...",
+    "errors": {
+      "unauthorized": "Unauthorized.",
+      "invalidUsername": "Username must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include: letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
+      "invalidAlias": "Alias must: \n • Be 6–20 characters long \n • Start with a letter \n • Only include letters, numbers, \n   or specific special characters: \n   dots (.), underscores (_), or hyphens (-)",
+      "invalidEmail": "Email must be in a valid format: \n • Example: name@domain.com",
+      "invalidPassword": "Password must: \n • Be 8–32 characters long \n • Include uppercase and lowercase letters \n • Include at least one number \n • Include at least one special character (@$!%*?&)",
+      "invalidPIN": "PIN must: \n • Be exactly 4 digits \n • Numbers only (0–9)",
+      "invalidTitle": "Title must: \n • Be 1–32 characters long \n • Letters and numbers only (no spaces or symbols)",
+      "passwordMismatch": "Passwords do not match. Please try again.",
+      "pinMismatch": "PINs do not match. Please re-enter to confirm.",
+      "newSameAsOldPassword": "New password must be different from the current password.",
+      "newSameAsOldPIN": "New PIN must be different from the current PIN code.",
+      "aliasNotUnique": "This alias is already taken. Please choose a different one.",
+      "duplicateAlias": "Player aliases must be different from each other.",
+      "invalidLogin": "Invalid login. Please check and try again.",
+      "incorrectPIN": "Incorrect PIN code. Please check and try again.",
+      "incorrectPassword": "Incorrect password. Please check and try again.",
+      "userNotFound": "Player not found. Please check and try again.",
+      "tooManyAttempts": "Too many attempts, PIN temporarily locked.",
+      "playerAlreadyInContext": "Player already logged in. Please try a different player."
+    }
+  },
+
+  "pages": {
+    "about": {
+      "title": "About this project",
+      "text": "P | N G - P · N G is our ft_transcendence project, developed as part of the 42 Network core curriculum. It’s a full-stack web application that combines real-time gameplay, and modern web technologies to deliver an engaging and competitive experience. This project showcases our skills in full-stack development, system design, and teamwork.",
+      "aria": {
+        "label": "About this project section",
+        "description": "Detailed information about the project, its purpose, and the technologies used."
+      }
+    },
+    "contact": {
+      "title": "Contact us",
+      "text": "For any questions, feedback, or to get in touch with the team behind this project, feel free to visit our profiles. We look forward to hearing from you!",
+      "aria": {
+        "label": "Contact information and team profiles",
+        "description": "Information on how to contact the project team and links to their profiles."
+      }
+    },
+    "privacy": {
+      "title": "Privacy",
+      "text": "",
+      "aria": {
+        "label": "Privacy policy section",
+        "description": "Details about the project's privacy practices and data handling policies."
+      }
+    },
+    "notFound": {
+      "title": "404 - Page Not Found",
+      "message": "Oops! The page you're looking for doesn't exist.",
+      "aria": {
+        "label": "Page not found",
+        "description": "This page cannot be found. You may have entered an incorrect URL or the page may have been moved or deleted.",
+        "errorIcon": "Illustration showing 404 error - page not found"
+      }
+    },
+
+    "home": {
+      "welcome": "Welcome to ft_transcendence!",
+      "aboutText": "This is a multiplayer ping pong game platform. Challenge friends, join tournaments, and climb the leaderboard.",
+      "aria": {
+        "label": "Home Page of the Project",
+        "description": "This is the home page of the project where users can sign in and learn about the project's purpose."
+      }
+    },
+
+    "homeUser": {
+      "labels": {
+        "score": "Score",
+        "rank": "Rank",
+        "stats": "STATS",
+        "matchHistory": "MATCH HISTORY", 
+		"date/time": "Date/Time",
+		"players": "Players",
+		"duration": "Duration",
+		"addToRivals": "ADD TO RIVALS",
+		"removeFromRivals": "REMOVE FROM RIVALS"
+      },
+      "aria": {
+        "label": "User home page",
+        "description": "This is the user dashboard where users can view their profile, check their score and rank, and navigate to various sections like stats, match history, tournaments, rivals, and the leaderboard.",
+        "score": "User's current game score",
+        "rank": "User's rank in the leaderboard",
+        "stats": "Statistics about the user's game performance",
+        "matchHistory": "History of the user's previous matches"
+      }
+    },
+
+    "signIn": {
+      "title": "Sign In",
+      "links": {
+        "notRegistered": "Not registered?",
+        "signUp": "Sign Up"
+      },
+      "aria": {
+        "label": "Sign In page",
+        "description": "This is the sign-in page where users can log in to their account by entering their username and password. It also provides a link to the sign-up page for new users.",
+        "signUpLink": "Navigate to the sign up page"
+      }
+    },
+
+    "signInWithGoogle": {
+      "button": "Sign in with Google",
+      "aria": {
+        "signInWithGoogle": "Navigate to the sign in with yourGoogle "
+      }
+    },
+
+    "signUp": {
+      "title": "Sign Up",
+      "toggle2FA": "2FA with Google Authenticator",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInLink": "Sign In",
+      "aria": {
+        "label": "Sign Up page",
+        "description": "This is the sign-up page where new users can create an account by entering their username, email, password, and PIN. It includes form validation and an option to enable two-factor authentication.",
+        "toggle2FA": "Enable or disable two-factor authentication with Google Authenticator",
+        "signInLink": "Navigate to the sign in page"
+      }
+    },
+
+    "completeProfile": {
+      "title": "Complete user registration",
+      "toggle2FA": "2FA with Google Authenticator",
+      "aria": {
+        "label": "Complete profile page",
+        "description": "This page allows users to complete their registration after sign in with Google by setting their username and player PIN. It also provides an option to enable two-factor authentication using Google Authenticator.",
+        "toggle2FA": "Enable or disable two-factor authentication with Google Authenticator"
+      }
+    },
+
+    "logInPlayer": {
+      "title": "Log in a player",
+      "aria": {
+        "label": "Log in a player page",
+        "description": "This page allows users to log in by entering their username and player PIN. After successful login, the player is added to the game context."
+      }
+    },
+
+    "twoFactorAuth": {
+      "setup": {
+        "title": "Setup Two-factor Authentication",
+        "scanQrTitle": "Scan the QR code",
+        "scanQrInstructions": "Open the Google Authenticator app and scan this QR code.",
+        "loadingQr": "Loading QR Code...",
+        "loadingSetupKeys": "Loading setup keys...",
+        "manualSetupPrompt": "Unable to scan? You can use the",
+        "manualSetupLink": "setup key",
+        "manualSetupSuffix": "to manually configure your authenticator app.",
+        "manualSetupTitle": "Setup Two-factor Authenticaion manually",
+        "manualSetupInstructions": "Please enter this key manually in your authentication app to set up your account.",
+        "downloadAppInfo": "Don’t have the app? Google Authenticator is a free 2FA app.",
+        "verifyCodeTitle": "Verify the code from the app",
+        "invalidCode": "Incorrect code. Please check and try again.",
+        "aria": {
+          "label": "Two-factor Authentication Setup Page",
+          "description": "This page helps users set up two-factor authentication (2FA) for their account. The user needs to scan a QR code with the Google Authenticator app and verify the code from the app to complete the setup.",
+          "scanQrImage": "QR code to scan with Google Authenticator app",
+          "manualSetupLink": "Link to manual setup key for authenticator app",
+          "manualSetupInstructions": "Instructions for manual 2FA setup",
+          "setupKeyDisplay": "Your manual 2FA setup key",
+          "verifyInput": "Input field to enter the verification code from app",
+          "verifyButton": "Submit the verification code"
+        }
+      },
+      "backup": {
+        "title": "Setup Two-factor Authentication",
+        "backupTitle": "Backup verification codes",
+        "backupInstructions": "With 2FA enabled for your account, you can use the recovery codes as a second factor to authenticate in case you lose your device. We recommend keeping them in a secure place.",
+        "loadingCodes": "Loading backup codes...",
+        "warningTitle": "Keep your recovery codes in a safe spot.",
+        "warningInfo": "If you lose your device and can’t find your recovery codes, you will lose access to your account.",
+        "aria": {
+          "aria": "Two-factor Authentication Backup Setup Page",
+          "description": "This page allows the user to download recovery codes for two-factor authentication (2FA) in case they lose access to their device. The user is encouraged to keep the recovery codes in a secure place for future use.",
+          "codesList": "List of backup recovery codes",
+          "warningText": "Warning about losing access if recovery codes are lost"
+        }
+      },
+      "success": {
+        "title": "Setup Two-factor Authentication",
+        "subtitle": "Two-factor authentication (2FA) is now enabled!",
+        "successInfo": "From now on, you’ll use Google Authenticator to sign in.",
+        "successMessage": "You have successfully enabled two-factor app authentication on your account. 2FA will be required even when signing in via Google or any third-party login method. From now on, whenever you sign in to your account, you’ll need to enter both your password and an authentication code.",
+        "aria": {
+          "label": "Two-factor Authentication Success Setup Page",
+          "description": "Two-factor authentication (2FA) is now enabled for your account. From now on, you’ll use Google Authenticator to sign in. You will need both your password and the authentication code from your app every time you log in.",
+          "securityIcon": "Security shield icon, indicating two-factor authentication is enabled."
+        }
+      },
+      "verify": {
+        "title": "Two-factor Authentication",
+        "subtitle": "Verify your account",
+        "instructions": "You have 2FA enabled on this account. Please enter the verification code from your Google Authenticator app to complete the login process.",
+        "verifyCodeTitle": "Verify the code from the app",
+        "backupPrompt": "Can’t find your device?",
+        "backupLink": "Use a backup code",
+        "checking": "Checking 2fa verification code ...",
+        "invalidCode": "Invalid verification code. Please try again.",
+        "errorMessage": "Something went wrong. Please try again.",
+        "aria": {
+          "label": "Verify two-factor authentication code to complete login.",
+          "description": "Enter the 6-digit verification code from your Google Authenticator app to complete the login process.",
+          "codeInput": "Enter your 6-digit two-factor authentication code",
+          "backupLink": "Use a backup code instead"
+        }
+      },
+      "verifyBackupCode": {
+        "title": "Two-factor Authentication",
+        "subtitle": "Verify your account",
+        "instructions": "You have 2FA enabled on this account. Please enter the backup verification code from your account to complete the login process.",
+        "verifyCodeTitle": "Verify with recovery codes",
+        "placeholder": "Enter a backup code",
+        "invalidCode": "Invalid verification code. Please try again.",
+        "errorMessage": "Something went wrong. Please try again.",
+        "aria": {
+          "label": "Verify two-factor authentication code to complete login.",
+          "description": "Enter the recovery verification code from your account.",
+          "codeInput": "Enter your backup code for the two-factor authentication."
+        }
+      }
+    },
+
+    "userSettings": {
+      "accountSettings": {
+        "title": "Account Settings",
+        "uploadProfile": "",
+        "uploadedProfileAlt": ""
+      },
+      "security": {
+        "title": "Security",
+        "googlePasswordNotice": "Password changes are managed via your Google account."
+      },
+      "twoFactor": {
+        "title": "Two-factor authentication",
+        "labelOn": "Enabled 2FA",
+        "labelOff": "Disabled 2FA",
+        "disableConfirm": "Are you sure you want to disable two-factor authentication?",
+        "disabled": "Two-factor authentication has been disabled.",
+        "disableFailed": "Disabling two-factor authentication failed. Please try again.",
+        "description": "Two-factor authentication is an enhanced security measure. Once enabled, you’ll be required to give two types of identification when you log into this website. Google Authenticator is supported."
+      },
+      "aria": {
+        "label": "User settings page, manage your profile, account settings, and security preferences.",
+        "description": "See your personal information, change your password and PIN, and enable two-factor authentication for enhanced security.",
+        "saveChanges": "Save account settings changes",
+        "changePassword": "Go to change password page",
+        "changePIN": "Go to change PIN page",
+        "2faToggle": "Enable or disable Google Authenticator two-factor authentication"
+      }
+    },
+
+    "changePassword": {
+      "title": "Change password",
+      "newPassword": "Enter your new password",
+      "confirmNewPassword": "Confirm new password",
+      "aria": {
+        "label": "Change Password Page",
+        "description": "Page to change your account password. Enter your current password, a new password, and confirm the new password.",
+        "password": "Input field to enter your new password",
+        "confirmNewPassword": "Input field to confirm your new password"
+      }
+      
+    },
+
+    "changePIN": {
+      "title": "Change PIN",
+      "newPIN": "Enter your new player PIN",
+      "confirmNewPIN": "Confirm new player PIN",
+      "aria": {
+        "label": "Change PIN code Page",
+        "description": "Page to change your PIN code. Enter your current PIN code, a new PIN, and confirm the new PIN.",
+        "PIN": "Input field to enter your new PIN code",
+        "confirmNewPIN": "Input field to confirm your new PIN code"
+      }
+    },
+
+    "choosePlayers": {
+      "title": "CHOOSE PLAYERS",
+      "player2TypeRegistered": "Registered",
+      "player2TypeGuest": "Guest",
+      "player2GuestAlert": "Fill the guest player!",
+      "player1Description": "The main user is player 1. They can give themselves an alias for this game.",
+      "player2Description": "Please choose if player 2 is a registered user or a guest user. Registered users can give themselves an alias for the game. Guest users must input a name.",
+      "aria": {
+        "label": "Form to choose Player 1 and Player 2, with options for Registered or Guest for Player 2",
+        "description": "Enter aliases for two players. Player 2 can be a registered user or guest.",
+        "player2TypeRegisteredButton": "Select player 2 as registered player, requires login",
+        "player2TypeGuestButton": "Select player 2 as guest player"
+      }
+    },
+
+    "tournament": {
+      "list": {
+        "title": "TOURNAMENTS",
+        "noTournaments": "No tournaments yet",
+        "columnHeaders": {
+          "title": "Title",
+          "date": "Date",
+          "players": "Players",
+          "winner": "Winner"
+        },
+        "buttons": {
+          "loadMore": "Load more tournaments",
+          "showLess": "Show fewer tournaments"
+        },
+        "aria": {
+          "label": "List of tournaments",
+          "description": "Browse existing tournaments with details like date, players count, and winner. Expand for bracket view.",  
+          "table": "Table listing tournaments with columns for title, date, players, and winner",
+          "columnTitle": "Tournament title column",
+          "columnDate": "Tournament date column",
+          "columnPlayers": "Tournament total players column",
+          "columnWinner": "Tournament winner column",        
+          "tournamentList": "List of tournaments with details such as title, date, number of players, and winner",
+          "tournamentRow": "Tournament row with title, date, player count, and winner",
+          "expandButton": "Button to expand or collapse the tournament bracket",
+          "loadMoreButton": "Button to load more tournaments",
+          "showLessButton": "Button to collapse tournament list"
+        }
+      },
+      "new": {
+        "title": "Create New Tournament",
+        "placeholders": {
+          "tournamentTitle": "Enter the tournament title",
+          "totalPlayers": "Total players",
+          "totalPlayersOptions": ["4", "8", "16"]
+        },
+        "aria": {
+          "label": "Create a new tournament",
+          "description": "Enter tournament title, select total players, and add registered players by clicking on player badges.",          
+          "form": "Form for creating a new tournament with title and player details",
+          "titleInput": "Input field for the tournament title",
+          "totalPlayersSelect": "Dropdown to select total number of players in the tournament",
+          "playersSection": "Section displaying player profile badges. Click to log in or select a player",
+          "playerBadge": "Player profile badge, click to login or change player",
+          "playerEmpty": "Empty player profile badge, no player selected yet"
+        }
+      },
+      "confirm": {
+        "title": "Confirm Tournament Details",
+        "defaultPlayer": "Player {{number}}",
+        "aria": {
+          "label": "Confirm tournament details",
+          "description": "Review the tournament title, players, and settings before confirming to start the tournament.",
+          "aliasesSection": "Section to edit player aliases",
+          "aliasInput": "Input field to edit player alias for player {{index}}"
+        }
+      }
+    },
+
+    "rival": {
+      "title": "RIVALS",
+      "aria": {
+        "label": "Rivals page",
+        "description": "Page displaying a list of your rivals with statistics including score, win ratio, and matches played.",
+        "table": "Table listing rivals, their scores, win ratios, your wins and losses against them, and matches played."
+      }
+
+    },
+
+    "leaderboard": {
+      "title": "LEADERBOARD",
+      "empty": "No players to show",
+      "loadingLeaderboard": "Loading leaderboard players...",
+      "columns": {
+        "username": "Username",
+        "rival": "Rival",
+        "totalGames": "Games played",
+        "score": "Score"
+      },
+      "aria": {
+        "label": "Top players ranking list",
+        "description": "View the top 10 players ranked by score in descending order, with your ranking visible even if you're not in the top 10.",
+        "table": "Table displaying the top players in the leaderboard",
+        "emptyTable": "No players on the leaderboard yet",
+        "columnUsername": "Leaderboard username column",
+        "columnRival": "Leaderboard rival column",
+        "columnTotalGames": "Leaderboard total games column",
+        "columnScore": "Leaderboard score column"
+      }
+    }
+  },
+
+  "components": {
+    "footer": {
+      "rights": "All rights reserved",
+      "about": "About",
+      "contact": "Contact",
+      "privacy": "Privacy",
+      "aria": {
+        "label": "Footer section",
+        "description": "Contains links to About, Contact, and Privacy pages",
+        "about": "Link to About page with information about the project",
+        "contact": "Link to Contact page for reaching out to the team",
+        "privacy": "Link to Privacy policy page"
+      }
+    },
+    "navBar": {
+	"searchBar": "Search for other users",
+    "aria": {
+      "languageMenu": "Language selection menu",
+      "accessibilityMenu": "Accessibility options menu",
+      "darkModeToggle": "Toggle dark mode",
+      "titleButton": "Go to user profile or homepage",
+      "rivalSearch": "Search bar to find other users",
+      "profileMenu": "User profile menu with settings and logout options"
+    }
+    },
+    "pieGraph": {
+      "wins": "WINS",
+      "draws": "DRAWS",
+      "losses": "LOSSES",
+      "aria": {
+        "label": "Game results pie chart",
+        "description": "Pie chart showing the distribution of wins, draws, and losses",
+        "wins": "Number of games won",
+        "draws": "Number of games drawn",
+        "losses": "Number of games lost"
+      }
+    },
+    "rivalRows": {
+      "loadingRivals": "Loading rivals...",
+      "noRivals": "No rivals yet",
+      "name": "Name",
+      "score": "Score",
+      "winRatio": "Win ratio",
+      "userRivalWinsLosses": "Your wins / losses",
+      "matchesPlayed": "Matches played",
+      "aria": {
+        "listLabel": "List of rivals",
+        "listItemLabel": "Rival statistics",
+        "winRatioDescription": "Percentage of games won against this rival",
+        "clickableRow": "View rival profile"
+      }
+      },
+      "searchBar": {
+        "noUser": "No users found",
+        "aria": {
+          "inputLabel": "User search input",
+          "listLabel": "Search results",
+          "listItemLabel": "User option",
+          "noResultsMessage": "No users found matching your search"
+        }
+      },
+      "stats": {
+        "noData": "No data found",
+        "scoreHistory": "SCORE HISTORY",
+        "scoreGainsVsLosses": "SCORE GAINS/LOSSES",
+        "winRate": "WIN RATE",
+        "playedGames": "PLAYED GAMES",
+        "worstRival": "WORST RIVAL",
+        "winStreak": "WIN STREAK",
+        "longestWinStreak": "LONGEST WIN STREAK",
+        "aria": {
+          "scoreHistory": "Line graph showing the user's score history over time",
+          "scoreGainsVsLosses": "Bar graph displaying score gains versus losses",
+          "winRate": "Pie chart illustrating the user's win rate distribution",
+          "playedGames": "Total number of games played",
+          "worstRival": "User's worst rival based on performance",
+          "winStreak": "Current win streak count",
+          "longestWinStreak": "User's longest win streak ever"
+        }
+      },
+      "genericInput": {
+        "aria": {
+          "showPass": "Show password or PIN code",
+          "hidePass": "Hide password or PIN code"
+        }
+      }
+  },
+
+  "game": {
+    "title": "Game",
+    "player1": "Player 1",
+    "player2": "Player 2",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "startMatch": "Start Match",
+    "optionsButton": "Options",
+    "pauseMatch": "Game paused",
+    "finishMatch": "Match is over!",
+    "winner": "Winner",
+    "finalScore": "Final Score",
+    "playAgain": "Play again",
+    "loading": "Loading...",
+    "exit": "Exit",
+    "options": {
+      "title": "Match Options",
+      "ballSpeed": {
+        "subtitle": "Base ball speed",
+        "speed": {
+          "slow": "Slow",
+          "medium": "Medium",
+          "fast": "Fast"
+        }
+      },
+      "winCondition": {
+        "subtitle": "Win condition",
+        "bestOf5": "Best of 5",
+        "bestOf9": "Best of 9",
+        "bestOf19": "Best of 19"
+      },
+      "map": {
+        "subtitle": "Map",
+        "default": "Default",
+        "large": "Large",
+        "obstacles": "Obstacles"
+      }
+    },
+    "controls": {
+      "title": "Controls",
+      "move": "Move",
+      "up": "Up",
+      "down": "Down",
+      "boost": "Boost",
+      "shield": "Shield",
+      "reset": "Reset to defaults",
+      "resetAll": "Reset all players to default controls",
+      "swap": "Swap controls",
+      "conflict": "Conflicts detected: ",
+      "pressAnyKey": "press any key",
+      "rebind": "rebind"
+    },
+    "pauseMenu": {
+      "title": "Game Paused",
+      "start": "Press space to start",
+      "pause": "Press space to continue"
+    },
+    "match": {
+      "end": "Match Over",
+      "winner": "Winner",
+      "finalScore": "Final Score",
+      "playAgain": "Play again"
+    },
+    "tournament": {
+      "round": "Round",
+      "match": "Match",
+      "vs": "vs",
+      "nextMatch": "Next Match",
+      "upNext": "Up next",
+      "complete": "Tournament completed!",
+      "champion": "Tournament champion: "
+    }
+  }
+}

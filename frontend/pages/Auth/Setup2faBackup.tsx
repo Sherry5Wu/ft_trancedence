@@ -1,0 +1,162 @@
+// /src/pages/Auth/Setup2faBackup.tsx
+
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
+import { useNavigate } from 'react-router-dom';
+import { GenericButton } from '../../components/GenericButton';
+import ProgressBar from '../../components/ProgressBar';
+import { useUserContext } from '../../context/UserContext';
+import { fetchProfileMe, disable2FA } from '../../utils/Fetch';
+import { ProfileMeResponse } from '../../utils/Interfaces';
+
+const Setup2faBackupPage: React.FC = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user, setUser } = useUserContext();
+  const [hasDownloaded, setHasDownloaded] = useState(false);
+  const location = useLocation();
+  const backupCodes = location.state?.backupCodes || [];
+  const [loading, setLoading] = useState(backupCodes.length === 0);
+
+  const accessToken = user?.accessToken;
+  
+  useEffect(() => {
+    if (backupCodes.length > 0) {
+      setLoading(false);
+    } else {
+      console.error('No backup codes passed via state');
+    }
+  }, [backupCodes]);
+
+  // Download file directly on the frontend a text file
+  // 1. Convert the array of backup codes into a string, with each code on a new line.
+  // 2. Create a Blob (a file-like object) containing the text, marked as plain text.
+  // 3. Generate a temporary URL pointing to that Blob.
+  // 4. Create an invisible anchor (<a>) element, set its href to the Blob URL,
+  //    and give it a filename for the downloaded file.
+  // 5. Simulate a click on the anchor to start the download.
+  // 6. Revoke the temporary URL to free up memory.
+  // 7. Update the state to indicate that the user has downloaded the file.
+  const handleDownload = () => {
+    const fileContent = backupCodes.join('\n');
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'backup-codes.txt';
+    a.click();
+
+    URL.revokeObjectURL(url);
+    setHasDownloaded(true);
+  };
+
+  const handleCancel = async () => {
+    if (!accessToken) {
+      alert(t("common.errors.unauthorized"));
+      navigate("/signin");
+      return;
+    }
+
+    const success = await disable2FA(user.accessToken);
+    if (success) {
+      const profile: ProfileMeResponse | null = await fetchProfileMe(accessToken);
+      if (profile) {
+        setUser({
+          ...user,
+          twoFA: profile.TwoFAStatus,
+        });
+        navigate('/settings');
+      }
+    }
+  }
+
+  return (
+    <main
+      className="pageLayout"
+      role="main"
+      aria-labelledby="pageTitle"
+      aria-describedby="pageDescription"
+    >
+      <AccessiblePageDescription
+        id="pageDescription"
+        text={t('pages.twoFactorAuth.backup.aria.description')}
+      />
+
+      <h1 id="pageTitle" className="font-semibold text-center text-xl">
+        {t('pages.twoFactorAuth.backup.title')}
+      </h1>
+
+      <ProgressBar
+        currentStep={2}
+        stepCompletion={{ 1: true, 2: hasDownloaded }}
+      />
+
+      <section className="max-w-md text-center space-y-4">
+        <h2 className="font-semibold text-center text-lg">
+          {t('pages.twoFactorAuth.backup.backupTitle')}
+        </h2>
+
+        <p>
+          {t('pages.twoFactorAuth.backup.backupInstructions')}
+        </p>
+
+        <div className="border-2 border-black rounded-3xl p-4 space-y-2">
+          {loading ? (
+            <p>{t('pages.twoFactorAuth.backup.loadingCodes')}</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {backupCodes.map((code, index) => (
+                <span
+                  key={index}
+                  className="bg-[#fdfBD4] p-2 rounded-xl text-center"
+                >
+                  {code}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.download')}
+          onClick={handleDownload}
+          aria-label={t('common.aria.buttons.download')}
+        />
+
+        <h2 className="font-semibold text-center text-lg mt-6">
+          {t('pages.twoFactorAuth.backup.warningTitle')}
+        </h2>
+
+        <p>
+          {t('pages.twoFactorAuth.backup.warningInfo')}
+        </p>
+      </section>
+
+      <div className="flex flex-wrap justify-center gap-6">
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.cancel')}
+          // onClick={() => navigate('/settings')}
+          onClick={handleCancel}
+          aria-label={t('common.aria.buttons.cancel')}
+        />
+
+        <GenericButton
+          className="generic-button"
+          text={t('common.buttons.next')}
+          disabled={!hasDownloaded}
+          onClick={() =>
+            navigate('/setup2fa-success')
+          }
+          aria-label={t('common.aria.buttons.next')}
+        />
+      </div>
+    </main>
+  );
+};
+
+export default Setup2faBackupPage;

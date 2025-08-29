@@ -1,64 +1,84 @@
-version: '3.9'
-
 services:
-  gateway:
-    build: ./gateway
-    ports:
-      - "8080:8080"
-    depends_on:
-      - auth-service
-      - user-service
-      - game-service
-      - chat-service
-      - stats-service
-      - i18n-service
+  stats-service:
+    build:
+      context: ./services/stats-service
+    env_file: "./.env"
+    volumes:
+      - stats_data:/app/data
+    networks:
+      - trancendence-network
+    restart: unless-stopped
 
-  frontend:
-    build: ./frontend
+  tournament-service:
+    build:
+      context: ./services/tournament-service
+    env_file: "./.env"
+    volumes:
+      - tournament_data:/app/data
+    networks:
+      - trancendence-network
+    restart: unless-stopped
+
+  gateway-service:
+    build:
+      context: ./gateway
+    env_file: "./.env"
+    depends_on:
+      - stats-service
+      - tournament-service
+      - auth-service
+      - frontend-service
     ports:
-      - "3000:3000"
+      - "8443:8443"
+    networks:
+      - trancendence-network
+    restart: unless-stopped
 
   auth-service:
-    build: ./services/auth-service
-    environment:
-      - DATABASE_URL=file:/data/auth.db
+    build:
+      context: ./services/auth-service
+      target: dev
+    env_file: "./services/auth-service/.env"
+    networks:
+      - trancendence-network
+    restart: unless-stopped
     volumes:
-      - auth-data:/data
+      - auth_data:/app/data
+      - ./services/auth-service/uploads:/app/uploads
+      - ./services/auth-service/:/app/
+      - /app/node_modules
 
-  user-service:
-    build: ./services/user-service
-    environment:
-      - DATABASE_URL=file:/data/user.db
+  frontend-service:
+    build:
+      context: ./frontend
+    networks:
+      - trancendence-network
+    restart: unless-stopped
     volumes:
-      - user-data:/data
-
-  game-service:
-    build: ./services/game-service
-    environment:
-      - DATABASE_URL=file:/data/game.db
-    volumes:
-      - game-data:/data
-
-  chat-service:
-    build: ./services/chat-service
-    environment:
-      - DATABASE_URL=file:/data/chat.db
-    volumes:
-      - chat-data:/data
-
-  stats-service:
-    build: ./services/stats-service
-    environment:
-      - DATABASE_URL=file:/data/stats.db
-    volumes:
-      - stats-data:/data
-
-  i18n-service:
-    build: ./services/i18n-service
+      - ./frontend/:/app/
 
 volumes:
-  auth-data:
-  user-data:
-  game-data:
-  chat-data:
-  stats-data:
+  stats_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/stats-service/data
+  tournament_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/tournament-service/data
+  auth_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/services/auth-service/data
+
+networks:
+  trancendence-network:
+    name: trancendence-network
+    driver: bridge
+

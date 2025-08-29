@@ -38,3 +38,7 @@ Maybe consider to do:
 	Server-Side Pong
 		-Major module: Replace basic Pong with server-side Pong and implement an
 API.(sherry)
+
+Services:
+	frontend, gateway, auth-service, stats-service, user-services, i18n-service and
+	game-service(this one not sure yet)

@@ -1,0 +1,630 @@
+{
+  "common": {
+    "alerts": {
+      "success": "Message temporaire de succès !",
+      "failure": {
+        "signIn": "Échec de la connexion. Veuillez vérifier votre nom d'utilisateur et mot de passe, puis réessayer.",
+        "signUp": "Échec de l'inscription. Veuillez réessayer.",
+        "updatePicture": "Échec de la mise à jour de l'avatar, veuillez essayer une autre image.",
+        "completeProfile": "Connexion Google requise avant de compléter le profil."
+      }
+    },
+    "buttons": {
+      "cancel": "ANNULER",
+      "save": "ENREGISTRER",
+      "next": "SUIVANT",
+      "back": "RETOUR",
+      "ok": "OK",
+      "done": "TERMINÉ",
+      "new": "NOUVEAU",
+      "signIn": "SE CONNECTER",
+      "signUp": "S'INSCRIRE",
+      "logIn": "CONNEXION",
+      "play": "JOUER",
+      "start": "DÉMARRER",
+      "tournament": "TOURNOI",
+      "rivals": "RIVAUX",
+      "leaderboard": "CLASSEMENT",
+      "download": "TÉLÉCHARGER",
+      "verify": "VÉRIFIER"
+    },
+    "placeholders": {
+		"usernameOrEmail": "Entrez votre nom d'utilisateur/email",
+		"username": "Entrez votre nom d'utilisateur",
+		"email": "Entrez votre adresse e-mail",
+		"password": "Entrez votre mot de passe",
+		"confirmPassword": "Confirmez votre mot PLAYde passe",
+		"pin": "Entrez votre code PIN joueur",
+		"confirmPin": "Confirmez votre code PIN joueur",
+		"player1": "Joueur 1",
+		"player2": "Joueur 2",
+		"playerAlias": "Pseudo du joueur",
+		"searchUsers": "Rechercher d'autres utilisateurs"
+    },
+    "tooltips": {
+      "PINcode": "Vous avez besoin de votre code PIN pour confirmer votre présence lors des parties locales contre d'autres joueurs",
+      "2fa": "Renforce la sécurité du compte en demandant un code Google Authenticator à chaque connexion",
+      "guestPlayer": "Si vous jouez contre un invité, les données du jeu ne seront pas sauvegardées et le résultat n'affectera pas votre score"
+    },
+    "aria": {
+      "buttons": {
+        "cancel": "Annuler l'action en cours et ignorer les modifications",
+        "save": "Enregistrer les modifications",
+        "next": "Passer à l'étape suivante du processus",
+        "back": "Retourner à la page précédente",
+        "ok": "Confirmer et continuer l'action",
+        "done": "Marquer le processus comme terminé",
+        "new": "Créer un nouveau tournoi",
+        "signIn": "Aller à la page de connexion",
+        "signUp": "Aller à la page d'inscription",
+        "logIn": "Se connecter à votre compte",
+        "play": "Commencer une nouvelle partie",
+        "start": "Démarrer le tournoi avec les joueurs sélectionnés",
+        "tournament": "Voir la liste des tournois",
+        "rivals": "Voir vos rivaux",
+        "leaderboard": "Voir le classement",
+        "download": "Télécharger le fichier",
+        "verify": "Vérifier les informations saisies"
+      },
+      "inputs": {
+		"usernameOrEmail": "Champ de saisie pour entrer votre nom d'utilisateur ou votre adresse e-mail",
+        "username": "Champ pour entrer votre nom d'utilisateur",
+        "email": "Champ pour entrer votre adresse e-mail",
+        "password": "Champ pour entrer votre mot de passe",
+        "confirmPassword": "Champ pour confirmer votre mot de passe",
+        "pin": "Champ pour entrer votre code PIN joueur",
+        "confirmPin": "Champ pour confirmer votre code PIN joueur",
+        "playerAlias": "Champ pour entrer le pseudo du joueur"
+      },
+      "toggles": {
+        "toggle2FA": "Activer ou désactiver l'authentification à deux facteurs"
+      }
+    },
+	"loading": "Chargement...",
+    "errors": {
+      "unauthorized": "Non autorisé.",
+      "invalidUsername": "Le nom d'utilisateur doit : \n • Avoir entre 6 et 20 caractères \n • Commencer par une lettre \n • Inclure uniquement : lettres, chiffres, ou caractères spéciaux : points (.), underscores (_) ou tirets (-)",
+      "invalidAlias": "Le pseudo doit : \n • Avoir entre 6 et 20 caractères \n • Commencer par une lettre \n • Inclure uniquement lettres, chiffres, ou caractères spéciaux : points (.), underscores (_) ou tirets (-)",
+      "invalidEmail": "L'adresse e-mail doit être valide : \n • Exemple : nom@domaine.com",
+      "invalidPassword": "Le mot de passe doit : \n • Avoir entre 8 et 32 caractères \n • Inclure des lettres majuscules et minuscules \n • Inclure au moins un chiffre \n • Inclure au moins un caractère spécial (@$!%*?&)",
+      "invalidPIN": "Le PIN doit : \n • Être exactement 4 chiffres \n • Chiffres uniquement (0–9)",
+      "invalidTitle": "Le titre doit : \n • Avoir entre 1 et 32 caractères \n • Lettres et chiffres uniquement (pas d'espaces ou de symboles)",
+      "passwordMismatch": "Les mots de passe ne correspondent pas. Veuillez réessayer.",
+      "pinMismatch": "Les PIN ne correspondent pas. Veuillez ressaisir pour confirmer.",
+      "newSameAsOldPassword": "Le nouveau mot de passe doit être différent de l'ancien.",
+      "newSameAsOldPIN": "Le nouveau code PIN doit être différent de l'ancien.",
+      "aliasNotUnique": "Ce pseudo est déjà utilisé. Veuillez en choisir un autre.",
+      "duplicateAlias": "Les pseudos des joueurs doivent être différents.",
+      "invalidLogin": "Connexion invalide. Veuillez vérifier et réessayer.",
+      "incorrectPIN": "Code PIN incorrect. Veuillez vérifier et réessayer.",
+      "incorrectPassword": "Mot de passe incorrect. Veuillez vérifier et réessayer.",
+      "userNotFound": "Joueur non trouvé. Veuillez vérifier et réessayer.",
+      "tooManyAttempts": "Trop de tentatives, le PIN est temporairement bloqué.",
+      "playerAlreadyInContext": "Joueur déjà connecté. Veuillez essayer avec un autre joueur."
+    }
+  }, 
+
+  "pages": {
+    "about": {
+      "title": "À propos de ce projet",
+      "text": "P | N G - P · N G est notre projet ft_transcendence, développé dans le cadre du cursus de base du réseau 42. C’est une application web full-stack combinant gameplay en temps réel et technologies web modernes pour offrir une expérience engageante et compétitive. Ce projet met en valeur nos compétences en développement full-stack, conception de systèmes et travail d'équipe.",
+      "aria": {
+        "label": "Section À propos de ce projet",
+        "description": "Informations détaillées sur le projet, son objectif et les technologies utilisées."
+      }
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "text": "Pour toute question, retour d'expérience ou pour contacter l'équipe derrière ce projet, n'hésitez pas à visiter nos profils. Nous sommes impatients de vous lire !",
+      "aria": {
+        "label": "Informations de contact et profils de l'équipe",
+        "description": "Informations sur la manière de contacter l'équipe du projet et liens vers leurs profils."
+      }
+    },
+    "privacy": {
+      "title": "Confidentialité",
+      "text": "",
+      "aria": {
+        "label": "Section politique de confidentialité",
+        "description": "Détails sur les pratiques de confidentialité du projet et la gestion des données."
+      }
+    },
+    "notFound": {
+      "title": "404 - Page non trouvée",
+      "message": "Oups ! La page que vous recherchez n'existe pas.",
+      "aria": {
+        "label": "Page non trouvée",
+        "description": "Cette page est introuvable. Vous avez peut-être saisi une URL incorrecte ou la page a été déplacée ou supprimée.",
+        "errorIcon": "Illustration montrant l'erreur 404 - page non trouvée"
+      }
+    },
+
+    "home": {
+      "welcome": "Bienvenue sur ft_transcendence !",
+      "aboutText": "Ceci est une plateforme de jeu de ping-pong multijoueur. Défiez vos amis, participez à des tournois et grimpez au classement.",
+      "aria": {
+        "label": "Page d'accueil du projet",
+        "description": "Page d'accueil du projet où les utilisateurs peuvent se connecter et découvrir l'objectif du projet."
+      }
+    },
+
+    "homeUser": {
+      "labels": {
+        "score": "Score",
+        "rank": "Rang",
+        "stats": "STATISTIQUES",
+        "matchHistory": "HISTORIQUE DES MATCHS",
+		"date/time": "Date/Heure",
+		"players": "Joueurs",
+		"duration": "Durée",
+		"addToRivals": "AJOUTER AUX RIVAUX",
+		"removeFromRivals": "RETIRER DES RIVAUX"
+      },
+      "aria": {
+        "label": "Page d'accueil utilisateur",
+        "description": "Tableau de bord de l'utilisateur où il peut voir son profil, consulter son score et rang, et naviguer vers les sections statistiques, historique des matchs, tournois, rivaux et classement.",
+        "score": "Score actuel de l'utilisateur",
+        "rank": "Rang de l'utilisateur dans le classement",
+        "stats": "Statistiques sur la performance de l'utilisateur",
+        "matchHistory": "Historique des matchs précédents de l'utilisateur"
+      }
+    },
+
+    "signIn": {
+      "title": "Se connecter",
+      "links": {
+        "notRegistered": "Pas encore inscrit ?",
+        "signUp": "S'inscrire"
+      },
+      "aria": {
+        "label": "Page de connexion",
+        "description": "Page où les utilisateurs peuvent se connecter en entrant leur nom d'utilisateur et mot de passe. Fournit également un lien vers la page d'inscription pour les nouveaux utilisateurs.",
+        "signUpLink": "Aller à la page d'inscription"
+      }
+    },
+
+    "signInWithGoogle": {
+      "button": "Connexion Google",
+      "aria": {
+        "signInWithGoogle": "Aller à la connexion avec votre compte Google"
+      }
+    },
+
+    "signUp": {
+      "title": "S'inscrire",
+      "toggle2FA": "2FA avec Google Authenticator",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "signInLink": "Se connecter",
+      "aria": {
+        "label": "Page d'inscription",
+        "description": "Page où les nouveaux utilisateurs peuvent créer un compte en entrant leur nom d'utilisateur, e-mail, mot de passe et PIN. Inclut la validation du formulaire et une option pour activer l'authentification à deux facteurs.",
+        "toggle2FA": "Activer ou désactiver l'authentification à deux facteurs avec Google Authenticator",
+        "signInLink": "Aller à la page de connexion"
+      }
+    },
+
+    "completeProfile": {
+      "title": "Compléter l'inscription de l'utilisateur",
+      "toggle2FA": "2FA avec Google Authenticator",
+      "aria": {
+        "label": "Page de complétion du profil",
+        "description": "Permet aux utilisateurs de compléter leur inscription après connexion avec Google en définissant leur nom d'utilisateur et code PIN. Offre également l'option d'activer l'authentification à deux facteurs via Google Authenticator.",
+        "toggle2FA": "Activer ou désactiver l'authentification à deux facteurs avec Google Authenticator"
+      }
+    },
+
+    "logInPlayer": {
+      "title": "Connexion d'un joueur",
+      "aria": {
+        "label": "Page de connexion d'un joueur",
+        "description": "Permet aux utilisateurs de se connecter en entrant leur nom d'utilisateur et code PIN. Après connexion réussie, le joueur est ajouté au contexte du jeu."
+      }
+    },
+
+    "twoFactorAuth": {
+      "setup": {
+        "title": "Configurer l'authentification à deux facteurs",
+        "scanQrTitle": "Scanner le code QR",
+        "scanQrInstructions": "Ouvrez l'application Google Authenticator et scannez ce code QR.",
+        "loadingQr": "Chargement du code QR...",
+        "loadingSetupKeys": "Chargement des clés de configuration...",
+        "manualSetupPrompt": "Impossible de scanner ? Vous pouvez utiliser la",
+        "manualSetupLink": "clé de configuration",
+        "manualSetupSuffix": "pour configurer manuellement votre application d'authentification.",
+        "manualSetupTitle": "Configurer l'authentification à deux facteurs manuellement",
+        "manualSetupInstructions": "Veuillez saisir cette clé manuellement dans votre application pour configurer votre compte.",
+        "downloadAppInfo": "Vous n'avez pas l'application ? Google Authenticator est une application 2FA gratuite.",
+        "verifyCodeTitle": "Vérifier le code de l'application",
+        "invalidCode": "Code incorrect. Veuillez vérifier et réessayer.",
+        "aria": {
+          "label": "Page de configuration de l'authentification à deux facteurs",
+          "description": "Aide l'utilisateur à configurer l'authentification à deux facteurs (2FA) pour son compte. L'utilisateur doit scanner un code QR avec l'application Google Authenticator et vérifier le code pour compléter la configuration.",
+          "scanQrImage": "Code QR à scanner avec l'application Google Authenticator",
+          "manualSetupLink": "Lien vers la clé de configuration manuelle pour l'application d'authentification",
+          "manualSetupInstructions": "Instructions pour la configuration manuelle de la 2FA",
+          "setupKeyDisplay": "Votre clé de configuration 2FA manuelle",
+          "verifyInput": "Champ pour entrer le code de vérification de l'application",
+          "verifyButton": "Soumettre le code de vérification"
+        }
+      },
+      "backup": {
+        "title": "Configurer l'authentification à deux facteurs",
+        "backupTitle": "Codes de récupération",
+        "backupInstructions": "Avec la 2FA activée, vous pouvez utiliser les codes de récupération comme second facteur pour authentification si vous perdez votre appareil. Il est recommandé de les garder en lieu sûr.",
+        "loadingCodes": "Chargement des codes de récupération...",
+        "warningTitle": "Gardez vos codes de récupération en sécurité.",
+        "warningInfo": "Si vous perdez votre appareil et ne trouvez pas vos codes, vous perdrez l'accès à votre compte.",
+        "aria": {
+          "aria": "Page de configuration des codes de récupération 2FA",
+          "description": "Permet à l'utilisateur de télécharger les codes de récupération pour l'authentification à deux facteurs en cas de perte d'accès à son appareil. Encourage à garder ces codes en lieu sûr.",
+          "codesList": "Liste des codes de récupération",
+          "warningText": "Avertissement sur la perte d'accès si les codes sont perdus"
+        }
+      },
+      "success": {
+        "title": "Configurer l'authentification à deux facteurs",
+        "subtitle": "L'authentification à deux facteurs (2FA) est maintenant activée !",
+        "successInfo": "Vous utiliserez désormais Google Authenticator pour vous connecter.",
+        "successMessage": "Vous avez activé avec succès l'authentification à deux facteurs sur votre compte. La 2FA sera requise même lors d'une connexion via Google ou autre méthode tierce. Désormais, pour chaque connexion, vous devrez entrer votre mot de passe et un code d'authentification.",
+        "aria": {
+          "label": "Page de succès de configuration 2FA",
+          "description": "L'authentification à deux facteurs (2FA) est maintenant activée. Vous devrez utiliser Google Authenticator et fournir à la fois votre mot de passe et le code de l'application à chaque connexion.",
+          "securityIcon": "Icône de bouclier de sécurité, indiquant que la 2FA est activée."
+        }
+      },
+      "verify": {
+        "title": "Authentification à deux facteurs",
+        "subtitle": "Vérifiez votre compte",
+        "instructions": "Vous avez la 2FA activée. Veuillez entrer le code de vérification de votre application Google Authenticator pour terminer la connexion.",
+        "verifyCodeTitle": "Vérifier le code de l'application",
+        "backupPrompt": "Impossible de trouver votre appareil ?",
+        "backupLink": "Utiliser un code de récupération",
+        "checking": "Vérification du code 2FA en cours...",
+        "invalidCode": "Code de vérification invalide. Veuillez réessayer.",
+        "errorMessage": "Une erreur est survenue. Veuillez réessayer.",
+        "aria": {
+          "label": "Vérifiez le code de l'authentification à deux facteurs pour terminer la connexion.",
+          "description": "Entrez le code à 6 chiffres de votre application Google Authenticator pour compléter la connexion.",
+          "codeInput": "Entrez votre code 2FA à 6 chiffres",
+          "backupLink": "Utiliser un code de récupération à la place"
+        }
+		},
+		"verifyBackupCode": {
+			"title": "Authentification à deux facteurs",
+			"subtitle": "Vérifiez votre compte",
+			"instructions": "Vous avez activé la 2FA sur ce compte. Veuillez entrer le code de vérification de secours de votre compte pour terminer la connexion.",
+			"verifyCodeTitle": "Vérifier avec les codes de récupération",
+			"placeholder": "Entrez un code de secours",
+			"invalidCode": "Code de vérification invalide. Veuillez réessayer.",
+			"errorMessage": "Une erreur est survenue. Veuillez réessayer.",
+			"aria": {
+				"label": "Vérifiez le code d'authentification à deux facteurs pour terminer la connexion.",
+				"description": "Entrez le code de vérification de récupération de votre compte.",
+				"codeInput": "Entrez votre code de secours pour l’authentification à deux facteurs."
+			}
+			}
+    },
+
+    "userSettings": {
+      "accountSettings": {
+        "title": "Paramètres du compte",
+        "uploadProfile": "",
+        "uploadedProfileAlt": ""
+      },
+      "security": {
+        "title": "Sécurité",
+        "googlePasswordNotice": "Les modifications de mot de passe sont gérées via votre compte Google."
+      },
+      "twoFactor": {
+        "title": "Authentification à deux facteurs",
+        "labelOn": "2FA activée",
+        "labelOff": "2FA désactivée",
+        "disableConfirm": "Êtes-vous sûr de vouloir désactiver l'authentification à deux facteurs ?",
+        "disabled": "L'authentification à deux facteurs a été désactivée.",
+        "disableFailed": "Échec de la désactivation de l'authentification à deux facteurs. Veuillez réessayer.",
+        "description": "L'authentification à deux facteurs est une mesure de sécurité renforcée. Une fois activée, deux types d'identification seront requis lors de la connexion. Google Authenticator est pris en charge."
+      },
+      "aria": {
+        "label": "Page des paramètres utilisateur, gérez votre profil, compte et préférences de sécurité.",
+        "description": "Consultez vos informations personnelles, modifiez votre mot de passe et code PIN, et activez la 2FA pour plus de sécurité.",
+        "saveChanges": "Enregistrer les modifications des paramètres du compte",
+        "changePassword": "Aller à la page de changement de mot de passe",
+        "changePIN": "Aller à la page de changement de code PIN",
+        "2faToggle": "Activer ou désactiver l'authentification à deux facteurs Google Authenticator"
+      }
+    },
+
+    "changePassword": {
+      "title": "Changer le mot de passe",
+      "newPassword": "Entrez votre nouveau mot de passe",
+      "confirmNewPassword": "Confirmez le nouveau mot de passe",
+      "aria": {
+        "label": "Page de changement de mot de passe",
+        "description": "Page pour changer le mot de passe de votre compte. Entrez votre mot de passe actuel, un nouveau mot de passe et confirmez le nouveau.",
+        "password": "Champ pour entrer votre nouveau mot de passe",
+        "confirmNewPassword": "Champ pour confirmer votre nouveau mot de passe"
+      }
+
+    },
+
+    "changePIN": {
+      "title": "Changer le code PIN",
+      "newPIN": "Entrez votre nouveau code PIN joueur",
+      "confirmNewPIN": "Confirmez le nouveau code PIN joueur",
+      "aria": {
+        "label": "Page de changement de code PIN",
+        "description": "Page pour changer votre code PIN. Entrez votre code PIN actuel, un nouveau PIN et confirmez le nouveau.",
+        "PIN": "Champ pour entrer votre nouveau code PIN",
+        "confirmNewPIN": "Champ pour confirmer votre nouveau code PIN"
+      }
+    },
+
+	"choosePlayers": {
+	"title": "CHOISIR LES JOUEURS",
+	"player2TypeRegistered": "Enregistré",
+	"player2TypeGuest": "Invité",
+	"player2GuestAlert": "Remplissez le joueur invité !",
+	"player1Description": "L’utilisateur principal est le joueur 1. Il peut se donner un alias pour cette partie.",
+	"player2Description": "Veuillez choisir si le joueur 2 est un utilisateur enregistré ou un invité. Les utilisateurs enregistrés peuvent se donner un alias pour la partie. Les invités doivent saisir un nom.",
+	"aria": {
+		"label": "Formulaire pour choisir le joueur 1 et le joueur 2, avec options Utilisateur enregistré ou Invité pour le joueur 2",
+		"description": "Entrez des alias pour deux joueurs. Le joueur 2 peut être un utilisateur enregistré ou un invité.",
+		"player2TypeRegisteredButton": "Sélectionner le joueur 2 comme utilisateur enregistré, connexion requise",
+		"player2TypeGuestButton": "Sélectionner le joueur 2 comme invité"
+	}
+	},
+
+    "tournament": {
+      "list": {
+        "title": "TOURNOIS",
+        "noTournaments": "Aucun tournoi pour le moment",
+        "columnHeaders": {
+          "title": "Titre",
+          "date": "Date",
+          "players": "Joueurs",
+          "winner": "Vainqueur"
+        },
+        "buttons": {
+          "loadMore": "Charger plus de tournois",
+          "showLess": "Afficher moins de tournois"
+        },
+        "aria": {
+          "label": "Liste des tournois",
+          "description": "Parcourir les tournois existants avec détails tels que date, nombre de joueurs et vainqueur. Développer pour voir le tableau des matches.",
+          "table": "Table listant les tournois avec colonnes pour titre, date, joueurs et vainqueur",
+          "columnTitle": "Colonne du titre du tournoi",
+          "columnDate": "Colonne de la date du tournoi",
+          "columnPlayers": "Colonne du nombre total de joueurs",
+          "columnWinner": "Colonne du vainqueur du tournoi",
+          "tournamentList": "Liste des tournois avec détails tels que titre, date, nombre de joueurs et vainqueur",
+          "tournamentRow": "Ligne du tournoi avec titre, date, nombre de joueurs et vainqueur",
+          "expandButton": "Bouton pour développer ou réduire le tableau du tournoi",
+          "loadMoreButton": "Bouton pour charger plus de tournois",
+          "showLessButton": "Bouton pour réduire la liste des tournois"
+        }
+      },
+      "new": {
+        "title": "Créer un nouveau tournoi",
+        "placeholders": {
+          "tournamentTitle": "Entrez le titre du tournoi",
+          "totalPlayers": "Nombre total de joueurs",
+          "totalPlayersOptions": ["4", "8", "16"]
+        },
+        "aria": {
+          "label": "Créer un nouveau tournoi",
+          "description": "Entrez le titre du tournoi, sélectionnez le nombre total de joueurs et ajoutez des joueurs enregistrés en cliquant sur leurs badges.",
+          "form": "Formulaire pour créer un nouveau tournoi avec titre et détails des joueurs",
+          "titleInput": "Champ pour entrer le titre du tournoi",
+          "totalPlayersSelect": "Menu déroulant pour sélectionner le nombre total de joueurs dans le tournoi",
+          "playersSection": "Section affichant les badges de profil des joueurs. Cliquez pour vous connecter ou sélectionner un joueur",
+          "playerBadge": "Badge de profil du joueur, cliquez pour vous connecter ou changer de joueur",
+          "playerEmpty": "Badge de joueur vide, aucun joueur sélectionné"
+        }
+      },
+      "confirm": {
+        "title": "Confirmer les détails du tournoi",
+        "defaultPlayer": "Joueur {{number}}",
+        "aria": {
+          "label": "Confirmer les détails du tournoi",
+          "description": "Vérifiez le titre du tournoi, les joueurs et les paramètres avant de confirmer pour démarrer le tournoi.",
+          "aliasesSection": "Section pour modifier les pseudos des joueurs",
+          "aliasInput": "Champ pour modifier le pseudo du joueur {{index}}"
+        }
+      }
+    },
+
+    "rival": {
+      "title": "RIVAUX",
+      "aria": {
+        "label": "Page des rivaux",
+        "description": "Page affichant la liste de vos rivaux avec statistiques incluant score, ratio de victoires et matchs joués.",
+        "table": "Table listant les rivaux, leurs scores, ratios de victoires, vos victoires et défaites contre eux, et matchs joués."
+      }
+
+    },
+
+    "leaderboard": {
+      "title": "CLASSEMENT",
+      "empty": "Aucun joueur à afficher",
+      "loadingLeaderboard": "Chargement des joueurs du classement...",
+      "columns": {
+        "username": "Nom d'utilisateur",
+        "rival": "Rival",
+        "totalGames": "Matchs joués",
+        "score": "Score"
+      },
+      "aria": {
+        "label": "Liste des meilleurs joueurs",
+        "description": "Voir les 10 meilleurs joueurs classés par score décroissant, avec votre classement même si vous n'êtes pas dans le top 10.",
+        "table": "Table affichant les meilleurs joueurs du classement",
+        "emptyTable": "Aucun joueur dans le classement pour le moment",
+        "columnUsername": "Colonne du nom d'utilisateur dans le classement",
+        "columnRival": "Colonne du rival dans le classement",
+        "columnTotalGames": "Colonne du nombre total de matchs",
+        "columnScore": "Colonne du score"
+      }
+    }
+  }, 
+
+  "components": {
+    "footer": {
+      "rights": "Tous droits réservés",
+      "about": "À propos",
+      "contact": "Contact",
+      "privacy": "Confidentialité",
+      "aria": {
+        "label": "Section pied de page",
+        "description": "Contient des liens vers les pages À propos, Contact et Confidentialité",
+        "about": "Lien vers la page À propos avec informations sur le projet",
+        "contact": "Lien vers la page Contact pour contacter l'équipe",
+        "privacy": "Lien vers la page Politique de confidentialité"
+      }
+    },
+    "navBar": {
+	"searchBar": "Rechercher des utilisateurs",
+    "aria": {
+        "languageMenu": "Menu de sélection de la langue",
+        "accessibilityMenu": "Menu des options d'accessibilité",
+        "darkModeToggle": "Basculer le mode sombre",
+        "titleButton": "Aller au profil utilisateur ou à la page d'accueil",
+        "rivalSearch": "Barre de recherche pour trouver d'autres utilisateurs",
+        "profileMenu": "Menu du profil utilisateur avec paramètres et options de déconnexion"
+      }
+    },
+    "pieGraph": {
+      "wins": "Victoires",
+      "draws": "Matchs nuls",
+      "losses": "Défaites",
+      "aria": {
+        "label": "Graphique circulaire des résultats de jeu",
+        "description": "Graphique circulaire montrant la répartition des victoires, matchs nuls et défaites",
+        "wins": "Nombre de matchs gagnés",
+        "draws": "Nombre de matchs nuls",
+        "losses": "Nombre de matchs perdus"
+      }
+    },
+    "rivalRows": {
+      "loadingRivals": "Chargement des rivaux...",
+      "noRivals": "Aucun rival pour le moment",
+      "name": "Nom",
+      "score": "Score",
+      "winRatio": "Ratio de victoires",
+      "userRivalWinsLosses": "Vos victoires / défaites",
+      "matchesPlayed": "Matchs joués",
+      "aria": {
+        "listLabel": "Liste des rivaux",
+        "listItemLabel": "Statistiques du rival",
+        "winRatioDescription": "Pourcentage de matchs gagnés contre ce rival",
+        "clickableRow": "Voir le profil du rival"
+      }
+    },
+    "searchBar": {
+      "noUser": "Aucun utilisateur trouvé",
+      "aria": {
+        "inputLabel": "Champ de recherche d'utilisateur",
+        "listLabel": "Résultats de la recherche",
+        "listItemLabel": "Option utilisateur",
+        "noResultsMessage": "Aucun utilisateur ne correspond à votre recherche"
+      }
+    },
+    "stats": {
+      "noData": "Aucune donnée trouvée",
+      "scoreHistory": "HISTORIQUE DES SCORES",
+      "scoreGainsVsLosses": "GAINS/PERTES DE SCORE",
+      "winRate": "TAUX DE VICTOIRE",
+      "playedGames": "MATCHS JOUÉS",
+      "worstRival": "PIRE RIVAL",
+      "winStreak": "SÉRIE DE VICTOIRES",
+      "longestWinStreak": "PLUS LONGUE SÉRIE DE VICTOIRES",
+      "aria": {
+        "scoreHistory": "Graphique en ligne montrant l'historique des scores de l'utilisateur au fil du temps",
+        "scoreGainsVsLosses": "Graphique en barres affichant les gains de score par rapport aux pertes",
+        "winRate": "Graphique circulaire illustrant le taux de victoire de l'utilisateur",
+        "playedGames": "Nombre total de matchs joués",
+        "worstRival": "Pire rival de l'utilisateur selon les performances",
+        "winStreak": "Nombre actuel de victoires consécutives",
+        "longestWinStreak": "Plus longue série de victoires de l'utilisateur"
+      }
+    },
+    "genericInput": {
+      "aria": {
+        "showPass": "Afficher le mot de passe ou code PIN",
+        "hidePass": "Masquer le mot de passe ou code PIN"
+      }
+    }
+  },
+
+  "game": {
+    "title": "Jeu",
+    "player1": "Joueur 1",
+    "player2": "Joueur 2",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "startMatch": "Commencer le match",
+    "optionsButton": "Options",
+    "pauseMatch": "Jeu en pause",
+    "finishMatch": "Match terminé !",
+    "winner": "Vainqueur",
+    "finalScore": "Score final",
+    "playAgain": "Rejouer",
+    "loading": "Chargement...",
+    "exit": "Quitter",
+    "options": {
+      "title": "Options du match",
+      "ballSpeed": {
+        "subtitle": "Vitesse de la balle",
+        "speed": {
+          "slow": "Lent",
+          "medium": "Moyen",
+          "fast": "Rapide"
+        }
+      },
+      "winCondition": {
+        "subtitle": "Condition de victoire",
+        "bestOf5": "Meilleur de 5",
+        "bestOf9": "Meilleur de 9",
+        "bestOf19": "Meilleur de 19"
+      },
+      "map": {
+        "subtitle": "Carte",
+        "default": "Par défaut",
+        "large": "Grande",
+        "obstacles": "Avec obstacles"
+      }
+    },
+    "controls": {
+      "title": "Contrôles",
+      "move": "Déplacer",
+      "up": "Haut",
+      "down": "Bas",
+      "boost": "Accélération",
+      "shield": "Bouclier",
+      "reset": "Réinitialiser par défaut",
+      "resetAll": "Réinitialiser tous les joueurs aux contrôles par défaut",
+      "swap": "Échanger les contrôles",
+      "conflict": "Conflits détectés : ",
+      "pressAnyKey": "appuyez sur une touche",
+      "rebind": "réassigner"
+    },
+    "pauseMenu": {
+      "title": "Jeu en pause",
+      "start": "Appuyez sur espace pour démarrer",
+      "pause": "Appuyez sur espace pour continuer"
+    },
+    "match": {
+      "end": "Match terminé",
+      "winner": "Vainqueur",
+      "finalScore": "Score final",
+      "playAgain": "Rejouer"
+    },
+    "tournament": {
+      "round": "Tour",
+      "match": "Match",
+      "vs": "vs",
+      "nextMatch": "Prochain match",
+      "upNext": "À venir",
+      "complete": "Tournoi terminé !",
+      "champion": "Champion du tournoi : "
+    }
+  }
+}

@@ -1,0 +1,165 @@
+// /src/pages/User/UserSettings.tsx
+
+import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AccessiblePageDescription } from '../../components/AccessiblePageDescription';
+import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../../context/UserContext';
+import { GenericButton } from '../../components/GenericButton';
+import { ToggleButton } from "../../components/ToggleButton";
+import { UserProfileBadge } from '../../components/UserProfileBadge';
+import { updateProfilePic } from '../../utils/Fetch';
+import { fetchProfileMe, disable2FA } from '../../utils/Fetch';
+import { useRequestNewToken } from '../../utils/Hooks';
+import { ProfileMeResponse } from '../../utils/Interfaces';
+
+const SettingsPage = () => {
+	const { t } = useTranslation();
+	const navigate = useNavigate();
+	const { user, setUser } = useUserContext();
+	const requestNewToken = useRequestNewToken();
+
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			try {
+				const token = await requestNewToken();
+				const avatarUrl = await updateProfilePic(file, token);
+				if (!user)
+					return ;
+				if (avatarUrl)
+				{
+					setUser({
+						...user, 
+						profilePic: avatarUrl});
+				}
+				else
+					alert(t('common.alerts.failure.updatePicture'));
+			}
+			catch(error) {
+				console.error('Avatar upload failed', error);
+		}}
+	};
+
+	const handle2fa = async () => {
+		if (!user?.accessToken) {
+			alert(t("common.errors.unauthorized"));
+			navigate("/signin");
+			return;
+		}
+
+		if (user.twoFA) {
+			const success = await disable2FA(user.accessToken);
+			if (success) {
+				const profile: ProfileMeResponse | null = await fetchProfileMe(user.accessToken);
+				if (profile) {
+					setUser({
+						...user,
+						twoFA: profile.TwoFAStatus,
+					});
+					// alert(t("pages.userSettings.twoFactor.disabled"));
+				}
+			} else {
+				alert(t("pages.userSettings.twoFactor.disableFailed"));
+			}
+		} else {
+			navigate("/setup2fa");
+		}
+	};
+
+	return (
+		<main
+		className="pageLayout"
+		role="main"
+		aria-labelledby="pageTitle"
+		aria-describedby="pageDescription"
+		> 
+		<p id="pageTitle" className="sr-only">
+			{t('pages.userSettings.aria.label')}
+		</p>
+		<AccessiblePageDescription
+		id="pageDescription"
+		text={t('pages.userSettings.aria.description')}
+		/>
+
+		<div className="text-center">
+			<UserProfileBadge
+			size="lg"
+			user={{
+				username: user?.username,
+				photo: user?.profilePic
+			}}
+			onClick={() => fileInputRef.current?.click()}
+			alwaysShowPlus
+			aria-label={t('pages.userSettings.aria.uploadProfile')}
+			/>
+			<input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleImageUpload}
+                aria-label={t('pages.userSettings.aria.uploadProfile')}
+			/>
+		</div>
+
+     <div className='w-80 truncate'>
+        <h2 className='h2 text-center font-semibold scale-dynamic'>
+          {user?.username}
+        </h2>
+      </div>
+           
+      <div className="flex flex-col items-center text-center w-full mx-auto">
+        <div className="p-4">
+          <h3 className="text-lg font-semibold mb-4">
+            {t('pages.userSettings.security.title')}
+          </h3>
+          
+          <GenericButton
+            className="generic-button mb-2"
+            text={t('pages.changePassword.title')}
+            aria-label={t('pages.userSettings.aria.changePassword')}
+            onClick={() => navigate('/change-password')}
+			disabled={user?.googleUser}
+          />
+		  {user?.googleUser && (
+			<p className="max-w-sm text-center mb-4">
+				{t('pages.userSettings.security.googlePasswordNotice')}
+			</p>
+			)}
+
+			<GenericButton
+				className="generic-button"
+				text={t('pages.changePIN.title')}
+				aria-label={t('pages.userSettings.aria.changePIN')}
+				onClick={() => navigate('/change-pin')}
+			/>
+			</div>
+
+			<div className="p-4">
+			<h3 className="text-lg font-semibold">
+				{t('pages.userSettings.twoFactor.title')}
+			</h3>
+				<div className="max-w-sm text-center p-4">
+					{t('pages.userSettings.twoFactor.description')}
+					<div className='flex justify-center mt-2'>
+						<ToggleButton
+							labelOn={t('pages.userSettings.twoFactor.labelOn')}
+							labelOff={t('pages.userSettings.twoFactor.labelOff')}
+							aria-label={t('pages.userSettings.aria.2faToggle')}
+							checked={!!user?.twoFA} 
+							onClick={
+								handle2fa
+							}
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+		</main>
+  	);
+};
+
+export default SettingsPage;
