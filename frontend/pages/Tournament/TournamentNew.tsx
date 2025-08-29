@@ -71,8 +71,14 @@ const NewTournamentPage: React.FC = () => {
 	};
 
 	const handleTitleChange = (value: string) => {
-		titleField.onFilled(value);
-		setTitle(value); // sync to context
+	  // Only update the local validation field on every keystroke
+	  titleField.onFilled(value);
+	};
+	
+	const handleTitleBlur = () => {
+	  // Run existing blur logic + sync to context once
+	  titleField.onBlur();
+	  setTitle(titleField.value);
 	};
 
 	const handlePlayerClick = (index: number) => {
@@ -121,13 +127,13 @@ const NewTournamentPage: React.FC = () => {
 				aria-label={t('pages.tournament.new.aria.form')}
 			>
 				<GenericInput
-					type="text"
-					placeholder={t('pages.tournament.new.placeholders.tournamentTitle')}
-					value={titleField.value}
-					onFilled={handleTitleChange}
-					onBlur={titleField.onBlur}
-					errorMessage={titleField.error}
-					aria-label={t('pages.tournament.new.aria.inputTitle')}
+				  type="text"
+				  placeholder={t('pages.tournament.new.placeholders.tournamentTitle')}
+				  value={titleField.value}
+				  onFilled={handleTitleChange}
+				  onBlur={handleTitleBlur}
+				  errorMessage={titleField.error}
+				  aria-label={t('pages.tournament.new.aria.inputTitle')}
 				/>
 				<div className={`transition-all ease-in-out duration-50 ${isOpen ? 'mb-25' : ''}`} onClick={() =>  console.log('OPEN: ', isOpen)} >
 					<DropDownButton
