@@ -191,8 +191,7 @@ const formFilled =
         </h2>
         <p className="text-sm text-black mb-2">
           {t(
-            'pages.choosePlayers.player2Description',
-            'Please choose the player 2 type as a registered or guest user. If the player is registered, the name can be changed; otherwise, the default is the username.'
+            'pages.choosePlayers.player2Description'
           )}
         </p>
       </section>
@@ -223,7 +222,7 @@ const formFilled =
                 removePlayer(players[1]?.id);
               }}
             />
-            <div className="absolute right-[-30px]">
+            <div className="absolute right-[-30px] -translate-y-2">
               <Tooltip text={t('common.tooltips.guestPlayer')} />
             </div>
           </div>

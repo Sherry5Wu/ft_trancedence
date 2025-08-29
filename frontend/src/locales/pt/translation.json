@@ -29,16 +29,17 @@
       "verify": "VERIFICAR"
     },
     "placeholders": {
-      "username": "Digite seu nome de usuário",
-      "email": "Digite seu endereço de e-mail",
-      "password": "Digite sua senha",
-      "confirmPassword": "Confirme sua senha",
-      "pin": "Digite seu PIN de jogador",
-      "confirmPin": "Confirme seu PIN de jogador",
-      "player1": "Jogador 1",
-      "player2": "Jogador 2",
-      "playerAlias": "Apelido do jogador",
-      "searchUsers": "Buscar outros usuários"
+		"usernameOrEmail": "Insira o seu nome de utilizador/email",
+		"username": "Digite seu nome de usuário",
+		"email": "Digite seu endereço de e-mail",
+		"password": "Digite sua senha",
+		"confirmPassword": "Confirme sua senha",
+		"pin": "Digite seu PIN de jogador",
+		"confirmPin": "Confirme seu PIN de jogador",
+		"player1": "Jogador 1",
+		"player2": "Jogador 2",
+		"playerAlias": "Apelido do jogador",
+		"searchUsers": "Buscar outros usuários"
     },
     "tooltips": {
       "PINcode": "Você precisa do seu código PIN para confirmar sua presença ao jogar localmente contra outros jogadores",
@@ -66,6 +67,7 @@
         "verify": "Verificar as informações inseridas"
       },
       "inputs": {
+		"usernameOrEmail": "Campo de entrada para inserir o seu nome de utilizador ou endereço de e-mail",
         "username": "Campo para inserir seu nome de usuário",
         "email": "Campo para inserir seu endereço de e-mail",
         "password": "Campo para inserir sua senha",
@@ -286,7 +288,21 @@
           "codeInput": "Digite seu código de 6 dígitos de autenticação de dois fatores",
           "backupLink": "Usar código de backup em vez disso"
         }
-      }
+      },
+	  "verifyBackupCode": {
+		"title": "Autenticação de dois fatores",
+		"subtitle": "Verifique a sua conta",
+		"instructions": "Você ativou a 2FA nesta conta. Por favor, insira o código de verificação de backup da sua conta para concluir o login.",
+		"verifyCodeTitle": "Verificar com códigos de recuperação",
+		"placeholder": "Insira um código de backup",
+		"invalidCode": "Código de verificação inválido. Tente novamente.",
+		"errorMessage": "Algo correu mal. Tente novamente.",
+		"aria": {
+			"label": "Verifique o código de autenticação de dois fatores para concluir o login.",
+			"description": "Insira o código de verificação de recuperação da sua conta.",
+			"codeInput": "Insira o seu código de backup para a autenticação de dois fatores."
+		}
+		}
     },
 
     "userSettings": {
@@ -343,18 +359,20 @@
       }
     },
 
-    "choosePlayers": {
-      "title": "Escolher jogadores",
-      "player2TypeRegistered": "Registrado",
-      "player2TypeGuest": "Convidado",
-      "player2GuestAlert": "Preencha o jogador convidado!",
-      "aria": {
-        "label": "Formulário para escolher Jogador 1 e Jogador 2, com opções de Registrado ou Convidado para Jogador 2",
-        "description": "Digite apelidos para dois jogadores. Jogador 2 pode ser usuário registrado ou convidado.",
-        "player2TypeRegisteredButton": "Selecionar Jogador 2 como registrado, requer login",
-        "player2TypeGuestButton": "Selecionar Jogador 2 como convidado"
-      }
-    },
+	"choosePlayers": {
+	"title": "ESCOLHER JOGADORES",
+	"player2TypeRegistered": "Registado",
+	"player2TypeGuest": "Convidado",
+	"player2GuestAlert": "Preencha o jogador convidado!",
+	"player1Description": "O utilizador principal é o jogador 1. Pode dar a si próprio um alias para este jogo.",
+	"player2Description": "Por favor, escolha se o jogador 2 é um utilizador registado ou um convidado. Utilizadores registados podem dar a si próprios um alias para o jogo. Convidados devem inserir um nome.",
+	"aria": {
+		"label": "Formulário para escolher o Jogador 1 e o Jogador 2, com opções de Utilizador Registado ou Convidado para o Jogador 2",
+		"description": "Insira aliases para dois jogadores. O jogador 2 pode ser um utilizador registado ou um convidado.",
+		"player2TypeRegisteredButton": "Selecionar o jogador 2 como utilizador registado, requer login",
+		"player2TypeGuestButton": "Selecionar o jogador 2 como convidado"
+	}
+	},
 
     "tournament": {
       "list": {

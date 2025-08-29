@@ -29,16 +29,17 @@
       "verify": "VÉRIFIER"
     },
     "placeholders": {
-      "username": "Entrez votre nom d'utilisateur",
-      "email": "Entrez votre adresse e-mail",
-      "password": "Entrez votre mot de passe",
-      "confirmPassword": "Confirmez votre mot PLAYde passe",
-      "pin": "Entrez votre code PIN joueur",
-      "confirmPin": "Confirmez votre code PIN joueur",
-      "player1": "Joueur 1",
-      "player2": "Joueur 2",
-      "playerAlias": "Pseudo du joueur",
-      "searchUsers": "Rechercher d'autres utilisateurs"
+		"usernameOrEmail": "Entrez votre nom d'utilisateur/email",
+		"username": "Entrez votre nom d'utilisateur",
+		"email": "Entrez votre adresse e-mail",
+		"password": "Entrez votre mot de passe",
+		"confirmPassword": "Confirmez votre mot PLAYde passe",
+		"pin": "Entrez votre code PIN joueur",
+		"confirmPin": "Confirmez votre code PIN joueur",
+		"player1": "Joueur 1",
+		"player2": "Joueur 2",
+		"playerAlias": "Pseudo du joueur",
+		"searchUsers": "Rechercher d'autres utilisateurs"
     },
     "tooltips": {
       "PINcode": "Vous avez besoin de votre code PIN pour confirmer votre présence lors des parties locales contre d'autres joueurs",
@@ -66,6 +67,7 @@
         "verify": "Vérifier les informations saisies"
       },
       "inputs": {
+		"usernameOrEmail": "Champ de saisie pour entrer votre nom d'utilisateur ou votre adresse e-mail",
         "username": "Champ pour entrer votre nom d'utilisateur",
         "email": "Champ pour entrer votre adresse e-mail",
         "password": "Champ pour entrer votre mot de passe",
@@ -182,7 +184,7 @@
     },
 
     "signInWithGoogle": {
-      "button": "Se connecter avec Google",
+      "button": "Connexion Google",
       "aria": {
         "signInWithGoogle": "Aller à la connexion avec votre compte Google"
       }
@@ -286,8 +288,22 @@
           "codeInput": "Entrez votre code 2FA à 6 chiffres",
           "backupLink": "Utiliser un code de récupération à la place"
         }
-      }
-    }, 
+		},
+		"verifyBackupCode": {
+			"title": "Authentification à deux facteurs",
+			"subtitle": "Vérifiez votre compte",
+			"instructions": "Vous avez activé la 2FA sur ce compte. Veuillez entrer le code de vérification de secours de votre compte pour terminer la connexion.",
+			"verifyCodeTitle": "Vérifier avec les codes de récupération",
+			"placeholder": "Entrez un code de secours",
+			"invalidCode": "Code de vérification invalide. Veuillez réessayer.",
+			"errorMessage": "Une erreur est survenue. Veuillez réessayer.",
+			"aria": {
+				"label": "Vérifiez le code d'authentification à deux facteurs pour terminer la connexion.",
+				"description": "Entrez le code de vérification de récupération de votre compte.",
+				"codeInput": "Entrez votre code de secours pour l’authentification à deux facteurs."
+			}
+			}
+    },
 
     "userSettings": {
       "accountSettings": {
@@ -343,18 +359,20 @@
       }
     },
 
-    "choosePlayers": {
-      "title": "Choisir les joueurs",
-      "player2TypeRegistered": "Enregistré",
-      "player2TypeGuest": "Invité",
-      "player2GuestAlert": "Remplissez le joueur invité !",
-      "aria": {
-        "label": "Formulaire pour choisir Joueur 1 et Joueur 2, avec options Enregistré ou Invité pour le Joueur 2",
-        "description": "Entrez les pseudos pour deux joueurs. Le Joueur 2 peut être un utilisateur enregistré ou un invité.",
-        "player2TypeRegisteredButton": "Sélectionner le joueur 2 comme joueur enregistré, nécessite connexion",
-        "player2TypeGuestButton": "Sélectionner le joueur 2 comme joueur invité"
-      }
-    },
+	"choosePlayers": {
+	"title": "CHOISIR LES JOUEURS",
+	"player2TypeRegistered": "Enregistré",
+	"player2TypeGuest": "Invité",
+	"player2GuestAlert": "Remplissez le joueur invité !",
+	"player1Description": "L’utilisateur principal est le joueur 1. Il peut se donner un alias pour cette partie.",
+	"player2Description": "Veuillez choisir si le joueur 2 est un utilisateur enregistré ou un invité. Les utilisateurs enregistrés peuvent se donner un alias pour la partie. Les invités doivent saisir un nom.",
+	"aria": {
+		"label": "Formulaire pour choisir le joueur 1 et le joueur 2, avec options Utilisateur enregistré ou Invité pour le joueur 2",
+		"description": "Entrez des alias pour deux joueurs. Le joueur 2 peut être un utilisateur enregistré ou un invité.",
+		"player2TypeRegisteredButton": "Sélectionner le joueur 2 comme utilisateur enregistré, connexion requise",
+		"player2TypeGuestButton": "Sélectionner le joueur 2 comme invité"
+	}
+	},
 
     "tournament": {
       "list": {

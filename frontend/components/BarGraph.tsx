@@ -27,9 +27,6 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
     correctedData.sort((a, b) => a.id - b.id);
 	const differenceData = calculateDifference({ correctedData });
 	const indexedData = differenceData.map((data, index) => ({...data, index: index}))
-    console.log('DATA');
-    console.log(correctedData);
-    console.log(differenceData);
 
     return (
         <ResponsiveContainer width="100%" aspect={1.5}>
@@ -48,13 +45,3 @@ export const BarGraph = ({ data }: { data: ScoreHistory[] | null }) => {
         </ResponsiveContainer>
     );
 }
-
-    // return (
-    //     <BarChart width={600} height={300} data={data}>
-    //         <Tooltip cursor={false}/>
-    //         <CartesianGrid stroke='#aaa' strokeDasharray='3 3' />
-    //         <Bar dataKey='value' fill='#000' stroke='black' strokeWidth={2} activeBar={<Rectangle fill="#FFEE8C" />} />
-    //         <XAxis dataKey='key' />
-    //         <YAxis />
-    //     </BarChart>
-    // );
