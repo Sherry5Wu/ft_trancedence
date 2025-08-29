@@ -317,12 +317,7 @@ export default function GamePage() {
 
       try {
         const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso, rawPlayers as any);
-        if (p2.id != 'guest') {
-          const payloadPlayer2 = buildPayload(p2, p1, s2, s1, durationSec, played_at_iso, rawPlayers as any);
-          pendingMatchHistory.current.push(payloadPlayer1, payloadPlayer2);
-        } else {
-          pendingMatchHistory.current.push(payloadPlayer1);
-        }
+        pendingMatchHistory.current.push(payloadPlayer1);
 
         const token = user?.accessToken;
         // Regular match
