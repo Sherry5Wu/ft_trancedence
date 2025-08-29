@@ -111,6 +111,9 @@ export default function TournamentsPage() {
         {t('pages.tournament.list.title')}
       </h1>
 
+      {tournaments.length === 0 && (<p>{t('pages.tournament.list.noTournaments')}</p>)}
+
+      {tournaments.length !== 0 && (
       <div role="table" aria-label={t('pages.tournament.list.aria.table')} className="w-full p-4 justify-center text-center max-w-200 min-w-200">
         <div role="row" className="grid grid-cols-9 mb-1 text-center font-semibold">
           <span className='col-span-2' role="columnheader" aria-label={t('pages.tournament.list.aria.columnTitle')}>
@@ -170,6 +173,7 @@ export default function TournamentsPage() {
           })}
         </ul>
       </div>
+      )}
 
       {visibleTournamentsCount < tournaments.length && (
         <div className="mt-4 text-center transition-all ease-in-out">

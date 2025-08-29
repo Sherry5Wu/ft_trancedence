@@ -359,6 +359,7 @@
     "tournament": {
       "list": {
         "title": "TOURNOIS",
+        "noTournaments": "Aucun tournoi pour le moment",
         "columnHeaders": {
           "title": "Titre",
           "date": "Date",
