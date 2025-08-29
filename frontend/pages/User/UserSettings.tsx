@@ -69,8 +69,6 @@ const SettingsPage = () => {
 		}
 	};
 
-	console.log(user);
-
 	return (
 		<main
 		className="pageLayout"

@@ -30,14 +30,12 @@ const LeaderboardPage = () => {
 				const leaderboard: (LeaderboardStats | null)[] = await Promise.all (
 					users.map(async u => {
 						const userStats = await fetchUserStats(u.username);
-						console.log('userstats: ', userStats);
 						if (userStats?.games_played && userStats?.games_played > 0)
 						{
 							const leaderboardEntry: LeaderboardStats = {
 								userInfo: u,
 								stats: userStats,
 							}
-							console.log("LEADERBOARD ENTRY: ", leaderboardEntry);
 							return leaderboardEntry;
 						}
 						else

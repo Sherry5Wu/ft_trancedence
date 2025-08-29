@@ -10,7 +10,7 @@ export const Menu = ({ 'aria-label': ariaLabel, Icon, elements, className, onCli
     useClickOutside(menuRef, () => setIsOpen(false));
 
     const handleClick = () => {
-        console.log('isOpen is ' + isOpen);
+        // console.log('isOpen is ' + isOpen);
         if (onClick)
             onClick();
         else

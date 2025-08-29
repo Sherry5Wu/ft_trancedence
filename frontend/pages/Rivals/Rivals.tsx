@@ -34,15 +34,11 @@ export const RivalsMain = () => {
 	useEffect(() => {
 		const loadRivals = async () => {
 			setLoading(true);
-			console.log("FETCHING TOKEN");
 			const token = await requestNewToken();
 			if (!user || !token)
 				return ;
-			console.log("FETCHING RIVALS");
 			const rivalData = await fetchRivalData(user?.username);
-			console.log("DONE");
 			setRivalData(rivalData);
-			console.log('RIVAL DATA', rivalData);
 			setLoading(false);
 		}
 		loadRivals();

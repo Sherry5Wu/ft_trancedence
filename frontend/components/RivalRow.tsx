@@ -35,8 +35,6 @@ const useRivalPic = (rivalName: string) => {
 		loadRivalPic();
 	}, [user, rivalName])
 
-	console.log('rival url = ', rivalPic);
-
 	if (rivalPic)
 		return rivalPic;
 	else

@@ -73,7 +73,7 @@ const LogInPlayerPage: React.FC = () => {
       }
 
       const profile = await fetchUserProfile(usernameField.value, user.accessToken);
-      console.log('PLAYER PROFILE: ', profile);
+    //   console.log('PLAYER PROFILE: ', profile);
 
       const player = {
         id: profile?.id ?? response.data?.userId ?? Date.now().toString(),
