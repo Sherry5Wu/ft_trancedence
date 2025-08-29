@@ -68,53 +68,51 @@ useEffect(() => {
   }
 }, [players]);
 
+const handleP1Filled = (v: string) => {
+  player1Field.onFilled(v); // local only while typing
+};
+
 // sync player1 field with PlayersContext
-useEffect(() => {
+const handleP1Blur = () => {
+  player1Field.onBlur();
   const trimmed = player1Field.value.trim();
-  if (!isPlayer1Loading && trimmed !== '' && !player1Field.error) {
-    const updated = {
-      id: user?.username ?? 'player1',
-      username: trimmed,
-      photo: user?.profilePic ?? `https://api.dicebear.com/6.x/initials/svg?seed=${trimmed}`,
+  if (!isPlayer1Loading && trimmed && !player1Field.error && players[0]) {
+    const next = {
+      ...players[0],
+      playername: trimmed,
+      photo: players[0].photo?.includes('dicebear.com')
+        ? dicebearUrl(trimmed)
+        : players[0].photo,
     };
-
-    if (players.length === 0) {
-      addPlayer(updated);
-    } else {
-      setPlayer(0, updated);
-    }
+    setPlayer(0, next);
   }
-}, [player1Field.value, isPlayer1Loading, player1Field.error, players]);
+};
 
+const handleP2Filled = (v: string) => {
+  player2Field.onFilled(v); // local only while typing
+};
 
 // sync player2 field with PlayersContext
-useEffect(() => {
+const handleP2Blur = () => {
+  player2Field.onBlur();
   const trimmed = player2Field.value.trim();
-  if (trimmed === '' || player2Field.error || !player2Type)
-    return;
+  if (!trimmed || player2Field.error || !player2Type) return;
+
   if (player2Type === 'guest') {
     const existing = players[1];
-    if (existing &&
-        existing.id === 'guest' &&
-        existing.username === 'guest' &&
-        existing.playername === trimmed) {
-      return;
-    }
-    const next = {
+    const base = {
       id: 'guest',
       username: 'guest',
       playername: trimmed,
       photo: dicebearUrl(trimmed),
     };
     if (existing) {
-      setPlayer(1, { ...existing, ...next });
+      setPlayer(1, { ...existing, ...base });
     } else if (players.length === 1) {
-      addPlayer(next);
+      addPlayer(base);
     }
   } else {
     if (!players[1]) return;
-    if (players[1].playername === trimmed)
-      return;
     const next = {
       ...players[1],
       playername: trimmed,
@@ -124,7 +122,7 @@ useEffect(() => {
     };
     setPlayer(1, next);
   }
-}, [player2Field.value, player2Type, players]);
+};
 
 
 const aliasDuplicate =
@@ -174,27 +172,15 @@ const formFilled =
           placeholder={t('common.placeholders.player1')}
           aria-label={t('common.aria.inputs.playerAlias')}
           value={player1Field.value}
-          onFilled={player1Field.onFilled}
-          onBlur={player1Field.onBlur}
+          onFilled={handleP1Filled}
+          onBlur={handleP1Blur}
           errorMessage={
             player1Field.error ||
             (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
           }
           disabled={isPlayer1Loading}
-          showEditIcon={true}
+          showEditIcon
         />
-
-      {/* Player 2 info */}
-      <section aria-labelledby="player2Title" className="mx-auto w-[300px] text-center mt-4">
-        <h2 id="player2Title" className="font-semibold text-lg mb-1">
-          {t('pages.choosePlayers.player2Title', 'Player 2')}
-        </h2>
-        <p className="text-sm text-black mb-2">
-          {t(
-            'pages.choosePlayers.player2Description'
-          )}
-        </p>
-      </section>
 
         <div className="flex flex-wrap justify-center gap-6 mt-4">
           <GenericButton
@@ -202,6 +188,7 @@ const formFilled =
             text={t('pages.choosePlayers.player2TypeRegistered')}
             aria-label={t('pages.choosePlayers.aria.player2TypeRegisteredButton')}
             onClick={() => {
+              setPlayer2Type("registered");
               navigate("/login-player", {
                 state: {
                   context: "generic",
@@ -219,7 +206,7 @@ const formFilled =
               onClick={() => {
                 setPlayer2Type("guest");
                 player2Field.setValue('');
-                removePlayer(players[1]?.id);
+                if (players[1]) removePlayer(players[1].id);
               }}
             />
             <div className="absolute right-[-30px] -translate-y-2">
@@ -234,14 +221,13 @@ const formFilled =
               placeholder={t('common.placeholders.player2')}
               aria-label={t('common.aria.inputs.playerAlias')}
               value={player2Field.value}
-              onFilled={player2Field.onFilled}
-              onBlur={player2Field.onBlur}
+              onFilled={handleP2Filled}
+              onBlur={handleP2Blur}
               errorMessage={
                 player2Field.error ||
                 (aliasDuplicate ? t('common.errors.duplicateAlias') : '')
               }
-              showEditIcon={true}
-              disabled={!player2Type}
+              showEditIcon
             />
           </div>
 
