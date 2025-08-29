@@ -6,6 +6,7 @@ import { postMatchHistoryBulk, postTournamentHistory, TournamentPayload, StatsPa
 import KeyBindingsPanel, { KeyBindings, loadBindings, labelForCode } from './KeyBindings';
 import { useTournamentBracket, type Player } from './Tournament';
 import { useTranslation } from 'react-i18next';
+import { fetchEloScore } from '../../utils/Fetch';
 
 const GameCanvas = React.lazy(() => import('../../game/main'));
 
@@ -146,6 +147,25 @@ export default function GamePage() {
     };
   }, [resetPlayers, setIsTournament]);
 
+  const [playersWithElo, setPlayersWithElo] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fillElos() {
+      if (!rawPlayers) return;
+      const filled = await Promise.all(
+        rawPlayers.map(async (p) => {
+          if (p.elo === undefined || p.elo === null) {
+            const elo = await fetchEloScore(p.username);
+            return { ...p, elo };
+          }
+          return p;
+        })
+      );
+      setPlayersWithElo(filled);
+    }
+    fillElos();
+  }, [rawPlayers]);
+
   // If page refresh, redirect to user page or sign in
   useEffect(() => {
     const ran = (window as any).__gp_reloadGate ?? false;
@@ -233,19 +253,19 @@ export default function GamePage() {
   // Tournament state
   const entrants = useMemo<Player[]>(() => {
     if (!isTournament) {
-      const base = rawPlayers?.length
-        ? rawPlayers.slice(0, 2)
-        : ([{ username: 'Player 1' }, { username: 'Player 2' }] as any);
+      const base = playersWithElo.length
+        ? playersWithElo.slice(0, 2)
+        : ([{ username: 'Player 1', elo: 1000 }, { username: 'Player 2', elo: 1000 }] as any);
       return normalizePlayers(base);
     }
     // Tournament: take exactly the selected amount from context
-    const size = totalPlayers ?? rawPlayers?.length ?? 0;
-    const list = (rawPlayers ?? []).slice(0, size);
+    const size = totalPlayers ?? playersWithElo.length ?? 0;
+    const list = (playersWithElo ?? []).slice(0, size);
     // If setup is incomplete, return empty and let the init effect handle it
     if (list.length < 2) return [];
 
     return normalizePlayers(list as any);
-  }, [isTournament, rawPlayers, totalPlayers]);
+  }, [isTournament, playersWithElo, totalPlayers]);
 
   // Set up tournament variables from the imported file
   const {
