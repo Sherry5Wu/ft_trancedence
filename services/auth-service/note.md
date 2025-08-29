@@ -1,16 +1,11 @@
 
 1. graceFullyShutDown() ????
-
-2. DB Bootstrap (src/db/index.js)
-Using alter: true in prod can be risky; explicit migrations (e.g. with Umzug) are
-safer for production.
-
 3. consider the avatar image dimensions limitation function.
 4. add the code information into the server response. Study how to design a good API (reply body and respons body)
 
 5. implement rate-limit:
 await fastify.register(import('@fastify/rate-limit'), {
-  max: 5,           // 最大请求次数
+  max: 5,
   timeWindow: '5 minutes',
   keyGenerator: (req) => req.body.username || req.ip,
   errorResponseBuilder: (req, context) => {
@@ -22,11 +17,6 @@ await fastify.register(import('@fastify/rate-limit'), {
   }
 });
 
-
-s
-5. run the test case auth.routes.test.js
-
-8. how to import different export funcitons.
 
 
 

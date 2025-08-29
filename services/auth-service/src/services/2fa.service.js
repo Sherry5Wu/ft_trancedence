@@ -99,7 +99,6 @@ async function generateTwoFAQrCode(otpauthUrl) {
  */
 async function consumeBackupCode(userId, code) {
   const user = await User.scope('withSecrets').findByPk(userId);
-  console.log('user', user); // for testing
   if (!user) throw new NotFoundError('User not found');
 
   if (!Array.isArray(user.backupCodes) || user.backupCodes.length === 0) {

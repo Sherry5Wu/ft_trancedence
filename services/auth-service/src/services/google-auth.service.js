@@ -23,7 +23,7 @@ import { jwkToPem } from '../utils/jwkToPem.js';
 import { ConflictError, InvalidCredentialsError, ValidationError } from '../utils/errors.js';
 import { validateUsername, validatePincode } from '../utils/validators.js';
 import { sequelize } from '../db/index.js';
-import { generateAccessToken, generateRefreshToken, decodeToken } from '../utils/jwt.js';
+import { generateAccessToken, generateRefreshToken, decodeToken, storeRefreshTokenHash } from '../utils/jwt.js';
 
 const GOOGLE_CERTS_URL = process.env.GOOGLE_CERTS_URL || 'https://www.googleapis.com/oauth2/v3/certs';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -164,12 +164,14 @@ async function userLogin(user) {
     id: user.id,
     email: user.email,
     username: user.username,
-    is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
+    // is2FAEnabled: !!user.twoFASecret, // True if 2FA is enabled
   };
   const refreshPayload = { id: user.id };
 
   const accessToken = generateAccessToken(accessPayload);
   const refreshToken = generateRefreshToken(refreshPayload);
+
+  await storeRefreshTokenHash(refreshToken, user.id);
 
   // Build public user object (do not include sensitive fields)
   const publicUser = {

@@ -105,9 +105,6 @@ async function buildApp() {
   app.register(userRoutes);
   app.register(healthRoutes);
 
-  // for testing
-  app.log.info(app.printRoutes());// only for testing
-
   return app;
 }
 

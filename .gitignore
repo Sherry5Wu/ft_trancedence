@@ -9,3 +9,5 @@ frontend/.vite/
 .backend_build
 .frontend_build
 ./test-project
+.env
+services/auth-service/.env
