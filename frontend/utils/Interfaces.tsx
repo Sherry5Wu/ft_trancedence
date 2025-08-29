@@ -131,7 +131,7 @@ export interface Players {
   username: string;
   playername: string;
   photo: string;
-  elo?: Promise<number>;
+  elo?: number;
 }
 
 export interface PlayersContextType {

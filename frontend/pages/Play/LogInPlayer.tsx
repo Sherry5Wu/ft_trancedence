@@ -73,18 +73,20 @@ const LogInPlayerPage: React.FC = () => {
       }
 
       const profile = await fetchUserProfile(usernameField.value, user.accessToken);
+      const elo = await fetchEloScore(profile?.username ?? usernameField.value);
     //   console.log('PLAYER PROFILE: ', profile);
 
       const player = {
         id: profile?.id ?? response.data?.userId ?? Date.now().toString(),
         username: profile?.username ?? usernameField.value,
-        elo: fetchEloScore(profile?.username ?? usernameField.value),
+        elo: elo,
         playername: profile?.playername ?? profile?.username ?? usernameField.value,
         photo: profile?.photo ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
           profile?.playername ?? profile?.username ?? usernameField.value
         )}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`,
       };
-
+      console.log("testing...");
+      console.log(player);
       setPlayer(playerIndex, player);
 
       navigate(returnTo);
