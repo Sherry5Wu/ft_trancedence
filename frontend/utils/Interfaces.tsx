@@ -89,13 +89,11 @@ export interface UserStats {
     games_played: number;
     win_streak: number;
     longest_win_streak: number;
-    // worstRival: string;
     games_draw: number;
     games_lost: number;
     games_won: number;
 	elo_score: number;
 	rank: number;
-    // worstRivalPic: string;
 }
 
 export interface ScoreHistory {
@@ -230,4 +228,11 @@ export interface ProfileMeResponse {
   avatarUrl: string;
   TwoFAStatus: boolean;
   registerFromGoogle: boolean;
+}
+
+export interface CloseButtonProps {
+  iconSize?: number;
+  className?: string;
+  onClick: () => void;
+  ariaLabel?: string;
 }

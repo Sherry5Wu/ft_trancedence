@@ -1,12 +1,6 @@
 import React from 'react';
-import CloseIcon from '../assets/symbols/noun-cross-rounded-5432729.svg';
-
-interface CloseButtonProps {
-  iconSize?: number;
-  className?: string;
-  onClick: () => void;
-  ariaLabel?: string;
-}
+import CloseIcon from '../assets/icons/symbols/cross-rounded.svg';
+import { CloseButtonProps } from '../utils/Interfaces';
 
 export const CloseButton: React.FC<CloseButtonProps> = ({
   iconSize = 24,
