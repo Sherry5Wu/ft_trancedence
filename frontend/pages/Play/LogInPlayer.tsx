@@ -9,7 +9,7 @@ import { GenericInput } from '../../components/GenericInput';
 import { useValidationField } from '../../utils/Hooks';
 import { isValidUsername, isValidPin } from '../../utils/Validation';
 import { usePlayersContext } from '../../context/PlayersContext';
-import { loginRegisteredPlayer } from '../../utils/Fetch';
+import { fetchEloScore, loginRegisteredPlayer } from '../../utils/Fetch';
 import { fetchUserProfile } from '../../utils/Fetch';
 import { useUserContext } from '../../context/UserContext';
 
@@ -78,6 +78,7 @@ const LogInPlayerPage: React.FC = () => {
       const player = {
         id: profile?.id ?? response.data?.userId ?? Date.now().toString(),
         username: profile?.username ?? usernameField.value,
+        elo: fetchEloScore(profile?.username ?? usernameField.value),
         playername: profile?.playername ?? profile?.username ?? usernameField.value,
         photo: profile?.photo ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(
           profile?.playername ?? profile?.username ?? usernameField.value

@@ -37,6 +37,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
       username: newPlayer.id === 'guest' ? 'guest' : newPlayer.username,
       playername: newPlayer.playername ?? newPlayer.username,
       photo: safePhoto(newPlayer.photo, safeSeed(newPlayer)),
+      elo: newPlayer.elo,
     };
     setPlayers(prev => [...prev, coerced]);
   };
@@ -52,6 +53,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
           id: next.id === 'guest' ? 'guest' : next.id,
           username: next.id === 'guest' ? 'guest' : next.username,
           playername: next.playername ?? next.username,
+          elo: next.elo,
           photo: (typeof next.photo === 'string' && next.photo.includes('dicebear.com') && next.playername)
             ? dicebearUrl(next.playername)
             : safePhoto(next.photo, next.playername ?? next.username ?? 'Player'),
@@ -67,6 +69,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
             ...old,
             ...next,
             id: next.id === 'guest' ? 'guest' : next.id,
+            elo: next.elo,
             username: next.id === 'guest' ? 'guest' : (next.username ?? old.username),
             playername: next.playername ?? next.username ?? old.playername ?? old.username,
             photo:
@@ -79,6 +82,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
             ...next,
             id: old.id,
             username: old.username,
+            elo: old.elo,
             playername: next.playername ?? old.playername ?? old.username,
             photo:
               (typeof old.photo === 'string' && old.photo.includes('dicebear.com') && next.playername)

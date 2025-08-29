@@ -540,3 +540,30 @@ def test_post_match_history_with_rivals():
     assert rival2["loss_against_rival"] == 1
 
     print("✅ Rival stats updated correctly after match")
+
+def test_get_elo_score_by_username():
+    """Test GET /user_match_data/elo_score/:player_username"""
+    # Luo käyttäjä ja varmista että sillä on elo_score (esim. oletus 1000)
+    ACCESS_TOKEN = login_user(TEST_USER_EMAIL, TEST_USER_PASSWORD)
+    headers = get_auth_headers(ACCESS_TOKEN)
+
+    # Hae käyttäjänimi tokenilla
+    response1 = requests.post(f"{AUTH_URL}/auth/verify-token", headers=headers, verify=False)
+    assert response1.status_code == 200
+    username = response1.json()["username"]
+
+    # Testaa olemassa oleva käyttäjä
+    response = requests.get(f"{STATS_URL}/user_match_data/elo_score/{username}", verify=False)
+    assert response.status_code == 200
+    data = response.json()
+    assert "elo_score" in data
+    assert isinstance(data["elo_score"], int)
+
+    # Testaa olematon käyttäjä (palauttaa 1000)
+    response = requests.get(f"{STATS_URL}/user_match_data/elo_score/ei_ole_tallaista_kayttajaa", verify=False)
+    assert response.status_code == 200
+    data = response.json()
+    assert "elo_score" in data
+    assert data["elo_score"] == 1000
+
+    print("✅ test_get_elo_score_by_username passed")

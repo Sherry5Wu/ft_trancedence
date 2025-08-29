@@ -686,3 +686,23 @@ export const fetchProfileMe = async (
     return null;
   }
 };
+
+export const fetchEloScore = async (username: string): Promise<number> => {
+  try {
+    const response = await fetch(`https://localhost:8443/stats/user_match_data/elo_score/${username}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok)
+      throw new Error(`HTTP error! Status: ${response.status}`);
+
+    const data = await response.json();
+    return typeof data.elo_score === "number" ? data.elo_score : 1000;
+  } catch (error) {
+    console.error('Error fetching elo score:', error);
+    return 1000;
+  }
+};
