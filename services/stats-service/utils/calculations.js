@@ -121,6 +121,8 @@ export function calculateLongestWinStreak(player_id) {
     let didWin = false;
     if (item.player_id === player_id && item.result === 'win') didWin = true;
     if (item.opponent_id === player_id && item.result === 'loss') didWin = true;
+    if (item.player_username == player_id && item.result == 'win') didWin = true;
+    if (item.opponent_username == player_id && item.result == 'loss') didWin = true;
     if (didWin) {
       currentStreak += 1;
       longestStreak = Math.max(longestStreak, currentStreak);
@@ -138,6 +140,8 @@ export function calculateCurrentWinStreak(player_id) {
     let didWin = false;
     if (item.player_id === player_id && item.result === 'win') didWin = true;
     if (item.opponent_id === player_id && item.result === 'loss') didWin = true;
+    if (item.player_username == player_id && item.result == 'win') didWin = true;
+    if (item.opponent_username == player_id && item.result == 'loss') didWin = true;
     if (didWin) {
       currentStreak += 1;
     } else {
@@ -189,7 +193,19 @@ export function calculateGamesPlayed(player_id) {
 }
   
 export function calculateGamesWon(player_id) {
-    return getMatchHistoryForPlayer(player_id).filter(row => row.result === 'win').length;
+  const rows = getMatchHistoryForPlayer(player_id);
+  let gameswon = 0;
+  for (const item of rows) {
+    let didWin = false;
+    if (item.player_id === player_id && item.result === 'win') didWin = true;
+    if (item.opponent_id === player_id && item.result === 'loss') didWin = true;
+    if (item.player_username == player_id && item.result == 'win') didWin = true;
+    if (item.opponent_username == player_id && item.result == 'loss') didWin = true;
+    if (didWin) {
+      gameswon += 1;
+    }
+  }
+  return gameswon;
 }
 
 export function calculateGamesDraw(player_id) {
@@ -197,5 +213,17 @@ export function calculateGamesDraw(player_id) {
 }
   
 export function calculateGamesLost(player_id) {
-    return getMatchHistoryForPlayer(player_id).filter(row => row.result === 'loss').length;
+  const rows = getMatchHistoryForPlayer(player_id);
+  let gameslost = 0;
+  for (const item of rows) {
+    let didlose = false;
+    if (item.player_id === player_id && item.result === 'loss') didlose = true;
+    if (item.opponent_id === player_id && item.result === 'win') didlose = true;
+    if (item.player_username == player_id && item.result == 'loss') didlose = true;
+    if (item.opponent_username == player_id && item.result == 'win') didlose = true;
+    if (didlose) {
+      gameslost += 1;
+    }
+  }
+  return gameslost;
 }

@@ -109,7 +109,7 @@ export default function GamePage() {
   const [draftWinMode, setDraftWinMode] = useState<WinMode>(winMode);
   const [draftMapKey, setDraftMapKey] = useState<MapKey>(mapKey);
 
-  const { user } = useUserContext();
+  const { user, refresh } = useUserContext();
   const [startAt, setStartAt] = useState<Date | null>(null);
   const matchSnapshot = useRef<{ p1: Player; p2: Player; startedAt: Date } | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -129,6 +129,21 @@ export default function GamePage() {
 
   const initialPhase: Phase = isTournament ? 'prematch' : 'home';
   const [phase, setPhase] = useState<Phase>(initialPhase);
+
+  async function getFreshToken(): Promise<string | undefined> {
+    // If we're close to expiry, refresh first
+    const needsRefresh =
+      !user?.accessToken ||
+      !user?.expiry ||
+      (user.expiry - Date.now()) < 60_000; // 60s buffer
+
+    if (needsRefresh) {
+      // refresh() updates context *and* returns the new token
+      const t = await refresh();
+      return t ?? user?.accessToken ?? undefined;
+    }
+    return user.accessToken;
+  }
 
   // Listen for a case where the page is being left and reset variables if so
   useEffect(() => {
@@ -338,19 +353,16 @@ export default function GamePage() {
       try {
         const payloadPlayer1 = buildPayload(p1, p2, s1, s2, durationSec, played_at_iso, rawPlayers as any);
         pendingMatchHistory.current.push(payloadPlayer1);
-
-        const token = user?.accessToken;
-        // Regular match
-        if (!isTournament) {
-          if (token) {
-            await postMatchHistoryBulk(pendingMatchHistory.current, token);
-          } else {
-            console.warn('No access token — match_history bulk skipped.');
+      
+        // Request a new token so it doesn't expire
+        let token = await getFreshToken();
+      
+        const postAll = async () => {
+          if (!isTournament) {
+            if (token) await postMatchHistoryBulk(pendingMatchHistory.current, token);
+            pendingMatchHistory.current = [];
+            return;
           }
-          pendingMatchHistory.current = [];
-        }
-        // Tournament: Accumulate entries to push at the end
-        else {
           const tournament_id = (tournamentTitle ?? '').trim();
           if (tournament_id) {
             const stage_number = stageForPost();
@@ -365,6 +377,7 @@ export default function GamePage() {
             };
             pendingTournamentEntries.current.push(entry);
           }
+        
           if (token) {
             await Promise.all([
               pendingTournamentEntries.current.length
@@ -374,12 +387,24 @@ export default function GamePage() {
                 ? postMatchHistoryBulk(pendingMatchHistory.current, token)
                 : Promise.resolve(null),
             ]);
-          } else {
-            console.warn('No access token — tournament+match_history bulks skipped.');
           }
           pendingTournamentEntries.current = [];
           pendingMatchHistory.current = [];
+        };
+      
+        try {
+          await postAll();
+        } catch (e: any) {
+          const msg = String(e?.message ?? "");
+          const looks401 = msg.includes(" 401:") || msg.toLowerCase().includes("unauthorized");
+          if (looks401) {
+            token = await refresh() ?? token;
+            await postAll();
+          } else {
+            throw e;
+          }
         }
+      
         afterSubmitUI();
       } catch (err) {
         console.error(err);
@@ -390,6 +415,8 @@ export default function GamePage() {
         }
       } finally {
         matchSnapshot.current = null;
+        pendingTournamentEntries.current = [];
+        pendingMatchHistory.current = [];
       }
     }
     await submitAll();
@@ -715,6 +742,12 @@ export default function GamePage() {
                     {labelForCode(bindings.p1.boost)}
                   </kbd>
                 </li>
+                <li>
+                  {t('game.controls.shield')}: &nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
+                    {labelForCode(bindings.p1.shield)}
+                  </kbd>
+                </li>
               </ul>
             </div>
               
@@ -735,6 +768,12 @@ export default function GamePage() {
                   {t('game.controls.boost')}: &nbsp;
                   <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
                     {labelForCode(bindings.p2.boost)}
+                  </kbd>
+                </li>
+                <li>
+                  {t('game.controls.shield')}: &nbsp;
+                  <kbd className="inline-flex items-center justify-center rounded-md border px-1.5 py-0.5 text-xs font-mono shadow-sm">
+                    {labelForCode(bindings.p2.shield)}
                   </kbd>
                 </li>
               </ul>

@@ -2,31 +2,7 @@ import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from 'recha
 import { UserStats } from '../utils/Interfaces';
 import { useTranslation } from 'react-i18next';
 
-const fetchData = (user: string) => {
-    //FETCH REAL DATA FROM BACKEND
-
-    //mockdata
-    const data = [
-        {key: 'wins', value: 7},
-        {key: 'draws', value: 1},
-        {key: 'losses', value: 5}
-    ];
-
-    const newData = [];
-
-    return data;
-};
-
 const colors = ['#2E6F40', '#252525', '#CD1C18'];
-
-// const customTooltip = ({ active, payload, label}) => {
-//     if (active && payload && payload.length)
-//         return (
-//             <div>
-//                 <p>{payload.value}</p>
-//             </div>
-//     )
-// }
 
 function userStatsToPieData(stats: UserStats) {
     const { t } = useTranslation();
@@ -65,7 +41,7 @@ export const PieGraph = ({ data }: { data: UserStats }) => {
                 <Tooltip />
                 <Legend
                 formatter={(value, entry) => {
-                    return entry.payload.key.toUpperCase(); // or just value.toUpperCase()
+                    return entry.payload.key.toUpperCase();
                 }}
                 />
             </PieChart>

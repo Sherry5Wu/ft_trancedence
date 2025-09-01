@@ -31,8 +31,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             }
 
             const data = await response.json();
-            const newExpiration = Date.now() + 15 * 60 * 1000; //replace with something from backend?
-			console.log("REFRESH OK");
+            const newExpiration = Date.now() + 15 * 60 * 1000;
 
 			setRefreshDone(true);
 			setTokenReceived(true);

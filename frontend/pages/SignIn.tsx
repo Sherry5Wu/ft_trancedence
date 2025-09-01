@@ -20,10 +20,6 @@ const SignInPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser, setTokenReceived } = useUserContext();
 
-  const isValidIdentifier = (value: string) => {
-    return isValidUsername(value) || isValidEmail(value);
-  };
-
   // const usernameField = useValidationField('', isValidUsername, t('common.errors.invalidUsername'));
   const passwordField = useValidationField('', isValidPassword, t('common.errors.invalidPassword'));
   const identifierField = useValidationField('', () => true, '');
@@ -56,7 +52,6 @@ const SignInPage: React.FC = () => {
 		  // 2: 2FA required
       case '2FA_REQUIRED':
         sessionStorage.setItem("pending2FAUserId", signInData.userId);
-            console.log('receive data');
         navigate('/verify2fa', { state: { userId: signInData.userId }});
         break;
 
@@ -106,8 +101,8 @@ const SignInPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="flex flex-col">
           <GenericInput
             type="text"
-            placeholder={t('common.placeholders.usernameOrEmail')}
-            aria-label={t('common.aria.inputs.usernameOrEmail')}
+            placeholder={t('common.placeholders.username')}
+            aria-label={t('common.aria.inputs.username')}
             value={identifierField.value}
             onFilled={identifierField.onFilled}
             onBlur={identifierField.onBlur}
