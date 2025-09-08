@@ -60,7 +60,7 @@ export interface RivalData {
 	rival_username: string,
 	rival_elo_score?: number,
 	games_played_against_rival?: number,
-	wins_against_rival?: number, 
+	wins_against_rival?: number,
 	loss_against_rival?: number,
 }
 
