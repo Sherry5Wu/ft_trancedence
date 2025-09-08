@@ -45,8 +45,6 @@ services:
     volumes:
       - auth_data:/app/data
       - ./services/auth-service/uploads:/app/uploads
-      - ./services/auth-service/:/app/
-      - /app/node_modules
 
   frontend-service:
     build:
@@ -54,8 +52,6 @@ services:
     networks:
       - trancendence-network
     restart: unless-stopped
-    volumes:
-      - ./frontend/:/app/
 
 volumes:
   stats_data:

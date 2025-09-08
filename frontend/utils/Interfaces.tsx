@@ -89,13 +89,11 @@ export interface UserStats {
     games_played: number;
     win_streak: number;
     longest_win_streak: number;
-    // worstRival: string;
     games_draw: number;
     games_lost: number;
     games_won: number;
 	elo_score: number;
 	rank: number;
-    // worstRivalPic: string;
 }
 
 export interface ScoreHistory {
@@ -209,12 +207,22 @@ export interface AliasField {
 	touched: boolean;
 }
 
+// export interface TournamentHistoryRow {
+//   stage_number: number; // 1 = final, 2 = semifinal, 3 = quarterfinal...
+//   match_number: number;
+//   player_name: string;
+//   opponent_name: string;
+//   result: Result;
+// }
+
 export interface TournamentHistoryRow {
-  stage_number: number; // 1 = final, 2 = semifinal, 3 = quarterfinal...
+  tournament_id: string;
+  stage_number: number;
   match_number: number;
   player_name: string;
   opponent_name: string;
   result: Result;
+  played_at: string;
 }
 
 export interface ModularBracketViewerProps {
@@ -230,4 +238,11 @@ export interface ProfileMeResponse {
   avatarUrl: string;
   TwoFAStatus: boolean;
   registerFromGoogle: boolean;
+}
+
+export interface CloseButtonProps {
+  iconSize?: number;
+  className?: string;
+  onClick: () => void;
+  ariaLabel?: string;
 }

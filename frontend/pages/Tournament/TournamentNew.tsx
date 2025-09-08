@@ -12,6 +12,8 @@ import { useValidationField } from '../../utils/Hooks';
 import { isValidTitle } from '../../utils/Validation';
 import { useUserContext } from '../../context/UserContext';
 import { usePlayersContext } from '../../context/PlayersContext';
+import { TournamentHistoryRow } from '../../utils/Interfaces';
+import { fetchAllTournamentHistory } from '../../utils/Fetch';
 
 const dicebearUrl = (seed: string) =>
   `https://api.dicebear.com/6.x/initials/png?seed=${encodeURIComponent(seed)}&backgroundColor=ffee8c&textColor=000000`;
@@ -21,6 +23,8 @@ const NewTournamentPage: React.FC = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
 	const { user } = useUserContext();
+	const [ nameUsed, setNameUsed ] = useState<boolean | undefined>(false);
+	const [ tournamentHistory, setTournamentHistory ] = useState<string[] | null >(null);
 	const {
 		players,
 		setPlayer,
@@ -35,6 +39,36 @@ const NewTournamentPage: React.FC = () => {
 
 	const titleField = useValidationField(tournamentTitle || '', isValidTitle,  t('common.errors.invalidTitle'));
 
+	useEffect(() => {
+		const loadOldTournaments = (async () => {
+		  try {
+			const data: TournamentHistoryRow[] = await fetchAllTournamentHistory();
+			if (data) 
+			{
+				const tournamentNames: string[] = data.map((t) => t.tournament_id);
+				setTournamentHistory(tournamentNames);
+			}
+		  } 
+     	catch (e: any) {
+      		console.error('Failed to load tournament history', e);
+		}})
+		loadOldTournaments();
+	  }, []);
+
+	useEffect(() => {
+		const checkName = () => {
+			if (!titleField.value || !tournamentHistory || tournamentHistory.length === 0) {
+    			setNameUsed(false);
+    			return;
+  			}
+
+			const exists = tournamentHistory?.includes(titleField.value)
+			setNameUsed(exists);
+		}
+		checkName();
+	}, [titleField.value])
+
+	
 	useEffect(() => {
 		// Load logged-in user as player[0] if not already set
 		if (user?.username && !players[0]) {
@@ -99,6 +133,7 @@ const NewTournamentPage: React.FC = () => {
 
 	const formFilled =
 		titleField.value.trim() !== '' &&
+		!nameUsed &&
 		!titleField.error &&
 		totalPlayers != null &&
 		players.length === totalPlayers &&
@@ -132,10 +167,13 @@ const NewTournamentPage: React.FC = () => {
 				  value={titleField.value}
 				  onFilled={handleTitleChange}
 				  onBlur={handleTitleBlur}
-				  errorMessage={titleField.error}
+				  errorMessage={
+						titleField.error ||
+						(nameUsed ? t('common.errors.titleAlreadyExists') : '')
+					}
 				  aria-label={t('pages.tournament.new.aria.inputTitle')}
 				/>
-				<div className={`transition-all ease-in-out duration-50 ${isOpen ? 'mb-25' : ''}`} onClick={() =>  console.log('OPEN: ', isOpen)} >
+				<div className={`transition-all ease-in-out duration-50 ${isOpen ? 'mb-25' : ''}`} >
 					<DropDownButton
 						label={t('pages.tournament.new.placeholders.totalPlayers')}
 						options={['4', '8']}
@@ -143,6 +181,7 @@ const NewTournamentPage: React.FC = () => {
 						selected={totalPlayers?.toString() ?? ''}
 						aria-label={t('pages.tournament.new.aria.totalPlayersSelect')}
 						onToggle={setIsOpen}
+						disabled={nameUsed || !!titleField.error}
 					/>
 				</div>
 			</section>
@@ -158,6 +197,7 @@ const NewTournamentPage: React.FC = () => {
 					key={idx}
 					user={player}
 					onClick={() => handlePlayerClick(idx)}
+					disabled={nameUsed || !!titleField.error}
 					aria-label={
 						player
 						? t('pages.tournament.new.aria.playerBadge', {
@@ -189,7 +229,7 @@ const NewTournamentPage: React.FC = () => {
 					className="generic-button"
 					text={t('common.buttons.next')}
 					aria-label={t('common.aria.buttons.next')}
-					disabled={!formFilled}
+					disabled={!formFilled || nameUsed || !!titleField.error}
 					onClick={() => {
 						setIsTournament(true);
 						navigate('/tournaments/new/players');

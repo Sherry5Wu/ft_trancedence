@@ -18,6 +18,7 @@ import { isValidUsername } from '../utils/Validation';
 import { fetchUsers } from '../utils/Fetch';
 import { FetchedUserData } from '../utils/Interfaces';
 import { usePlayersContext } from '../context/PlayersContext';
+import { DEFAULT_AVATAR } from '../utils/constants';
 
 export const Navbar = () => {  
     const { user, setUser, logOut } = useUserContext();
@@ -50,7 +51,6 @@ export const Navbar = () => {
     
     //go to title
     const handleTitleClick = () => {
-        console.log('Going to title/profile page');
         if (user) {
             setIsTournament(false);
             resetPlayers();
@@ -72,9 +72,8 @@ export const Navbar = () => {
 
     const profileMenuItems = [
         {Icon: <SettingsIcon className='menuIcon scale-90'/>, onClick: () => {
-            console.log('Go to Settings'), 
             user ? navigate('/settings') : navigate('/signin')}},
-        {Icon: <LogOutIcon className='menuIcon scale-85 translate-x-1'/>, onClick: () => {console.log('Log out'), handleLogOut(), navigate('/signin')}}
+        {Icon: <LogOutIcon className='menuIcon scale-85 translate-x-1'/>, onClick: () => {handleLogOut(), navigate('/signin')}}
     ]
 
     if (!user)
@@ -119,7 +118,7 @@ export const Navbar = () => {
                         />
                     </div>
                 </div>
-                <Menu aria-label='profile menu' Icon={<img src={user.profilePic} className='profilePicSmall -translate-x-1' />} elements={profileMenuItems} className='menuIcon' variant='userMenu'/>
+                <Menu aria-label='profile menu' Icon={<img src={user.profilePic || DEFAULT_AVATAR} className='profilePicSmall -translate-x-1' />} elements={profileMenuItems} className='menuIcon' variant='userMenu'/>
             </div>
         </nav>
     );

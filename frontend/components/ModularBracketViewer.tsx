@@ -46,89 +46,10 @@ const ModularBracketViewer: React.FC<ModularBracketViewerProps> = ({
   const rounds = useMemo(() => groupRounds(matches, totalPlayers), [matches, totalPlayers]);
 
   const matchRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
-  const [layoutsReady, setLayoutsReady] = useState(false);
-  const svgRef = useRef<SVGSVGElement | null>(null);
-
-  useEffect(() => {
-    const id = window.requestAnimationFrame(() => {
-      setLayoutsReady(true);
-    });
-    return () => window.cancelAnimationFrame(id);
-  }, [matches, rounds.length]);
 
   function getMatchKey(roundIndex: number, matchIndex: number) {
     return `${roundIndex}-${matchIndex}`;
   }
-
-  function measureRect(key: string) {
-    const el = matchRefs.current.get(key);
-    if (!el) return null;
-    return el.getBoundingClientRect();
-  }
-
-  const paths = useMemo(() => {
-    if (!layoutsReady) return [];
-    const svgEl = svgRef.current;
-    if (!svgEl) return [];
-    const svgRect = svgEl.getBoundingClientRect();
-
-    const result: { d: string; key: string }[] = [];
-
-    for (let rIndex = 0; rIndex < rounds.length; rIndex++) {
-      const roundMatches = rounds[rIndex];
-      const nextRoundMatches = rounds[rIndex + 1] ?? [];
-
-      for (let m = 0; m < roundMatches.length; m++) {
-        const match = roundMatches[m];
-        const winnerName =
-          match.result === 'win'
-            ? match.player_name
-            : match.result === 'loss'
-            ? match.opponent_name
-            : null;
-
-        if (!winnerName) continue;
-
-        let parentKey: string | null = null;
-        if (nextRoundMatches.length > 0) {
-          const parentIndex = nextRoundMatches.findIndex(
-            (nm) => nm.player_name === winnerName || nm.opponent_name === winnerName
-          );
-          if (parentIndex !== -1) parentKey = getMatchKey(rIndex + 1, parentIndex);
-        } else {
-          parentKey = 'winner-column';
-        }
-
-        const fromKey = getMatchKey(rIndex, m);
-        const fromRect = measureRect(fromKey);
-        const toRect =
-          parentKey === 'winner-column' ? measureRect(parentKey) : parentKey ? measureRect(parentKey) : null;
-        if (!fromRect || !toRect) continue;
-
-        const startX = fromRect.right - svgRect.left;
-        const startY = fromRect.top + fromRect.height / 2 - svgRect.top;
-        const endX = toRect.left - svgRect.left;
-        const endY = toRect.top + toRect.height / 2 - svgRect.top;
-
-        const midX = startX + (endX - startX) / 2;
-
-        // Draw simple right-angled path:
-        // Horizontal from startX to midX
-        // Vertical from startY to endY
-        // Horizontal from midX to endX
-        const d = [
-          `M ${startX} ${startY}`,   // move to start
-          `H ${midX}`,              // horizontal line to midX
-          `V ${endY}`,              // vertical line to endY
-          `H ${endX}`,              // horizontal line to endX (end)
-        ].join(' ');
-
-        result.push({ d, key: `${fromKey}->${parentKey}` });
-      }
-    }
-
-    return result;
-  }, [layoutsReady, rounds]);
 
   const finalMatch = rounds[rounds.length - 1]?.[0];
   let tournamentWinner = 'TBD';
@@ -169,11 +90,6 @@ const ModularBracketViewer: React.FC<ModularBracketViewerProps> = ({
             </div>
           </div>
         </div>
-        {/* <svg ref={svgRef} className="absolute inset-0 w-full h-full pointer-events-none z-0">
-          {paths.map((p) => (
-            <path key={p.key} d={p.d} stroke="#444" strokeWidth={2.2} fill="none" strokeLinecap="round" />
-          ))}
-        </svg> */}
       </div>
     </div>
   );

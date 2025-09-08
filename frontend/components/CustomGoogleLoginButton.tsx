@@ -16,7 +16,6 @@ const CustomGoogleLoginButton: React.FC = () => {
     // global google
     if (window.google) {
       google.accounts.id.initialize({
-        // THIS SHOULD BE PROTECTED .ENV
         client_id: "1050460559645-gq8j4unkacl92p5dmvllsehhp6aasbq7.apps.googleusercontent.com",
         callback: handleCredentialResponse,
       });

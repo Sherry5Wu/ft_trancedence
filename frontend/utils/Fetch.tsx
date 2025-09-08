@@ -12,10 +12,10 @@ import {
 	RegisteredPlayerData,
 	Players,
 	ProfileMeResponse,
+	TournamentHistoryRow
 	} from "../utils/Interfaces";
 
 export const createUser = async (player: UserProfileData): Promise<UserProfileData | null> => {
-	// console.log('Sending user:', player);
 	try {
 		const response = await fetch('https://localhost:8443/as/auth/register', {
 			method: 'POST',
@@ -223,8 +223,6 @@ export const fetchRivalData = async (username: string) => {
 		}
 
 		const data: RivalData[] = await rivals.json();
-		console.log('RIVALSDATA: ')
-		console.log(data);
 
 		return data;
 	}
@@ -304,8 +302,6 @@ export const fetchScoreHistory = async (username: string): Promise<ScoreHistory[
 			id: item.id,
 			elo_score: item.elo_score,
 		}));
-		// console.log('from fetchScoreHistory ');
-		// console.log(filteredData);
 		return filteredData;
 	}
 
@@ -325,8 +321,6 @@ export const fetchUserStats = async (username: string): Promise<UserStats | null
 			throw new Error(`HTTP error! Status: ${response.status}`);
 
 		const userStats: UserStats = await response.json();
-		console.log('FETCH USER STATS: '); //REMOVE LATER
-		console.log(userStats); //REMOVE LATER
 		return userStats;
 	}
 
@@ -706,3 +700,12 @@ export const fetchEloScore = async (username: string): Promise<number> => {
     return 1000;
   }
 };
+
+const API_BASE = 'https://localhost:8443';
+
+export async function fetchAllTournamentHistory(): Promise<TournamentHistoryRow[]> {
+  const res = await fetch(`${API_BASE}/tournament_history`, { credentials: 'include' });
+  if (!res.ok) throw new Error(`GET /tournament_history ${res.status}`);
+  return res.json();
+}
+

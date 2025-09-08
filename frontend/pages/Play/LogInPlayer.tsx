@@ -74,7 +74,6 @@ const LogInPlayerPage: React.FC = () => {
 
       const profile = await fetchUserProfile(usernameField.value, user.accessToken);
       const elo = await fetchEloScore(profile?.username ?? usernameField.value);
-    //   console.log('PLAYER PROFILE: ', profile);
 
       const player = {
         id: profile?.id ?? response.data?.userId ?? Date.now().toString(),
@@ -85,10 +84,7 @@ const LogInPlayerPage: React.FC = () => {
           profile?.playername ?? profile?.username ?? usernameField.value
         )}&backgroundColor=ffee8c&textColor=000000&fontFamily=Jost`,
       };
-      console.log("testing...");
-      console.log(player);
       setPlayer(playerIndex, player);
-
       navigate(returnTo);
     } catch (err) {
       alert(t("common.errors.invalidLogin"));
